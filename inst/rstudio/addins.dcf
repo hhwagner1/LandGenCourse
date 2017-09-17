@@ -1,0 +1,25 @@
+Name: 1. Watch Course Video
+Description: opens a video resource from course "Landscape Genetic Data Analysis with R"
+Binding: watchVideoAddin
+Interactive: true
+
+Name: 2. Start Tutorial
+Description: installs swirl course "Landscape_Genetics_R_Course" and prints instructions.
+Binding: startTutorialAddin
+Interactive: true
+
+Name: 3. Choose Worked Example
+Description: opens file with a worked example from course "Landscape Genetic Data Analysis with R".
+Binding: chooseWEAddin
+Interactive: true
+
+Name: 4. Open Cheat Sheet
+Description: opens selected R cheat sheet
+Binding: openCheatsheetAddin
+Interactive: true
+
+
+
+
+
+

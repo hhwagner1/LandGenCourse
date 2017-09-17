@@ -1,0 +1,21 @@
+value,color,attribute
+11,#456DA8,Open Water
+12,#E6EEF9,Perennial Ice/Snow
+21,#E1CBCD,"Developed, Open Space"
+22,#DC9786,"Developed, Low Intensity"
+23,#F40100,"Developed, Medium Intensity"
+24,#B00206,"Developed, High Intensity"
+31,#B2AEA3,Barren Land (Rock/Sand/Clay)
+41,#6BA95C,Deciduous Forest
+42,#16692E,Evergreen Forest
+43,#B9CA8F,Mixed Forest
+51,#AD9439,Dwarf Scrub
+52,#D5B883,Shrub/Scrub
+71,#EDEFCA,Grassland/Herbaceous
+72,#D3D27C,Sedge/Herbaceous
+73,#A5CD53,Lichens
+74,#88B8A1,Moss
+81,#DED73E,Pasture/Hay
+82,#AD722C,Cultivated Crops
+90,#BED8F6,Woody Wetlands
+95,#6EA5C4,Emergent Herbaceous Wetlands
