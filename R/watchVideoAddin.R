@@ -13,9 +13,10 @@ watchVideoAddin <- function() {
       shiny::selectInput("video", "Select a Topic:",
                    list("Week 0: Intro to RStudio"=1,
                         "Week 0: Intro to R course package"=2,
-                        "Week 1: Getting LG Data into R"=3,
-                        "Week 2: Land Cover Analysis in R"=4),
-                  selected = 3
+                        "Week 0: Intro to R Notebooks"=3,
+                        "Week 1: Getting LG Data into R"=4,
+                        "Week 2: Land Cover Analysis in R"=5),
+                  selected = 4
       )
     )
   )
@@ -32,10 +33,11 @@ watchVideoAddin <- function() {
       selectedVideo <- c(
         "https://www.dropbox.com/s/4jogqfu3xpeuged/Intro_RStudio_small.mp4?dl=0",
         "https://www.dropbox.com/s/598kwim7x09m47t/Intro_LandGenCourse_small.mp4?dl=0",
+        "https://www.dropbox.com/s/hxij2c18hckc1uv/Intro_RNotebooks.mp4?dl=0",
         "http://sho.co/19DCV",
         "http://sho.co/19DA2")[as.numeric(input$video)]
 
-      selectedSlides <- c("","",
+      selectedSlides <- c("", "", "",
                           "Week1_Slides.pdf",
                           "Week2_Slides.pdf")[as.numeric(input$video)]
 
