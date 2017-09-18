@@ -10,8 +10,6 @@ vignette: >
 ---
 ## 1. Overview
 
-Author: Helene Wagner
-
 ### a) Goals 
 
 This bonus material expands the Worked Exakmple to show:
@@ -32,6 +30,7 @@ require(raster)
 require(GeNetIt)
 require(rasterVis)
 require(tmaptools) 
+if(!dir.exists("./data")) dir.create("./data")
 ```
 
 ## 2. Convert 'SpatialPointsDataFrame' to 'sf' object 
@@ -73,7 +72,7 @@ Just in case you want to know how you could get your results into a GIS. This is
 The argument 'delete_dsn' specifies whether any existing file with the same name should be deleted first (i.e., overwritten). 
 
 ```{r}
-st_write(Sites.sf, "Sites.shp", delete_dsn = TRUE)
+st_write(Sites.sf, "./data/Sites.shp", delete_dsn = TRUE)
 ```
 
 ## 5. Display categorical map with a predefined color table

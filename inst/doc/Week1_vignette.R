@@ -5,18 +5,18 @@ require(LandGenCourse)
 require(tibble)
 
 ## ------------------------------------------------------------------------
-getwd()
+if(!dir.exists("./data")) dir.create("./data")
 
 ## ------------------------------------------------------------------------
 data(ralu.loci)
-write.csv(ralu.loci, "ralu.loci.csv", quote=FALSE, row.names=FALSE)
+write.csv(ralu.loci, "./data/ralu.loci.csv", quote=FALSE, row.names=FALSE)
 
 ## ----out.width = "50%"---------------------------------------------------
 knitr::include_graphics(system.file("extdata", "ExcelTable.png", 
                             package = "LandGenCourse"))
 
 ## ------------------------------------------------------------------------
-Frogs <- read.csv("ralu.loci.csv", header=TRUE)
+Frogs <- read.csv("./data/ralu.loci.csv", header=TRUE)
 as.tibble(Frogs)
 
 ## ------------------------------------------------------------------------
@@ -51,8 +51,9 @@ Frogs.genind@all.names
 ?read_population
 
 ## ------------------------------------------------------------------------
-Frogs.gstudio <- read_population("ralu.loci.csv", type="separated", 
-                locus.columns=c(3:10), phased=NULL, sep=",", header=TRUE)
+Frogs.gstudio <- read_population("./data/ralu.loci.csv", 
+                   type="separated", locus.columns=c(3:10), 
+                   phased=NULL, sep=",", header=TRUE)
 
 ## ------------------------------------------------------------------------
 as.tibble(Frogs.gstudio)

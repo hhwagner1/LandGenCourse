@@ -10,8 +10,6 @@ vignette: >
 ---
 ## 1. Overview of Worked Example
 
-Author: Helene Wagner
-
 ### a) Goals 
 
 This worked example shows:
@@ -55,22 +53,28 @@ require(tibble)
 
 ### a) Preparation
 
-First, check that your active working directory is the folder you created for this lesson. If not, use the RStudio menu to set it manually: 'Session > Set Working Directory > Choose Directory'. This is where R will look for files and save anything you export.
+Create a new R project for this lab: File > New Project > New Directory > New Project. 
+
+This will automatically set your working directory to the new project folder. That's where R will look for files and save anything you export.  
+
+First we check whether a subdirectory "data" already exists, and create it if not. The relative path of the folder "data" within the project folder is "./data". This is very convenient if you want to make your code portable and reproducible!
+
+Note: R does not distinguish between single quotes and double quotes, they are treated as synonyms, but the opening and closing symbols need to match.
 
 ```{r}
-getwd()
+if(!dir.exists("./data")) dir.create("./data")
 ```
 
-The dataset 'ralu.loci' is available in the package 'LandGenCourse'. Here we first export it as a comma separated file (.csv), as this is the recommended format for importing your own data (e.g. from Excel). 
+The dataset 'ralu.loci' is available in the package 'LandGenCourse'. Here we first export it as a comma separated file (.csv), as this is the recommended format for importing your own data (e.g. from Excel). We use a relative path to save the file into a subfolder 'data' within your project folder.
 
 ```{r}
 data(ralu.loci)
-write.csv(ralu.loci, "ralu.loci.csv", quote=FALSE, row.names=FALSE)
+write.csv(ralu.loci, "./data/ralu.loci.csv", quote=FALSE, row.names=FALSE)
 ```
 
 ### b) Excel file 
 
-Check that the file "ralu.loci.csv" is now in your active working directory. Note that in Excel, the columns with the loci must be explicitly defined as 'text', otherwise Excel is likely to interpret them as times. Instructions: 
+Check that the file "ralu.loci.csv" is now in the folder "data". Note that in Excel, the columns with the loci must be explicitly defined as 'text', otherwise Excel is likely to interpret them as times. Instructions: 
 
 Opening an existing .csv file with genetic data:
 
@@ -103,7 +107,7 @@ knitr::include_graphics(system.file("extdata", "ExcelTable.png",
 As the file is saved in csv format, we use the function 'read.csv' to import it into an R object called 'Frogs'. Display the first few rows and columns to check whether the data have been imported correctly:
 
 ```{r}
-Frogs <- read.csv("ralu.loci.csv", header=TRUE)
+Frogs <- read.csv("./data/ralu.loci.csv", header=TRUE)
 as.tibble(Frogs)
 ```
 
@@ -243,8 +247,9 @@ Some explanations:
 - **header**: yes we have column names.
 
 ```{r}
-Frogs.gstudio <- read_population("ralu.loci.csv", type="separated", 
-                locus.columns=c(3:10), phased=NULL, sep=",", header=TRUE)
+Frogs.gstudio <- read_population("./data/ralu.loci.csv", 
+                   type="separated", locus.columns=c(3:10), 
+                   phased=NULL, sep=",", header=TRUE)
 ```
 
 ### c) Check imported data

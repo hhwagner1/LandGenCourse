@@ -12,7 +12,7 @@
 
 <meta name="author" content="Helene Wagner" />
 
-<meta name="date" content="2017-09-16" />
+<meta name="date" content="2017-09-18" />
 
 <title>Week 1: Importing Genetic Data</title>
 
@@ -70,13 +70,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Week 1: Importing Genetic Data</h1>
 <h4 class="author"><em>Helene Wagner</em></h4>
-<h4 class="date"><em>2017-09-16</em></h4>
+<h4 class="date"><em>2017-09-18</em></h4>
 
 
 
 <div id="overview-of-worked-example" class="section level2">
 <h2>1. Overview of Worked Example</h2>
-<p>Author: Helene Wagner</p>
 <div id="a-goals" class="section level3">
 <h3>a) Goals</h3>
 <p>This worked example shows:</p>
@@ -120,16 +119,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2>2. Import data from .csv file</h2>
 <div id="a-preparation" class="section level3">
 <h3>a) Preparation</h3>
-<p>First, check that your active working directory is the folder you created for this lesson. If not, use the RStudio menu to set it manually: ‘Session &gt; Set Working Directory &gt; Choose Directory’. This is where R will look for files and save anything you export.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getwd</span>()</code></pre></div>
-<pre><code>## [1] &quot;/Users/hhwagner1/Desktop/LandGenCourse/vignettes&quot;</code></pre>
-<p>The dataset ‘ralu.loci’ is available in the package ‘LandGenCourse’. Here we first export it as a comma separated file (.csv), as this is the recommended format for importing your own data (e.g. from Excel).</p>
+<p>Create a new R project for this lab: File &gt; New Project &gt; New Directory &gt; New Project.</p>
+<p>This will automatically set your working directory to the new project folder. That’s where R will look for files and save anything you export.</p>
+<p>First we check whether a subdirectory “data” already exists, and create it if not. The relative path of the folder “data” within the project folder is “./data”. This is very convenient if you want to make your code portable and reproducible!</p>
+<p>Note: R does not distinguish between single quotes and double quotes, they are treated as synonyms, but the opening and closing symbols need to match.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span>(<span class="op">!</span><span class="kw">dir.exists</span>(<span class="st">&quot;./data&quot;</span>)) <span class="kw">dir.create</span>(<span class="st">&quot;./data&quot;</span>)</code></pre></div>
+<p>The dataset ‘ralu.loci’ is available in the package ‘LandGenCourse’. Here we first export it as a comma separated file (.csv), as this is the recommended format for importing your own data (e.g. from Excel). We use a relative path to save the file into a subfolder ‘data’ within your project folder.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(ralu.loci)
-<span class="kw">write.csv</span>(ralu.loci, <span class="st">&quot;ralu.loci.csv&quot;</span>, <span class="dt">quote=</span><span class="ot">FALSE</span>, <span class="dt">row.names=</span><span class="ot">FALSE</span>)</code></pre></div>
+<span class="kw">write.csv</span>(ralu.loci, <span class="st">&quot;./data/ralu.loci.csv&quot;</span>, <span class="dt">quote=</span><span class="ot">FALSE</span>, <span class="dt">row.names=</span><span class="ot">FALSE</span>)</code></pre></div>
 </div>
 <div id="b-excel-file" class="section level3">
 <h3>b) Excel file</h3>
-<p>Check that the file “ralu.loci.csv” is now in your active working directory. Note that in Excel, the columns with the loci must be explicitly defined as ‘text’, otherwise Excel is likely to interpret them as times. Instructions:</p>
+<p>Check that the file “ralu.loci.csv” is now in the folder “data”. Note that in Excel, the columns with the loci must be explicitly defined as ‘text’, otherwise Excel is likely to interpret them as times. Instructions:</p>
 <p>Opening an existing .csv file with genetic data:</p>
 <ul>
 <li>Excel menu: ‘File &gt; New Workbook’.</li>
@@ -157,7 +158,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="c-import-with-function-read.csv" class="section level3">
 <h3>c) Import with function ‘read.csv’</h3>
 <p>As the file is saved in csv format, we use the function ‘read.csv’ to import it into an R object called ‘Frogs’. Display the first few rows and columns to check whether the data have been imported correctly:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Frogs &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;ralu.loci.csv&quot;</span>, <span class="dt">header=</span><span class="ot">TRUE</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Frogs &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;./data/ralu.loci.csv&quot;</span>, <span class="dt">header=</span><span class="ot">TRUE</span>)
 <span class="kw">as.tibble</span>(Frogs)</code></pre></div>
 <pre><code>## # A tibble: 181 x 10
 ##        SiteName      Pop      A      B      C      D      E      F      G
@@ -373,8 +374,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><strong>sep</strong>: here this refers to the .csv file! The separater is a comma.</li>
 <li><strong>header</strong>: yes we have column names.</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Frogs.gstudio &lt;-<span class="st"> </span><span class="kw">read_population</span>(<span class="st">&quot;ralu.loci.csv&quot;</span>, <span class="dt">type=</span><span class="st">&quot;separated&quot;</span>, 
-                <span class="dt">locus.columns=</span><span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="dv">10</span>), <span class="dt">phased=</span><span class="ot">NULL</span>, <span class="dt">sep=</span><span class="st">&quot;,&quot;</span>, <span class="dt">header=</span><span class="ot">TRUE</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Frogs.gstudio &lt;-<span class="st"> </span><span class="kw">read_population</span>(<span class="st">&quot;./data/ralu.loci.csv&quot;</span>, 
+                   <span class="dt">type=</span><span class="st">&quot;separated&quot;</span>, <span class="dt">locus.columns=</span><span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="dv">10</span>), 
+                   <span class="dt">phased=</span><span class="ot">NULL</span>, <span class="dt">sep=</span><span class="st">&quot;,&quot;</span>, <span class="dt">header=</span><span class="ot">TRUE</span>)</code></pre></div>
 </div>
 <div id="c-check-imported-data-1" class="section level3">
 <h3>c) Check imported data</h3>

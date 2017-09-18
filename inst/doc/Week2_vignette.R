@@ -5,12 +5,12 @@ require(GeNetIt)
 require(tmaptools) 
 require(SDMTools) # for landscape metrics
 require(tibble)
-getwd()           # check your working directory
+if(!dir.exists("./data")) dir.create("./data")
 
 ## ------------------------------------------------------------------------
 data(ralu.site)
-write.csv(data.frame(ralu.site@coords, ralu.site@data), file="ralu.site.csv", quote=FALSE, row.names=FALSE)
-Sites <- read.csv("ralu.site.csv", header=TRUE)
+write.csv(data.frame(ralu.site@coords, ralu.site@data), file="./data/ralu.site.csv", quote=FALSE, row.names=FALSE)
+Sites <- read.csv("./data/ralu.site.csv", header=TRUE)
 as.tibble(Sites)
 
 ## ------------------------------------------------------------------------

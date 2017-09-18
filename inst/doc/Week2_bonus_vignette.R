@@ -5,6 +5,7 @@ require(raster)
 require(GeNetIt)
 require(rasterVis)
 require(tmaptools) 
+if(!dir.exists("./data")) dir.create("./data")
 
 ## ------------------------------------------------------------------------
 data(ralu.site)
@@ -19,7 +20,7 @@ plot(Sites.sf[,c("Drainage", "Basin")], pch=16)
 plot(Sites.sf[,c("AREA_m2", "Depth_m")], pch=16)
 
 ## ------------------------------------------------------------------------
-st_write(Sites.sf, "Sites.shp", delete_dsn = TRUE)
+st_write(Sites.sf, "./data/Sites.shp", delete_dsn = TRUE)
 
 ## ------------------------------------------------------------------------
 data(rasters)
