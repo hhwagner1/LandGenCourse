@@ -11,22 +11,32 @@ watchVideoAddin <- function() {
                          selected = 1
       ),
       shiny::selectInput("video", "Select a Topic:",
-                   list("Week 1: Getting LG Data into R"=1,
-                        "Week 2: Land Cover Analysis in R"=2),
-                  selected = 1
+                   list("Week 0: Intro to RStudio"=1,
+                        "Week 0: Intro to R course package"=2,
+                        "Week 1: Getting LG Data into R"=3,
+                        "Week 2: Land Cover Analysis in R"=4),
+                  selected = 3
       )
     )
   )
+
+
+
+
 
   server <- function(input, output, session) {
 
     # Listen for 'done' events.
     shiny::observeEvent(input$done, {
 
-      selectedVideo <- c("http://sho.co/19DCV",
-                         "http://sho.co/19DA2")[as.numeric(input$video)]
+      selectedVideo <- c(
+        "https://www.dropbox.com/s/4jogqfu3xpeuged/Intro_RStudio_small.mp4?dl=0",
+        "https://www.dropbox.com/s/598kwim7x09m47t/Intro_LandGenCourse_small.mp4?dl=0",
+        "http://sho.co/19DCV",
+        "http://sho.co/19DA2")[as.numeric(input$video)]
 
-      selectedSlides <- c("Week1_Slides.pdf",
+      selectedSlides <- c("","",
+                          "Week1_Slides.pdf",
                           "Week2_Slides.pdf")[as.numeric(input$video)]
 
       if(!dir.exists(file.path(getwd(), "downloads")))
@@ -35,19 +45,22 @@ watchVideoAddin <- function() {
       }
 
       if(as.numeric(input$type) != 2) utils::browseURL(selectedVideo)
-      if(as.numeric(input$type) != 1)
+      if(as.numeric(input$type) != 1 && selectedSlides!="")
       {
+
         utils::download.file(paste0("https://github.com/hhwagner1/DGS_LG_Labs/raw/master/docs/Video_slides/", selectedSlides),
                destfile=file.path("downloads", selectedSlides), mode="wb")
         utils::browseURL(file.path("downloads", selectedSlides))
       }
 
-      cat(paste0("Video location: ",selectedVideo, "\n\n",
-      "Hints:
+
+      cat(paste0("Video location: ",selectedVideo, "\n\n"))
+      if(selectedSlides=="")cat(paste0("No slides available for this video.", "\n\n"))
+      cat("Hints:
 - Videos open in your default web browser.
 - Make video fullscreen by clicking on screen symbol (bottom right).
 - Slides open in your default PDF viewer.
-- Slides are saved to folder 'download' in your active working directory."))
+- Slides are saved to folder 'download' in your active working directory.")
 
       shiny::stopApp()
     })
