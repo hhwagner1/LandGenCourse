@@ -42,8 +42,6 @@ chooseWEAddin <- function() {
 
   }
 
-  # We'll use a pane viewer, and set the minimum height at
-  # 300px to ensure we get enough screen space to display the clock.
   viewer <- shiny::dialogViewer("Choose Worked Example",
                                 width = 400, height = 600)
   shiny::runGadget(ui, server, viewer = viewer)

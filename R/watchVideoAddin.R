@@ -14,9 +14,10 @@ watchVideoAddin <- function() {
                    list("Week 0: Intro to RStudio"=1,
                         "Week 0: Intro to R course package"=2,
                         "Week 0: Intro to R Notebooks"=3,
-                        "Week 1: Getting LG Data into R"=4,
-                        "Week 2: Land Cover Analysis in R"=5),
-                  selected = 4
+                        "Week 0: Version Control 101"=4,
+                        "Week 1: Getting LG Data into R"=5,
+                        "Week 2: Land Cover Analysis in R"=6),
+                  selected = 5
       )
     )
   )
@@ -34,16 +35,18 @@ watchVideoAddin <- function() {
         "https://www.dropbox.com/s/4jogqfu3xpeuged/Intro_RStudio_small.mp4?dl=0",
         "https://www.dropbox.com/s/598kwim7x09m47t/Intro_LandGenCourse_small.mp4?dl=0",
         "https://www.dropbox.com/s/hxij2c18hckc1uv/Intro_RNotebooks.mp4?dl=0",
+        "http://sho.co/19EFD",
         "http://sho.co/19DCV",
         "http://sho.co/19DA2")[as.numeric(input$video)]
 
       selectedSlides <- c("", "", "",
+                          "Week0_Slides.pdf",
                           "Week1_Slides.pdf",
                           "Week2_Slides.pdf")[as.numeric(input$video)]
 
-      if(!dir.exists(file.path(getwd(), "downloads")))
+      if(!dir.exists(file.path("./downloads")))
       {
-        dir.create(file.path(getwd(), "downloads"), FALSE)
+        dir.create(file.path("./downloads"), FALSE)
       }
 
       if(as.numeric(input$type) != 2) utils::browseURL(selectedVideo)
