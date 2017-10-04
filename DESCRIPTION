@@ -33,7 +33,7 @@ Imports:
     sp,
     spdep,
     swirl (>= 2.4.3),
-    swirlify (> 0.5.0),
+    swirlify (>= 0.5.1),
     tibble,
     tmaptools,
     adegenet (>= 2.1.0),
