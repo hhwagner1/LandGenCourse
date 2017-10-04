@@ -1,8 +1,8 @@
 startTutorialAddin <- function() {
 
   course_name <- "Landscape_Genetics_R_Course"
-  path <- file.path(swirl:::swirl_courses_dir(),
-                    swirl:::make_pathname(course_name))
+  path <- file.path(swirlify::swirl_courses_dir(),
+                    swirlify::make_pathname(course_name))
   if (file.exists(path)) unlink(path, recursive = TRUE, force = TRUE)
 
   swirl::install_course_github("hhwagner1", course_name)
