@@ -283,7 +283,7 @@ bubble(Sites.sp, "ForestPatchSize", fill=FALSE, key.entries=as.numeric(names(tab
 ```
 
 
-## Extract landscape metrics at sampling locations.
+## 5. Extract landscape metrics at sampling locations.
 
 ### a) Calculate class-level metrics in buffer around sampling locations
 
