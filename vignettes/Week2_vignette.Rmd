@@ -1,8 +1,13 @@
 ---
 title: "Week 2: Spatial Data"
-author: Helene Wagner
+author: "Helene Wagner"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+show_toc: true
+output:
+  knitr:::html_vignette:
+    toc: yes
+    fig_width: 4 
+    fig_height: 3.5
 vignette: >
   %\VignetteIndexEntry{Week 2: Spatial Data}
   %\VignetteEngine{knitr::rmarkdown}
@@ -51,13 +56,6 @@ require(SDMTools) # for landscape metrics
 require(tibble)
 if(!dir.exists("./data")) dir.create("./data")
 ```
-
-### d) List of tasks
-
-- Import site data from .CSV file into a 'SpatialPointsDataFrame' object (package 'sp').
-- Display raster maps (package 'raster') and overlay sampling locations. Extract raster values at sampling locations.
-- Calculate patch-level and class-level landscape metrics (package 'SDMTools').
-- Extract landscape metrics at sampling locations.
 
 ## 2. Import site data from .csv file
 
@@ -174,7 +172,7 @@ Now we can use 'plot', which knows what to do with a raster stack.
 
 Note: layer 'nlcd' is a categorical map of land cover types. See this week's bonus materials for how to better display a categorical map in R.
 
-```{r fig.width=7, fig.height=5}
+```{r fig.width=8, fig.height=5.5}
 plot(RasterMaps)
 ```
 Some layers seem to show a similar pattern. It is easy to calculate the correlation between quantitative raster layers. Here, the last layer 'ncld', is in fact categorical (land cover type), and it's correlation here is meaningless.
@@ -191,12 +189,13 @@ Note: To learn about options for the 'plot' function for 'raster' objects, acces
 
 We can add the sampling locations (if we plot only a single raster layer). Here we use 'rev' to reverse the color ramp for plotting raster layer 'ffp', and add the sites as white circles with black outlines.
 
-```{r fig.width=4, fig.height=4}
+```{r fig.width=4.45, fig.height=4}
+par(mar=c(3,3,1,2))
 plot(raster(RasterMaps, layer="ffp"), col=rev(rainbow(9)))
 points(Sites.sp, pch=21, col="black", bg="white")
 ```
 
-### Extract raster values at sampling locations
+### c) Extract raster values at sampling locations
 
 The following code adds six variables to the data slot of Sites.sp. Technically we combine the columns of the existing data frame 'Sites.sp' with the new columns in a new data frame with the same name. 
 
@@ -238,7 +237,8 @@ Calculating patch-level metrics is a little more involved, as we have to decide 
 
 The first step is to reduce the land cover map 'nlcd' to a binary map showing evergreen forest vs. any other cover type. We can do this by using a logical test: 'RasterMaps==42', which tests for each cell in NLCD whether it is equal to 42. This results in a binary map, which we can plot, and overlay the sampling locations.
 
-```{r fig.width=4, fig.height=4}
+```{r fig.width=4.45, fig.height=4}
+par(mar=c(3,3,1,2))
 Forest <- (NLCD==42)
 plot(Forest)
 points(Sites.sp, pch=21, bg="yellow", col="black")
@@ -277,7 +277,8 @@ Sites.sp@data$ForestPatchSize
 ```
 Plot a bubble map of forest patch size at each sampling location: 
  
-```{r}
+```{r fig.width=4.45, fig.height=4}
+par(mar=c(3,3,1,2))
 bubble(Sites.sp, "ForestPatchSize", fill=FALSE, key.entries=as.numeric(names(table(Sites.sp@data$ForestPatchSize))))
 ```
 

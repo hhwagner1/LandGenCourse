@@ -1,8 +1,13 @@
 ---
 title: "Week 1: Importing Genetic Data"
-author: Helene Wagner
+author: "Helene Wagner"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+show_toc: true
+output:
+  knitr:::html_vignette:
+    toc: yes
+    fig_width: 4 
+    fig_height: 3.5
 vignette: >
   %\VignetteIndexEntry{Week 1: Importing Genetic Data}
   %\VignetteEngine{knitr::rmarkdown}
@@ -40,14 +45,6 @@ require(gstudio)
 require(LandGenCourse)
 require(tibble)
 ```
-
-### d) List of tasks
-
-- Import .csv file
-- Import data with function 'read_population' from the 'gstudio' package
-- Import data with function 'df2genind' from the 'adegenet' package
-- Summarize 'genind' object
-- View information stored in 'genind' object
 
 ## 2. Import data from .csv file
 
@@ -260,7 +257,7 @@ Check the column types: 'SiteName' and 'Pop' are now character vectors, and the 
 as.tibble(Frogs.gstudio)
 ```
 
-### d) Add FrogID as row names
+### d) Add FrogID
 
 Frogs.gstudio is a data frame, and we can manipulate like any other data frame. Here we will add the variable 'FrogID' as the first column. 
 
