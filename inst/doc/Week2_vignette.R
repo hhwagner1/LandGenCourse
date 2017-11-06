@@ -47,13 +47,14 @@ class(RasterMaps)
 ## ------------------------------------------------------------------------
 RasterMaps
 
-## ----fig.width=7, fig.height=5-------------------------------------------
+## ----fig.width=8, fig.height=5.5-----------------------------------------
 plot(RasterMaps)
 
 ## ------------------------------------------------------------------------
 layerStats(RasterMaps, 'pearson', na.rm=T)
 
-## ----fig.width=4, fig.height=4-------------------------------------------
+## ----fig.width=4.45, fig.height=4----------------------------------------
+par(mar=c(3,3,1,2))
 plot(raster(RasterMaps, layer="ffp"), col=rev(rainbow(9)))
 points(Sites.sp, pch=21, col="black", bg="white")
 
@@ -70,7 +71,8 @@ NLCD.class <- SDMTools::ClassStat(NLCD,cellsize=30)
 ## ------------------------------------------------------------------------
 ?ClassStat
 
-## ----fig.width=4, fig.height=4-------------------------------------------
+## ----fig.width=4.45, fig.height=4----------------------------------------
+par(mar=c(3,3,1,2))
 Forest <- (NLCD==42)
 plot(Forest)
 points(Sites.sp, pch=21, bg="yellow", col="black")
@@ -93,7 +95,8 @@ Sites.sp@data$ForestPatchSize <- NLCD.patch[a,"area"]
 Sites.sp@data$ForestPatchSize[is.na(a)] <- 0  # set patch size to zero for nonforested
 Sites.sp@data$ForestPatchSize
 
-## ------------------------------------------------------------------------
+## ----fig.width=4.45, fig.height=4----------------------------------------
+par(mar=c(3,3,1,2))
 bubble(Sites.sp, "ForestPatchSize", fill=FALSE, key.entries=as.numeric(names(table(Sites.sp@data$ForestPatchSize))))
 
 ## ------------------------------------------------------------------------
