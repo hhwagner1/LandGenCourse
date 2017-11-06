@@ -9,14 +9,20 @@ License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
 Imports:
-    ade4,
+    ade4(>= 1.7-8),
     base64enc,
+    dplyr,
     formatR (>= 1.5),
     GeNetIt,
     geosphere,
+    hierfstat,
     httpuv,
     igraph,
     miniUI (>= 0.1.1),
+    mmod,
+    pegas,
+    PopGenReport,
+    poppr,
     proto,
     raster,
     rasterVis,
