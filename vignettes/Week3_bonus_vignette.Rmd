@@ -37,17 +37,17 @@ Microsatellite data for 181 individuals of Colombia spotted frogs (Rana luteiven
 All required packages should have been installed already when you installed 'LandGenCourse'.
 
 ```{r message=FALSE, warning=TRUE}
-require(adegenet)
-#require(gstudio)
+#require(adegenet)
+require(ade4)
 require(LandGenCourse)
-require(pegas)       
-require(sp)
-require(hierfstat)  
-require(PopGenReport)
-require(GeNetIt)
+#require(pegas)       
+#require(sp)
+#require(hierfstat)  
+#require(PopGenReport)
+#require(GeNetIt)
 require(dplyr)
-require(poppr)       
-require(mmod)
+#require(poppr)       
+#require(mmod)
 require(tibble)
 require(here)
 ```
@@ -167,14 +167,14 @@ ADD SOME TEXT
 Maximum likelihood estimate of inbreeding coefficient F:
 
 ```{r} 
-Fest <- lapply(seppop(Frogs.genind), 
+Fest <- lapply(adegenet::seppop(Frogs.genind), 
                function(ls) adegenet::inbreeding(ls, N=200, res.type="estimate"))
 ```
 
 Average sample estimates of F: 
 
 ```{r}
-temp <- lapply(seppop(Frogs.genind), 
+temp <- lapply(adegenet::seppop(Frogs.genind), 
                function(ls) adegenet::inbreeding(ls, N=200, res.type="sample"))
 Fbar <- lapply(temp, function (ls) sapply(ls, mean))
 ```
@@ -293,7 +293,7 @@ Result <- matrix(NA, length(GD.pop), 2,
                  dimnames=list(names(GD.pop), c("Mantel.r", "p-value")))
 for(i in 1:length(GD.pop))
 {
-  IBD <- mantel.randtest(as.dist(GD.pop[[i]]),Dgeo)
+  IBD <- ade4::mantel.randtest(as.dist(GD.pop[[i]]),Dgeo)
   Result[i,] <- c(IBD$obs, IBD$pvalue)
 }
 Result
@@ -418,14 +418,14 @@ Let's plot it against sample size (left) and pond area (right).
 par(mar=c(4, 4.5,1,1))
 plot(Frogs.sites$n, Fst.per.site, xlim=c(5,25),  ylim=c(0, 0.25),
        xlab = "Sample size", ylab = "Average pair-wise Fst")
-abline(lm(Fst.per.site ~ summary(Frogs.genind)$n.by.pop), col = "red")
-text(x=summary(Frogs.genind)$n.by.pop, y=Fst.per.site,
+abline(lm(Fst.per.site ~ Frogs.sites$n), col = "red")
+text(x=Frogs.sites$n, y=Fst.per.site,
      labels=names(Fst.per.site), pos=4)
 
 plot(Frogs.sites$AREA_m2, Fst.per.site, xlim=c(5,25),  ylim=c(0, 0.25),
        xlab = "Sample size", ylab = "Average pair-wise Fst")
-abline(lm(Fst.per.site ~ summary(Frogs.genind)$n.by.pop), col = "red")
-text(x=summary(Frogs.genind)$n.by.pop, y=Fst.per.site,
+abline(lm(Fst.per.site ~ Frogs.sites$n), col = "red")
+text(x=Frogs.sites$n, y=Fst.per.site,
      labels=names(Fst.per.site), pos=4)
 ```  
 

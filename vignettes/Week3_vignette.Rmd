@@ -44,11 +44,11 @@ Microsatellite data for 181 individuals of Colombia spotted frogs (Rana luteiven
 All required packages should have been installed already when you installed 'LandGenCourse'.
 
 ```{r message=FALSE, warning=TRUE}
-require(adegenet)
+#require(adegenet)
 require(LandGenCourse)
-require(pegas)       
-require(sp)
-require(PopGenReport)
+#require(pegas)       
+#require(sp)
+#require(PopGenReport)
 require(dplyr)
 require(poppr) 
 require(here)

@@ -40,12 +40,12 @@ We thus have three types of data:
 require(here)
 require(LandGenCourse)
 require(lme4)
-require(car)
-require(EcoGenetics)
+#require(car)
+#require(EcoGenetics)
 require(tibble)
-require(vegan)
-require(hierfstat)
-require(QstFstComp)
+#require(vegan)
+#require(hierfstat)
+#require(QstFstComp)
 source(system.file("extdata", "supplemental_R_functions.R", 
                             package = "LandGenCourse"))
 ```
@@ -69,8 +69,8 @@ We will compare three models (all models include a fixed effect of block):
 
 ```{r, echo=TRUE}
 mod1<- lm(phen$d13c~1+phen$block)
-mod2<- lmer(d13c~1+(1|family)+block,data = phen, REML = F)
-mod3 <- lmer(d13c ~ 1 + (1|population/family) + block, data = phen, REML = F)
+mod2<- lme4::lmer(d13c~1+(1|family)+block,data = phen, REML = F)
+mod3 <- lme4::lmer(d13c ~ 1 + (1|population/family) + block, data = phen, REML = F)
 ```
 
 **Question 1**: 
@@ -78,11 +78,11 @@ mod3 <- lmer(d13c ~ 1 + (1|population/family) + block, data = phen, REML = F)
 
 ```{r, echo=FALSE}
 cat("\n", "Model 1:", "\n")
-Anova(mod1, type="III", test.statistic = "F")
+car::Anova(mod1, type="III", test.statistic = "F")
 cat("\n", "Model 2:", "\n")
-Anova(mod2, type="III", test.statistic = "Chisq")
+car::Anova(mod2, type="III", test.statistic = "Chisq")
 cat("\n", "Model 3:", "\n")
-Anova(mod3, type="III", test.statistic = "Chisq")
+car::Anova(mod3, type="III", test.statistic = "Chisq")
 ```
 
 Now, let’s explore which model best fits our data. To do this we will use the Akaike Information Criterion (AIC). This statistic is like a penalized likelihood score, where the penalty increases as the number of parameters in a model increases. When using AIC, the model with the lowest score is the preferred model. 
@@ -111,7 +111,7 @@ aic_out
 - *What does this tell you about your optimal model?*
 
 ```{r, echo=FALSE}
-mod3_eff <- ranef(mod3)
+mod3_eff <- lme4::ranef(mod3)
 mod3_fam_only <- mod3_eff$family + -30.59964
 mod3_all_eff <- mod3_fam_only + pop_rep(pop.eff = mod3_eff$population, 
                                         n.fam = nrow(mod3_eff$family), 
@@ -147,11 +147,10 @@ Here is a 95% bootstrap confidence interval for our estimate of $h^2 = 0.399$. T
 
 ```{r, echo=FALSE}
 h2_boot_out <- mod_boot(model = mod3, nboot = 1000)
-ci_95 <- quantile(h2_boot_out, probs = c(0.025, 0.50, 0.975)) ### 95% ci.
+ci_95 <- quantile(h2_boot_out, probs = c(0.025, 0.50, 0.975)) 
 cat("\n", "95% bootstrap confidence interval:", "\n")
 ci_95
 boxplot(h2_boot_out, range=5); abline(h = h2, col = "red") 
-## red line: original h2 estimate for comparison to bootstrap distribution.
 ```
 
 Compare the numerical 95% confidence interval and boxplot with our original estimate of $h^2= 0.399$ (red line). 
@@ -216,7 +215,8 @@ trait$family <- sapply(strsplit(row.names(trait),":"),
                               function(ls) ls[[1]])
 row.names(trait) <- trait$family
 
-WWP <- ecogen(XY = env[,3:4], P = trait, G = snp[,-c(1:2)], E = env[,-c(1:4)], S = env[,1:2], order.G = FALSE)
+WWP <- EcoGenetics::ecogen(XY = env[,3:4], P = trait, G = snp[,-c(1:2)], 
+                           E = env[,-c(1:4)], S = env[,1:2], order.G = FALSE)
 ```
 
 
@@ -312,7 +312,8 @@ colnames(snp_reformat2) <- names(WWP@G)[-which(mono == 1)]
 Let’s examine differentiation for the SNP data using FST. 
 
 ```{r, echo=FALSE}
-fst <- varcomp.glob(levels = WWP@S$population, loci = snp_reformat2, diploid = T)
+fst <- hierfstat::varcomp.glob(levels = WWP@S$population, 
+                               loci = snp_reformat2, diploid = T)
 fst$F
 ```
 
@@ -346,7 +347,7 @@ Now that we have inspected overall genetic differentiation among populations, le
 ```{r, echo=FALSE}
 snp_reformat3 <- data.frame(population=WWP@S$population, snp_reformat2)
 phen_mod <- phen[,-c(2,4)]
-QstFst_out <- QstFstComp(fst.dat = snp_reformat3, qst.dat = phen_mod, 
+QstFst_out <- QstFstComp::QstFstComp(fst.dat = snp_reformat3, qst.dat = phen_mod, 
                          numpops = nlevels(WWP@S$population), nsim = 10000, 
                          breeding.design = "half.sib.dam", 
                          dam.offspring.relatedness = 0.25, output = "concise")

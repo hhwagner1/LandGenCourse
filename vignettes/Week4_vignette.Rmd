@@ -51,10 +51,10 @@ All required packages should have been installed already when you installed 'Lan
 require(here)
 require(LandGenCourse)
 require(lme4)
-require(car)
-require(EcoGenetics)
+#require(car)
+#require(EcoGenetics)
 require(tibble)
-require(vegan)
+#require(vegan)
 
 source(system.file("extdata", "supplemental_R_functions.R", 
                             package = "LandGenCourse"))
@@ -122,12 +122,12 @@ Inspect the values in aic_out. They add to one and can be thought of as conditio
 
 Now that we have the best model, let’s use it to calculate the genetic values for each maternal tree for $δ^{13}C$. To do this, we will work directly with the mod3 output from before. What we are after is the value of $δ^{13}C$ for each tree from which we measured $δ^{13}C$ from five of her offspring in the common garden. This is the genetic value and represents the value of $δ^{13}C$ that would result if you knew all the genes and effect sizes of variation within those genes determining variation for this trait (see genetics without molecular markers!).
 
-To get the effects due to family and population, we can use the 'ranef' function from "supplemental_R_functions.R". This function produces estimates for each family and population in a list with named elements ('family' and 'population').
+To get the effects due to family and population, we can use the 'ranef' function from package 'lme4'. This function produces estimates for each family and population in a list with named elements ('family' and 'population').
 
 First, let’s get the list we need: 
 
 ```{r}
-mod3_eff <- ranef(mod3)
+mod3_eff <- lme4::ranef(mod3)
 head(mod3_eff$family)
 ```
 
