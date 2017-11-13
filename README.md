@@ -16,3 +16,7 @@ The package installs four Add-ins in RStudio. Each will provide you with some dr
 - **Start Tutorial**: installs swirl course "Landscape_Genetics_R_Course" and prints instructions.
 - **Choose Worked Example**: opens vignette file (.html, .Rmd, or .R) with a worked example from course "Landscape Genetic Data Analysis with R".
 - **Open Cheat Sheet**: opens selected R cheat sheet.
+
+## Video instructions for beginners
+This video walks through the process of installing devtools, the course package, and using the RStudio Add-Ins.
+<a href="https://www.dropbox.com/s/598kwim7x09m47t/Intro_LandGenCourse_small.mp4?dl=0" target="_blank">Intro_LandGenCourse_small.mp4</a>
