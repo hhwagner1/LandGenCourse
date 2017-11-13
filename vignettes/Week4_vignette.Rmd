@@ -48,7 +48,6 @@ We will thus have three types of data:
 All required packages should have been installed already when you installed 'LandGenCourse'.
 
 ```{r message=FALSE, warning=TRUE}
-require(here)
 require(LandGenCourse)
 require(lme4)
 #require(car)
@@ -199,6 +198,7 @@ WWP <- EcoGenetics::ecogen(XY = env[,3:4], P = trait, G = snp[,-c(1:2)],
 We can export the 'ecogen' object 'WWP' to a folder 'output' in your current project folder with the function 'save', and load it again with 'load'. To run the code, remove the hashtags '#' at the beginning of each line (i.e., uncomment the lines). 
 
 ```{r}
+#require(here)
 #if(!dir.exists(paste0(here(),"/output"))) dir.create(paste0(here(),"/output"))
 #save(WWP, file = paste0(here(), "/output/WWP.RData"))
 #load(paste0(here(), "/output/WWP.RData"))
@@ -361,5 +361,10 @@ Now we can extract the p-values. Looks like all testable fractions are statistic
 ```{r}
 c(ab=ab$"Pr(>F)"[1], bc=bc$"Pr(>F)"[1], abc=abc$"Pr(>F)"[1], 
   a=a$"Pr(>F)"[1], b=b$"Pr(>F)"[1])
+```
+
+```{r message=FALSE, warning=TRUE, include=FALSE}
+detach("package:lme4", unload=TRUE)
+detach("package:Matrix", unload=TRUE)
 ```
 

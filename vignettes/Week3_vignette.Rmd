@@ -51,7 +51,6 @@ require(LandGenCourse)
 #require(PopGenReport)
 require(dplyr)
 require(poppr) 
-require(here)
 ```
 
 ## 2. Basic checking of markers and populations
@@ -333,6 +332,7 @@ Frogs.diversity
 You can save the R object 'Frogs.diversity' with the code below (need to uncomment by removing the hashtags '#'):
 
 ```{r}
+#require(here)
 #if(!dir.exists(paste0(here(),"/output"))) dir.create(paste0(here(),"/output"))
 #save(Frogs.diversity, file = paste0(here(),"/output/Frogs.diversity.RData"))
 #load(paste0(here(),"/output/Frogs.diversity.RData"))
@@ -360,4 +360,13 @@ The allele frequencies of all alleles from the same locus (e.g., A.1, A.2 and A.
 
 ```{r}
 apply(Freq, MARGIN = 1, FUN = sum)    # Just checking
+```
+
+
+
+```{r message=FALSE, warning=TRUE, include=FALSE}
+detach("package:poppr", unload=TRUE)
+detach("package:dplyr", unload=TRUE)
+detach("package:adegenet", unload=TRUE)
+detach("package:ade4", unload=TRUE)
 ```

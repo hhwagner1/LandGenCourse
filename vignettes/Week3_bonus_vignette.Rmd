@@ -49,7 +49,6 @@ require(dplyr)
 #require(poppr)       
 #require(mmod)
 require(tibble)
-require(here)
 ```
 
 ## 2. Add sampling locations and hierarchical structure to genind object
@@ -129,6 +128,7 @@ Frogs.genind@other$site <- tmp[,-c(3:7)]
 Optional: save the complete genind object (uncomment lines first):
 
 ```{r}
+#require(here)
 #if(!dir.exists(paste0(here(),"/output"))) dir.create(paste0(here(),"/output"))
 #save(Frogs.genind, file = paste0(here(),"/output/Frogs.genind.RData"))
 #load(paste0(here(),"/output/Frogs.genind.RData"))
@@ -259,6 +259,7 @@ round(cor(sapply(GD.pop, function(ls) as.vector(ls))),2)
 Optional: Use 'save' to save an R object to your file system, and 'load' to read it in again. Note: the default setting is that 'save' will overwrite existing files with the same name.
 
 ```{r}
+#require(here)
 #if(!dir.exists(paste0(here(),"/output"))) dir.create(paste0(here(),"/output"))
 
 #save(GD.ind, file = paste0(here(),"/output/GD.ind.RData"))
@@ -395,39 +396,9 @@ Let's look at the numerical test results:
 
 Hence there is statistically significant differentiation at all levels, except for among frogs sampled at the same pond. The effects are largest for basin and drainage (about 10% each), whereas differentiation among populations within basins is very weak (about 1.5%).
 
-### c) Contribution of each population to Fst
 
-See also: Foll M and Gaggiotti O. 2006. Identifying the environmental factors that determine the genetic structure of populations. Genetics 174: 875-891. http://www.genetics.org/content/174/2/875
 
-The degree of differentiation of each local population (deme) from all others can be expressed in an Fst value for each site. This has been implemented in the software GESTE (for Windows): 
-http://www-leca.ujf-grenoble.fr/moyens-techniques/logiciels/article/population-genomics-software?lang=fr
-
-Balkenhol (citation?) has used a simpler approach that averages the pairwise Fst values for each population. We already have calculated pairwise Fst values. It is an object of class 'dist'. The function 'as.matrix' converts from the distance vector format to the full distance matrix. We set the diagonal to missing values 'NA'. Then we use 'apply' to take the mean across each row = site, using option 'na.rm' to ignore missing values. 
-
-```{r}
-Matrix <- as.matrix(Pairwise.fst)
-diag(Matrix) <- NA
-Fst.per.site <- apply(Matrix, 1, mean, na.rm=TRUE)
-names(Fst.per.site) <- levels(Frogs.genind$pop)
-round(Fst.per.site, 3)
+```{r message=FALSE, warning=TRUE, include=FALSE}
+detach("package:ade4", unload=TRUE)
+detach("package:dplyr", unload=TRUE)
 ```
-
-Let's plot it against sample size (left) and pond area (right).
-
-```{r, fig.show='hold'}
-par(mar=c(4, 4.5,1,1))
-plot(Frogs.sites$n, Fst.per.site, xlim=c(5,25),  ylim=c(0, 0.25),
-       xlab = "Sample size", ylab = "Average pair-wise Fst")
-abline(lm(Fst.per.site ~ Frogs.sites$n), col = "red")
-text(x=Frogs.sites$n, y=Fst.per.site,
-     labels=names(Fst.per.site), pos=4)
-
-plot(Frogs.sites$AREA_m2, Fst.per.site, xlim=c(5,25),  ylim=c(0, 0.25),
-       xlab = "Sample size", ylab = "Average pair-wise Fst")
-abline(lm(Fst.per.site ~ Frogs.sites$n), col = "red")
-text(x=Frogs.sites$n, y=Fst.per.site,
-     labels=names(Fst.per.site), pos=4)
-```  
-
-This is a counter-intuitive result, as we expect small populations to have higher drift and thus stronger differentiation. However, sample size is not the same as (effective) population size, and we did not take into account isolation either.
-

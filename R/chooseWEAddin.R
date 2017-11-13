@@ -13,7 +13,11 @@ chooseWEAddin <- function() {
       shiny::selectInput("example", "Choose a Worked Example:",
                    list("Week 1: Importing Genetic Data"=1,
                         "Week 2: Spatial Data"=2,
-                        "Week 2: Bonus Material"=3),
+                        "Week 2: Bonus Material"=3,
+                        "Week 3: Genetic Diversity"=4,
+                        "Week 3: Bonus Material"=5,
+                        "Week 4: Selection"=6,
+                        "Week 4: Bonus Material"=7),
                   selected = 1
       )
     )
@@ -26,7 +30,11 @@ chooseWEAddin <- function() {
 
       selectedFile <- paste0(c("Week1_vignette",
                                "Week2_vignette",
-                               "Week2_bonus_vignette")[as.numeric(input$example)],
+                               "Week2_bonus_vignette",
+                               "Week3_vignette",
+                               "Week3_bonus_vignette",
+                               "Week4_vignette",
+                               "Week4_bonus_vignette")[as.numeric(input$example)],
                              c(".html", ".Rmd", ".R")[as.numeric(input$type)])
       selectedPath <- (paste0(system.file("doc", selectedFile,
                        package = "LandGenCourse")))
