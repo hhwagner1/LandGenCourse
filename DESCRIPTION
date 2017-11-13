@@ -8,16 +8,25 @@ Description: Installs four RStudio Addins (Watch Course Video, Start Tutorial, C
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
+
+
+require(tibble)
+require(vegan)
+
 Imports:
     ade4(>= 1.7-8),
+    adegenet (>= 2.1.0),
     base64enc,
+    car,
     dplyr,
+    EcoGenetics,
     formatR (>= 1.5),
     GeNetIt,
     geosphere,
     hierfstat,
     httpuv,
     igraph,
+    lme4,
     miniUI (>= 0.1.1),
     mmod,
     pegas,
@@ -42,13 +51,11 @@ Imports:
     swirlify (>= 0.5.1),
     tibble,
     tmaptools,
-    adegenet (>= 2.1.0),
-    popgraph,
-    gstudio
+    vegan
 Remotes:
-    thibautjombart/adegenet,
     dyerlab/popgraph,
-    dyerlab/gstudio
+    dyerlab/gstudio,
+    krlmlr/here
 Suggests: knitr
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
