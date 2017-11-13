@@ -1,0 +1,365 @@
+---
+title: "Week 4: Selection"
+author: 
+- "Andrew Eckert (worked example)"
+- "Helene Wagner (vignette)"
+date: "`r Sys.Date()`"
+show_toc: true
+output:
+  knitr:::html_vignette:
+    toc: yes
+    fig_width: 4 
+    fig_height: 3.5
+vignette: >
+  %\VignetteIndexEntry{Week 4: Selection}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## 1. Overview of Worked Example
+
+### a) Goals 
+
+**Justification**: Natural selection acts on phenotypic variation that is genetically determined. As such, it can be difficult to get a complete picture about adaptation from scanning genomes using molecular markers. The reason is that genetic outliers, even if true positives, have little to no information present about what phenotype they affect and how this phenotype results in fitness differences. Moreover, it is debatable to scan genomes for the presence of outliers if you have yet to demonstrate that the populations being sampled are locally adapted.
+
+**Learning Objectives**: This lab was constructed to give you experience in working with basic quantitative and population genetic analyses useful to testing hypotheses about local adaptation. Phenotypic measurement is undergoing a revolution, so that familiarity with basic methods in quantitative genetics will serve you well in the future. By the end of the laboratory, you should be able to do the following:
+
+- Construct, fit, and assess linear mixed models (LMMs) to estimate genetic values for a phenotypic trait measured for families existing in a common garden.
+- Use LMMs to estimate heritability of a trait, its differentiation among populations, and its correlation with environment.
+
+In addition, this week's bonus material shows how to: 
+
+- Test whether or not phenotypic trait differentiation is statistically different than genetic differentiation at random molecular markers.
+- Test whether molecular markers behave neutrally (FST outliers)
+- Test association between trait and molecular markers
+
+### b) Data set 
+
+The data with which you are working come from a study of western white pine (Pinus monticola Dougl. ex D. Don) sampled around the Lake Tahoe Basin of California and Nevada. These data consist of 157 trees sampled from 10 populations (n = 9 to 22 trees/population). Within each population, trees were sampled within three plots. For each plot, GPS coordinates were collected (i.e. each plot in each population has its own GPS coordinates) and used to generate a set of 7 environmental variables. From these trees, needle tissue was collected from which total DNA was extracted and genotyped for 164 single nucleotide polymorphisms (SNPs). Seeds were also collected and planted in a common garden. The seedlings (n = 5 to 35/tree) were measured for several phenotypic traits. The phenotypic trait we will be working with today is known as the carbon isotope ratio ($δ^{13}C$). It is the ratio of two isotopes of carbon ($^{13}C$ and $^{12}C$) relative to an experimental control, and it is strongly correlated with intrinsic water-use efficiency in plants. Plants need water to live, so it is not a stretch of the imagination to believe that this phenotypic trait has a link with plant fitness.
+
+We will thus have three types of data:
+
+- **WWP_SNP_genotypes.txt**: SNP genotypes for all trees sampled in the field.
+- **WWP_environmental_data.txt**:Environmental data collected from each plot within each population.
+- **WWP_phenotype_data.txt**: Phenotypic measurements for 5 seedlings per tree made in a common garden.
+
+### c) Required R libraries
+
+All required packages should have been installed already when you installed 'LandGenCourse'.
+
+```{r message=FALSE, warning=TRUE}
+require(here)
+require(LandGenCourse)
+require(lme4)
+require(car)
+require(EcoGenetics)
+require(tibble)
+require(vegan)
+
+source(system.file("extdata", "supplemental_R_functions.R", 
+                            package = "LandGenCourse"))
+```
+
+## 2. Estimate genetic values for an observed phenotypic trait
+
+**Motivation**: A lot of genetics can be carried out without use of any molecular markers. Practitioners of empirical population genetics forget this quite often. A common garden allows us to create a standardized environment in which we minimize the influence of environment on the expression of a particular phenotypic trait. Since we know, after over a century of showing it to be true, that phenotypic variation results from genetic variation, environmental variation, and the interaction of genetic and environmental variation, then if we standardize the environment, phenotypic variation we see in the common garden is due to genetic variation (or if multiple gardens are used, genetics and the interaction of genetics and the environment).
+
+**Goals & Background**: The goal for this part of the laboratory is to construct, fit, and assess LMMs for $δ^{13}C$. We will be using the data in the file named "WWP_phenotypic_data.txt". These data are organized in a tab-delimited text file with seedlings grouped by maternal tree (i.e. its mother tree), plot, and population. Also included is an experimental treatment known as “block”. In a common garden, seedlings from the same maternal tree are randomized among blocks to avoid the influence of micro-environmental variation on expression of phenotypic traits.
+
+### a) Import phenytypic data 
+
+```{r}
+phen <- read.delim(system.file("extdata", "WWP_phenotype_data.txt", 
+                            package = "LandGenCourse"), sep = "\t", header = T)
+tibble::as.tibble(phen)
+```
+
+### b) Fit linear models to phenotypic trait data
+
+Now,we are ready to fit a series of linear models. We will fit three models in total for this laboratory: 
+- **mod1**: a fixed effect model with only an intercept, 
+- **mod2**:a LMM with an intercept (fixed) and a random effect due to family, and 
+- **mod3**:a LMM with an intercept, a random effect due to family nested within population, and a random effect of population. We will thus be ignoring the plot identifiers. All models will also have a fixed effect of block.
+
+```{r}
+mod1 <- lm(phen$d13c~1+phen$block)
+mod2 <- lme4::lmer(d13c~1+(1|family)+block,data = phen, REML = F)
+mod3 <- lme4::lmer(d13c ~ 1 + (1|population/family) + block, data = phen, REML = F)
+```
+
+We are now ready to explore each of these models and to look at which model best fits our data. First, you can use the Anova() function in the car library to test the statistical significance of the fixed terms in each mod. This function let's us control the type of sums of squares (SS) being used, here type III sums of squares (see your stats book).
+
+Note that for modelsl fitted with 'lmer' (models 2 & 3) and with 'REML = F', we need to use a chi-squared test. An alternative would be to specifiy 'REML = T'. However, further down we will need the likelihood (calculated with 'REML = F') to look at model performance (as opposed to the approximate REML value generated with 'REML = T').
+
+
+```{r}
+car::Anova(mod1, type="III", test.statistic = "F")
+car::Anova(mod2, type="III", test.statistic = "Chisq")
+car::Anova(mod3, type="III", test.statistic = "Chisq")
+```
+Compare the output. What do you conclude about the effect of block in each of the models? Remember this is an experimental treatment, so your conclusion directly addresses whether micro-environmental variation exists in your common garden.
+
+### c) Compare model fit
+
+Now, let’s explore which model best fits our data. To do this we will use the Akaike Information Criterion (AIC). This statistic is like a penalized likelihood score, where the penalty increases as the number of parameters in a model increases. When using AIC, the model with the lowest score is the preferred model. To get AIC values for each model, do something like the following using the AIC() function.
+
+```{r}
+aic_vals <- c(AIC(mod1), AIC(mod2), AIC(mod3))
+names(aic_vals) <- c("mod1","mod2","mod3")
+aic_vals
+```
+
+We can express the relative support of each model using Akaike weights. These can be thought of as the conditional probabilities of each model. To do this, we will need to write a few lines of R commands. Luckily for you, I have provided a function named aic_weights that will calculate these for you. This function is located in the "supplemental_R_functions.R" file that we have sourced at the beginning. 
+
+```{r}
+aic_out <- aic_weights(aic_vals)
+aic_out
+```
+
+Inspect the values in aic_out. They add to one and can be thought of as conditional probabilities of each model, with the conditioning being on only these three models being examined. Which model has the highest probability? How much larger is it than the other probabilities? What does this tell you about your optimal model?
+
+### d) Calculate genetic values for maternal trees
+
+Now that we have the best model, let’s use it to calculate the genetic values for each maternal tree for $δ^{13}C$. To do this, we will work directly with the mod3 output from before. What we are after is the value of $δ^{13}C$ for each tree from which we measured $δ^{13}C$ from five of her offspring in the common garden. This is the genetic value and represents the value of $δ^{13}C$ that would result if you knew all the genes and effect sizes of variation within those genes determining variation for this trait (see genetics without molecular markers!).
+
+To get the effects due to family and population, we can use the 'ranef' function from "supplemental_R_functions.R". This function produces estimates for each family and population in a list with named elements ('family' and 'population').
+
+First, let’s get the list we need: 
+
+```{r}
+mod3_eff <- ranef(mod3)
+head(mod3_eff$family)
+```
+
+The values look strange relative to the original values in the phen object. It turns out that values in each element are relative to the global intercept listed in the 'mod3' output. So, for example, family 59 has a value of $δ^{13}C$ that is 0.269382818 greater than the mean, whereas family 65 has a value of $δ^{13}C$ 0.159631179 less than the mean. Look in the 'mod3' output by printing it to screen and finding the global intercept (-30.59964).
+
+Now, we need to add this number to the values in the $family output in mod3_effs: 
+
+```{r}
+mod3_fam_only <- mod3_eff$family + -30.59964
+head(mod3_fam_only)
+```
+
+We still are not done. Remember that families were nested within populations, so the total effect of a maternal tree was partitioned into an effect of population and trees within populations. Therefore, we should add the population effect to the numbers from in 'mod3_fam_only'. 
+
+To get this we need to replicate the values in the $population part of the list for each tree in each population. You can just use the pop_rep function provided in "supplemental_R_functions.R":
+
+```{r}
+mod3_all_eff <- mod3_fam_only + pop_rep(pop.eff = mod3_eff$population, 
+                                        n.fam = nrow(mod3_eff$family), 
+                                        fam.eff = mod3_eff$family)
+head(mod3_all_eff)
+```
+
+The values held in the object mod3_all_eff are now the genetic effects of each maternal tree. In other words, this is the phenotypic trait value for the maternal tree for $δ^{13}C$. Note that we did not measure the maternal tree, but inferred her phenotype from her offspring in a common environment.
+
+### e) Combine trait, genotypic and environmental data
+
+Now that we have an estimate of the trait for each family (i.e., mother tree), we can add it to the dataset to facilitate their joint analysis.
+
+The 'EcoGenetics' package facilitates the joint storing and spatial analysis of phenotypic, genotypic, spatial and environmental data. 
+
+First, we import the snp and environmental data, and write the $δ^{13}C$ estimates into an object 'trait'. 
+
+```{r}
+snp <- read.delim(system.file("extdata", "WWP_SNP_genotypes.txt", 
+                            package = "LandGenCourse"), sep = "\t", header = T)
+               
+env <- read.delim(system.file("extdata", "WWP_environmental_data.txt", 
+                            package = "LandGenCourse"),sep = "\t", header = T)
+trait <- mod3_all_eff
+names(trait)[1] <- "d13c"
+```
+
+For import into an 'ecogen' object, all tables should have matching row numbers as identifiers. Here the identifier is the variable 'family', hence we use it to create new row names. For 'trait', we use function 'strsplit' to extract the variable 'family' as the first part of the existing row names (before the colon ':').
+
+```{r}
+row.names(snp) <- snp$family   
+row.names(env) <- env$family
+trait$family <- sapply(strsplit(row.names(trait),":"), 
+                              function(ls) ls[[1]])
+row.names(trait) <- trait$family
+```
+
+Now we can assign different parts of the data to different slots of the ecogen object:
+
+- XY: data frame with spatial coordinates (here: longitude, latitude)
+- P: data frame with phenotypic traits (here: d13C, family)
+- G: data frame with genotypic data (here: 164 SNPs)
+- E: data frame with environmental data (here: 7 bioclimatic etc. site variables)
+- S: data frame with structure (hierarchical sampling levels)
+
+Note: we have only one trait, but ecogen does not accept a data frame with a single column, hence we keep the variable 'family' in there.
+
+```{r}
+WWP <- EcoGenetics::ecogen(XY = env[,3:4], P = trait, G = snp[,-c(1:2)], 
+                           E = env[,-c(1:4)], S = env[,1:2], order.G = FALSE)
+```
+
+We can export the 'ecogen' object 'WWP' to a folder 'output' in your current project folder with the function 'save', and load it again with 'load'. To run the code, remove the hashtags '#' at the beginning of each line (i.e., uncomment the lines). 
+
+```{r}
+#if(!dir.exists(paste0(here(),"/output"))) dir.create(paste0(here(),"/output"))
+#save(WWP, file = paste0(here(), "/output/WWP.RData"))
+#load(paste0(here(), "/output/WWP.RData"))
+```
+
+## 3. Estimate trait heritability
+
+**Motivation**: Now that we have learned how to estimate genetic values for $δ^{13}C$, let’s learn how to estimate what fraction of the total variation in trait values is due to genetic effects and how much of this genetic effect is due to families nested within populations and to populations. These analyses provide key information about whether or not local adaptation should even be considered. Remember that local adaptation is about genetically determined phenotypes that vary across environments in responses to differing selective pressures. This step allows us to assess how genetic variation for a phenotypic trait is distributed across the landscape.
+
+**Goals & Background**: The goal for this part of the laboratory is to estimate heritability, trait differentiation, and correlation with environment for trait values determined in Part 1. To do this, we will be using the output from the previous part of the laboratory and the environmental data contained in the file named "WWP_environmental_data.txt". As with the phenotype file this is a tab-delimited text file.
+
+### a) Estimate heritability
+
+Let’s start with estimating the heritability of $δ^{13}C$. If you remember from your undergraduate evolution course, heritability refers generally to the proportion of phenotypic variance due to genetic variance. It comes in at least two different versions. The version we are interested in is narrow-sense heritability ($h^2$), which is defined as the ratio of additive genetic variance to total phenotypic variance:
+
+$$h^{2} = \frac{\sigma^{2}_{additive}}{\sigma^{2}_{total}}$$
+We need to extract the variance components from 'mod3' for all model terms. We do this visually by printing mod3 to screen or using a set of functions applied to 'mod3'. For this lab, let’s do it visually.
+
+```{r}
+mod3
+```
+
+Using the results from above, let’s calculate $h^2$. If we assume that the seedlings from each maternal tree are half-siblings (i.e. same mom, but each with a different father) then $σ^2_A = 4 σ^2_{family}$ (so variance due to family:population). If the seedlings were all full-siblings, then the 4 would be replaced with 2. We also need to realize that we are using a hierarchical model, where some of the genetic effects are due to among populations, where $h^2$ is a measure within populations. That means we have to ignore the variance due to populations. Let’s assume half-siblings. We can then do the following:
+
+```{r}
+add_var <- 4*(0.2831^2)
+total_wp_var <- (0.2831^2) + (0.8509^2)
+h2 <- add_var/total_wp_var
+h2
+```
+
+Inspect your value of $h^2$. What does it mean? Why did we square the values above?
+
+We have generated a point estimate for $h^2$. It represents the average $h^2$ across populations after removing the genetic effects due to population differences. Would it not be nice to also have a confidence interval? We can do that through an approach known as parametric bootstrapping. This approach simulates data using the fitted model a large number of times. Using the resulting distribution, you can create confidence intervals using the appropriate symmetric quantiles of the distribution. To see this, please
+do the following using the mod_boot function in "supplemental_R_functions.R". It will takes a few moments to run the first line.
+
+```{r}
+par(mar=c(1, 1, 1, 1))
+h2_boot_out <- mod_boot(model = mod3, nboot = 1000)
+ci_95 <- quantile(h2_boot_out, probs = c(0.025, 0.50, 0.975))
+ci_95
+boxplot(h2_boot_out, range=5); abline(h = h2, col = "red") 
+```
+
+Interpret the numerical 95% confidence intervals 'ci_95' and boxplot with our original $h^2$ estimate (red line: 0.399) for comparison to the bootstrap distribution. 
+
+- Do you think that $h^2$ is statistically different than zero? 
+- Is this consistent with the AIC results from Part 1? 
+- Is it meaningful that the red line is very similar to the mean (or median) of the bootstrap distribution? How would you change the code for a 99% confidence interval?
+
+### b) Estimate trait differentiation
+
+Great, we have shown that within population genetic variation is statistically greater than zero. What about among population genetic variation? Let’s get to that right now. To measure among population genetic variation we will use a statistic known as $Q_{ST}$. It is similar in concept to $F_{ST}$ from population genetics. To estimate $Q_{ST}$, we will use our LMM output again. If we assume that all seedlings are again half-siblings, then:
+
+$$Q_{ST} = \frac{\sigma^{2}_{population}}
+{\sigma^{2}_{population}+8\sigma^{2}_{family}}$$
+
+```{r}
+num_qst <- 0.3088^2
+dem_qst <- (0.3088^2) + (8*(0.2831^2))
+qst <- num_qst/dem_qst
+```
+
+Inspect your value in qst object. What does it mean? Look at the quantities
+in the equation above, what is the denominator equal to? Is it the total
+phenotypic variance or the total genetic variance?
+
+Now, we can again look at a confidence interval using parametric bootstrapping. Again, please use the function 'mod_boot_qst' that is also located in "supplemental_R_functions.R". As before, it will take a few moments for the first line to finish.
+
+```{r}
+par(mar=c(1, 1, 1, 1))
+qst_boot_out <- mod_boot_qst(model = mod3, nboot = 1000)
+ci_95_qst <- quantile(qst_boot_out, probs = c(0.025, 0.50, 0.975)) 
+ci_95_qst
+boxplot(qst_boot_out); abline(h = qst, col = "red")
+```
+
+Interpret the results. Do you think that $Q_{ST}$ is statistically different than zero? Is this consistent with the AIC results from Part 1? Is it meaningful that the red line is less similar to the mean (or median) of the bootstrap distribution as compared to $h^2$?
+
+## 4. Estimate trait correlation with environment
+
+The last thing we want to do in this part of the lab is to test for correlations
+between genetic values of $δ^{13}C$ and environmental data.
+
+### a) Correlation matrix
+
+First, we need to combine the trait, geographic and environmental data into a single data frame 'phen_env'. At the same time, we'll use the function 'scale' to scale the geographic and environmental variables, so that each has mean = 0 and a sd = 1. 
+
+```{r}
+phen_env <- data.frame(d13c=scale(WWP@P[,1]), scale(WWP@XY), scale(WWP@E))
+```
+
+Fortunately, from the way we imported the data into the 'ecogen' object (with matching row labels), we know that the data in all slots of WWP are ordered by the same variable 'family', so that their rows correspond.
+
+Create a correlation matrix.
+
+```{r}
+round(cor(phen_env), 2)
+```
+
+- Which site variables show the strongest correlation with the trait?
+- Which site variables are strongly correlated with each other? 
+
+### b) Multiple regression model
+
+Next, let’s use multiple regression to test the effect of these variables on $δ^{13}C$. 
+
+```{r}
+mod1_env <- lm(d13c ~ longitude + latitude + elev + max_rad + tmax_july + 
+                 tmin_jan + ann_ppt + gdd_aug + AWS050, data = phen_env)
+summary(mod1_env)
+```
+
+This model shows us the effect of all variables on $δ^{13}C$, given all other variables in the model. Note that the estimated slope coefficients 'Estimate', and their p-values 'Pr(>|t|)' may differ from the results of a simple regression analysis (with a single predictor in each model) due to the correlation among predictor variables.
+
+It is important to understand that these estimates and p-values are based on type II sums of squares. This means that for each predictor, they are estimated as if it was added last to the model, thus accounting for the effect of all other variables in the model.
+
+- Is this multiple regression model statistically significant? If so, why? 
+- Which variables have a statistically significant effect, given all other variables in the model?
+- Which variables provide the largest effects (use the column labeled 'Estimate', which is the partial regression coefficient)? Is this consistent with the correlation results?
+
+### c) Variation partitioning
+
+What is the relative contribution of climate vs. geography to variation in the trait $δ^{13}C$? 
+
+This can be assessed with variation partitioning, using the function 'varpart' from package 'vegan'. It takes three (or more) data frames. The first contains the response variable(s), here the trait. The others contain groups of predictors, here the bioclimatic variables and the spatial coordinates, for partitioning the explained variance in the response. We set the argument transfo="standardize" to force all variables to be standardized.
+
+```{r}
+par(mar=c(1, 1, 1, 1))
+mod <- vegan::varpart(WWP@P$d13c, WWP@E, WWP@XY, transfo="standardize")
+mod
+plot(mod)
+```
+
+The result is a partition table that lists the size of different fractions of variance. Interpretation should be based on adjusted $R^2$ values. Note that negative $R^2$ values should be interpreted as zero. 
+
+The figure is a graphical representation of the fractions. Here, X1 is the set of bioclimatic variables ('climate'), and X2 is the spatial coordinates ('geography'). 
+
+Fraction [a+b] is the percent of variance in the trait that can be explained by climate. Some of this, however, might also be explained by geography. Specifically, fration [b] is the shared variance between climate and geography, and [b+c] is the percent of variance in the trait that can be explained by geography. Hence, the fraction that can only be explained by climate, but not by geography, is fraction [a]. Similarly, fraction [c] can only be explained by geography but not by climate.
+
+Looks like climate alone ([a] = 47%) explains about three times as much as geography alone ([c] = 15.5%). Together, they explain [a+b+c] = 59% of variation in the trait. Surprisingly, there was no shared variance between climate and geography (b = 0).
+
+Finally, we can test whether each component is statistically different from zero.
+
+First we fit models for all testable fractions (see last column in output above). In a way, we are now making explicit what the function 'varpart' did implicitly. We use the function 'rda' (for 'redundancy analysis') to fit a series of regression models. RDA can take multiple response variables (e.g., allele frequencies of multiple loci, or species abundances in a community), which results in multivariate regression. Here, we have a single response variable (the trait), so each model boils down to a multiple regression with one response and multiple predictor variables. 
+
+The first argument of 'rda' is the response, the second argument is the set of predictors, and the third is an optional set of predictors that should be used for conditioning (i.e., their effect is accounted for before regressing the response on the second set).
+
+```{r}
+ab <- vegan::anova.cca(vegan::rda(WWP@P$d13c, WWP@E,  transfo="standardize"))
+bc <- vegan::anova.cca(vegan::rda(WWP@P$d13c, WWP@XY, transfo="standardize"))
+abc <- vegan::anova.cca(vegan::rda(WWP@P$d13c, data.frame(WWP@E, WWP@XY),
+                                   transfo="standardize"))
+a <- vegan::anova.cca(vegan::rda(WWP@P$d13c, WWP@E, WWP@XY, transfo="standardize"))
+b <- vegan::anova.cca(vegan::rda(WWP@P$d13c, WWP@XY, WWP@E, transfo="standardize"))
+```
+
+Now we can extract the p-values. Looks like all testable fractions are statistically significant!
+
+```{r}
+c(ab=ab$"Pr(>F)"[1], bc=bc$"Pr(>F)"[1], abc=abc$"Pr(>F)"[1], 
+  a=a$"Pr(>F)"[1], b=b$"Pr(>F)"[1])
+```
+

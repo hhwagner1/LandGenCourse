@@ -44,6 +44,7 @@ require(adegenet)
 require(gstudio)
 require(LandGenCourse)
 require(tibble)
+require(here)
 ```
 
 ## 2. Import data from .csv file
@@ -54,20 +55,15 @@ Create a new R project for this lab: File > New Project > New Directory > New Pr
 
 This will automatically set your working directory to the new project folder. That's where R will look for files and save anything you export.  
 
-First we check whether a subdirectory "data" already exists, and create it if not. The relative path of the folder "data" within the project folder is "./data". This is very convenient if you want to make your code portable and reproducible!
-
 Note: R does not distinguish between single quotes and double quotes, they are treated as synonyms, but the opening and closing symbols need to match.
 
-```{r}
-if(!dir.exists("./data")) dir.create("./data")
-```
-
-The dataset 'ralu.loci' is available in the package 'LandGenCourse'. Here we first export it as a comma separated file (.csv), as this is the recommended format for importing your own data (e.g. from Excel). We use a relative path to save the file into a subfolder 'data' within your project folder.
+The dataset 'ralu.loci' is available in the package 'LandGenCourse' and can be loaded with 'data(ralu.loci)'. 
 
 ```{r}
 data(ralu.loci)
-write.csv(ralu.loci, "./data/ralu.loci.csv", quote=FALSE, row.names=FALSE)
 ```
+
+Below, however, we'll import it from a comma separated file (.csv), as this is the recommended format for importing your own data (e.g. from Excel). 
 
 ### b) Excel file 
 
@@ -104,7 +100,8 @@ knitr::include_graphics(system.file("extdata", "ExcelTable.png",
 As the file is saved in csv format, we use the function 'read.csv' to import it into an R object called 'Frogs'. Display the first few rows and columns to check whether the data have been imported correctly:
 
 ```{r}
-Frogs <- read.csv("./data/ralu.loci.csv", header=TRUE)
+Frogs <- read.csv(system.file("extdata", "ralu.loci.csv", 
+                            package = "LandGenCourse"), header=TRUE)
 as.tibble(Frogs)
 ```
 
@@ -116,6 +113,7 @@ as.tibble(Frogs)
 - This coding suggests that the markers are codominant and that the species is diploid. 
 - The code for missing values is 'NA'. There seem to be quite a few missing values.
 
+
 ### d) Create ID variable
 
 We'll add unique ID's for the frogs (to show how these would be imported). Here we take, for each frog, a substring of 'Pop' containing the first three letters, add the row number, and separate them by a period. 
@@ -124,6 +122,21 @@ We'll add unique ID's for the frogs (to show how these would be imported). Here 
 Frogs <- data.frame(FrogID = paste(substr(Frogs$Pop, 1, 3), row.names(Frogs), sep="."), Frogs)
 as.tibble(Frogs)
 ```
+
+### e) Export with function 'write.csv'
+
+If you want to export (and import) your own files, adapt this code (it assumes that you writing permission for your project folder). To run the code, remove the hashtag '#' at the beginning of each line of code, so that it will not be commented out.
+
+The first line checks whether a subdirectory "output" already exists, and creates it if not. We use a relative path to save the file into a subfolder 'output' within your project folder. The relative path of the folder "output" is "./output". This is convenient if you want to make your code portable and reproducible!
+
+The function 'here' from the package 'here' finds the path to your project folder, so that we can paste it together with the relative path to folder 'output' within the project folder.
+
+```{r}
+#if(!dir.exists(paste0(here(),"/output"))) dir.create(paste0(here(),"/output"))
+#write.csv(ralu.loci, paste0(here(),"/output/ralu.loci.csv"), 
+#          quote=FALSE, row.names=FALSE)
+```
+
 
 ## 3. Create 'genind' Object
 
@@ -236,15 +249,18 @@ While 'genind' objects are used by many functions for analyzing genetic data, th
 
 Some explanations:
 
-- **path**: This is the path to the .csv file. If it is in the current working directory, then the filename is sufficient. Set the working directory in the R Studio menu under: Session > Set working directory > Choose Directory.
+- **path**: This is the path to the .csv file. If it is in the current working directory, then the filename is sufficient.  
 - **type**: here we have 'separated' data, as the alleles at each locus are separated by a colon.
 - **locus.columns**: this would be columns 3 - 10 in this case, because we are importing from the .csv file directly, which does not contain the FrogID variable. We can add that later.
 - **phased**: default is fine here.
 - **sep**: here this refers to the .csv file! The separater is a comma.
 - **header**: yes we have column names.
 
+Working directory confusion: If you are working within an R project folder, then that folder is automatically set as your working directory. If you are working in an R session outside of an R project, then you need to actively set the working directory in the R Studio menu under: Session > Set working directory > Choose Directory.
+
 ```{r}
-Frogs.gstudio <- read_population("./data/ralu.loci.csv", 
+Frogs.gstudio <- read_population(path=system.file("extdata", "ralu.loci.csv", 
+                                                  package = "LandGenCourse"), 
                    type="separated", locus.columns=c(3:10), 
                    phased=NULL, sep=",", header=TRUE)
 ```
@@ -254,7 +270,7 @@ Frogs.gstudio <- read_population("./data/ralu.loci.csv",
 Check the column types: 'SiteName' and 'Pop' are now character vectors, and the loci columns A - H are now of class 'locus' (it is indicated that 'locus' is a S3 object type).
 
 ```{r}
-as.tibble(Frogs.gstudio)
+str(Frogs.gstudio)
 ```
 
 ### d) Add FrogID
@@ -263,5 +279,5 @@ Frogs.gstudio is a data frame, and we can manipulate like any other data frame. 
 
 ```{r}
 Frogs.gstudio <- data.frame(FrogID=Frogs$FrogID, Frogs.gstudio) 
-as.tibble(Frogs.gstudio)
+str(Frogs.gstudio)
 ```

@@ -54,27 +54,39 @@ require(GeNetIt)
 require(tmaptools) 
 require(SDMTools) # for landscape metrics
 require(tibble)
-if(!dir.exists("./data")) dir.create("./data")
+require(here)
 ```
 
 ## 2. Import site data from .csv file
 
 ### a) Import data into 'SpatialPointsDataFrame'
 
-The site data are already in a SpatialPointsDataFrame. To illustrate importing spatial data from Excel, we export the data as a csv file, import it again as a data frame, then convert it to a SpatialPointsDataFrame. 
+The site data are already in a SpatialPointsDataFrame named 'ralu.site' that comes with the package 'GeNetIt'. Use 'data(ralu.site)' to load it. This will create an object 'ralu.site'. 
 
-First we piece together the coordinates from the @coords slot and the attribute data from the @data slot into a single data frame.
+To demonstrate how to create a SpatialPointsDataFrame, we create a simple data frame 'Sites' with the coordinates and site data.
 
 ```{r}
 data(ralu.site)
-write.csv(data.frame(ralu.site@coords, ralu.site@data), file="./data/ralu.site.csv", quote=FALSE, row.names=FALSE)
-Sites <- read.csv("./data/ralu.site.csv", header=TRUE)
+class(ralu.site)
+Sites <- data.frame(ralu.site@coords, ralu.site@data)
+class(Sites)
 as.tibble(Sites)
 ```
 
-The dataset has two columns with spatial coordinates and 17 attribute variables. 
+To illustrate importing spatial data from Excel, here we export the data as a csv file, import it again as a data frame, then convert it to a SpatialPointsDataFrame. First we create a folder 'output' if it does not yet exist. 
 
-So far, R treats the spatial coordinates like any other quantitative variables. To let R know this is spatial information, we import it into a spatial object type, a 'SpatialPointsDataFrame' from the 'sp' package.
+Note: to run the code, remove all the hashtags '#" at the beginning of the lines to uncomment them. This part assumes that you have writing permission on your computer. Alternatively, try setting up your R project folder on an external drive where you have writing permission.
+
+The second line exports the data in 'Sites' as a .csv file. The third line re-imports the .csv file to re-create data frame 'Sites'.
+
+```{r}
+#if(!dir.exists(paste0(here(),"/output"))) dir.create(paste0(here(),"/output"))
+#write.csv(Sites, file=paste0(here(),"/output/ralu.site.csv"), 
+#          quote=FALSE, row.names=FALSE)
+#Sites <- read.csv(paste0(here(),"/output/ralu.site.csv"), header=TRUE)
+```
+
+The dataset 'Sites' contains two columns with spatial coordinates and 17 attribute variables. So far, R treats the spatial coordinates like any other quantitative variables. To let R know this is spatial information, we import it into a spatial object type, a 'SpatialPointsDataFrame' from the 'sp' package.
 
 The conversion is done with the function 'coordinates', which takes a data frame and converts it to a spatial object of the same name. The code is not very intuitive. 
 

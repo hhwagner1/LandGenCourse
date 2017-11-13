@@ -85,6 +85,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#b-excel-file">b) Excel file</a></li>
 <li><a href="#c-import-with-function-read.csv">c) Import with function ‘read.csv’</a></li>
 <li><a href="#d-create-id-variable">d) Create ID variable</a></li>
+<li><a href="#e-export-with-function-write.csv">e) Export with function ‘write.csv’</a></li>
 </ul></li>
 <li><a href="#create-genind-object">3. Create ‘genind’ Object</a><ul>
 <li><a href="#a-read-the-helpfile">a) Read the helpfile</a></li>
@@ -136,7 +137,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">require</span>(adegenet)
 <span class="kw">require</span>(gstudio)
 <span class="kw">require</span>(LandGenCourse)
-<span class="kw">require</span>(tibble)</code></pre></div>
+<span class="kw">require</span>(tibble)
+<span class="kw">require</span>(here)</code></pre></div>
 </div>
 </div>
 <div id="import-data-from-.csv-file" class="section level2">
@@ -145,12 +147,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h3>a) Preparation</h3>
 <p>Create a new R project for this lab: File &gt; New Project &gt; New Directory &gt; New Project.</p>
 <p>This will automatically set your working directory to the new project folder. That’s where R will look for files and save anything you export.</p>
-<p>First we check whether a subdirectory “data” already exists, and create it if not. The relative path of the folder “data” within the project folder is “./data”. This is very convenient if you want to make your code portable and reproducible!</p>
 <p>Note: R does not distinguish between single quotes and double quotes, they are treated as synonyms, but the opening and closing symbols need to match.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span>(<span class="op">!</span><span class="kw">dir.exists</span>(<span class="st">&quot;./data&quot;</span>)) <span class="kw">dir.create</span>(<span class="st">&quot;./data&quot;</span>)</code></pre></div>
-<p>The dataset ‘ralu.loci’ is available in the package ‘LandGenCourse’. Here we first export it as a comma separated file (.csv), as this is the recommended format for importing your own data (e.g. from Excel). We use a relative path to save the file into a subfolder ‘data’ within your project folder.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(ralu.loci)
-<span class="kw">write.csv</span>(ralu.loci, <span class="st">&quot;./data/ralu.loci.csv&quot;</span>, <span class="dt">quote=</span><span class="ot">FALSE</span>, <span class="dt">row.names=</span><span class="ot">FALSE</span>)</code></pre></div>
+<p>The dataset ‘ralu.loci’ is available in the package ‘LandGenCourse’ and can be loaded with ‘data(ralu.loci)’.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(ralu.loci)</code></pre></div>
+<p>Below, however, we’ll import it from a comma separated file (.csv), as this is the recommended format for importing your own data (e.g. from Excel).</p>
 </div>
 <div id="b-excel-file" class="section level3">
 <h3>b) Excel file</h3>
@@ -182,7 +182,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="c-import-with-function-read.csv" class="section level3">
 <h3>c) Import with function ‘read.csv’</h3>
 <p>As the file is saved in csv format, we use the function ‘read.csv’ to import it into an R object called ‘Frogs’. Display the first few rows and columns to check whether the data have been imported correctly:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Frogs &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;./data/ralu.loci.csv&quot;</span>, <span class="dt">header=</span><span class="ot">TRUE</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Frogs &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;ralu.loci.csv&quot;</span>, 
+                            <span class="dt">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>), <span class="dt">header=</span><span class="ot">TRUE</span>)
 <span class="kw">as.tibble</span>(Frogs)</code></pre></div>
 <pre><code>## # A tibble: 181 x 10
 ##        SiteName      Pop      A      B      C      D      E      F      G
@@ -227,6 +228,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##  9  Air.9 AirplaneLake Airplane    3:1    1:1    1:1    1:1    1:7    1:1
 ## 10 Air.10 AirplaneLake Airplane    2:2    1:3    1:1    1:1    3:7    1:1
 ## # ... with 171 more rows, and 2 more variables: G &lt;fctr&gt;, H &lt;fctr&gt;</code></pre>
+</div>
+<div id="e-export-with-function-write.csv" class="section level3">
+<h3>e) Export with function ‘write.csv’</h3>
+<p>If you want to export (and import) your own files, adapt this code (it assumes that you writing permission for your project folder). To run the code, remove the hashtag ‘#’ at the beginning of each line of code, so that it will not be commented out.</p>
+<p>The first line checks whether a subdirectory “output” already exists, and creates it if not. We use a relative path to save the file into a subfolder ‘output’ within your project folder. The relative path of the folder “output” is “./output”. This is convenient if you want to make your code portable and reproducible!</p>
+<p>The function ‘here’ from the package ‘here’ finds the path to your project folder, so that we can paste it together with the relative path to folder ‘output’ within the project folder.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#if(!dir.exists(paste0(here(),&quot;/output&quot;))) dir.create(paste0(here(),&quot;/output&quot;))</span>
+<span class="co">#write.csv(ralu.loci, paste0(here(),&quot;/output/ralu.loci.csv&quot;), </span>
+<span class="co">#          quote=FALSE, row.names=FALSE)</span></code></pre></div>
 </div>
 </div>
 <div id="create-genind-object" class="section level2">
@@ -391,57 +401,53 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h3>b) Set arguments</h3>
 <p>Some explanations:</p>
 <ul>
-<li><strong>path</strong>: This is the path to the .csv file. If it is in the current working directory, then the filename is sufficient. Set the working directory in the R Studio menu under: Session &gt; Set working directory &gt; Choose Directory.</li>
+<li><strong>path</strong>: This is the path to the .csv file. If it is in the current working directory, then the filename is sufficient.<br />
+</li>
 <li><strong>type</strong>: here we have ‘separated’ data, as the alleles at each locus are separated by a colon.</li>
 <li><strong>locus.columns</strong>: this would be columns 3 - 10 in this case, because we are importing from the .csv file directly, which does not contain the FrogID variable. We can add that later.</li>
 <li><strong>phased</strong>: default is fine here.</li>
 <li><strong>sep</strong>: here this refers to the .csv file! The separater is a comma.</li>
 <li><strong>header</strong>: yes we have column names.</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Frogs.gstudio &lt;-<span class="st"> </span><span class="kw">read_population</span>(<span class="st">&quot;./data/ralu.loci.csv&quot;</span>, 
+<p>Working directory confusion: If you are working within an R project folder, then that folder is automatically set as your working directory. If you are working in an R session outside of an R project, then you need to actively set the working directory in the R Studio menu under: Session &gt; Set working directory &gt; Choose Directory.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Frogs.gstudio &lt;-<span class="st"> </span><span class="kw">read_population</span>(<span class="dt">path=</span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;ralu.loci.csv&quot;</span>, 
+                                                  <span class="dt">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>), 
                    <span class="dt">type=</span><span class="st">&quot;separated&quot;</span>, <span class="dt">locus.columns=</span><span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="dv">10</span>), 
                    <span class="dt">phased=</span><span class="ot">NULL</span>, <span class="dt">sep=</span><span class="st">&quot;,&quot;</span>, <span class="dt">header=</span><span class="ot">TRUE</span>)</code></pre></div>
 </div>
 <div id="c-check-imported-data-1" class="section level3">
 <h3>c) Check imported data</h3>
 <p>Check the column types: ‘SiteName’ and ‘Pop’ are now character vectors, and the loci columns A - H are now of class ‘locus’ (it is indicated that ‘locus’ is a S3 object type).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.tibble</span>(Frogs.gstudio)</code></pre></div>
-<pre><code>## # A tibble: 181 x 10
-##        SiteName      Pop           A           B           C           D
-##           &lt;chr&gt;    &lt;chr&gt; &lt;S3: locus&gt; &lt;S3: locus&gt; &lt;S3: locus&gt; &lt;S3: locus&gt;
-##  1 AirplaneLake Airplane         1:1         1:1         1:1         1:1
-##  2 AirplaneLake Airplane         2:2         1:1        &lt;NA&gt;         1:1
-##  3 AirplaneLake Airplane         1:1         1:1         1:1         1:1
-##  4 AirplaneLake Airplane         1:1         1:1        &lt;NA&gt;         2:2
-##  5 AirplaneLake Airplane         1:2         1:3         1:1         1:1
-##  6 AirplaneLake Airplane         1:2         1:1         1:1         3:1
-##  7 AirplaneLake Airplane         2:2         1:3         1:1         1:1
-##  8 AirplaneLake Airplane         2:2         1:3         1:1         1:1
-##  9 AirplaneLake Airplane         3:1         1:1         1:1         1:1
-## 10 AirplaneLake Airplane         2:2         1:3         1:1         1:1
-## # ... with 171 more rows, and 4 more variables: E &lt;S3: locus&gt;, F &lt;S3:
-## #   locus&gt;, G &lt;S3: locus&gt;, H &lt;S3: locus&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(Frogs.gstudio)</code></pre></div>
+<pre><code>## 'data.frame':    181 obs. of  10 variables:
+##  $ SiteName: chr  &quot;AirplaneLake&quot; &quot;AirplaneLake&quot; &quot;AirplaneLake&quot; &quot;AirplaneLake&quot; ...
+##  $ Pop     : chr  &quot;Airplane&quot; &quot;Airplane&quot; &quot;Airplane&quot; &quot;Airplane&quot; ...
+##  $ A       :Class 'locus'  chr [1:181] &quot;1:1&quot; &quot;2:2&quot; &quot;1:1&quot; &quot;1:1&quot; ...
+##  $ B       :Class 'locus'  chr [1:181] &quot;1:1&quot; &quot;1:1&quot; &quot;1:1&quot; &quot;1:1&quot; ...
+##  $ C       :Class 'locus'  chr [1:181] &quot;1:1&quot; &quot;&quot; &quot;1:1&quot; &quot;&quot; ...
+##  $ D       :Class 'locus'  chr [1:181] &quot;1:1&quot; &quot;1:1&quot; &quot;1:1&quot; &quot;2:2&quot; ...
+##  $ E       :Class 'locus'  chr [1:181] &quot;1:2&quot; &quot;1:1&quot; &quot;3:3&quot; &quot;1:2&quot; ...
+##  $ F       :Class 'locus'  chr [1:181] &quot;1:1&quot; &quot;&quot; &quot;1:1&quot; &quot;&quot; ...
+##  $ G       :Class 'locus'  chr [1:181] &quot;1:1&quot; &quot;2:2&quot; &quot;1:1&quot; &quot;&quot; ...
+##  $ H       :Class 'locus'  chr [1:181] &quot;4:5&quot; &quot;&quot; &quot;3:3&quot; &quot;&quot; ...</code></pre>
 </div>
 <div id="d-add-frogid" class="section level3">
 <h3>d) Add FrogID</h3>
 <p>Frogs.gstudio is a data frame, and we can manipulate like any other data frame. Here we will add the variable ‘FrogID’ as the first column.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Frogs.gstudio &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">FrogID=</span>Frogs<span class="op">$</span>FrogID, Frogs.gstudio) 
-<span class="kw">as.tibble</span>(Frogs.gstudio)</code></pre></div>
-<pre><code>## # A tibble: 181 x 11
-##    FrogID     SiteName      Pop           A           B           C
-##    &lt;fctr&gt;        &lt;chr&gt;    &lt;chr&gt; &lt;S3: locus&gt; &lt;S3: locus&gt; &lt;S3: locus&gt;
-##  1  Air.1 AirplaneLake Airplane         1:1         1:1         1:1
-##  2  Air.2 AirplaneLake Airplane         2:2         1:1        &lt;NA&gt;
-##  3  Air.3 AirplaneLake Airplane         1:1         1:1         1:1
-##  4  Air.4 AirplaneLake Airplane         1:1         1:1        &lt;NA&gt;
-##  5  Air.5 AirplaneLake Airplane         1:2         1:3         1:1
-##  6  Air.6 AirplaneLake Airplane         1:2         1:1         1:1
-##  7  Air.7 AirplaneLake Airplane         2:2         1:3         1:1
-##  8  Air.8 AirplaneLake Airplane         2:2         1:3         1:1
-##  9  Air.9 AirplaneLake Airplane         3:1         1:1         1:1
-## 10 Air.10 AirplaneLake Airplane         2:2         1:3         1:1
-## # ... with 171 more rows, and 5 more variables: D &lt;S3: locus&gt;, E &lt;S3:
-## #   locus&gt;, F &lt;S3: locus&gt;, G &lt;S3: locus&gt;, H &lt;S3: locus&gt;</code></pre>
+<span class="kw">str</span>(Frogs.gstudio)</code></pre></div>
+<pre><code>## 'data.frame':    181 obs. of  11 variables:
+##  $ FrogID  : Factor w/ 181 levels &quot;Air.1&quot;,&quot;Air.10&quot;,..: 1 12 15 16 17 18 19 20 21 2 ...
+##  $ SiteName: chr  &quot;AirplaneLake&quot; &quot;AirplaneLake&quot; &quot;AirplaneLake&quot; &quot;AirplaneLake&quot; ...
+##  $ Pop     : chr  &quot;Airplane&quot; &quot;Airplane&quot; &quot;Airplane&quot; &quot;Airplane&quot; ...
+##  $ A       :Class 'locus'  chr [1:181] &quot;1:1&quot; &quot;2:2&quot; &quot;1:1&quot; &quot;1:1&quot; ...
+##  $ B       :Class 'locus'  chr [1:181] &quot;1:1&quot; &quot;1:1&quot; &quot;1:1&quot; &quot;1:1&quot; ...
+##  $ C       :Class 'locus'  chr [1:181] &quot;1:1&quot; &quot;&quot; &quot;1:1&quot; &quot;&quot; ...
+##  $ D       :Class 'locus'  chr [1:181] &quot;1:1&quot; &quot;1:1&quot; &quot;1:1&quot; &quot;2:2&quot; ...
+##  $ E       :Class 'locus'  chr [1:181] &quot;1:2&quot; &quot;1:1&quot; &quot;3:3&quot; &quot;1:2&quot; ...
+##  $ F       :Class 'locus'  chr [1:181] &quot;1:1&quot; &quot;&quot; &quot;1:1&quot; &quot;&quot; ...
+##  $ G       :Class 'locus'  chr [1:181] &quot;1:1&quot; &quot;2:2&quot; &quot;1:1&quot; &quot;&quot; ...
+##  $ H       :Class 'locus'  chr [1:181] &quot;4:5&quot; &quot;&quot; &quot;3:3&quot; &quot;&quot; ...</code></pre>
 </div>
 </div>
 

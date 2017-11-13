@@ -107,7 +107,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">require</span>(GeNetIt)
 <span class="kw">require</span>(rasterVis)
 <span class="kw">require</span>(tmaptools) 
-<span class="cf">if</span>(<span class="op">!</span><span class="kw">dir.exists</span>(<span class="st">&quot;./data&quot;</span>)) <span class="kw">dir.create</span>(<span class="st">&quot;./data&quot;</span>)</code></pre></div>
+<span class="kw">require</span>(here)</code></pre></div>
 </div>
 </div>
 <div id="convert-spatialpointsdataframe-to-sf-object" class="section level2">
@@ -145,17 +145,10 @@ Sites.sf &lt;-<span class="st"> </span><span class="kw">st_as_sf</span>(ralu.sit
 </div>
 <div id="export-site-data-as-esri-shapefile" class="section level2">
 <h2>4. Export site data as ESRI shapefile</h2>
-<p>Just in case you want to know how you could get your results into a GIS. This is really easy with the ‘sf’ package. The following code may produce a warning that column names were abbreviated, and writes the component files for the ESRI shapefile into the pre-existing folder ‘Output’ (it won’t create a new folder, you need to create it first).</p>
+<p>Just in case you want to know how you could get your results into a GIS. This is really easy with the ‘sf’ package. The following code may produce a warning that column names were abbreviated, and writes the component files for the ESRI shapefile into the pre-existing folder ‘output’ (the first line will create it if does not exist yet). Remember to remove the hashtags ‘#’ to uncomment the code before running it.</p>
 <p>The argument ‘delete_dsn’ specifies whether any existing file with the same name should be deleted first (i.e., overwritten).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">st_write</span>(Sites.sf, <span class="st">&quot;./data/Sites.shp&quot;</span>, <span class="dt">delete_dsn =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>## Warning in CPL_write_ogr(obj, dsn, layer, driver,
-## as.character(dataset_options), : GDAL Error 1: ./data/Sites.shp does not
-## appear to be a file or directory.</code></pre>
-<pre><code>## Deleting source `./data/Sites.shp' failed
-## Writing layer `Sites' to data source `./data/Sites.shp' using driver `ESRI Shapefile'
-## features:       31
-## fields:         17
-## geometry type:  Point</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#if(!dir.exists(paste0(here(),&quot;/output&quot;))) dir.create(paste0(here(),&quot;/output&quot;))</span>
+<span class="co">#st_write(Sites.sf, paste0(here(),&quot;/output/Sites.shp&quot;), delete_dsn = TRUE)</span></code></pre></div>
 </div>
 <div id="display-categorical-map-with-a-predefined-color-table" class="section level2">
 <h2>5. Display categorical map with a predefined color table</h2>

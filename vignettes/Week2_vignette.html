@@ -144,22 +144,27 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">require</span>(tmaptools) 
 <span class="kw">require</span>(SDMTools) <span class="co"># for landscape metrics</span>
 <span class="kw">require</span>(tibble)
-<span class="cf">if</span>(<span class="op">!</span><span class="kw">dir.exists</span>(<span class="st">&quot;./data&quot;</span>)) <span class="kw">dir.create</span>(<span class="st">&quot;./data&quot;</span>)</code></pre></div>
+<span class="kw">require</span>(here)</code></pre></div>
 </div>
 </div>
 <div id="import-site-data-from-.csv-file" class="section level2">
 <h2>2. Import site data from .csv file</h2>
 <div id="a-import-data-into-spatialpointsdataframe" class="section level3">
 <h3>a) Import data into ‘SpatialPointsDataFrame’</h3>
-<p>The site data are already in a SpatialPointsDataFrame. To illustrate importing spatial data from Excel, we export the data as a csv file, import it again as a data frame, then convert it to a SpatialPointsDataFrame.</p>
-<p>First we piece together the coordinates from the <span class="citation">@coords</span> slot and the attribute data from the <span class="citation">@data</span> slot into a single data frame.</p>
+<p>The site data are already in a SpatialPointsDataFrame named ‘ralu.site’ that comes with the package ‘GeNetIt’. Use ‘data(ralu.site)’ to load it. This will create an object ‘ralu.site’.</p>
+<p>To demonstrate how to create a SpatialPointsDataFrame, we create a simple data frame ‘Sites’ with the coordinates and site data.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(ralu.site)
-<span class="kw">write.csv</span>(<span class="kw">data.frame</span>(ralu.site<span class="op">@</span>coords, ralu.site<span class="op">@</span>data), <span class="dt">file=</span><span class="st">&quot;./data/ralu.site.csv&quot;</span>, <span class="dt">quote=</span><span class="ot">FALSE</span>, <span class="dt">row.names=</span><span class="ot">FALSE</span>)
-Sites &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;./data/ralu.site.csv&quot;</span>, <span class="dt">header=</span><span class="ot">TRUE</span>)
-<span class="kw">as.tibble</span>(Sites)</code></pre></div>
+<span class="kw">class</span>(ralu.site)</code></pre></div>
+<pre><code>## [1] &quot;SpatialPointsDataFrame&quot;
+## attr(,&quot;package&quot;)
+## [1] &quot;sp&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Sites &lt;-<span class="st"> </span><span class="kw">data.frame</span>(ralu.site<span class="op">@</span>coords, ralu.site<span class="op">@</span>data)
+<span class="kw">class</span>(Sites)</code></pre></div>
+<pre><code>## [1] &quot;data.frame&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.tibble</span>(Sites)</code></pre></div>
 <pre><code>## # A tibble: 31 x 19
 ##    coords.x1 coords.x2       SiteName        Drainage      Basin Substrate
-##        &lt;dbl&gt;     &lt;dbl&gt;         &lt;fctr&gt;          &lt;fctr&gt;     &lt;fctr&gt;    &lt;fctr&gt;
+##        &lt;dbl&gt;     &lt;dbl&gt;          &lt;chr&gt;           &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;
 ##  1  688816.6   5003207   AirplaneLake ShipIslandCreek Sheepeater      Silt
 ##  2  688494.4   4999093 BachelorMeadow     WilsonCreek    Skyhigh      Silt
 ##  3  687938.4   5000223 BarkingFoxLake  WaterfallCreek    Terrace      Silt
@@ -170,11 +175,17 @@ Sites &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class
 ##  8  688539.3   4998146   EggWhiteLake     WilsonCreek    Skyhigh      Silt
 ##  9  688878.7   5004435     ElenasLake ShipIslandCreek Sheepeater      Sand
 ## 10  688901.5   4996837       FawnLake     WilsonCreek    Skyhigh      Silt
-## # ... with 21 more rows, and 13 more variables: NWI &lt;fctr&gt;, AREA_m2 &lt;dbl&gt;,
+## # ... with 21 more rows, and 13 more variables: NWI &lt;chr&gt;, AREA_m2 &lt;dbl&gt;,
 ## #   PERI_m &lt;dbl&gt;, Depth_m &lt;dbl&gt;, TDS &lt;dbl&gt;, FISH &lt;int&gt;, ACB &lt;dbl&gt;,
 ## #   AUC &lt;dbl&gt;, AUCV &lt;dbl&gt;, AUCC &lt;dbl&gt;, AUF &lt;dbl&gt;, AWOOD &lt;dbl&gt;, AUFV &lt;dbl&gt;</code></pre>
-<p>The dataset has two columns with spatial coordinates and 17 attribute variables.</p>
-<p>So far, R treats the spatial coordinates like any other quantitative variables. To let R know this is spatial information, we import it into a spatial object type, a ‘SpatialPointsDataFrame’ from the ‘sp’ package.</p>
+<p>To illustrate importing spatial data from Excel, here we export the data as a csv file, import it again as a data frame, then convert it to a SpatialPointsDataFrame. First we create a folder ‘output’ if it does not yet exist.</p>
+<p>Note: to run the code, remove all the hashtags ’#&quot; at the beginning of the lines to uncomment them. This part assumes that you have writing permission on your computer. Alternatively, try setting up your R project folder on an external drive where you have writing permission.</p>
+<p>The second line exports the data in ‘Sites’ as a .csv file. The third line re-imports the .csv file to re-create data frame ‘Sites’.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#if(!dir.exists(paste0(here(),&quot;/output&quot;))) dir.create(paste0(here(),&quot;/output&quot;))</span>
+<span class="co">#write.csv(Sites, file=paste0(here(),&quot;/output/ralu.site.csv&quot;), </span>
+<span class="co">#          quote=FALSE, row.names=FALSE)</span>
+<span class="co">#Sites &lt;- read.csv(paste0(here(),&quot;/output/ralu.site.csv&quot;), header=TRUE)</span></code></pre></div>
+<p>The dataset ‘Sites’ contains two columns with spatial coordinates and 17 attribute variables. So far, R treats the spatial coordinates like any other quantitative variables. To let R know this is spatial information, we import it into a spatial object type, a ‘SpatialPointsDataFrame’ from the ‘sp’ package.</p>
 <p>The conversion is done with the function ‘coordinates’, which takes a data frame and converts it to a spatial object of the same name. The code is not very intuitive.</p>
 <p>Note: the tilde symbol ‘~’ (here before the first coordinate) is often used in R formulas, we will see it again later. It roughly translates to ‘is modeled as a function of’.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Sites.sp &lt;-<span class="st"> </span>Sites
@@ -182,7 +193,7 @@ Sites &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class
 <span class="kw">as.tibble</span>(Sites.sp)</code></pre></div>
 <pre><code>## # A tibble: 31 x 19
 ##    coords.x1 coords.x2       SiteName        Drainage      Basin Substrate
-##  *     &lt;dbl&gt;     &lt;dbl&gt;         &lt;fctr&gt;          &lt;fctr&gt;     &lt;fctr&gt;    &lt;fctr&gt;
+##  *     &lt;dbl&gt;     &lt;dbl&gt;          &lt;chr&gt;           &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;
 ##  1  688816.6   5003207   AirplaneLake ShipIslandCreek Sheepeater      Silt
 ##  2  688494.4   4999093 BachelorMeadow     WilsonCreek    Skyhigh      Silt
 ##  3  687938.4   5000223 BarkingFoxLake  WaterfallCreek    Terrace      Silt
@@ -193,7 +204,7 @@ Sites &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class
 ##  8  688539.3   4998146   EggWhiteLake     WilsonCreek    Skyhigh      Silt
 ##  9  688878.7   5004435     ElenasLake ShipIslandCreek Sheepeater      Sand
 ## 10  688901.5   4996837       FawnLake     WilsonCreek    Skyhigh      Silt
-## # ... with 21 more rows, and 13 more variables: NWI &lt;fctr&gt;, AREA_m2 &lt;dbl&gt;,
+## # ... with 21 more rows, and 13 more variables: NWI &lt;chr&gt;, AREA_m2 &lt;dbl&gt;,
 ## #   PERI_m &lt;dbl&gt;, Depth_m &lt;dbl&gt;, TDS &lt;dbl&gt;, FISH &lt;int&gt;, ACB &lt;dbl&gt;,
 ## #   AUC &lt;dbl&gt;, AUCV &lt;dbl&gt;, AUCC &lt;dbl&gt;, AUF &lt;dbl&gt;, AWOOD &lt;dbl&gt;, AUFV &lt;dbl&gt;</code></pre>
 <p>Now R knows these are spatial data and knows how to handle them. It does not treat the coordinates as variables anymore, hence the first column is now ‘SiteName’.</p>

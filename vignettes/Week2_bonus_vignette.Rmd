@@ -35,7 +35,7 @@ require(raster)
 require(GeNetIt)
 require(rasterVis)
 require(tmaptools) 
-if(!dir.exists("./data")) dir.create("./data")
+require(here)
 ```
 
 ## 2. Convert 'SpatialPointsDataFrame' to 'sf' object 
@@ -73,12 +73,13 @@ plot(Sites.sf[,c("AREA_m2", "Depth_m")], pch=16)
 
 ## 4. Export site data as ESRI shapefile
 
-Just in case you want to know how you could get your results into a GIS. This is really easy with the 'sf' package. The following code may produce a warning that column names were abbreviated, and writes the component files for the ESRI shapefile into the pre-existing folder 'Output' (it won't create a new folder, you need to create it first). 
+Just in case you want to know how you could get your results into a GIS. This is really easy with the 'sf' package. The following code may produce a warning that column names were abbreviated, and writes the component files for the ESRI shapefile into the pre-existing folder 'output' (the first line will create it if does not exist yet). Remember to remove the hashtags '#' to uncomment the code before running it.
 
 The argument 'delete_dsn' specifies whether any existing file with the same name should be deleted first (i.e., overwritten). 
 
 ```{r}
-st_write(Sites.sf, "./data/Sites.shp", delete_dsn = TRUE)
+#if(!dir.exists(paste0(here(),"/output"))) dir.create(paste0(here(),"/output"))
+#st_write(Sites.sf, paste0(here(),"/output/Sites.shp"), delete_dsn = TRUE)
 ```
 
 ## 5. Display categorical map with a predefined color table
