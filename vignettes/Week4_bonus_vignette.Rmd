@@ -118,7 +118,7 @@ phen_mod <- phen[,-c(2,4)]
 QstFst_out <- QstFstComp::QstFstComp(fst.dat = snp_reformat3, qst.dat = phen_mod, 
                          numpops = nlevels(WWP@S$population), nsim = 10000, 
                          breeding.design = "half.sib.dam", 
-                         dam.offspring.relatedness = 0.25, output = "concise")
+                         dam.offspring.relatedness = 0.25, output = "concise_nowrite")
 QstFst_out
 ```
 
