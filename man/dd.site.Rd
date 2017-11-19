@@ -31,8 +31,7 @@
     \item{APA}{Apparent population age: Time in years since the most recent potential founder effect. From Table 4.}
     \item{NLT}{Long-term population size: Combination of observed density and site size averaged over years. From Table 4.}
     \item{Fst.temp}{Mean pairwise FST between temporal samples within site. From Table 5.}
-
-}
+}}
 \references{
 Lamy, T., Pointier, J. P., Jarne, P. and David, P. (2012), Testing metapopulation dynamics using genetic, demographic and ecological data. Molecular Ecology, 21: 1394–1410. doi:10.1111/j.1365-294X.2012.05478.x}
 \keyword{datasets}

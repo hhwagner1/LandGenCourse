@@ -25,13 +25,13 @@
     \item{DDE3}{Genotypes at microsatellite locus DDE3 (two alleles, unseparated).}
   }}
     \item{A}{\describe{Allele frequencies derived from slot @G}
-  }}
-    \item{S}{Structures: some sites were sampled in multiple years \describe{
+  }
+    \item{S}{Structures (note that some sites were sampled in multiple years): \describe{
     \item{SiteID}{Combination of SITE and YEAR}
     \item{SITE}{Site name (abbreviated)}
     \item{YEAR}{Year of sampling}
   }}
-}
+}}
 \references{
 Lamy, T., Pointier, J. P., Jarne, P. and David, P. (2012), Testing metapopulation dynamics using genetic, demographic and ecological data. Molecular Ecology, 21: 1394–1410. doi:10.1111/j.1365-294X.2012.05478.x}
 \keyword{datasets}
