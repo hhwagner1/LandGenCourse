@@ -25,6 +25,7 @@ Imports:
     httpuv,
     igraph,
     lme4,
+    methods,
     miniUI (>= 0.1.1),
     mmod,
     pegas,
@@ -51,7 +52,9 @@ Imports:
     swirlify (>= 0.5.1),
     tibble,
     tmaptools,
-    vegan
+    vegan,
+    QstFstComp,
+    popgraph
 Remotes:
     krlmlr/here,
     kjgilbert/QstFstComp,
