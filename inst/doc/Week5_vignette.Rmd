@@ -1,0 +1,347 @@
+---
+title: "Week 5: Metapopulation Genetics"
+author: 
+- "Nusha Keyghobadi"
+- "Thomas Lamy"
+- "Helene Wagner"
+date: "`r Sys.Date()`"
+show_toc: true
+output:
+  knitr:::html_vignette:
+    toc: yes
+    fig_width: 4 
+    fig_height: 3.5
+vignette: >
+  %\VignetteIndexEntry{Week 5: Metapopulation Genetics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## 1. Overview of Worked Example
+
+### a) Goals 
+
+This worked example shows how to:
+
+- Assess the spatial distribution of genetic structure with hierarchical AMOVA
+- Relate site-specific Fst to patch connectivity and population size
+- Relate genetic diversity to explanatory variables (node-level analysis)
+- Assess temporal changes (between years for same site)
+
+The Bonus Material provides guidance how to calculate several metrics outside of R:
+
+- Estimate population-level Fst (GESTE, FRENA)
+- Estimate effective population size (Ne) and migration rate (m)
+
+### b) Data set 
+
+Lamy et al. (2012) sampled the freshwater snail *Drepanotrema depressissimum* in a fragmented landscape of tropical ponds on the island of Guadeloupe in the French West Indies. They used a spatially and temporally stratified sampling design with a total of 25 sites, where 12 sites formed four well-separated clusters of three neighbouring sites to study spatial variability, and 12 sites spread across the island were sampled in multiple years to study temporal variability. For each site and year, 22 - 34 individuals were genotyped at ten microsatellite loci. The species is diploid, hermaphroditic, and outcrossed.  
+
+- **dd.ecogen**: The dataset 'dd.ecogen' with genetic data for 1270 snails from 42 populations is included in package 'LandGenCourse'. To load it, type: data(dd.ecogen). 
+
+- **dd.site**: Population-level data from Tables 2 - 5 of Lamy et al. (2012) are available in dataset 'dd.site' (with 25 variables) in package 'LandGenCourse'. To load it, type: data(dd.site). 
+
+### c) Required R libraries
+
+All required packages should have been installed already when you installed 'LandGenCourse'.
+
+```{r message=FALSE, warning=TRUE}
+require(LandGenCourse)
+#require(EcoGenetics)
+require(gstudio)
+#require(vegan)
+#require(dplyr)
+#require(pwr)
+#require(effsize)
+```
+
+### d) Import data
+
+Let's import the genetic data (spatial and temporal data sets combined, 42 combinations of site and year). Use '?dd.ecogen' to check helpfile with data set desription.
+
+The 'ecogen' object 'dd.ecogen' contains individual-level data in the following slots:
+
+- **XY**: Spatial coordinates (lat-long format)
+- **G**: Microsatellite loci (columns = loci, rows = individuals)
+- **A**: Table of allele frequencies (columns = alleles, rows = individuals)
+- **S**: Structure variables (SiteID, SITE, YEAR, Cluster)
+
+```{r}
+data(dd.ecogen, package = "LandGenCourse")
+dd.ecogen
+?dd.ecogen   
+```
+
+We also import site-level data from Tables 2 - 5 in Lamy et al. (2012). Use '?dd.site' to check helpfile with data set desription of the variables.
+
+```{r}
+data(dd.site, package = "LandGenCourse")
+tibble::as.tibble(dd.site)
+?dd.site
+```
+Check the meaning of the following explanatory variables:
+
+- What does 'APE' refer to, and how is it different from 'APA'?
+- How does 'NLT' represent, and is it calculated independently from 'Size'?
+- What does 'Type' mean, and what about 'V' and 'D'?
+- To understand how connectivity 'C' and stability 'Stab' were calculated, you'll need to consult Lamy et al. (2012).
+
+Hypotheses - which explanatory variables would you expect to affect:
+
+- Genetic diversity within local populations?
+- Genetic differentiation among local populations?
+- Both?
+
+In the following, we'll perform three types of analyses:
+
+- Compare 25 populations in space, across the island of Guadeloupe.
+- Compare 12 populations in 4 clusters: differentiation within vs. among clusters?
+- Compare 12 sites over time, some of which experienced a local extinction event.
+
+## 2. Spatial distribution of genetic structure
+
+How similar are populations from nearby habitat patches compared to populations across the island? To answer this question, we perform a hiearchical AMOVA with individuals from 12 populations that form 4 clusters with 3 populations each. 
+
+### a) Calculating AMOVA distance
+
+```{r}
+dd.gstudio <- EcoGenetics::ecogen2gstudio(dd.ecogen)
+dd.gstudio.Cluster <- dd.gstudio[!is.na(dd.gstudio$Cluster),]
+D <- gstudio::dist_amova(dd.gstudio.Cluster)
+```
+
+### b) Hierarchical AMOVA with 'adonis' function
+
+DO WE NEED TO TAKE THE SQUARE ROOT OF THE AMOVA DISTANCE? BOTH SHOWN HERE.
+```{r}
+vegan::adonis(as.dist(D) ~ Cluster/SiteID, data=dd.gstudio.Cluster)
+vegan::adonis(as.dist(sqrt(D)) ~ Cluster/SiteID, data=dd.gstudio.Cluster)
+```
+Questions:
+
+- At what level is there stronger differentiation, within or among clusters? 
+- What does this mean biologically?
+- Are both levels statistically significant?
+
+
+## 3. What determines genetic differentiation among sites? 
+
+What factors explain site-specific Fst? Let's consider the key micro-evolutionary processes:
+
+- **Genetic drift**: the smaller the population, the higher the rate of drift, hence we expect higher differention for small populations. Predictor: long-term population size 'NLT'.
+- **Gene flow**: gene flow homogenizes allele frequencies, hence we expect less differentiation for well connected patches. Predictors: connectivity 'C', density of favorable habitat 'D' (within 2 km radius).
+
+### a) Correlation matrix
+Let's start with a correlation matrix.
+
+```{r}
+cor(dd.site[dd.site$Spatial==TRUE, c("FST.GESTE", "NLT", "C", "D")], 
+    use="pairwise.complete")
+```
+Questions:
+
+- Is there genetic evidence for higher drift in small populations?
+- Is there genetic evidence for higher gene flow among well connected patches?
+- Are the two factors confounded for this data set?
+- Would you prefer 'C' or 'D' to quantify patch connectivity? Does it matter? What does this mean biologically?
+
+### b) Regression model
+
+The two predictors 'NLT' and 'C' are not strongly correlated. We'll fit a regression model with both predictors. Here we use function 'scale' to standardize each variable, so that we can interpret the regression slope coefficients as partial correlation coefficients (beta coefficients). 
+
+```{r}
+mod.diff <- lm(scale(FST.GESTE) ~ scale(NLT) + scale(C), 
+               data=dd.site[dd.site$Spatial==TRUE,])
+summary(mod.diff)
+```
+
+Is the model valid? Let's check the residual plots:
+
+```{r fig.height=7, fig.width=8}
+par(mfrow=c(2,2))
+plot(mod.diff, labels.id = names(residuals(mod.diff)))
+```
+
+### c) Which populations don't fit the general pattern?
+
+Let's plot the residuals in space:
+
+```{r}
+
+```
+
+### d) Regression model without outliers
+```{r}
+mod.diff.minus2 <- lm(scale(FST.GESTE) ~ scale(NLT) + scale(C), 
+               data=dd.site[dd.site$Spatial==TRUE & dd.site$SiteID!= "DESB2009"
+                            & dd.site$SiteID!= "PTC2009",])
+summary(mod.diff.minus2)
+```
+
+- Did omitting the two sites improve model fit?
+- Did it change the nature of the results?
+- Does this affect the biologial interpretation?
+
+```{r fig.height=7, fig.width=8}
+par(mfrow=c(2,2))
+plot(mod.diff.minus2, labels.id = names(residuals(mod.diff)))
+```
+
+
+## 4. What determines genetic diversity?
+
+- Can the same predictors (population size and connectivity) explain genetic diversity? 
+- Is patch size ('Size') a good proxy for population size (as often used in ecological studies)? 
+- Which measure of genetic diversity shows the stronger response, allelic richness (rarefied) or expected heterozygosity?
+
+### a) Correlation matrix
+
+```{r}
+cor(dd.site[dd.site$Spatial==TRUE, c("RA", "He", "Size", "NLT", "C", "D")], 
+    use="pairwise.complete")
+```
+
+- How strongly are the two diversity measures 'RA' and 'He' correlated?
+- Are 'NLT' and 'C' strongly correlated with the diversity measures 'RA' and 'He'? 
+- Is the correlation with 'Size' similarly strong as the correlation with 'NLT'? 
+- How strongly are 'Size' and 'NLT' correlated with each other? 
+- Does 'D' show a stronger correlation with diversity than with differentiation?
+
+### b) Regression models
+
+For allelic richness:
+
+```{r}
+mod.RA <- lm(scale(RA) ~ scale(NLT) + scale(C), 
+               data=dd.site[dd.site$Spatial==TRUE,])
+summary(mod.RA)
+```
+
+```{r fig.height=7, fig.width=8}
+par(mfrow=c(2,2))
+plot(mod.RA)
+```
+
+For gene diversity (expected heterozygosity):
+
+```{r}
+mod.He <- lm(scale(He) ~ scale(NLT) + scale(C), 
+               data=dd.site[dd.site$Spatial==TRUE,])
+summary(mod.He)
+```
+
+```{r fig.height=7, fig.width=8}
+par(mfrow=c(2,2))
+plot(mod.He)
+```
+
+## 5. Effect of recent extinction events
+
+Several patches fell dry between observation years, which is assumed to signify extinction of the local population. Does genetic evidence support this interpretation, i.e., is there genetic evidence of bottlenecks or founder effects in *D. depressissimum*?
+
+### a) Effect of apparent population age (spatial data set)
+
+- Can apparent population age ('APA') explain variation in inbreeding coefficient 'f' and estimated selfing rate 's'?
+- Are 'f' and 's' also affected by population size and connectivity?
+
+```{r}
+cor(dd.site[dd.site$Spatial==TRUE, c("s", "f", "APA", "NLT", "C")], 
+    use="pairwise.complete")
+```
+
+Looks like selfing rate 's' (but not 'f') is associated with 'APA'. However, 'APA' is correlated with 'NLT' (which is not unexpected), and s is associated with 'NLP' and 'C'. 
+
+Interpret the sign of the correlations. What does a positive or a negative association with 's' mean here? Does this make sense biologically?
+
+```{r}
+mod.s <- lm(scale(s) ~ scale(APA), data=dd.site[dd.site$Spatial==TRUE,])
+summary(mod.s)
+
+mod.s.C <- lm(scale(s) ~ scale(APA) + scale(C),  
+            data=dd.site[dd.site$Spatial==TRUE,])
+mod.s.NLT <- lm(scale(s) ~ scale(APA) + scale(NLT),  
+            data=dd.site[dd.site$Spatial==TRUE,])
+mod.s.both <- lm(scale(s) ~ scale(APA) + scale(NLT) + scale(C),  
+            data=dd.site[dd.site$Spatial==TRUE,])
+AIC(mod.s, mod.s.C, mod.s.NLT, mod.s.both)
+```
+
+Interestingly, 'APA' alone is not significantly correlated with 's', but it becomes significant when adding 'NLT' to the model. Based on lowest AIC, the model with three predictors ('APA', 'NLT' and 'C') is best, even though 'NLT' was not statistically significant.
+
+Note: we'll learn more about model selection in Week 12.
+
+```{r}
+summary(mod.s.both)
+```
+
+```{r fig.height=7, fig.width=8}
+par(mfrow=c(2,2))
+plot(mod.s.both)
+```
+
+Hm, that does not look great, though there may be no quick fix to this. This analysis is based on comparing populations with different apparent population age across space, but many factors may contribute to the variation among sites. The temporal data may be more helpful here.
+
+### b) Effect of patch extinction event (temporal data set)
+
+```{r}
+cor(dd.site[dd.site$MultiYear==TRUE, c("Fst.temp", "APE", "NLT", "C")], 
+    use="pairwise.complete")
+```
+
+```{r}
+mod.Fst.temp <- lm(scale(Fst.temp) ~ scale(APE), data=dd.site[dd.site$MultiYear==TRUE
+                                                              & dd.site$Spatial==TRUE,])
+summary(mod.Fst.temp)
+
+mod.Fst.temp.C <- lm(scale(Fst.temp) ~ scale(APE) + scale(C),  
+            data=dd.site[dd.site$MultiYear==TRUE & dd.site$Spatial==TRUE,])
+mod.Fst.temp.NLT <- lm(scale(Fst.temp) ~ scale(APE) + scale(NLT),  
+            data=dd.site[dd.site$MultiYear==TRUE & dd.site$Spatial==TRUE,])
+mod.Fst.temp.both <- lm(scale(Fst.temp) ~ scale(APE) + scale(NLT) + scale(C),  
+            data=dd.site[dd.site$MultiYear==TRUE & dd.site$Spatial==TRUE,])
+AIC(mod.Fst.temp, mod.Fst.temp.C, mod.Fst.temp.NLT, mod.Fst.temp.both)
+```
+The best model includes neither 'C' nor 'NLT'. Note that 'APE' is a binary variable, so in essence we're performing a t-test here.
+
+```{r}
+res.Fst.temp <- t.test(Fst.temp ~ APE, data=dd.site, alternative = "less")
+res.Fst.temp
+```
+
+The effect is not statistically significant. Does that mean that we found no effect of apparent population extinctions on temporal Fst? Let's check effect size:
+
+```{r}
+effsize::cohen.d(Fst.temp ~ factor(APE), data=dd.site[!is.na(dd.site$Fst.temp),])
+
+```
+
+So, we actually found a 'large' effect (more than 0.8 standard deviations difference between group means). Maybe sample size was too small to have sufficient power?
+
+Let's check sample size:
+
+```{r}
+table(dd.site$APE[!is.na(dd.site$Fst.temp)])
+```
+
+Ah, that explains a lot. There were only 4 sites with apparent extinction, and 8 without.
+
+Given that sample size, what was the statistical power of our test to detect a large effect (d = -0.88), i.e., be able to reject the null hypothesis if such an effect is present in the population from which we sampled?
+
+```{r}
+pwr::pwr.t2n.test(n1=8, n2=4, d=-0.8, alternative = "less")
+```
+
+So the power to detect a large effect was only 0.33, way below the 0.8 (or even 0.95) that we would want to see. How large a sample would we have needed in each group to achieve a power of 0.8?
+
+```{r}
+pwr::pwr.t.test( power=0.8, d=-0.8, alternative = "less")
+```
+
+More than 20 sites in each group would have been needed!
+
+Hence the results are inconclusive, there was a trend showing a large effect size but power was very low, hence the study should be repeated with a larger sample size before reaching any conclusions.
+
+
+```{r message=FALSE, warning=TRUE, include=FALSE}
+detach("package:gstudio", unload=TRUE)
+```

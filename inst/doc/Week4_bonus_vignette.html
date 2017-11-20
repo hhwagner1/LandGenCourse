@@ -13,7 +13,7 @@
 <meta name="author" content="Andrew Eckert (worked example)" />
 <meta name="author" content="Helene Wagner (vignette)" />
 
-<meta name="date" content="2017-11-13" />
+<meta name="date" content="2017-11-19" />
 
 <title>Week 4: Bonus Material</title>
 
@@ -72,7 +72,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1 class="title toc-ignore">Week 4: Bonus Material</h1>
 <h4 class="author"><em>Andrew Eckert (worked example)</em></h4>
 <h4 class="author"><em>Helene Wagner (vignette)</em></h4>
-<h4 class="date"><em>2017-11-13</em></h4>
+<h4 class="date"><em>2017-11-19</em></h4>
 
 
 <div id="TOC">
@@ -166,8 +166,9 @@ phen_mod &lt;-<span class="st"> </span>phen[,<span class="op">-</span><span clas
 QstFst_out &lt;-<span class="st"> </span>QstFstComp<span class="op">::</span><span class="kw">QstFstComp</span>(<span class="dt">fst.dat =</span> snp_reformat3, <span class="dt">qst.dat =</span> phen_mod, 
                          <span class="dt">numpops =</span> <span class="kw">nlevels</span>(WWP<span class="op">@</span>S<span class="op">$</span>population), <span class="dt">nsim =</span> <span class="dv">10000</span>, 
                          <span class="dt">breeding.design =</span> <span class="st">&quot;half.sib.dam&quot;</span>, 
-                         <span class="dt">dam.offspring.relatedness =</span> <span class="fl">0.25</span>, <span class="dt">output =</span> <span class="st">&quot;concise&quot;</span>)
-QstFst_out</code></pre></div>
+                         <span class="dt">dam.offspring.relatedness =</span> <span class="fl">0.25</span>, <span class="dt">output =</span> <span class="st">&quot;concise_nowrite&quot;</span>)</code></pre></div>
+<pre><code>## [1] &quot;No output file of Q minus F values written.&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">QstFst_out</code></pre></div>
 <pre><code>## [[1]]
 ##            Calculated Qst-Fst  Lower Bound crit. value.2.5% 
 ##                    0.11917632                   -0.02660870 
@@ -175,7 +176,7 @@ QstFst_out</code></pre></div>
 ##                    0.06797447 
 ## 
 ## [[2]]
-## [1] &quot;Qst-Fst values output to file: /Users/hhwagner1/Desktop/R_GitHub_Projects/LandGenCourse/vignettes/QminusFvalues_2017-11-13_10-39-48.txt&quot;
+## [1] &quot;Qst-Fst values output to file: /Users/hhwagner1/Desktop/R_GitHub_Projects/LandGenCourse/vignettes/QminusFvalues_2017-11-19_21-33-24.txt&quot;
 ## 
 ## [[3]]
 ## Lower one-tailed p value Upper one-tailed p value       Two-tailed p value 
