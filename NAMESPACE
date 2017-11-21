@@ -1,2 +1,2 @@
 exportPattern("^[[:alpha:]]+")
-importFrom(EcoGenetics, show)
+#importFrom(EcoGenetics, show)

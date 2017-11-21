@@ -2,7 +2,7 @@
 require(lme4)
 #require(hierfstat)
 #require(QstFstComp)
-#require(EcoGenetics)
+require(EcoGenetics)
 source(system.file("extdata", "supplemental_R_functions.R", 
                             package = "LandGenCourse"))
 
@@ -54,4 +54,5 @@ plot(het_out/(1-fst_snp), fst_snp)
 ## ----message=FALSE, warning=TRUE, include=FALSE--------------------------
 #detach("package:lme4", unload=TRUE)
 #detach("package:Matrix", unload=TRUE)
+#detach("package:EcoGenetics", unload=TRUE)
 

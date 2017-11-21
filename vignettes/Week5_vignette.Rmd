@@ -47,7 +47,7 @@ All required packages should have been installed already when you installed 'Lan
 
 ```{r message=FALSE, warning=TRUE}
 require(LandGenCourse)
-#require(EcoGenetics)
+require(EcoGenetics)
 require(gstudio)
 #require(vegan)
 #require(dplyr)
@@ -135,7 +135,7 @@ What factors explain site-specific Fst? Let's consider the key micro-evolutionar
 Let's start with a correlation matrix.
 
 ```{r}
-cor(dd.site[dd.site$Spatial==TRUE, c("FST.GESTE", "NLT", "C", "D")], 
+cor(dd.site@data[dd.site@data$Spatial==TRUE, c("FST.GESTE", "NLT", "C", "D")], 
     use="pairwise.complete")
 ```
 Questions:
@@ -197,8 +197,8 @@ plot(mod.diff.minus2, labels.id = names(residuals(mod.diff)))
 ### a) Correlation matrix
 
 ```{r}
-cor(dd.site[dd.site$Spatial==TRUE, c("RA", "He", "Size", "NLT", "C", "D")], 
-    use="pairwise.complete")
+cor(dd.site@data[dd.site@data$Spatial==TRUE, 
+                 c("RA", "He", "Size", "NLT", "C", "D")], use="pairwise.complete")
 ```
 
 - How strongly are the two diversity measures 'RA' and 'He' correlated?
@@ -245,7 +245,7 @@ Several patches fell dry between observation years, which is assumed to signify 
 - Are 'f' and 's' also affected by population size and connectivity?
 
 ```{r}
-cor(dd.site[dd.site$Spatial==TRUE, c("s", "f", "APA", "NLT", "C")], 
+cor(dd.site@data[dd.site@data$Spatial==TRUE, c("s", "f", "APA", "NLT", "C")], 
     use="pairwise.complete")
 ```
 
@@ -284,7 +284,7 @@ Hm, that does not look great, though there may be no quick fix to this. This ana
 ### b) Effect of patch extinction event (temporal data set)
 
 ```{r}
-cor(dd.site[dd.site$MultiYear==TRUE, c("Fst.temp", "APE", "NLT", "C")], 
+cor(dd.site@data[dd.site@data$MultiYear==TRUE, c("Fst.temp", "APE", "NLT", "C")], 
     use="pairwise.complete")
 ```
 
@@ -320,7 +320,7 @@ So, we actually found a 'large' effect (more than 0.8 standard deviations differ
 Let's check sample size:
 
 ```{r}
-table(dd.site$APE[!is.na(dd.site$Fst.temp)])
+table(dd.site@data$APE[!is.na(dd.site@data$Fst.temp)])
 ```
 
 Ah, that explains a lot. There were only 4 sites with apparent extinction, and 8 without.
@@ -344,4 +344,5 @@ Hence the results are inconclusive, there was a trend showing a large effect siz
 
 ```{r message=FALSE, warning=TRUE, include=FALSE}
 detach("package:gstudio", unload=TRUE)
+detach("package:EcoGenetics", unload=TRUE)
 ```

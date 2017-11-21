@@ -2,7 +2,7 @@
 require(LandGenCourse)
 require(lme4)
 #require(car)
-#require(EcoGenetics)
+require(EcoGenetics)
 require(tibble)
 #require(vegan)
 
@@ -133,4 +133,5 @@ c(ab=ab$"Pr(>F)"[1], bc=bc$"Pr(>F)"[1], abc=abc$"Pr(>F)"[1],
 ## ----message=FALSE, warning=TRUE, include=FALSE--------------------------
 detach("package:lme4", unload=TRUE)
 detach("package:Matrix", unload=TRUE)
+detach("package:EcoGenetics", unload=TRUE)
 
