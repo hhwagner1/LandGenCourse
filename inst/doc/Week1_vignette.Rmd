@@ -283,9 +283,11 @@ Frogs.gstudio <- data.frame(FrogID=Frogs$FrogID, Frogs.gstudio)
 str(Frogs.gstudio)
 ```
 
+The following code detaches all packages except for some basic ones:
 
 ```{r message=FALSE, warning=TRUE, include=FALSE}
-detach("package:adegenet", unload=TRUE)
-detach("package:ade4", unload=TRUE)
-detach("package:gstudio", unload=TRUE)
+#detach("package:adegenet", unload=TRUE)
+#detach("package:ade4", unload=TRUE)
+#detach("package:gstudio", unload=TRUE)
+detachAllPackages()
 ```

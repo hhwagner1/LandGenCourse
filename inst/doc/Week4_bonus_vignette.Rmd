@@ -158,11 +158,10 @@ ADD THIS PART?
 
 ADD THIS PART?
 
+The following code detaches all packages except for some basic ones:
 
 ```{r message=FALSE, warning=TRUE, include=FALSE}
-#detach("package:lme4", unload=TRUE)
-#detach("package:Matrix", unload=TRUE)
-#detach("package:EcoGenetics", unload=TRUE)
+LandGenCourse::detachAllPackages()
 ```
 
 

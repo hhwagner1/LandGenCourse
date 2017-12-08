@@ -1,4 +1,5 @@
 ## ----message=FALSE, warning=TRUE-----------------------------------------
+require(LandGenCourse)
 require(sp)
 require(raster)
 require(GeNetIt)
@@ -205,9 +206,10 @@ Sites.sp@data <- data.frame(Sites.sp@data, Prop.landscape,
                                 Forest.class) 
 
 ## ----message=FALSE, warning=TRUE, include=FALSE--------------------------
-detach("package:raster", unload=TRUE)
-detach("package:sp", unload=TRUE)
-detach("package:GeNetIt", unload=TRUE)
-detach("package:tmaptools", unload=TRUE)
-detach("package:SDMTools", unload=TRUE)
+#detach("package:raster", unload=TRUE)
+#detach("package:sp", unload=TRUE)
+#detach("package:GeNetIt", unload=TRUE)
+#detach("package:tmaptools", unload=TRUE)
+#detach("package:SDMTools", unload=TRUE)
+LandGenCourse::detachAllPackages()
 

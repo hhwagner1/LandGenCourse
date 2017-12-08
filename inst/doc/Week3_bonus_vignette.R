@@ -188,6 +188,7 @@ amova.test <- ade4::randtest(amova.result.ade4, nrepet=199)
 amova.test
 
 ## ----message=FALSE, warning=TRUE, include=FALSE--------------------------
-detach("package:ade4", unload=TRUE)
-detach("package:dplyr", unload=TRUE)
+#detach("package:ade4", unload=TRUE)
+#detach("package:dplyr", unload=TRUE)
+LandGenCourse::detachAllPackages()
 

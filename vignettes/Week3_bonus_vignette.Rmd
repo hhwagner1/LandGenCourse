@@ -396,9 +396,10 @@ Let's look at the numerical test results:
 
 Hence there is statistically significant differentiation at all levels, except for among frogs sampled at the same pond. The effects are largest for basin and drainage (about 10% each), whereas differentiation among populations within basins is very weak (about 1.5%).
 
-
+The following code detaches all packages except for some basic ones:
 
 ```{r message=FALSE, warning=TRUE, include=FALSE}
-detach("package:ade4", unload=TRUE)
-detach("package:dplyr", unload=TRUE)
+#detach("package:ade4", unload=TRUE)
+#detach("package:dplyr", unload=TRUE)
+LandGenCourse::detachAllPackages()
 ```

@@ -48,6 +48,7 @@ We will extract values at sampling point locations and within a local neighborho
 ### c) Required R libraries
 
 ```{r message=FALSE, warning=TRUE}
+require(LandGenCourse)
 require(sp)
 require(raster)
 require(GeNetIt)
@@ -432,10 +433,13 @@ Done!
 
 Note: check this week's bonus material if you want to see how to use the new 'sf' library for spatial data, and how to export the site data to an shapefile that you can import into a GIS.
 
+The following code detaches all packages except for some basic ones:
+
 ```{r message=FALSE, warning=TRUE, include=FALSE}
-detach("package:raster", unload=TRUE)
-detach("package:sp", unload=TRUE)
-detach("package:GeNetIt", unload=TRUE)
-detach("package:tmaptools", unload=TRUE)
-detach("package:SDMTools", unload=TRUE)
+#detach("package:raster", unload=TRUE)
+#detach("package:sp", unload=TRUE)
+#detach("package:GeNetIt", unload=TRUE)
+#detach("package:tmaptools", unload=TRUE)
+#detach("package:SDMTools", unload=TRUE)
+LandGenCourse::detachAllPackages()
 ```

@@ -15,7 +15,7 @@ Imports:
     base64enc,
     car,
     dplyr,
-    EcoGenetics,
+    EcoGenetics (>= 1.2.1-2),
     effsize,
     formatR (>= 1.5),
     GeNetIt,

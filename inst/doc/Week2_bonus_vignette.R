@@ -1,4 +1,5 @@
 ## ----message=FALSE, warning=TRUE-----------------------------------------
+require(LandGenCourse)
 require(sp)
 require(sf)
 require(raster)
@@ -60,14 +61,14 @@ Map + layer(sp.points(Sites.sp, pch=16, col="yellow", cex=1.1)) +
   layer(sp.points(Sites.sp, pch=1, col="black", cex=1.1))
 
 ## ----message=FALSE, warning=TRUE, include=FALSE--------------------------
-
-detach("package:rasterVis", unload=TRUE)
-detach("package:raster", unload=TRUE)
-detach("package:sp", unload=TRUE)
-detach("package:GeNetIt", unload=TRUE)
-detach("package:sf", unload=TRUE)
-detach("package:tmaptools", unload=TRUE)
-detach("package:latticeExtra", unload=TRUE)
-detach("package:lattice", unload=TRUE)
-detach("package:RColorBrewer", unload=TRUE)
+#detach("package:rasterVis", unload=TRUE)
+#detach("package:raster", unload=TRUE)
+#detach("package:sp", unload=TRUE)
+#detach("package:GeNetIt", unload=TRUE)
+#detach("package:sf", unload=TRUE)
+#detach("package:tmaptools", unload=TRUE)
+#detach("package:latticeExtra", unload=TRUE)
+#detach("package:lattice", unload=TRUE)
+#detach("package:RColorBrewer", unload=TRUE)
+LandGenCourse::detachAllPackages()
 

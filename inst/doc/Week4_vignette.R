@@ -131,7 +131,8 @@ c(ab=ab$"Pr(>F)"[1], bc=bc$"Pr(>F)"[1], abc=abc$"Pr(>F)"[1],
   a=a$"Pr(>F)"[1], b=b$"Pr(>F)"[1])
 
 ## ----message=FALSE, warning=TRUE, include=FALSE--------------------------
-detach("package:lme4", unload=TRUE)
-detach("package:Matrix", unload=TRUE)
-detach("package:EcoGenetics", unload=TRUE)
+#detach("package:lme4", unload=TRUE)
+#detach("package:Matrix", unload=TRUE)
+#detach("package:EcoGenetics", unload=TRUE)
+LandGenCourse::detachAllPackages()
 

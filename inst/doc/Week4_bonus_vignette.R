@@ -52,7 +52,5 @@ plot(het_out, fst_snp)
 plot(het_out/(1-fst_snp), fst_snp)
 
 ## ----message=FALSE, warning=TRUE, include=FALSE--------------------------
-#detach("package:lme4", unload=TRUE)
-#detach("package:Matrix", unload=TRUE)
-#detach("package:EcoGenetics", unload=TRUE)
+LandGenCourse::detachAllPackages()
 
