@@ -41,7 +41,6 @@ round(HWE.test.MC,3)}
 
 ## ------------------------------------------------------------------------
 alpha=0.05
-#alpha=0.05/(nrow(HWE.test) * ncol(HWE.test))   # Optional Bonferroni correction
 Prop.loci.out.of.HWE <- data.frame(Chisq=apply(HWE.test.chisq<alpha, 2, mean), 
            MC=apply(HWE.test.MC<alpha, 2, mean))
 Prop.loci.out.of.HWE             # Type this line again to see results table
@@ -49,6 +48,19 @@ Prop.loci.out.of.HWE             # Type this line again to see results table
 ## ------------------------------------------------------------------------
 Prop.pops.out.of.HWE <- data.frame(Chisq=apply(HWE.test.chisq<alpha, 1, mean), 
            MC=apply(HWE.test.MC<alpha, 1, mean))
+Prop.pops.out.of.HWE             
+
+## ------------------------------------------------------------------------
+
+Chisq.fdr <- matrix(p.adjust(HWE.test.chisq,method="fdr"), 
+                    nrow=nrow(HWE.test.chisq))
+MC.fdr <- matrix(p.adjust(HWE.test.MC, method="fdr"), 
+                    nrow=nrow(HWE.test.MC))
+
+Prop.pops.out.of.HWE <- data.frame(Chisq=apply(HWE.test.chisq<alpha, 1, mean), 
+           MC=apply(HWE.test.MC<alpha, 1, mean),
+           Chisq.fdr=apply(Chisq.fdr<alpha, 1, mean),
+           MC.fdr=apply(MC.fdr<alpha, 1, mean))
 Prop.pops.out.of.HWE             
 
 ## ---- fig.show='hold'----------------------------------------------------
@@ -84,7 +96,7 @@ abline(lm(Sum$pop.n.all ~ Sum$n.by.pop), col = "red")
 
 ## ------------------------------------------------------------------------
 Richness <- PopGenReport::allel.rich(Frogs.genind, min.alleles = NULL)
-Richness
+Richness$alleles.sampled
 
 ## ---- fig.show='hold'----------------------------------------------------
 par(mar=c(5.5, 4.5,1,1))

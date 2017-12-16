@@ -15,10 +15,9 @@ chooseWEAddin <- function() {
                         "Week 2: Spatial Data"=2,
                         "Week 2: Bonus Material"=3,
                         "Week 3: Genetic Diversity"=4,
-                        "Week 3: Bonus Material"=5,
-                        "Week 4: Selection"=6,
-                        "Week 4: Bonus Material"=7,
-                        "Week 5: Metapopulation Genetics"=8),
+                        "Week 4: Selection"=5,
+                        "Week 4: Bonus Material"=6,
+                        "Week 5: Metapopulation Genetics"=7),
                   selected = 1
       )
     )
@@ -33,7 +32,6 @@ chooseWEAddin <- function() {
                                "Week2_vignette",
                                "Week2_bonus_vignette",
                                "Week3_vignette",
-                               "Week3_bonus_vignette",
                                "Week4_vignette",
                                "Week4_bonus_vignette",
                                "Week5_vignette")[as.numeric(input$example)],
