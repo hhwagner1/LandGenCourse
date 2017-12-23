@@ -386,8 +386,9 @@ apply(Freq, MARGIN = 1, FUN = sum)    # Just checking
 
 
 ```{r message=FALSE, warning=TRUE, include=FALSE}
-detach("package:poppr", unload=TRUE)
-detach("package:dplyr", unload=TRUE)
-detach("package:adegenet", unload=TRUE)
-detach("package:ade4", unload=TRUE)
+#detach("package:poppr", unload=TRUE)
+#detach("package:dplyr", unload=TRUE)
+#detach("package:adegenet", unload=TRUE)
+#detach("package:ade4", unload=TRUE)
+LandGenCourse::detachAllPackages()
 ```

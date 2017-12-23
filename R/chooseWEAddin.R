@@ -15,9 +15,8 @@ chooseWEAddin <- function() {
                         "Week 2: Spatial Data"=2,
                         "Week 2: Bonus Material"=3,
                         "Week 3: Genetic Diversity"=4,
-                        "Week 4: Selection"=5,
-                        "Week 4: Bonus Material"=6,
-                        "Week 5: Metapopulation Genetics"=7),
+                        "Week 4: Metapopulation Genetics"=5,
+                        "Week 6: Quantitative Genetics"=6),
                   selected = 1
       )
     )
@@ -33,8 +32,7 @@ chooseWEAddin <- function() {
                                "Week2_bonus_vignette",
                                "Week3_vignette",
                                "Week4_vignette",
-                               "Week4_bonus_vignette",
-                               "Week5_vignette")[as.numeric(input$example)],
+                               "Week6_vignette")[as.numeric(input$example)],
                              c(".html", ".Rmd", ".R")[as.numeric(input$type)])
       selectedPath <- (paste0(system.file("doc", selectedFile,
                        package = "LandGenCourse")))

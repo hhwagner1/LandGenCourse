@@ -1,0 +1,487 @@
+---
+title: "Week 6: Quantitative Genetics"
+author: 
+- "Andrew Eckert"
+- "Kati Csillery"
+- "Helene Wagner"
+date: "`r Sys.Date()`"
+show_toc: true
+output:
+  knitr:::html_vignette:
+    toc: yes
+    fig_width: 4 
+    fig_height: 3.5
+vignette: >
+  %\VignetteIndexEntry{Week 6: Quantitative Genetics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## 1. Overview of Worked Example
+
+### a) Goals 
+
+**Justification**: Natural selection acts on the heritable component of the total phenotypic variation. Traditionally, the heritable proportion of trait variation is estimated using information on the degree of relatedness between individuals. This approach - extensively employed in breeding and evolutionary quantitative genetics – ignores the molecular underpinnings of traits. An alternative approach is  scanning genomes using molecular markers to search for so-called outlier loci (see week 11), where selection invoked a change in allele frequencies that is detectable as unusual differentiation between populations in different environments. This approach – advocated in population genetics - neglects information about the trait variation, but assumes that the markers are in or close to genes that code for adaptive traits. Genetic outliers often hard to interpret because generally we lack information what phenotype they affect and if this phenotype results in fitness differences between populations. 
+
+**Learning Objectives**: This lab was constructed to give you experience in working with basic quantitative and population genetic analyses to test hypotheses about the presence of local adaptation. Similar to the genomic revolution,  phenotyping is also undergoing a revolution thanks to developments e.g. in imagery that allow for a highly automated recording of traits; a task that has been extremely time consuming in the past. These developments will certainly advance the quantitative genetic approach in the future in evolutionary biology let alone breeding. By the end of the laboratory, you should be able to do the following:
+
+-	Construct, fit, and assess linear mixed effects models (LMMs) to estimate genetic values and variance components of a phenotypic trait measured in families, e.g. in a common garden experiments. 
+-	Use LMMs to estimate the heritability of a trait. 
+-	Test for the presence of unusual trait differentiation among populations relative to differentiation  expected in the absence of adaptation
+-	Assess if trait differentiation is correlated with differentiation in environmental variables to try identifying the selective component of the environment. 
+
+### b) Data set 
+
+The data come from a study of western white pine (Pinus monticola Dougl. ex D. Don) sampled around the Lake Tahoe Basin of California and Nevada. These data consist of 157 trees sampled from 10 populations (n = 9 to 22 trees/population). Within each population, trees were sampled within three plots. For each plot, GPS coordinates were collected (i.e. each plot in each population has its own GPS coordinates) and used to generate a set of 7 environmental variables. From these trees, needle tissue was collected from which total DNA was extracted and genotyped for 164 single nucleotide polymorphisms (SNPs). Seeds were also collected and planted in a common garden. The seedlings (n = 5 to 35/tree) were measured for several phenotypic traits. The phenotypic trait we will be working with today is known as the carbon isotope ratio ($δ^{13}C$). It is the ratio of two isotopes of carbon ($^{13}C$ and $^{12}C$) relative to an experimental control, and it is strongly correlated with intrinsic water-use efficiency in plants. Plants need water to live, so it is not a stretch of the imagination to believe that this phenotypic trait has a link with plant fitness.
+
+We will thus have the following data:
+
+- **WWP_phenotype_data.txt**: Phenotypic measurements for 5 seedlings per tree made in a common garden.
+- **WWP.ecogen**: an 'ecogen' object (package 'EcoGenetics') with SNP genotypes for all trees sampled in the field, and with environmental data collected from each plot within each population.
+
+### c) Required R libraries
+
+All required packages should have been installed already when you installed 'LandGenCourse'.
+
+```{r message=FALSE, warning=TRUE}
+require(LandGenCourse)
+require(lme4)
+#require(car)
+#require(EcoGenetics)
+require(tibble)
+#require(sjPlot)
+#require(MuMIn)
+#require(predictmeans)
+#require(nlme)
+#require(QstFstComp)
+
+source(system.file("extdata", "supplemental_R_functions.R", 
+                            package = "LandGenCourse"))
+source(system.file("extdata", "panel.cor.r", 
+                            package = "LandGenCourse"))
+```
+
+## 2. Estimate genetic and non-genetic variance components from a common garden experiment
+
+**Motivation**: A lot of genetics can be carried out without use of any molecular markers. Practitioners of empirical population genetics forget this quite often. A common garden allows us to create a standardized environment in which we minimize the influence of environment on the expression of a particular phenotypic trait. Phenotypic variation can be partitioned to genetic , environmental and residual components based on quantitative genetic theory. Further, we may also test for the presence of interaction between the genetic and environmental variation. The rationale of a common garden is to “standardize” the environment, thus phenotypic variation we observe is mainly due to genetic variation, even though environmental heterogeneity can never be completely eliminated and we still have to additionally control for it, e.g. using a block design (see below).
+
+**Goals & Background**: The goal for this part of the laboratory is to construct, fit, and assess LMMs for $δ^{13}C$. We will be using the data in the file named "WWP_phenotypic_data.txt". These data are organized in a tab-delimited text file with seedlings grouped by maternal tree (i.e. its mother tree), plot, and population. Also included is an experimental treatment known as “block”. In a common garden, seedlings from the same maternal tree are randomized among blocks to avoid the influence of micro-environmental variation on expression of phenotypic traits.
+
+### a) Import phenytypic data 
+
+```{r}
+phen <- read.delim(system.file("extdata", "WWP_phenotype_data.txt", 
+                            package = "LandGenCourse"), sep = "\t", header = T)
+tibble::as.tibble(phen)
+```
+
+Check the variable types: 'family' and 'block' have been imported as type 'integer', and we need to convert them to 'factor' first.
+
+```{r}
+phen$family <- as.factor(phen$family)
+phen$block <- as.factor(phen$block)
+sapply(phen, class)
+```
+
+### b) Fit linear mixed effects models (LMM) to trait data observed on families
+
+Now,we are ready to fit a series of linear models. Here we will fit four models in total, though the last two are equivalent for our data: 
+- **mod1**: a model with only fixed effects (intercept and block), 
+- **mod2**:a LMM with an fixed effects and a random effect due to family, and 
+- **mod3**:a LMM where the random effect due to family is nested within population. We will thus be ignoring the variable "plot".
+- **mod4**:a LMM where the nesting of family within population is not explicitly specified, it is implied by the data. 
+
+Note: 'd13c ~ 1 + block' is equivalent to 'd13c ~ block' (see video, Part 1). 
+
+```{r}
+mod1 <- lm(d13c ~ block, data = phen)
+mod2 <- lme4::lmer(d13c ~ 1 + (1|family) + block,data = phen, REML = TRUE)
+mod3 <- lme4::lmer(d13c ~ 1 + (1|population/family) + block, 
+                   data = phen, REML = TRUE)
+mod4 <- lme4::lmer(d13c ~ 1 + (1|population) + (1|family) + block, 
+                   data = phen, REML = TRUE)
+```
+
+Models 'mod3' and 'mod4' produce identical results, as long as each family has its own unique ID. In the following, we will use 'mod4' as it simplifies interpretation (as commonly used in quantitative genetics).
+
+Notice that we are using REML=TRUE, which stands for restricted maximum likelihood. This method is advised for quantitative genetic analysis, because it provides unbiased estimates of the variance components. The other approach would be to use ML or maximum likelihood, however, it generally underestimates the residual variance, thus leading to inflated estimates of the family variance and thus the heritability. ML would be needed e.g. to test fixed effects.
+
+### c) Compare model fit
+
+Now, let’s explore which model best fits our data. To do this we will use the Akaike Information Criterion (AIC). This statistic scores model fit while giving a  penalty for the number of parameters in a model. The model with the lowest score is the preferred model. 
+
+How do we ensure that the AIC values of the different models are comparable? 
+
+- For 'mod1' that was fitted with 'lm', we use the function 'AIC'. 
+- For the other models that were fitted with 'lmer', we use 'extractAIC'. 
+
+For model comparison purposes, we have to use the ML fit, as AIC is no longer valid for REML. The function ‘extractAIC’ refits the models with ‘REML=FALSE’ to obtain AIC values that are comparable between models with different fixed effects (though this does not apply here because the fixed effects were the same), or between models fitted with 'lm' and 'lmer'. It returns two values, the first is the ‘equivalent degrees of freedom’ of the fitted model, and the second is the ‘AIC’ value. Here we only extract the second value.
+
+```{R}
+aic_vals <- c(AIC(mod1), extractAIC(mod2)[2], extractAIC(mod3)[2], 
+              extractAIC(mod4)[2])
+names(aic_vals) <- c("mod1","mod2","mod3", "mod4")
+aic_vals
+```
+
+Hence, model 'mod3' (and its equivalent 'mod4') appears to be the best model. This suggests that there are important differences among populations, and among trees within populations.
+
+We will learn more about model selection later in the course (Week 12).
+
+### d) Check model validity
+
+Is the model 'mod4' valid? Let's check the residuals. The function 'residplot' from package 'predictmeans' produces four diagnostic plots for a model fitted with 'lmer'. The option 'level' indicates which random factor should be plotted (here: 1 = family, 2 = population). This function uses the 'conditional' residuals, which represent 'observed - fitted(fixed) - fitted(random)'.  
+
+```{r}
+predictmeans::residplot(mod4, group="population", level=1)
+
+```
+
+Hint: You may need to use the arrow symbols to scroll through the plots in the 'Plot' tab in RStudio.
+
+The plots are:
+
+- A normal probability plot of the random effect 'family': points should follow line.
+- A normal probability plot of (conditional) residuals: points should follow line.
+- A scatterplot of the (conditional) residuals against fitted values: the plot should not 'thicken' (which would indicate differences in variances between groups such as blocks = heteroscedasticity). Due to the option 'group = "population", residuals are colored by population.
+- A plot of fitted values against observed: the scatterplot shows the overall model fit, where points would fall on a line if the model explained 100% of the variation in the response (you can ignore the dashed line).
+
+In addition, we may want to look for outliers and influential points. For this, we create two additional plots. Here we use marginal residuals, which are calculated without accounting for random effects: 'observed - fitted(fixed)'. 
+
+- A plot of marginal residuals against the fixed effect 'block': there should not be any large outliers.  
+- A plot of Cook's distances, where D > 1 indicates influential points (more relevant when using quantitative predictors (covariates). Note: this may take a while to calculate.
+
+First we calculate the marginal residuals by predicting values with fixed effects only ('re.form=NA') and subtract these fitted values from the observed values.
+
+```{r}
+marginal.residuals <- mod4@frame$d13c - predict(mod4, re.form=NA)
+plot(mod4@frame$block, marginal.residuals)
+predictmeans::CookD(mod4)
+```
+
+The residual plots did not indicate any major problem. Hence we can proceed with interpreting the results.
+
+### e) Estimate variance components
+ 
+How much of the variation in $d^{13}C$' is explained by the fixed and random effects? In models fitted with 'lm', we use the $R^2$ statistics to describe the total variance in the response explained by all the predictors in the model. In a mixed effects modeling context, there is no longer an obvious definition for $R^2$. Two approximate $R^2$ statistics have been implemented in the function ‘r.squaredGLMM’ from the package ‘MuMIn’ (which stands for multi-model inference):
+
+- R2m: marginal $R^2$. This is the variance explained by fixed factors. 
+- R2c: conditional $R^2$. This is interpreted as the variance explained by both fixed and random factors, i.e., the entire model.
+
+In both statistics, the denominator is a sum of the fixed-effects variance, the random effect variance, and the residual variance.
+
+```{r}
+MuMIn::r.squaredGLMM(mod3)
+```
+
+The fixed effect 'block' had a small effect of about 2.5%. The total model explained about 23%, most of which was due to the random effects.
+
+How important are the random factors 'population' and 'family'? The summary for 'mod4' lists the variance components under 'Random effects'. 
+
+
+```{r}
+summary(mod4)
+```
+
+Here we extract these variance components from the summary and divide by their sum. 
+
+```{r}
+fam.var <- nlme::VarCorr(mod4)$"family"[1]
+prov.var <- nlme::VarCorr(mod4)$"population"[1]
+res.var <- summary(mod4)$sigma^2
+
+Components <- data.frame(fam.var, prov.var, res.var)
+Components / sum(Components)
+```
+
+Compared to Cohen's (1988) effect sizes, population and family each had a medium-size effect (> 9% variance explained) on d13c values.
+
+### f) Significance testing
+
+In quantiative genetics, we are more interested in estimating variance components and effects than hypothesis testing. Let's do some testing anyways to see how it works. 
+
+The confusing part here is that we need to fit the model differentely to test fixed and random effects. For random effects, we can use model 'mod4' that was fitted with 'REML=TRUE'. 
+
+The simplest way to test the significance of a random effect is to calculate the model with and without it and use 'anova()' to test whether the more complex model (listed first) explains significantly more than the simpler model. This implements a likelihood ratio test (LR). By default, when used for a model fitted with 'lmer', 'anova' will refit the models with ML. Here we use the option'refit=FALSE' to prevent this.
+
+
+```{r}
+#mod.noPop <- update(mod4, .~. -(1 | population))
+mod.noPop <- lmer(d13c ~ 1  + (1 | family) + block, data=phen, REML=TRUE)
+mod.noFam <- lmer(d13c ~ 1  + (1 | population) + block, data=phen, REML=TRUE)
+anova(mod4, mod.noPop, refit=FALSE)
+anova(mod4, mod.noFam, refit=FALSE)
+```
+
+We can do a similar test for the fixed effecs. Here we have only one effect.
+
+```{r}
+mod.noBlock <- lmer(d13c ~ 1  + (1 | population) + (1 | family), data=phen, REML=FALSE)
+mod.noFam <- lmer(d13c ~ 1  + (1 | population) + block, data=phen, REML=TRUE)
+anova(mod4, mod.noBlock, refit=TRUE, REML=FALSE)
+```
+
+If we have several fixed effects, it may be more convenient to use function 'Anova' from the 'car' package to perform a Wald chi-square test. However, the model must be fitted with ML. Choose between type II and type II sums of squares (see video).
+
+```{r}
+mod4.ML <- lmer(d13c ~ 1  + (1 | population) + (1 | family) + block, 
+                data=phen, REML=FALSE)
+car::Anova(mod4.ML, type="II", test.statistic="Chisq")
+```
+
+## 3. Estimate trait heritability
+
+**Motivation**: Now that we have learned how to estimate genetic values for $δ^{13}C$, let’s learn how to estimate what fraction of the total variation in trait values is due to genetic effects. More precisely, we shall estimate the heritable proportion of the trait variation. Not all genetic effects are transmitted from one generation to the next, but the so-called additive genetic effects (see Week 6 lecture). Here we have data on half-siblings because seeds come from the same mother tree, but their father is most likely different because our species is wind pollinated. In such family structure, the estimation of the additive genetic variance is straightforward because  these analyses provide key information about whether or not local adaptation should even be considered. Remember that local adaptation is about genetically determined phenotypes that vary across environments in responses to differing selective pressures. This step allows us to assess how genetic variation for a phenotypic trait is distributed across the landscape.
+
+**Goals & Background**: The goal for this part of the laboratory is to estimate heritability, trait differentiation, and correlation with environment for trait values determined in Part 1. To do this, we will be using the output from the previous part of the laboratory and the environmental data contained in the file named "WWP_environmental_data.txt". As with the phenotype file this is a tab-delimited text file.
+
+### a) Estimate heritability
+
+Let’s start with estimating the heritability of $δ^{13}C$. If you remember from your undergraduate evolution course, heritability refers generally to the proportion of phenotypic variance due to genetic variance. It comes in at least two different versions. The version we are interested in is narrow-sense heritability ($h^2$), which is defined as the ratio of additive genetic variance to total phenotypic variance:
+
+$$h^{2} = \frac{\sigma^{2}_{additive}}{\sigma^{2}_{total}}$$
+We need to extract the variance components from 'mod3' for all model terms. We do this visually by printing mod3 to screen or using a set of functions applied to 'mod3'. Here, we will do both.
+
+```{r}
+mod4
+```
+
+Using the results from above, let’s calculate $h^2$. If we assume that the seedlings from each maternal tree are half-siblings (i.e. same mom, but each with a different father) then $σ^2_A = 4 σ^2_{family}$ (so variance due to family). If the seedlings were all full-siblings, then the 4 would be replaced with 2. Let’s assume half-siblings. We can then do the following:
+
+Copying the values visually from the output above (note that we need to square the standard deviations to get the variances):
+
+```{r}
+add_var <- 4*(0.2857^2)
+total_wp_var <- (0.2857^2) + (0.3295^2) + (0.8452^2)
+h2 <- add_var/total_wp_var
+h2
+```
+
+And the same using the variance components from above:
+
+```{r}
+one.over.relatedness <- 1/0.25
+h2 <- (one.over.relatedness*Components$fam.var) / sum(Components)
+h2
+```
+
+Inspect your value of $h^2$. What does it mean? 
+
+We have generated a point estimate for $h^2$. It represents the average $h^2$ across populations after removing the genetic effects due to population differences. Would it not be nice to also have a confidence interval? We can do that through an approach known as parametric bootstrapping. This approach simulates data using the fitted model a large number of times. Using the resulting distribution, you can create confidence intervals using the appropriate symmetric quantiles of the distribution. To see this, please
+do the following using the mod_boot function in "supplemental_R_functions.R". 
+
+Note: It will takes a few moments to run the first line! (The rest of the lab will run without this chunk of R code).  
+
+```{r}
+par(mar=c(1, 2, 1, 1))
+h2_boot_out <- mod_boot(model = mod4, nboot = 1000)
+ci_95 <- quantile(h2_boot_out, probs = c(0.025, 0.50, 0.975))
+ci_95
+boxplot(h2_boot_out, range=5); abline(h = h2, col = "red") 
+```
+
+Interpret the numerical 95% confidence intervals 'ci_95' and boxplot with our original $h^2$ estimate (red line: 0.405) for comparison to the bootstrap distribution. 
+
+- Do you think that $h^2$ is statistically different than zero? 
+- Is this consistent with the AIC results from Part 1? 
+- Is it meaningful that the red line is very similar to the mean (or median) of the bootstrap distribution? 
+- How would you change the code for a 99% confidence interval?
+
+### b) Estimate trait differentiation
+
+Great, we have shown that within population genetic variation is statistically greater than zero. What about among population genetic variation? Let’s get to that right now. To measure among population genetic variation we will use a statistic known as $Q_{ST}$. It is similar in concept to $F_{ST}$ from population genetics. To estimate $Q_{ST}$, we will use our LMM output again. If we assume that all seedlings are again half-siblings, then:
+
+$$Q_{ST} = \frac{\sigma^{2}_{population}}
+{\sigma^{2}_{population}+8\sigma^{2}_{family}}$$
+
+Again, we can do this by copying the values visually from the output:
+
+```{r}
+num_qst <- 0.3295^2
+dem_qst <- 0.3295^2 + (8*(0.2857^2))
+qst <- num_qst/dem_qst
+qst
+```
+
+Or using the variance components from above:
+
+```{r}
+num_qst <- Components$prov.var
+dem_qst <- Components$prov.var + (8*Components$fam.var)
+qst <- num_qst/dem_qst
+qst
+```
+
+Inspect your 'qst' value:
+
+- What does it mean? 
+- Look at the quantities in the equation above, what is the denominator equal to? Is it the total phenotypic variance or the total genetic variance?
+
+Now, we can again look at a confidence interval using parametric bootstrapping. Again, please use the function 'mod_boot_qst' that is also located in "supplemental_R_functions.R". 
+
+Note: As before, it will takes a few moments to run the first line! (The rest of the lab will run without this chunk of R code).
+
+```{r}
+par(mar=c(1, 2, 1, 1))
+qst_boot_out <- mod_boot_qst(model = mod3, nboot = 1000)
+ci_95_qst <- quantile(qst_boot_out, probs = c(0.025, 0.50, 0.975)) 
+ci_95_qst
+boxplot(qst_boot_out); abline(h = qst, col = "red")
+```
+
+Interpret the results. 
+
+- Do you think that $Q_{ST}$ is statistically different than zero? 
+- Is this consistent with the AIC results from Part 1? 
+- Is it meaningful that the red line is less similar to the mean (or median) of the bootstrap distribution as compared to $h^2$?
+
+## 4. Compare $Q_{st}$ to $F_{st}$ measured from SNP data
+
+### a) Import 'ecogen' object 
+
+Load the data set 'WWP.ecogen'.
+
+```{r}
+data(WWP.ecogen, package="LandGenCourse")
+```
+
+This 'ecogen' object has information in the following slots:
+
+- **XY**: data frame with spatial coordinates (here: longitude, latitude)
+- **P**: data frame with phenotypic traits (here: intercept, family effects and population effects from mod4) 
+- **G**: data frame with genotypic data (here: 164 SNPs)
+- **A**: generated automatically from G: matrix of allele counts (codominant markers only)
+- **E**: data frame with environmental data (here: 7 bioclimatic site variables)
+- **S**: data frame with structure (hierarchical sampling levels)
+
+
+
+### b) Compare $Q_{ST}$ to $F_{ST}$
+
+See 'Week 6 Bonus Material' for calculating Fst from the SNP data.
+
+Here, we will use the 'QstFstComp' library to formally test whether or not $Q_{ST} > F_{ST}$ for $δ^{13}C$. The function 'QstFstComp' from the package with the same name calculates both $Q_{ST}$ and $F_{ST}$ itself, then tests whethere they are different from each other.
+
+Note: as this is a permutation test, if you run it several times, the results may change slightly from run to run. 
+
+First, however, we need to re-format the data to the format that 'QstFstComp' expects. This is easy with the function 'ecogen2hierfstat'.
+
+```{r}
+WWP.hierfstat <- EcoGenetics::ecogen2hierfstat(WWP.ecogen, pop='population', 
+                                  to_numeric=TRUE, nout=1)
+phen_mod <- phen[,-c(2,4)]
+QstFst_out <- QstFstComp::QstFstComp(fst.dat = WWP.hierfstat, 
+                                     qst.dat = phen_mod, 
+                                     numpops = nlevels(WWP@S$population), 
+                                     nsim = 10000, 
+                                     breeding.design = "half.sib.dam",
+                                     dam.offspring.relatedness = 0.25, 
+                                     output = "concise_nowrite")
+
+QstFst_out
+```
+
+The output contains the following elements:
+
+- '[[1]]': The calculated difference between Qst and Fst, with 95% critical values of the distribution of the distribution under the null hypothesis of no difference.
+- '[[2]]': an output file name (though we suppressed the writing of this file with the option 'output="consise_nowrite")'
+- '[[3]]': p-values for a hypothesis test with H0: $Q_{ST} = F_{ST}$, with three different alternatives ('less', 'greater', 'two.sided')
+- '[[4]]': the Fst value estimated from the data with 95% confidence intervals.
+- '[[5]]': the Qst value estimated from the data with 95% confidence intervals.
+- '[[6]]': the additive genetic variance for the trait with 95% confidence intervals.
+
+Note: the values are somewhat different from what we calculated, most likely because the function 'QstFstComp' did not account for the block effect.
+
+Inspect the first and third elements of the list 'QstFst_out': 
+
+- For the observed values, is $Q_{ST} > F_{ST}$? 
+- Which alternative is most appropriate here?
+- Can the null hypothesis be rejected with alpha = 0.05?
+- What does this mean biologically? 
+
+## 5. Assess correlation between trait and environment
+
+**Motivation**: Similar to the fixed effects, estimates of the random effects can be also extracted from a mixed effects model and used in further analysis. Such estimates are called Best Linear Unbiased Predictions or BLUPs. They are technically predictions because when you fit a mixed effects model, initially only the mean and variance of the random effects are estimated. Then, the random effects or BLUPs for a given experimental unit (e.g., population or family) can be "predicted" from the estimated mean and variance (and the data).
+
+**Goals and background**: Here we will extract block, population and family effects from the model. Then we will correlate the plot-level bioclimatic data with the population effects to see if population differences in seedling d13C trait can be explained by the environment at the site where the mother tree stands. The underlying idea is to look if selection has made the population different. 
+
+### a) Describe and extract effects
+
+Which blocks, populations or trees had higher mean d13c values than others? To answer this question, we extract and plot the fixed and random effects. We'll start with the fixed effect for 'block'. 
+
+The effects are not simply the mean of all seedlings from the same block, but the marginal effect of 'block', i.e., estimates of the mean per block after accounting for all other effects (i.e., keeping population and family constant). 
+
+There are two ways to extract the block effects. The first is with function 'fixef'. This treats the first level of 'block' as a reference level and uses it to estimate the global intercept, then expresses the effect of the other blocks as deviations from the first block. 
+
+```{r}
+lme4::fixef(mod4)
+```
+
+A more convenient way to extract the effects is with function 'ggeffect' of the package 'ggeffects'. This provides a mean for each block.
+
+```{r}
+ggeffects::ggeffect(mod4, terms=c("block"))
+sjPlot::plot_model(mod4, type="eff", terms=c("block"))
+```
+
+The plot shows the predicted d13c value for each block (accounting for population and family) and a 95% confidence interval for each predicted value.
+
+Now let's plot the effects (mean with 95% confidence interval) for each random factor, accounting for all other factors. Again, these are not simply means of observed traits values but marginal effect, accounting for all other factors in the model. 
+
+Note: If the plots appear in the 'Plot' tab in RStudio, use the arrows to scroll between plots.
+
+```{r}
+sjPlot::plot_model(mod3, type="re")     
+```
+
+We can see that there are considerable differences between populations, where 'blk cyn' has the highest, and 'mt watson' the lowest mean. 
+
+We can extract the values with 'ranef'. Again, they are deviations from the global intercept (block 1). We are now ready to correlate the population effect to the environmental data.
+
+```{r}
+prov.eff <- lme4::ranef(mod4)$population
+fam.eff <- lme4::ranef(mod4)$family
+prov.eff
+head(fam.eff)
+```
+
+### b) Correlation of population effect with environment
+
+We have population effects estimated for 10 populations, and bioclimatic data for 30 plots (3 plots x 10 populations). If we used all 157 rows of the site data set, this would inflate our sample size. To avoid this, we first extract 30 unique rows (one per plot) from the site data 'WWP.ecogen@E'. Then we use' match' to find for each plot the corresponding population. This returns the row number ('index') and we use it to extract the corresponding population effect.
+
+```{r}
+Plot.data <- dplyr::distinct(data.frame(WWP.ecogen@E, 
+                    population=WWP.ecogen@S$population))
+index <- match(Plot.data$population, row.names(prov.eff))
+dat2 <- data.frame(prov.eff=prov.eff[index,1], Plot.data[,-8])
+```
+
+Now we estimate the correlation between the population effect and each bioclimatic variable. We summarize the results in a correlation matrix plot.
+
+```{r fig.height=7.5, fig.width=7.5}
+pairs(dat2, lower.panel=panel.smooth, upper.panel=panel.cor,
+      diag.panel=panel.hist)
+```
+
+How to read this plot:
+
+- Each diagonal cell shows the name and histogram of one variable.
+- Each cell in the upper triangle shows the correlation coefficient r, and the p-value for the correlation, between the two variables that define the corresponding row and column. (A larger font indicates a stronger correlation, though this seems to be inconsistent).
+- Each cell in the lower triangle shows a scatterplot of the two variables that define the corresponding row and column. A smooth regression line is shown in red.
+
+Questions:
+
+- Which site variables show the strongest correlation with the population effect?
+- Which site variables are significantly correlated with the population effect?
+- OVerall, does the population effect appear to be related to the environment?
+
+
+```{r message=FALSE, warning=TRUE, include=FALSE}
+#detach("package:lme4", unload=TRUE)
+#detach("package:Matrix", unload=TRUE)
+#detach("package:adegenet", unload=TRUE)
+#detach("package:ade4", unload=TRUE)
+#detach("package:gstudio", unload=TRUE)
+LandGenCourse::detachAllPackages()
+```
+

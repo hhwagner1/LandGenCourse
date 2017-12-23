@@ -1,7 +1,7 @@
 Package: LandGenCourse
 Type: Package
 Title: Interface for course "Landscape Genetic Data Analysis with R"
-Version: 1.0.3
+Version: 1.0.4
 Author: Helene Wagner
 Maintainer: Helene Wagner <hhwagner1@gmail.com>
 Description: Installs four RStudio Addins (Watch Course Video, Start Tutorial, Choose Worked Examples, Open Cheat Sheet), several vignettes, and course data sets.
@@ -28,11 +28,15 @@ Imports:
     methods,
     miniUI (>= 0.1.1),
     mmod,
+    MuMIn,
+    nlme,
     pegas,
     PopGenReport,
     poppr,
+    predictmeans,
     proto,
     pwr,
+    QstFstComp,
     raster,
     rasterVis,
     readr,
@@ -44,6 +48,7 @@ Imports:
     seqinr,
     sf,
     shiny (>= 0.13),
+    sjPlot,
     SoDA,
     spacetime,
     sp,

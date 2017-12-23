@@ -19,7 +19,8 @@ watchVideoAddin <- function() {
                         "Week 2: Land Cover Analysis in R"=6,
                         "Week 3: Genetic Diversity (Part 1)"=7,
                         "Week 3: Genetic Diversity (Part 2)"=8,
-                        "Week 6: Linear Models in R (Part 1)"=9),
+                        "Week 6: Linear (Mixed) Models in R (Part 1)"=9,
+                        "Week 6: Linear (Mixed) Models in R (Part 2)"=10),
                   selected = 5
       )
     )
@@ -41,9 +42,10 @@ watchVideoAddin <- function() {
         "http://sho.co/19EFD",
         "http://sho.co/19DCV",
         "http://sho.co/19DA2",
-        "http://sho.co/19RL7",
-        "http://sho.co/19RL1",
-        "http://sho.co/19PHI")[as.numeric(input$video)]
+        "http://sho.co/19SY4",
+        "http://sho.co/19SY6",
+        "http://sho.co/19SXN",
+        "http://sho.co/19SXK")[as.numeric(input$video)]
 
       selectedSlides <- c("", "", "",
                           "Week0_Slides.pdf",
@@ -51,6 +53,7 @@ watchVideoAddin <- function() {
                           "Week2_Slides.pdf",
                           "Week3_Slides.pdf",
                           "Week3_Slides.pdf",
+                          "Week6_Slides.pdf",
                           "Week6_Slides.pdf")[as.numeric(input$video)]
 
       if(!dir.exists(file.path("./downloads")))
@@ -86,7 +89,7 @@ watchVideoAddin <- function() {
   }
 
   viewer <- shiny::dialogViewer("Watch a Course Video",
-                                width = 400, height = 600)
+                                width = 500, height = 600)
   shiny::runGadget(ui, server, viewer = viewer)
 
 }
