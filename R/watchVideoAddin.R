@@ -19,8 +19,9 @@ watchVideoAddin <- function() {
                         "Week 2: Land Cover Analysis in R"=6,
                         "Week 3: Genetic Diversity (Part 1)"=7,
                         "Week 3: Genetic Diversity (Part 2)"=8,
-                        "Week 6: Linear (Mixed) Models in R (Part 1)"=9,
-                        "Week 6: Linear (Mixed) Models in R (Part 2)"=10),
+                        "Week 5: Spatial Statistics"=9,
+                        "Week 6: Linear (Mixed) Models in R (Part 1)"=10,
+                        "Week 6: Linear (Mixed) Models in R (Part 2)"=11),
                   selected = 5
       )
     )
@@ -44,6 +45,7 @@ watchVideoAddin <- function() {
         "http://sho.co/19DA2",
         "http://sho.co/19SY4",
         "http://sho.co/19SY6",
+        "http://sho.co/19UM3",
         "http://sho.co/19SXN",
         "http://sho.co/19SXK")[as.numeric(input$video)]
 
@@ -53,6 +55,7 @@ watchVideoAddin <- function() {
                           "Week2_Slides.pdf",
                           "Week3_Slides.pdf",
                           "Week3_Slides.pdf",
+                          "Week5_Slides.pdf",
                           "Week6_Slides.pdf",
                           "Week6_Slides.pdf")[as.numeric(input$video)]
 
