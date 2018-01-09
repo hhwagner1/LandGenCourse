@@ -4,7 +4,7 @@ require(lme4)
 #require(car)
 #require(EcoGenetics)
 require(tibble)
-#require(sjPlot)
+#require(lattice)
 #require(MuMIn)
 #require(predictmeans)
 #require(nlme)
@@ -141,10 +141,9 @@ lme4::fixef(mod4)
 
 ## ------------------------------------------------------------------------
 ggeffects::ggeffect(mod4, terms=c("block"))
-sjPlot::plot_model(mod4, type="eff", terms=c("block"))
 
 ## ------------------------------------------------------------------------
-sjPlot::plot_model(mod3, type="re")     
+lattice::dotplot(ranef(mod4,condVar=TRUE))
 
 ## ------------------------------------------------------------------------
 prov.eff <- lme4::ranef(mod4)$population

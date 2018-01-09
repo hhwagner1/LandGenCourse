@@ -24,6 +24,7 @@ Imports:
     hierfstat,
     httpuv,
     igraph,
+    lattice,
     lme4,
     methods,
     miniUI (>= 0.1.1),
