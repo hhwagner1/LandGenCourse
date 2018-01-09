@@ -21,7 +21,7 @@
     \item{YEAR}{Year of sampling}
     \item{Spatial}{Logical: population included in spatial study?}
     \item{MultiYear}{Logical: population sampled in multiple years?}
-    \item{APE}{Logical: population extinct between sampling years? Based on Table 2.}
+    \item{APE}{Logical: population extinct between sampling years? Based on Table 5.}
     \item{Cluster}{Cluster name for populations that belong to a cluster.}
     \item{n}{Number of individuals sampled per population.}
     \item{RA}{Allelic richness based on a sample size of 14 individuals. From Table 2.}

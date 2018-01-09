@@ -132,9 +132,6 @@ pwr::pwr.t2n.test(n1=8, n2=4, d=-0.8, alternative = "less")
 pwr::pwr.t.test( power=0.8, d=-0.8, alternative = "less")
 
 ## ----message=FALSE, warning=TRUE, include=FALSE--------------------------
-
-
-## ----message=FALSE, warning=TRUE, include=FALSE--------------------------
 #detach("package:gstudio", unload=TRUE)
 #detach("package:EcoGenetics", unload=TRUE)
 LandGenCourse::detachAllPackages()

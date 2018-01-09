@@ -16,7 +16,12 @@ watchVideoAddin <- function() {
                         "Week 0: Intro to R Notebooks"=3,
                         "Week 0: Version Control 101"=4,
                         "Week 1: Getting LG Data into R"=5,
-                        "Week 2: Land Cover Analysis in R"=6),
+                        "Week 2: Land Cover Analysis in R"=6,
+                        "Week 3: Genetic Diversity (Part 1)"=7,
+                        "Week 3: Genetic Diversity (Part 2)"=8,
+                        "Week 5: Spatial Statistics"=9,
+                        "Week 6: Linear (Mixed) Models in R (Part 1)"=10,
+                        "Week 6: Linear (Mixed) Models in R (Part 2)"=11),
                   selected = 5
       )
     )
@@ -37,12 +42,22 @@ watchVideoAddin <- function() {
         "https://www.dropbox.com/s/hxij2c18hckc1uv/Intro_RNotebooks.mp4?dl=0",
         "http://sho.co/19EFD",
         "http://sho.co/19DCV",
-        "http://sho.co/19DA2")[as.numeric(input$video)]
+        "http://sho.co/19DA2",
+        "http://sho.co/19SY4",
+        "http://sho.co/19SY6",
+        "http://sho.co/19UM3",
+        "http://sho.co/19SXN",
+        "http://sho.co/19SXK")[as.numeric(input$video)]
 
       selectedSlides <- c("", "", "",
                           "Week0_Slides.pdf",
                           "Week1_Slides.pdf",
-                          "Week2_Slides.pdf")[as.numeric(input$video)]
+                          "Week2_Slides.pdf",
+                          "Week3_Slides.pdf",
+                          "Week3_Slides.pdf",
+                          "Week5_Slides.pdf",
+                          "Week6_Slides.pdf",
+                          "Week6_Slides.pdf")[as.numeric(input$video)]
 
       if(!dir.exists(file.path("./downloads")))
       {
@@ -53,8 +68,13 @@ watchVideoAddin <- function() {
       if(as.numeric(input$type) != 1 && selectedSlides!="")
       {
 
-        utils::download.file(paste0("https://github.com/hhwagner1/DGS_LG_Labs/raw/master/docs/Video_slides/", selectedSlides),
-               destfile=file.path("downloads", selectedSlides), mode="wb")
+        if (file.exists(file.path("downloads", selectedSlides))) {
+            cat("Slides already downloaded, skipping download. Slides will open in default PDF viewer.", "\n");
+        } else {
+          utils::download.file(paste0("https://github.com/hhwagner1/DGS_LG_Labs/raw/master/docs/Video_slides/", selectedSlides),
+                               destfile=file.path("downloads", selectedSlides), mode="wb")
+          cat("Slides will open in default PDF viewer.", "\n");
+           }
         utils::browseURL(file.path("downloads", selectedSlides))
       }
 
@@ -64,7 +84,6 @@ watchVideoAddin <- function() {
       cat("Hints:
 - Videos open in your default web browser.
 - Make video fullscreen by clicking on screen symbol (bottom right).
-- Slides open in your default PDF viewer.
 - Slides are saved to folder 'download' in your active working directory.")
 
       shiny::stopApp()
@@ -73,7 +92,7 @@ watchVideoAddin <- function() {
   }
 
   viewer <- shiny::dialogViewer("Watch a Course Video",
-                                width = 400, height = 600)
+                                width = 500, height = 600)
   shiny::runGadget(ui, server, viewer = viewer)
 
 }
