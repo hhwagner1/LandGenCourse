@@ -1,8 +1,6 @@
 ---
 title: "Week 3: Genetic Diversity"
-author: 
-- "Helene Wagner"
-- "Melanie Murphy"
+author: "Helene Wagner"
 date: "`r Sys.Date()`"
 show_toc: true
 output:
@@ -25,12 +23,6 @@ This worked example shows how to:
 - Check markers and populations (polymorphism, HWE, linkage, null alleles). 
 - Assess genetic diversity.
 - Aggregate genetic data at the population level.
-
-In addition, this week's bonus material shows how to:
-- Add sampling locations and hierarchical structure to genind object.
-- Estimate inbreeding coefficients.
-- Calculate genetic distances among individuals and populations.
-- Analyze genetic structure with F statistics (and analogues) and AMOVA.
 
 ### b) Data set 
 
@@ -247,10 +239,9 @@ These measures are typically quantified per population.
 
 Both nominal sample size (number of frogs sampled) and valid sample size (e.g., for each locus, the number of frogs with non-missing genetic data) vary between sites. We would expect the number of alleles found in a population to increase with the number of individuals genotyped. 
 
-We can check this by plotting allelic richness against sample size. Here we create an object 'Sum' that contains the summary of the genind object, then we can access its elements by '$' to plot what we need. The function 'names' lists the names of the elements, which reduced the guesswork.
+We can check this by plotting the number of alleles against sample size. Here we create an object 'Sum' that contains the summary of the genind object, then we can access its elements by '$' to plot what we need. The function 'names' lists the names of the elements, which reduced the guesswork.
 
 ```{r}
-# rarefied allelic richness
 Sum <- summary(Frogs.genind)
 names(Sum)
 ```
@@ -259,7 +250,7 @@ The site names are quite long, hence we print the labels vertically by setting '
 
 We add a regression line to the scatterplot with the function 'abline', where we specify the linear regression model with the function 'lm'. In this case, we model the response 'pop.n.all' as a function of predictor 'n.by.pop'.
 
-The barchart (left) shows that there is considerable variation among ponds in the total number of alleles observed across all loci. The scatterplot (right) with the red regression line shows that the total number of alleles increases with sample size. 
+The barchart (left) shows that there is considerable variation among ponds in the number of alleles observed across all loci. The scatterplot (right) with the red regression line shows that the number of alleles increases with sample size. 
 
 ```{r, fig.show='hold'}
 par(mar=c(5.5, 4.5,1,1))
@@ -270,7 +261,7 @@ plot(Sum$n.by.pop, Sum$pop.n.all,
 abline(lm(Sum$pop.n.all ~ Sum$n.by.pop), col = "red")
 ```  
 
-Hence we should not compare allelic richness directly. Instead, we'll use rarefied allelic richness (Ar). 
+Hence we should not compare the number of alleles directly. Instead, we'll use rarefied allelic richness (Ar). 
 
 By default, the function 'allel.rich' finds the lowest valid sample size across all populations and loci, and multiplies it by the ploidy level. The number is stored as 'Richness$alleles.sampled' (here: 3 individuals * 2 alleles = 6 alleles). Alternatively, this number can be set with the 'min.alleles' argument.  
 
@@ -280,7 +271,7 @@ Richness <- PopGenReport::allel.rich(Frogs.genind, min.alleles = NULL)
 Richness$alleles.sampled
 ```  
 
-Populations with more alleles are resampled to determine the average allelic richness among the minimum number of allels. Here, this means that 6 alleles are sampled from each population, allelic richness is calculated, and the process is repeated many times to determine the average).
+Populations with more alleles are resampled to determine the average allelic richness among the minimum number of alleles. Here, this means that 6 alleles are sampled from each population, allelic richness is calculated, and the process is repeated many times to determine the average).
 
 Let's plot the results again. The barchart shows that there is considerable variation in genetic diversity among ponds. The scatterplot against sample size (here: for each population, the average number of valid alleles across loci) suggests that the variation is not related to sample size. The regression line (red) is almost horizontal.
 
@@ -304,7 +295,7 @@ Note: Writing the 'genind' summary into an object 'Sum' allows accessing its att
   names(Sum)
 ```
   
-Expected heterozygosity (Hexp) is a measure of genetic diversity among individuals, and observed heterozygosity (Hobs) within individuals. Here are the global values (pooled across all populations):
+Expected heterozygosity (here: Hexp) is the heterozygosity expected in a population under HWE, and observed heterozygosity (here: Hobs) is the observed number of heterozygotes at a locus divided by the total number of genotyped individuals. Here are the global values (pooled across all populations):
 
 ```{r, fig.show='hold', fig.height=3, fig.width=4}
   par(mar=c(3, 4.5,1,1))
@@ -383,12 +374,6 @@ The allele frequencies of all alleles from the same locus (e.g., A.1, A.2 and A.
 apply(Freq, MARGIN = 1, FUN = sum)    # Just checking
 ```
 
-
-
 ```{r message=FALSE, warning=TRUE, include=FALSE}
-#detach("package:poppr", unload=TRUE)
-#detach("package:dplyr", unload=TRUE)
-#detach("package:adegenet", unload=TRUE)
-#detach("package:ade4", unload=TRUE)
 LandGenCourse::detachAllPackages()
 ```

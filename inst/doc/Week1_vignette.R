@@ -68,8 +68,5 @@ Frogs.gstudio <- data.frame(FrogID=Frogs$FrogID, Frogs.gstudio)
 str(Frogs.gstudio)
 
 ## ----message=FALSE, warning=TRUE, include=FALSE--------------------------
-#detach("package:adegenet", unload=TRUE)
-#detach("package:ade4", unload=TRUE)
-#detach("package:gstudio", unload=TRUE)
-detachAllPackages()
+LandGenCourse::detachAllPackages()
 
