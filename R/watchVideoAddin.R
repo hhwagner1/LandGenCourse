@@ -43,8 +43,8 @@ watchVideoAddin <- function() {
         "http://sho.co/19EFD",
         "http://sho.co/19DCV",
         "http://sho.co/19DA2",
-        "http://sho.co/19USZ",
-        "http://sho.co/19USY",
+        "http://sho.co/19UT5",
+        "http://sho.co/19UT6",
         "http://sho.co/19UM3",
         "http://sho.co/19SXN",
         "http://sho.co/19SXK")[as.numeric(input$video)]
