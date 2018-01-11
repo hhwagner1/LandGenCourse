@@ -37,11 +37,11 @@ openCheatsheetAddin <- function() {
 
       selectedFile <- switch(input$sheet,
                              "1" = "",
-                             "2" = "https://github.com/rstudio/cheatsheets/raw/master/source/pdfs/base-r.pdf",
-                             "3" = "https://github.com/rstudio/cheatsheets/raw/master/source/pdfs/rmarkdown-cheatsheet-2.0.pdf",
-                             "4" = "https://github.com/rstudio/cheatsheets/raw/master/source/pdfs/data-import-cheatsheet.pdf",
-                             "5" = "https://github.com/rstudio/cheatsheets/raw/master/source/pdfs/data-transformation-cheatsheet.pdf",
-                             "6" = "https://github.com/rstudio/cheatsheets/raw/master/source/pdfs/ggplot2-cheatsheet-2.1.pdf")
+                             "2" = "https://github.com/rstudio/cheatsheets/raw/master/base-r.pdf",
+                             "3" = "https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf",
+                             "4" = "https://github.com/rstudio/cheatsheets/raw/master/data-import.pdf",
+                             "5" = "https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf",
+                             "6" = "https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf")
 
       utils::download.file(selectedFile,
                          destfile=file.path("downloads", basename(selectedFile)),
