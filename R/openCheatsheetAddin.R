@@ -23,7 +23,7 @@ openCheatsheetAddin <- function() {
 
     if(input$sheet == "1")
     {
-      utils::browseURL(paste0("file://", system.file("extdata", "RCommands.doc",
+      utils::browseURL(paste0("file://", system.file("extdata", "RCommands.docx",
                                                        package = "LandGenCourse")))
     }
 
