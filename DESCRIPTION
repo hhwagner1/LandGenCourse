@@ -13,7 +13,6 @@ Imports:
     ade4(>= 1.7-8),
     adegenet (>= 2.1.0),
     base64enc,
-    car,
     dplyr,
     EcoGenetics (>= 1.2.1-2),
     effsize,
