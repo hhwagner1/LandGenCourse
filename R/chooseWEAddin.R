@@ -11,10 +11,12 @@ chooseWEAddin <- function() {
                   selected = 1
       ),
       shiny::selectInput("example", "Choose a Worked Example:",
-                   list("Week 1: Importing Genetic Data"=1,
-                        "Week 2: Spatial Data"=2,
-                        "Week 2: Bonus Material"=3,
-                        "Week 3: Genetic Diversity"=4),
+                   list("Week 0: Intro to R Programming"=1,
+                        "Week 0: R Graphics"=2,
+                        "Week 1: Importing Genetic Data"=3,
+                        "Week 2: Spatial Data"=4,
+                        "Week 2: Bonus Material"=5,
+                        "Week 3: Genetic Diversity"=6),
                   selected = 1
       )
     )
@@ -25,7 +27,9 @@ chooseWEAddin <- function() {
     # Listen for 'done' events.
     shiny::observeEvent(input$done, {
 
-      selectedFile <- paste0(c("Week1_vignette",
+      selectedFile <- paste0(c("Week0_BasicR",
+                               "Week0_Graphics",
+                               "Week1_vignette",
                                "Week2_vignette",
                                "Week2_bonus_vignette",
                                "Week3_vignette")[as.numeric(input$example)],
