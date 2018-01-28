@@ -48,6 +48,7 @@ require(EcoGenetics)
 #require(mmod)
 #require(spdep)
 #require(SoDA)
+#require(MASS)
 ```
 
 ## 2. Data import and manipulation

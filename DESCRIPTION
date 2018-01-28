@@ -28,6 +28,7 @@ Imports:
     igraph,
     lattice,
     lme4,
+    MASS,
     methods,
     miniUI (>= 0.1.1),
     mmod,
