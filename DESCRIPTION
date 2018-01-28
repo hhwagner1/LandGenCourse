@@ -19,6 +19,8 @@ Imports:
     formatR (>= 1.5),
     GeNetIt,
     geosphere,
+    ggplot2,
+    ggmap,
     gstudio,
     here,
     hierfstat,
