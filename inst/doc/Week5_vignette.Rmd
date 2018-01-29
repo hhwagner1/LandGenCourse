@@ -48,6 +48,7 @@ require(EcoGenetics)
 #require(mmod)
 #require(spdep)
 #require(SoDA)
+#require(MASS)
 ```
 
 ## 2. Data import and manipulation
@@ -58,7 +59,7 @@ We will only need one year's data from each site. Like last week, we select the 
 
 ```{r}
 data(dd.site)
-dd.spatial <- dd.site[dd.site$Spatial==TRUE,]
+dd.spatial <- dd.site[dd.site@data$Spatial==TRUE,]
 #Snails.site.df <- as.data.frame(dd.spatial)
 ```
 
@@ -495,7 +496,7 @@ Each row contains the weights for the neighbors of one site. We see that the fif
 ### c) Calculating and testing Moran's I
 
 ```{r}
-spdep::moran.test(dd.spatial$RA, spdep::nb2listw(nb.gab),
+spdep::moran.test(dd.spatial@data$RA, spdep::nb2listw(nb.gab),
                   alternative="greater")
 ```
 

@@ -43,7 +43,6 @@ All required packages should have been installed already when you installed 'Lan
 ```{r message=FALSE, warning=TRUE}
 require(LandGenCourse)
 require(lme4)
-#require(car)
 #require(EcoGenetics)
 require(tibble)
 #require(lattice)
@@ -51,6 +50,9 @@ require(tibble)
 #require(predictmeans)
 #require(nlme)
 #require(QstFstComp)
+#require(car)  
+
+#require(ggeffects)     # Not automatically installed with 'LandGenCourse'
 
 source(system.file("extdata", "supplemental_R_functions.R", 
                             package = "LandGenCourse"))
@@ -416,7 +418,11 @@ lme4::fixef(mod4)
 
 A more convenient way to extract the effects is with function 'ggeffect' of the package 'ggeffects'. 
 
+Note: The package 'ggeffects' is not automatically imported with 'LandGenCourse' to avoid incompatibility issues. You can install by runing 'install.packages("ggeffects")' below without '#'. 
+
 ```{r}
+# install.packages("ggeffects")
+
 ggeffects::ggeffect(mod4, terms=c("block"))
 ```
 

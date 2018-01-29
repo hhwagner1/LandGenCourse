@@ -10,10 +10,11 @@ require(EcoGenetics)
 #require(mmod)
 #require(spdep)
 #require(SoDA)
+#require(MASS)
 
 ## ------------------------------------------------------------------------
 data(dd.site)
-dd.spatial <- dd.site[dd.site$Spatial==TRUE,]
+dd.spatial <- dd.site[dd.site@data$Spatial==TRUE,]
 #Snails.site.df <- as.data.frame(dd.spatial)
 
 ## ------------------------------------------------------------------------
@@ -213,7 +214,7 @@ par(mfrow=c(1,1))
 spdep::nb2mat(nb.gab)[1:5,1:5]
 
 ## ------------------------------------------------------------------------
-spdep::moran.test(dd.spatial$RA, spdep::nb2listw(nb.gab),
+spdep::moran.test(dd.spatial@data$RA, spdep::nb2listw(nb.gab),
                   alternative="greater")
 
 ## ------------------------------------------------------------------------

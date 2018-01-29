@@ -52,7 +52,7 @@ require(LandGenCourse)
 require(sp)
 require(raster)
 require(GeNetIt)
-require(tmaptools) 
+#require(tmaptools) 
 require(SDMTools) # for landscape metrics
 require(tibble)
 ```
@@ -109,7 +109,10 @@ For more information on CRS, see: https://www.nceas.ucsb.edu/~frazier/RSpatialGu
 
 We know that these coordinates are UTM zone 11 (Northern hemisphere) coordinates, hence we can use a helper function to find the correct 'proj4string', using function 'get_proj4' from the 'tmaptools' package. (For the Southern hemisphere, you would add 's' after the zone: "utm11s"). Here we call the function and the package simultaneously (this is good practice, as it helps keep track of where the functions in your code come from).
 
+Note: Package 'tmaptools' has not been automatically installed with 'LandGenCourse' to avoid incompatibilities. To use the function, you may first need to install 'tmaptools' by running the line with 'install.packages("tmaptools")' without '#'.
+
 ```{r}
+#install.packages("tmaptools")
 proj4string(Sites.sp) <- tmaptools::get_proj4("utm11")
 ```
 

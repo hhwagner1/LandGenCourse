@@ -9,6 +9,7 @@ require(EcoGenetics)
 #require(sp)
 #require(ggmap)
 #require(ggplot2)
+#require(car)          
 
 ## ------------------------------------------------------------------------
 data(dd.ecogen, package = "LandGenCourse")
@@ -51,8 +52,7 @@ plot(mod.diff, labels.id = names(residuals(mod.diff)))
 par(mfrow=c(1,1))
 
 ## ------------------------------------------------------------------------
-#install.packages("car")
-#car::vif(mod.diff)
+car::vif(mod.diff)
 
 ## ------------------------------------------------------------------------
 dd.spatial@data$Residuals <- mod.diff$residuals

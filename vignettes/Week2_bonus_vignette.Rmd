@@ -35,7 +35,6 @@ require(sf)
 require(raster)
 require(GeNetIt)
 require(rasterVis)
-require(tmaptools) 
 ```
 
 ## 2. Convert 'SpatialPointsDataFrame' to 'sf' object 

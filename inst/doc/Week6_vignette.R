@@ -1,7 +1,6 @@
 ## ----message=FALSE, warning=TRUE-----------------------------------------
 require(LandGenCourse)
 require(lme4)
-#require(car)
 #require(EcoGenetics)
 require(tibble)
 #require(lattice)
@@ -9,6 +8,9 @@ require(tibble)
 #require(predictmeans)
 #require(nlme)
 #require(QstFstComp)
+#require(car)  
+
+#require(ggeffects)     # Not automatically installed with 'LandGenCourse'
 
 source(system.file("extdata", "supplemental_R_functions.R", 
                             package = "LandGenCourse"))
@@ -140,6 +142,8 @@ QstFst_out
 lme4::fixef(mod4)
 
 ## ------------------------------------------------------------------------
+# install.packages("ggeffects")
+
 ggeffects::ggeffect(mod4, terms=c("block"))
 
 ## ------------------------------------------------------------------------

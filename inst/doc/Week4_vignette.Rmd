@@ -55,6 +55,7 @@ require(EcoGenetics)
 #require(sp)
 #require(ggmap)
 #require(ggplot2)
+#require(car)          
 ```
 
 ### d) Import data
@@ -189,11 +190,10 @@ plot(mod.diff, labels.id = names(residuals(mod.diff)))
 par(mfrow=c(1,1))
 ```
 
-Note: If we had more than two predictors, it would be a good idea to calculate variance inflation factors. The package 'car' has a function 'vif' that takes as argument a fitted model. The package 'car' is not automatically installed with 'LandGenCourse' due to compatibility issues. Feel free to uncomment and run the code below to install 'car' and calculate variance inflation factors. Here, both predictors have VIF = 1.007, which indicates no collinearity.
+If we had more than two predictors, it would be a good idea to calculate variance inflation factors. The package 'car' has a function 'vif' that takes as argument a fitted model. Here, both predictors have VIF = 1.007, which indicates no collinearity. 
 
 ```{r}
-#install.packages("car")
-#car::vif(mod.diff)
+car::vif(mod.diff)
 ```
 
 ### c) Which populations don't fit the general pattern?

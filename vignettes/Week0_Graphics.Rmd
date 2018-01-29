@@ -36,6 +36,13 @@ I will also provide examples using two different plotting approaches. R has a ro
 
 In the normal plotting routines discussed before, configuration of these layers were specified as arguments passed to the plotting function (`plot()`, `boxplot()`, etc.). The ggplot2 library takes a different approach, allowing you to specify these components separately and literally add them together like components of a linear model.
 
+Required packages:
+
+```{r}
+library(ggplot2)
+library(RColorBrewer)
+```
+
 # 2. Univariate plots
 
 ## 2.1. Barplots and histograms

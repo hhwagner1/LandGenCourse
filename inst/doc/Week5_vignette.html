@@ -141,7 +141,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="co">#require(PopGenReport)</span>
 <span class="co">#require(mmod)</span>
 <span class="co">#require(spdep)</span>
-<span class="co">#require(SoDA)</span></code></pre></div>
+<span class="co">#require(SoDA)</span>
+<span class="co">#require(MASS)</span></code></pre></div>
 </div>
 </div>
 <div id="data-import-and-manipulation" class="section level2">
@@ -150,7 +151,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h3>a) Import and subset site data</h3>
 <p>We will only need one year’s data from each site. Like last week, we select the rows (combinations of site and year) from the site data with ‘Spatial==TRUE’.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(dd.site)
-dd.spatial &lt;-<span class="st"> </span>dd.site[dd.site<span class="op">$</span>Spatial<span class="op">==</span><span class="ot">TRUE</span>,]
+dd.spatial &lt;-<span class="st"> </span>dd.site[dd.site<span class="op">@</span>data<span class="op">$</span>Spatial<span class="op">==</span><span class="ot">TRUE</span>,]
 <span class="co">#Snails.site.df &lt;- as.data.frame(dd.spatial)</span></code></pre></div>
 <p>For some analyses, we need to convert geographic coordinates from latitude-longitude format into metric coordinates to facilitate the calcultion of geographic distances. Here we add the metric coordinates (“x” and “Y”) to the <span class="citation">@data</span> slot. We use ‘cbind’ to bind the columns with the coordinates with the columns in <a href="mailto:dd.spaital@data">dd.spaital@data</a>. Because ‘xy’ is listed first, it will be inserted as the first two columns.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">xy &lt;-<span class="st"> </span>SoDA<span class="op">::</span><span class="kw">geoXY</span>(dd.spatial<span class="op">@</span>coords[,<span class="st">'Latitude'</span>], 
@@ -158,22 +159,21 @@ dd.spatial &lt;-<span class="st"> </span>dd.site[dd.site<span class="op">$</span
 dd.spatial<span class="op">@</span>data &lt;-<span class="st"> </span><span class="kw">cbind</span>(xy, dd.spatial<span class="op">@</span>data)
 tibble<span class="op">::</span><span class="kw">as.tibble</span>(dd.spatial<span class="op">@</span>data)</code></pre></div>
 <pre><code>## # A tibble: 25 x 24
-##            X         Y   SiteID   SITE  YEAR Spatial MultiYear   APE
-##  *     &lt;dbl&gt;     &lt;dbl&gt;    &lt;chr&gt; &lt;fctr&gt; &lt;int&gt;   &lt;lgl&gt;     &lt;lgl&gt; &lt;lgl&gt;
-##  1  5955.311 14828.660 PICO2009   PICO  2009    TRUE      TRUE FALSE
-##  2  8008.129  3441.560  ROC2006    ROC  2006    TRUE      TRUE FALSE
-##  3     0.000 26415.065  SEN2007    SEN  2007    TRUE      TRUE FALSE
-##  4 13974.132  2357.080  VEE2008    VEE  2008    TRUE      TRUE FALSE
-##  5  1507.538 12615.415  GEF2009    GEF  2009    TRUE      TRUE FALSE
-##  6  1336.470  2213.221  REJ2008    REJ  2008    TRUE      TRUE FALSE
-##  7 15032.616 10380.042  ECL2009    ECL  2009    TRUE      TRUE  TRUE
-##  8 21351.447 11851.847  COU2009    COU  2009    TRUE      TRUE FALSE
-##  9  6543.358 26182.672    FDR09    FDR  2009    TRUE      TRUE  TRUE
-## 10  9152.148 24910.043    MAH09    MAH  2009    TRUE      TRUE  TRUE
-## # ... with 15 more rows, and 16 more variables: Cluster &lt;fctr&gt;, n &lt;int&gt;,
-## #   RA &lt;dbl&gt;, He &lt;dbl&gt;, f &lt;dbl&gt;, s &lt;dbl&gt;, Type &lt;fctr&gt;, FST.GESTE &lt;dbl&gt;,
-## #   Size &lt;dbl&gt;, V &lt;dbl&gt;, C &lt;dbl&gt;, Stab &lt;dbl&gt;, D &lt;int&gt;, APA &lt;int&gt;,
-## #   NLT &lt;dbl&gt;, Fst.temp &lt;dbl&gt;</code></pre>
+##        X     Y SiteID   SITE   YEAR Spatial MultiYear APE   Cluster     n
+##  * &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;fct&gt; &lt;int&gt; &lt;lgl&gt;   &lt;lgl&gt;     &lt;lgl&gt; &lt;fct&gt;   &lt;int&gt;
+##  1  5955 14829 PICO2009 PICO   2009 T       T         F     &lt;NA&gt;       32
+##  2  8008  3442 ROC2006  ROC    2006 T       T         F     &lt;NA&gt;       32
+##  3     0 26415 SEN2007  SEN    2007 T       T         F     &lt;NA&gt;       30
+##  4 13974  2357 VEE2008  VEE    2008 T       T         F     &lt;NA&gt;       31
+##  5  1508 12615 GEF2009  GEF    2009 T       T         F     &lt;NA&gt;       30
+##  6  1336  2213 REJ2008  REJ    2008 T       T         F     &lt;NA&gt;       31
+##  7 15033 10380 ECL2009  ECL    2009 T       T         T     &lt;NA&gt;       30
+##  8 21351 11852 COU2009  COU    2009 T       T         F     &lt;NA&gt;       22
+##  9  6543 26183 FDR09    FDR    2009 T       T         T     &lt;NA&gt;       32
+## 10  9152 24910 MAH09    MAH    2009 T       T         T     &lt;NA&gt;       31
+## # ... with 15 more rows, and 14 more variables: RA &lt;dbl&gt;, He &lt;dbl&gt;,
+## #   f &lt;dbl&gt;, s &lt;dbl&gt;, Type &lt;fct&gt;, FST.GESTE &lt;dbl&gt;, Size &lt;dbl&gt;, V &lt;dbl&gt;,
+## #   C &lt;dbl&gt;, Stab &lt;dbl&gt;, D &lt;int&gt;, APA &lt;int&gt;, NLT &lt;dbl&gt;, Fst.temp &lt;dbl&gt;</code></pre>
 </div>
 <div id="b-import-and-subset-genetic-data" class="section level3">
 <h3>b) Import and subset genetic data</h3>
@@ -274,22 +274,21 @@ Snails.genind &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span
 ##     alleles, ploidy</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tibble<span class="op">::</span><span class="kw">as.tibble</span>(Snails.gstudio)</code></pre></div>
 <pre><code>## # A tibble: 749 x 17
-##           ID Latitude Longitude   SiteID   SITE   YEAR Cluster       DDE16
-##  *    &lt;fctr&gt;    &lt;dbl&gt;     &lt;dbl&gt;   &lt;fctr&gt; &lt;fctr&gt; &lt;fctr&gt;  &lt;fctr&gt; &lt;S3: locus&gt;
-##  1 PICO09-01 -61.4570  -61.4570 PICO2009   PICO   2009    &lt;NA&gt;     208:212
-##  2 PICO09-02  16.3519   16.3519 PICO2009   PICO   2009    &lt;NA&gt;     196:228
-##  3 PICO09-03 -61.4570  -61.4570 PICO2009   PICO   2009    &lt;NA&gt;     188:180
-##  4 PICO09-04  16.3519   16.3519 PICO2009   PICO   2009    &lt;NA&gt;     228:172
-##  5 PICO09-05 -61.4570  -61.4570 PICO2009   PICO   2009    &lt;NA&gt;     212:228
-##  6 PICO09-06  16.3519   16.3519 PICO2009   PICO   2009    &lt;NA&gt;     172:204
-##  7 PICO09-07 -61.4570  -61.4570 PICO2009   PICO   2009    &lt;NA&gt;     208:196
-##  8 PICO09-08  16.3519   16.3519 PICO2009   PICO   2009    &lt;NA&gt;     228:192
-##  9 PICO09-09 -61.4570  -61.4570 PICO2009   PICO   2009    &lt;NA&gt;     228:172
-## 10 PICO09-10  16.3519   16.3519 PICO2009   PICO   2009    &lt;NA&gt;     208:172
-## # ... with 739 more rows, and 9 more variables: DDE4 &lt;S3: locus&gt;,
-## #   DDE9 &lt;S3: locus&gt;, DDE12 &lt;S3: locus&gt;, DDE22 &lt;S3: locus&gt;, DDE20 &lt;S3:
-## #   locus&gt;, DDE06 &lt;S3: locus&gt;, DDE14 &lt;S3: locus&gt;, DDE23 &lt;S3: locus&gt;,
-## #   DDE3 &lt;S3: locus&gt;</code></pre>
+##    ID     Latitude Longitude SiteID  SITE  YEAR  Cluster DDE16 DDE4  DDE9 
+##  * &lt;fct&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;fct&gt;   &lt;fct&gt; &lt;fct&gt; &lt;fct&gt;   &lt;S3:&gt; &lt;S3:&gt; &lt;S3:&gt;
+##  1 PICO0…    -61.5     -61.5 PICO20… PICO  2009  &lt;NA&gt;    208:… 251:… 271:…
+##  2 PICO0…     16.4      16.4 PICO20… PICO  2009  &lt;NA&gt;    196:… 267:… 350:…
+##  3 PICO0…    -61.5     -61.5 PICO20… PICO  2009  &lt;NA&gt;    188:… 251:… 319:…
+##  4 PICO0…     16.4      16.4 PICO20… PICO  2009  &lt;NA&gt;    228:… 271:… 339:…
+##  5 PICO0…    -61.5     -61.5 PICO20… PICO  2009  &lt;NA&gt;    212:… 259:… 319:…
+##  6 PICO0…     16.4      16.4 PICO20… PICO  2009  &lt;NA&gt;    172:… 251:… 319:…
+##  7 PICO0…    -61.5     -61.5 PICO20… PICO  2009  &lt;NA&gt;    208:… 296:… 347:…
+##  8 PICO0…     16.4      16.4 PICO20… PICO  2009  &lt;NA&gt;    228:… 276:… 376:…
+##  9 PICO0…    -61.5     -61.5 PICO20… PICO  2009  &lt;NA&gt;    228:… 239:… 255:…
+## 10 PICO0…     16.4      16.4 PICO20… PICO  2009  &lt;NA&gt;    208:… 271:… 251:…
+## # ... with 739 more rows, and 7 more variables: DDE12 &lt;S3: locus&gt;,
+## #   DDE22 &lt;S3: locus&gt;, DDE20 &lt;S3: locus&gt;, DDE06 &lt;S3: locus&gt;, DDE14 &lt;S3:
+## #   locus&gt;, DDE23 &lt;S3: locus&gt;, DDE3 &lt;S3: locus&gt;</code></pre>
 </div>
 </div>
 <div id="calculate-genetic-distances" class="section level2">
@@ -414,11 +413,11 @@ IBD</code></pre></div>
 ## Observation: -0.04134931 
 ## 
 ## Based on 999 replicates
-## Simulated p-value: 0.593 
+## Simulated p-value: 0.628 
 ## Alternative hypothesis: greater 
 ## 
-##     Std.Obs Expectation    Variance 
-## -0.33258286 -0.00390165  0.01267797</code></pre>
+##       Std.Obs   Expectation      Variance 
+## -0.3726089278  0.0004125899  0.0125618636</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attributes</span>(IBD)</code></pre></div>
 <pre><code>## $names
 ## [1] &quot;obs&quot;    &quot;alter&quot;  &quot;rep&quot;    &quot;expvar&quot; &quot;pvalue&quot; &quot;plot&quot;   &quot;call&quot;  
@@ -431,21 +430,21 @@ IBD</code></pre></div>
 <span class="kw">data.frame</span>(<span class="dt">Mantel.r =</span> <span class="kw">sapply</span>(Mantel.test, <span class="cf">function</span>(x) x<span class="op">$</span>obs),
            <span class="dt">p.value =</span> <span class="kw">sapply</span>(Mantel.test, <span class="cf">function</span>(x) x<span class="op">$</span>pvalue))</code></pre></div>
 <pre><code>##                             Mantel.r p.value
-## pairwiseFst.hierfstat   -0.064925412   0.690
-## propShared.PopGenReport -0.041349314   0.617
-## Nei.adegenet             0.009841262   0.431
-## Edwards.adegenet        -0.061319610   0.700
-## Reynolds.adegenet       -0.078994318   0.750
-## Rogers.adegenet         -0.070451953   0.721
-## Provesti.adegenet       -0.041349314   0.611
-## Joost.mmod              -0.010217824   0.522
-## Hedrick.mmod            -0.018674091   0.559
-## Nei.mmod                -0.071961950   0.729
-## Euclidean.gstudio       -0.072919594   0.715
-## cGD.gstudio             -0.012994592   0.525
+## pairwiseFst.hierfstat   -0.064925412   0.697
+## propShared.PopGenReport -0.041349314   0.640
+## Nei.adegenet             0.009841262   0.428
+## Edwards.adegenet        -0.061319610   0.712
+## Reynolds.adegenet       -0.078994318   0.741
+## Rogers.adegenet         -0.070451953   0.707
+## Provesti.adegenet       -0.041349314   0.636
+## Joost.mmod              -0.010217824   0.513
+## Hedrick.mmod            -0.018674091   0.525
+## Nei.mmod                -0.071961950   0.719
+## Euclidean.gstudio       -0.072919594   0.704
+## cGD.gstudio             -0.012994592   0.521
 ## Nei.gstudio              0.009091776   0.463
-## Dps.gstudio             -0.062443290   0.720
-## Jaccard.gstudio         -0.062483735   0.674</code></pre>
+## Dps.gstudio             -0.062443290   0.723
+## Jaccard.gstudio         -0.062483735   0.695</code></pre>
 <p>The nature of the result did not depend on the measure of genetic diversity used. Does this mean that there is no indication of IBD in the data? Let’s look at this in a different way, with a Mantel correlogram.</p>
 </div>
 </div>
@@ -485,16 +484,16 @@ IBD</code></pre></div>
 ## 
 ## [[1]]
 ##                             d.mean     obs     exp p.val cardinal
-## d= 0 - 4228.418           2090.772  0.0687 -0.0106 0.150       28
-## d= 4228.418 - 8456.836    6592.930  0.0017 -0.0115 0.445       34
-## d= 8456.836 - 12685.253  11013.614 -0.0688  0.0018 0.890       43
-## d= 12685.253 - 16913.671 14810.461 -0.0511 -0.0034 1.000       67
-## d= 16913.671 - 21142.089 18741.818  0.0032  0.0106 1.000       32
-## d= 21142.089 - 25370.507 23525.813 -0.0849 -0.0079 1.000       38
-## d= 25370.507 - 29598.925 27343.091  0.0498 -0.0103 1.000       28
-## d= 29598.925 - 33827.342 30605.163  0.1744 -0.0096 0.160       20
-## d= 33827.342 - 38055.76  34933.340 -0.0534  0.0195 1.000        5
-## d= 38055.76 - 42284.178  40442.266  0.0075  0.0140 1.000        5
+## d= 0 - 4228.418           2090.772  0.0687 -0.0131 0.110       28
+## d= 4228.418 - 8456.836    6592.930  0.0017  0.0040 0.515       34
+## d= 8456.836 - 12685.253  11013.614 -0.0688  0.0031 1.000       43
+## d= 12685.253 - 16913.671 14810.461 -0.0511 -0.0038 1.000       67
+## d= 16913.671 - 21142.089 18741.818  0.0032  0.0028 1.000       32
+## d= 21142.089 - 25370.507 23525.813 -0.0849 -0.0086 1.000       38
+## d= 25370.507 - 29598.925 27343.091  0.0498 -0.0034 1.000       28
+## d= 29598.925 - 33827.342 30605.163  0.1744 -0.0078 0.080       20
+## d= 33827.342 - 38055.76  34933.340 -0.0534  0.0134 1.000        5
+## d= 38055.76 - 42284.178  40442.266  0.0075  0.0106 1.000        5
 ## 
 ## 
 ##  Results table(s) in ecoslot.OUT(x) 
@@ -557,21 +556,21 @@ IBD</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">EcoGenetics<span class="op">::</span><span class="kw">ecoslot.OUT</span>(corm.<span class="dv">20</span>)</code></pre></div>
 <pre><code>## [[1]]
 ##                             d.mean     obs     exp p.val cardinal
-## d= 0 - 2596.008           1521.732  0.0568 -0.0012 0.165       20
-## d= 2596.008 - 6188.922    4747.551  0.0393  0.0091 0.330       20
-## d= 6188.922 - 8106.607    7041.822 -0.0386  0.0034 0.785       20
-## d= 8106.607 - 11243.545   9500.774 -0.0255 -0.0025 1.000       20
-## d= 11243.545 - 12421.777 11859.059 -0.0415  0.0082 1.000       20
-## d= 12421.777 - 13881.751 13106.147 -0.0413  0.0107 1.000       20
-## d= 13881.751 - 14968.315 14504.758 -0.0137  0.0033 1.000       20
-## d= 14968.315 - 15772.668 15398.249 -0.0783  0.0036 1.000       20
-## d= 15772.668 - 17592.848 16686.465  0.0925 -0.0016 0.855       20
-## d= 17592.848 - 20585.714 18923.022 -0.0694 -0.0009 1.000       20
-## d= 20585.714 - 23587.173 22037.648 -0.0072  0.0022 1.000       20
-## d= 23587.173 - 24981.359 24265.927 -0.0673 -0.0066 1.000       20
-## d= 24981.359 - 27821.987 26371.121  0.0720  0.0075 1.000       20
-## d= 27821.987 - 30565.139 29432.906  0.0462  0.0169 1.000       20
-## d= 30565.139 - 42284.178 34447.541  0.0760  0.0009 1.000       20</code></pre>
+## d= 0 - 2596.008           1521.732  0.0568  0.0048 0.245       20
+## d= 2596.008 - 6188.922    4747.551  0.0393  0.0097 0.490       20
+## d= 6188.922 - 8106.607    7041.822 -0.0386  0.0003 0.980       20
+## d= 8106.607 - 11243.545   9500.774 -0.0255 -0.0089 1.000       20
+## d= 11243.545 - 12421.777 11859.059 -0.0415 -0.0029 1.000       20
+## d= 12421.777 - 13881.751 13106.147 -0.0413  0.0036 1.000       20
+## d= 13881.751 - 14968.315 14504.758 -0.0137 -0.0019 1.000       20
+## d= 14968.315 - 15772.668 15398.249 -0.0783  0.0011 1.000       20
+## d= 15772.668 - 17592.848 16686.465  0.0925 -0.0022 0.765       20
+## d= 17592.848 - 20585.714 18923.022 -0.0694  0.0005 1.000       20
+## d= 20585.714 - 23587.173 22037.648 -0.0072  0.0090 1.000       20
+## d= 23587.173 - 24981.359 24265.927 -0.0673  0.0014 1.000       20
+## d= 24981.359 - 27821.987 26371.121  0.0720 -0.0054 1.000       20
+## d= 27821.987 - 30565.139 29432.906  0.0462  0.0017 1.000       20
+## d= 30565.139 - 42284.178 34447.541  0.0760  0.0304 1.000       20</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">corm.<span class="dv">50</span> &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span><span class="kw">eco.cormantel</span>(<span class="dt">M =</span> GD.pop<span class="op">$</span>propShared.PopGenReport, 
            <span class="dt">XY =</span> dd.spatial<span class="op">@</span>coords,  <span class="dt">nsim =</span> <span class="dv">199</span>, <span class="dt">latlon=</span><span class="ot">TRUE</span>,
            <span class="dt">alternative=</span><span class="st">&quot;less&quot;</span>, <span class="dt">size=</span><span class="dv">50</span>)</code></pre></div>
@@ -586,12 +585,12 @@ IBD</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">EcoGenetics<span class="op">::</span><span class="kw">ecoslot.OUT</span>(corm.<span class="dv">50</span>)</code></pre></div>
 <pre><code>## [[1]]
 ##                             d.mean     obs     exp p.val cardinal
-## d= 0 - 6783.793           3822.684  0.0462 -0.0085 0.135       50
-## d= 6783.793 - 12421.777  10045.691 -0.0525  0.0067 0.745       50
-## d= 12421.777 - 15374.539 14081.123 -0.0941  0.0075 1.000       50
-## d= 15374.539 - 20585.714 17366.333  0.0203 -0.0046 1.000       50
-## d= 20585.714 - 26217.455 23670.576 -0.0415  0.0006 1.000       50
-## d= 26217.455 - 42284.178 30951.481  0.1217  0.0097 0.810       50</code></pre>
+## d= 0 - 6783.793           3822.684  0.0462 -0.0004  0.20       50
+## d= 6783.793 - 12421.777  10045.691 -0.0525 -0.0086  0.67       50
+## d= 12421.777 - 15374.539 14081.123 -0.0941  0.0096  1.00       50
+## d= 15374.539 - 20585.714 17366.333  0.0203  0.0054  1.00       50
+## d= 20585.714 - 26217.455 23670.576 -0.0415 -0.0020  1.00       50
+## d= 26217.455 - 42284.178 30951.481  0.1217 -0.0088  0.96       50</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">EcoGenetics<span class="op">::</span><span class="kw">eco.plotCorrelog</span>(corm.<span class="dv">20</span>)
 EcoGenetics<span class="op">::</span><span class="kw">eco.plotCorrelog</span>(corm.<span class="dv">50</span>)</code></pre></div>
 <p>Let’s compare the observed Mantel r statistic, p-value, number of pairs in the first distance class and their mean distance, as well as the definition of the first lag interval. We can get all of this by extracting the first line from each object.</p>
@@ -604,9 +603,9 @@ Lag1.def<span class="op">$</span>bin &lt;-<span class="st"> </span><span class="
               <span class="kw">row.names</span>(EcoGenetics<span class="op">::</span><span class="kw">ecoslot.OUT</span>(corm.<span class="dv">50</span>)[[<span class="dv">1</span>]])[<span class="dv">1</span>])
 Lag1.def</code></pre></div>
 <pre><code>##           d.mean    obs     exp p.val cardinal             bin
-## Sturge  2090.772 0.0687 -0.0106 0.150       28 d= 0 - 4228.418
-## size.20 1521.732 0.0568 -0.0012 0.165       20 d= 0 - 2596.008
-## size.50 3822.684 0.0462 -0.0085 0.135       50 d= 0 - 6783.793</code></pre>
+## Sturge  2090.772 0.0687 -0.0131 0.110       28 d= 0 - 4228.418
+## size.20 1521.732 0.0568  0.0048 0.245       20 d= 0 - 2596.008
+## size.50 3822.684 0.0462 -0.0004 0.200       50 d= 0 - 6783.793</code></pre>
 <ul>
 <li>None of the three distance class definitions (Sturge’s rule, size = 20, size = 50) resulted in statistically significant p-values.</li>
 <li>The Mantel correlation in the first distance lag was strongest for Sturge’s rule.</li>
@@ -647,20 +646,20 @@ Lag1.def</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t</span>(<span class="kw">sapply</span>(corm.GD.pop, <span class="cf">function</span>(x) EcoGenetics<span class="op">::</span><span class="kw">ecoslot.OUT</span>(x)[[<span class="dv">1</span>]][<span class="dv">1</span>,<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">4</span>)]))</code></pre></div>
 <pre><code>##                            obs p.val
 ## pairwiseFst.hierfstat   0.0488 0.195
-## propShared.PopGenReport 0.0687 0.120
-## Nei.adegenet            0.1284 0.015
-## Edwards.adegenet        0.0743 0.080
-## Reynolds.adegenet       0.0598 0.195
-## Rogers.adegenet         0.0661 0.195
-## Provesti.adegenet       0.0687 0.140
-## Joost.mmod              0.1154 0.005
-## Hedrick.mmod            0.1105 0.055
-## Nei.mmod                0.0564 0.200
-## Euclidean.gstudio       0.0648 0.165
-## cGD.gstudio             0.1256 0.015
-## Nei.gstudio             0.1281 0.020
-## Dps.gstudio             0.0656 0.175
-## Jaccard.gstudio         0.0654 0.155</code></pre>
+## propShared.PopGenReport 0.0687 0.115
+## Nei.adegenet            0.1284 0.040
+## Edwards.adegenet        0.0743 0.125
+## Reynolds.adegenet       0.0598 0.120
+## Rogers.adegenet         0.0661 0.125
+## Provesti.adegenet       0.0687 0.190
+## Joost.mmod              0.1154 0.030
+## Hedrick.mmod            0.1105 0.040
+## Nei.mmod                0.0564 0.205
+## Euclidean.gstudio       0.0648 0.160
+## cGD.gstudio             0.1256 0.010
+## Nei.gstudio             0.1281 0.040
+## Dps.gstudio             0.0656 0.110
+## Jaccard.gstudio         0.0654 0.125</code></pre>
 <p>Compare the p-values: some genetic distance measures resulted in significant spatial autocorrelation (indicating IBD), others not! Generally, those with significant p-values showed stronger Mantel correlation values ‘obs’ for the first distance class.</p>
 <p>Let’s plot the Mantel correlogram for ‘Nei.adegenet’. Statistically significant lags are shown in a different color than non-significant ones.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">EcoGenetics<span class="op">::</span><span class="kw">eco.plotCorrelog</span>(corm.GD.pop<span class="op">$</span>Nei.adegenet)</code></pre></div>
@@ -734,12 +733,12 @@ nb.4nn &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span cla
 </div>
 <div id="c-calculating-and-testing-morans-i" class="section level3">
 <h3>c) Calculating and testing Moran’s I</h3>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">spdep<span class="op">::</span><span class="kw">moran.test</span>(dd.spatial<span class="op">$</span>RA, spdep<span class="op">::</span><span class="kw">nb2listw</span>(nb.gab),
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">spdep<span class="op">::</span><span class="kw">moran.test</span>(dd.spatial<span class="op">@</span>data<span class="op">$</span>RA, spdep<span class="op">::</span><span class="kw">nb2listw</span>(nb.gab),
                   <span class="dt">alternative=</span><span class="st">&quot;greater&quot;</span>)</code></pre></div>
 <pre><code>## 
 ##  Moran I test under randomisation
 ## 
-## data:  dd.spatial$RA  
+## data:  dd.spatial@data$RA  
 ## weights: spdep::nb2listw(nb.gab)  
 ## 
 ## Moran I statistic standard deviate = 1.3823, p-value = 0.08343

@@ -13,14 +13,16 @@ Imports:
     ade4(>= 1.7-8),
     adegenet (>= 2.1.0),
     base64enc,
+    car,
+    checkpoint,
     dplyr,
     EcoGenetics (>= 1.2.1-2),
     effsize,
     formatR (>= 1.5),
     GeNetIt,
     geosphere,
-    ggplot2,
     ggmap,
+    ggplot2,
     gstudio,
     here,
     hierfstat,
@@ -41,13 +43,14 @@ Imports:
     proto,
     pwr,
     QstFstComp,
-    raster,
+     raster,
     rasterVis,
     readr,
+    RColorBrewer,
     RgoogleMaps,
     rmarkdown,
     rstudioapi (>= 0.5),
-    sampling,
+       sampling,
     SDMTools,
     seqinr,
     sf,
@@ -59,7 +62,6 @@ Imports:
     swirl (>= 2.4.3),
     swirlify (>= 0.5.1),
     tibble,
-    tmaptools,
     vegan,
     popgraph
 Remotes:
@@ -67,6 +69,9 @@ Remotes:
     kjgilbert/QstFstComp,
     dyerlab/popgraph,
     dyerlab/gstudio
-Suggests: knitr
+Suggests: 
+    knitr,
+    tmaptools,
+    ggeffects
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
