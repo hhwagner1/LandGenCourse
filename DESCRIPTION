@@ -50,7 +50,7 @@ Imports:
     RgoogleMaps,
     rmarkdown,
     rstudioapi (>= 0.5),
-       sampling,
+    sampling,
     SDMTools,
     seqinr,
     sf,

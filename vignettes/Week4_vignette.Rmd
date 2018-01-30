@@ -224,6 +224,11 @@ ggplot2::ggsave("ResidualMap.png", width = 7, height = 5.5, units = "in",
                 dpi = 300)
 ```
 
+What might explain the large residuals for the two sites 'PTC' and 'DESB'?
+
+- Site 'PTC' lies on the tip of a peninsula and thus is very isolated geographically.
+- Site 'DESB' is a very instable site that can frequently dry out during the dry season, as it is shallow and lies in the comparatively dry northern part of the island. In addition, although 'DESB' is surrounded by many ponds, these ponds never get connected to 'DESB' hydrologically during the rainy season. Therefore, immigration can only occur via cattle or birds, which are much less important drivers of gene flow than immigration by hydrological connectivity during the rainy season.  
+
 ### d) Regression model without outliers
 
 We can use the same index 'a' to exclude the potential outliers from the regression model:
