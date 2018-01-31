@@ -12,7 +12,7 @@
 
 <meta name="author" content="Rodney Dyer (worked example) and Helene Wagner (adaptation)" />
 
-<meta name="date" content="2018-01-13" />
+<meta name="date" content="2018-01-28" />
 
 <title>Week 0: R Graphics</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Week 0: R Graphics</h1>
 <h4 class="author"><em>Rodney Dyer (worked example) and Helene Wagner (adaptation)</em></h4>
-<h4 class="date"><em>2018-01-13</em></h4>
+<h4 class="date"><em>2018-01-28</em></h4>
 
 
 <div id="TOC">
@@ -129,6 +129,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>Specification of subplots.</li>
 </ul>
 <p>In the normal plotting routines discussed before, configuration of these layers were specified as arguments passed to the plotting function (<code>plot()</code>, <code>boxplot()</code>, etc.). The ggplot2 library takes a different approach, allowing you to specify these components separately and literally add them together like components of a linear model.</p>
+<p>Required packages:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
+<span class="kw">library</span>(RColorBrewer)</code></pre></div>
 </div>
 <div id="univariate-plots" class="section level1">
 <h1>2. Univariate plots</h1>
@@ -496,13 +499,11 @@ vals</code></pre></div>
 <pre><code>## [1] 657</code></pre>
 <p>different colors available for your use. Not all are distinct as some overlap. However the benefit of these colors is that they have specific names, making it easier for you to remember than RGB or hex representations. Here are a random set of 20 color names.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colors</span>()[ <span class="kw">sample.int</span>( <span class="kw">length</span>(<span class="kw">colors</span>()), <span class="dt">size=</span><span class="dv">20</span>) ]</code></pre></div>
-<pre><code>##  [1] &quot;darkolivegreen3&quot; &quot;gray72&quot;          &quot;mistyrose1&quot;     
-##  [4] &quot;slateblue&quot;       &quot;maroon&quot;          &quot;gray5&quot;          
-##  [7] &quot;lightpink1&quot;      &quot;gray30&quot;          &quot;tan2&quot;           
-## [10] &quot;darkseagreen1&quot;   &quot;grey10&quot;          &quot;gray10&quot;         
-## [13] &quot;coral4&quot;          &quot;peachpuff4&quot;      &quot;grey77&quot;         
-## [16] &quot;lightseagreen&quot;   &quot;grey1&quot;           &quot;pink4&quot;          
-## [19] &quot;mediumseagreen&quot;  &quot;gray70&quot;</code></pre>
+<pre><code>##  [1] &quot;greenyellow&quot;   &quot;gray93&quot;        &quot;gray81&quot;        &quot;grey70&quot;       
+##  [5] &quot;lemonchiffon2&quot; &quot;mediumorchid&quot;  &quot;orangered2&quot;    &quot;cyan3&quot;        
+##  [9] &quot;indianred3&quot;    &quot;snow2&quot;         &quot;grey30&quot;        &quot;thistle4&quot;     
+## [13] &quot;limegreen&quot;     &quot;blue4&quot;         &quot;mediumorchid2&quot; &quot;slateblue3&quot;   
+## [17] &quot;darkorange&quot;    &quot;grey15&quot;        &quot;blue&quot;          &quot;papayawhip&quot;</code></pre>
 <p>To use these colors you can call them by name in the col= option to a plot. Here is an example where I define three named colors and then coerce the <code>iris$Species</code> variable into an integer to select the color by species and plot it in a scatter plot (another version of the <code>pch=</code> example previously).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">colors &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;royalblue1&quot;</span>, <span class="st">&quot;orange1&quot;</span>, <span class="st">&quot;green3&quot;</span>)
 cols &lt;-<span class="st"> </span>colors[ iris<span class="op">$</span>Species ]

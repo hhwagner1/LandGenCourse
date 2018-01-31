@@ -12,7 +12,7 @@
 
 <meta name="author" content="Helene Wagner" />
 
-<meta name="date" content="2018-01-13" />
+<meta name="date" content="2018-01-28" />
 
 <title>Week 2: Spatial Data</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Week 2: Spatial Data</h1>
 <h4 class="author"><em>Helene Wagner</em></h4>
-<h4 class="date"><em>2018-01-13</em></h4>
+<h4 class="date"><em>2018-01-28</em></h4>
 
 
 <div id="TOC">
@@ -142,7 +142,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">require</span>(sp)
 <span class="kw">require</span>(raster)
 <span class="kw">require</span>(GeNetIt)
-<span class="kw">require</span>(tmaptools) 
+<span class="co">#require(tmaptools) </span>
 <span class="kw">require</span>(SDMTools) <span class="co"># for landscape metrics</span>
 <span class="kw">require</span>(tibble)</code></pre></div>
 </div>
@@ -163,21 +163,21 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>## [1] &quot;data.frame&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.tibble</span>(Sites)</code></pre></div>
 <pre><code>## # A tibble: 31 x 19
-##    coords.x1 coords.x2       SiteName        Drainage      Basin Substrate
-##        &lt;dbl&gt;     &lt;dbl&gt;          &lt;chr&gt;           &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;
-##  1  688816.6   5003207   AirplaneLake ShipIslandCreek Sheepeater      Silt
-##  2  688494.4   4999093 BachelorMeadow     WilsonCreek    Skyhigh      Silt
-##  3  687938.4   5000223 BarkingFoxLake  WaterfallCreek    Terrace      Silt
-##  4  689732.8   5002522   BirdbillLake      ClearCreek   Birdbill      Sand
-##  5  690104.0   4999355        BobLake     WilsonCreek     Harbor      Silt
-##  6  688742.5   4997481      CacheLake     WilsonCreek    Skyhigh      Silt
-##  7  688962.4   4996675        DoeLake     WilsonCreek    Skyhigh      Silt
-##  8  688539.3   4998146   EggWhiteLake     WilsonCreek    Skyhigh      Silt
-##  9  688878.7   5004435     ElenasLake ShipIslandCreek Sheepeater      Sand
-## 10  688901.5   4996837       FawnLake     WilsonCreek    Skyhigh      Silt
-## # ... with 21 more rows, and 13 more variables: NWI &lt;chr&gt;, AREA_m2 &lt;dbl&gt;,
-## #   PERI_m &lt;dbl&gt;, Depth_m &lt;dbl&gt;, TDS &lt;dbl&gt;, FISH &lt;int&gt;, ACB &lt;dbl&gt;,
-## #   AUC &lt;dbl&gt;, AUCV &lt;dbl&gt;, AUCC &lt;dbl&gt;, AUF &lt;dbl&gt;, AWOOD &lt;dbl&gt;, AUFV &lt;dbl&gt;</code></pre>
+##    coords.x1 coords.x2 SiteName  Drainage  Basin Substrate NWI     AREA_m2
+##        &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;     &lt;dbl&gt;
+##  1    688817   5003207 Airplane… ShipIsla… Shee… Silt      Lacust…   62582
+##  2    688494   4999093 Bachelor… WilsonCr… Skyh… Silt      Riveri…     225
+##  3    687938   5000223 BarkingF… Waterfal… Terr… Silt      Lacust…   12000
+##  4    689733   5002522 Birdbill… ClearCre… Bird… Sand      Lacust…   12359
+##  5    690104   4999355 BobLake   WilsonCr… Harb… Silt      Palust…    4600
+##  6    688742   4997481 CacheLake WilsonCr… Skyh… Silt      Palust…    2269
+##  7    688962   4996675 DoeLake   WilsonCr… Skyh… Silt      Lacust…   13035
+##  8    688539   4998146 EggWhite… WilsonCr… Skyh… Silt      Palust…    4544
+##  9    688879   5004435 ElenasLa… ShipIsla… Shee… Sand      Palust…       0
+## 10    688902   4996837 FawnLake  WilsonCr… Skyh… Silt      Palust…    3866
+## # ... with 21 more rows, and 11 more variables: PERI_m &lt;dbl&gt;,
+## #   Depth_m &lt;dbl&gt;, TDS &lt;dbl&gt;, FISH &lt;int&gt;, ACB &lt;dbl&gt;, AUC &lt;dbl&gt;,
+## #   AUCV &lt;dbl&gt;, AUCC &lt;dbl&gt;, AUF &lt;dbl&gt;, AWOOD &lt;dbl&gt;, AUFV &lt;dbl&gt;</code></pre>
 <p>To illustrate importing spatial data from Excel, here we export the data as a csv file, import it again as a data frame, then convert it to a SpatialPointsDataFrame. First we create a folder ‘output’ if it does not yet exist.</p>
 <p>Note: to run the code, remove all the hashtags ’#&quot; at the beginning of the lines to uncomment them. This part assumes that you have writing permission on your computer. Alternatively, try setting up your R project folder on an external drive where you have writing permission.</p>
 <p>The second line exports the data in ‘Sites’ as a .csv file. The third line re-imports the .csv file to re-create data frame ‘Sites’.</p>
@@ -193,21 +193,21 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">coordinates</span>(Sites.sp) &lt;-<span class="st"> </span><span class="er">~</span>coords.x1<span class="op">+</span>coords.x2
 <span class="kw">as.tibble</span>(Sites.sp)</code></pre></div>
 <pre><code>## # A tibble: 31 x 19
-##    coords.x1 coords.x2       SiteName        Drainage      Basin Substrate
-##  *     &lt;dbl&gt;     &lt;dbl&gt;          &lt;chr&gt;           &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;
-##  1  688816.6   5003207   AirplaneLake ShipIslandCreek Sheepeater      Silt
-##  2  688494.4   4999093 BachelorMeadow     WilsonCreek    Skyhigh      Silt
-##  3  687938.4   5000223 BarkingFoxLake  WaterfallCreek    Terrace      Silt
-##  4  689732.8   5002522   BirdbillLake      ClearCreek   Birdbill      Sand
-##  5  690104.0   4999355        BobLake     WilsonCreek     Harbor      Silt
-##  6  688742.5   4997481      CacheLake     WilsonCreek    Skyhigh      Silt
-##  7  688962.4   4996675        DoeLake     WilsonCreek    Skyhigh      Silt
-##  8  688539.3   4998146   EggWhiteLake     WilsonCreek    Skyhigh      Silt
-##  9  688878.7   5004435     ElenasLake ShipIslandCreek Sheepeater      Sand
-## 10  688901.5   4996837       FawnLake     WilsonCreek    Skyhigh      Silt
-## # ... with 21 more rows, and 13 more variables: NWI &lt;chr&gt;, AREA_m2 &lt;dbl&gt;,
-## #   PERI_m &lt;dbl&gt;, Depth_m &lt;dbl&gt;, TDS &lt;dbl&gt;, FISH &lt;int&gt;, ACB &lt;dbl&gt;,
-## #   AUC &lt;dbl&gt;, AUCV &lt;dbl&gt;, AUCC &lt;dbl&gt;, AUF &lt;dbl&gt;, AWOOD &lt;dbl&gt;, AUFV &lt;dbl&gt;</code></pre>
+##    coords.x1 coords.x2 SiteName  Drainage  Basin Substrate NWI     AREA_m2
+##  *     &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;     &lt;dbl&gt;
+##  1    688817   5003207 Airplane… ShipIsla… Shee… Silt      Lacust…   62582
+##  2    688494   4999093 Bachelor… WilsonCr… Skyh… Silt      Riveri…     225
+##  3    687938   5000223 BarkingF… Waterfal… Terr… Silt      Lacust…   12000
+##  4    689733   5002522 Birdbill… ClearCre… Bird… Sand      Lacust…   12359
+##  5    690104   4999355 BobLake   WilsonCr… Harb… Silt      Palust…    4600
+##  6    688742   4997481 CacheLake WilsonCr… Skyh… Silt      Palust…    2269
+##  7    688962   4996675 DoeLake   WilsonCr… Skyh… Silt      Lacust…   13035
+##  8    688539   4998146 EggWhite… WilsonCr… Skyh… Silt      Palust…    4544
+##  9    688879   5004435 ElenasLa… ShipIsla… Shee… Sand      Palust…       0
+## 10    688902   4996837 FawnLake  WilsonCr… Skyh… Silt      Palust…    3866
+## # ... with 21 more rows, and 11 more variables: PERI_m &lt;dbl&gt;,
+## #   Depth_m &lt;dbl&gt;, TDS &lt;dbl&gt;, FISH &lt;int&gt;, ACB &lt;dbl&gt;, AUC &lt;dbl&gt;,
+## #   AUCV &lt;dbl&gt;, AUCC &lt;dbl&gt;, AUF &lt;dbl&gt;, AWOOD &lt;dbl&gt;, AUFV &lt;dbl&gt;</code></pre>
 <p>Now R knows these are spatial data and knows how to handle them. It does not treat the coordinates as variables anymore, hence the first column is now ‘SiteName’.</p>
 </div>
 <div id="b-add-spatial-reference-data" class="section level3">
@@ -215,7 +215,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Before we can combine the sampling locations with other spatial datasets, such as raster data, we need to tell R where on earth these locations are (georeferencing). This is done by specifying the ‘Coordinate Reference System’ (CRS) or a ‘proj4’ string.</p>
 <p>For more information on CRS, see: <a href="https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf" class="uri">https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf</a></p>
 <p>We know that these coordinates are UTM zone 11 (Northern hemisphere) coordinates, hence we can use a helper function to find the correct ‘proj4string’, using function ‘get_proj4’ from the ‘tmaptools’ package. (For the Southern hemisphere, you would add ‘s’ after the zone: “utm11s”). Here we call the function and the package simultaneously (this is good practice, as it helps keep track of where the functions in your code come from).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">proj4string</span>(Sites.sp) &lt;-<span class="st"> </span>tmaptools<span class="op">::</span><span class="kw">get_proj4</span>(<span class="st">&quot;utm11&quot;</span>)</code></pre></div>
+<p>Note: Package ‘tmaptools’ has not been automatically installed with ‘LandGenCourse’ to avoid incompatibilities. To use the function, you may first need to install ‘tmaptools’ by running the line with ‘install.packages(“tmaptools”)’ without ‘#’.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#install.packages(&quot;tmaptools&quot;)</span>
+<span class="kw">proj4string</span>(Sites.sp) &lt;-<span class="st"> </span>tmaptools<span class="op">::</span><span class="kw">get_proj4</span>(<span class="st">&quot;utm11&quot;</span>)</code></pre></div>
 <p>If we had longitude and latitude coordinates, we would modify the command like this: proj4string(Sites.sp) &lt;- tmaptools::get_proj4(“longlat”).</p>
 </div>
 <div id="c-access-data-in-spatialpointsdataframe" class="section level3">
@@ -235,16 +237,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>## # A tibble: 31 x 2
 ##    coords.x1 coords.x2
 ##        &lt;dbl&gt;     &lt;dbl&gt;
-##  1  688816.6   5003207
-##  2  688494.4   4999093
-##  3  687938.4   5000223
-##  4  689732.8   5002522
-##  5  690104.0   4999355
-##  6  688742.5   4997481
-##  7  688962.4   4996675
-##  8  688539.3   4998146
-##  9  688878.7   5004435
-## 10  688901.5   4996837
+##  1    688817   5003207
+##  2    688494   4999093
+##  3    687938   5000223
+##  4    689733   5002522
+##  5    690104   4999355
+##  6    688742   4997481
+##  7    688962   4996675
+##  8    688539   4998146
+##  9    688879   5004435
+## 10    688902   4996837
 ## # ... with 21 more rows</code></pre>
 <p>And the proj4 string: Let’s compare this to the proj4string of the original ‘ralu.site’ dataset</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Sites.sp<span class="op">@</span>proj4string</code></pre></div>
@@ -437,14 +439,14 @@ class.ID &lt;-<span class="st"> </span><span class="kw">levels</span>(<span clas
 <pre><code>## # A tibble: 8 x 38
 ##      ID n.patches total.area prop.landscape patch.density total.edge
 ##   &lt;dbl&gt;     &lt;int&gt;      &lt;dbl&gt;          &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;
-## 1    11         1      32400    0.041426928  1.278609e-06        900
-## 2    12         1        900    0.001150748  1.278609e-06        120
-## 3    31         1       7200    0.009205984  1.278609e-06        480
-## 4    42         5     311400    0.398158803  6.393044e-06       6540
-## 5    52         7      38700    0.049482163  8.950262e-06       3300
-## 6    71         3     386100    0.493670886  3.835827e-06       6540
-## 7    90        NA         NA             NA            NA         NA
-## 8    95         1       5400    0.006904488  1.278609e-06        360
+## 1  11.0         1      32400        0.0414     0.00000128        900
+## 2  12.0         1        900        0.00115    0.00000128        120
+## 3  31.0         1       7200        0.00921    0.00000128        480
+## 4  42.0         5     311400        0.398      0.00000639       6540
+## 5  52.0         7      38700        0.0495     0.00000895       3300
+## 6  71.0         3     386100        0.494      0.00000384       6540
+## 7  90.0        NA         NA       NA         NA                  NA
+## 8  95.0         1       5400        0.00690    0.00000128        360
 ## # ... with 32 more variables: edge.density &lt;dbl&gt;,
 ## #   landscape.shape.index &lt;dbl&gt;, largest.patch.index &lt;dbl&gt;,
 ## #   mean.patch.area &lt;dbl&gt;, sd.patch.area &lt;dbl&gt;, min.patch.area &lt;dbl&gt;,
@@ -513,16 +515,16 @@ Prop.landscape &lt;-<span class="st"> </span><span class="kw">as.data.frame</spa
 <pre><code>## # A tibble: 31 x 8
 ##    Prop.500.11 Prop.500.12 Prop.500.31 Prop.500.42 Prop.500.52 Prop.500.71
 ##  *       &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;
-##  1 0.082758621 0.000000000 0.000000000   0.7965517 0.005747126  0.11494253
-##  2 0.041426928 0.001150748 0.009205984   0.3981588 0.049482163  0.49367089
-##  3 0.017241379 0.000000000 0.010344828   0.3770115 0.150574713  0.44482759
-##  4 0.000000000 0.020642202 0.000000000   0.3119266 0.036697248  0.61582569
-##  5 0.000000000 0.000000000 0.000000000   0.3791523 0.117983963  0.50286369
-##  6 0.038901602 0.000000000 0.000000000   0.8478261 0.038901602  0.07437071
-##  7 0.066361556 0.000000000 0.000000000   0.7082380 0.024027460  0.19336384
-##  8 0.003424658 0.000000000 0.000000000   0.8812785 0.029680365  0.08561644
-##  9 0.000000000 0.025258324 0.000000000   0.1056257 0.112514351  0.75660161
-## 10 0.088505747 0.000000000 0.000000000   0.7252874 0.011494253  0.16666667
+##  1     0.0828      0           0             0.797     0.00575      0.115 
+##  2     0.0414      0.00115     0.00921       0.398     0.0495       0.494 
+##  3     0.0172      0           0.0103        0.377     0.151        0.445 
+##  4     0           0.0206      0             0.312     0.0367       0.616 
+##  5     0           0           0             0.379     0.118        0.503 
+##  6     0.0389      0           0             0.848     0.0389       0.0744
+##  7     0.0664      0           0             0.708     0.0240       0.193 
+##  8     0.00342     0           0             0.881     0.0297       0.0856
+##  9     0           0.0253      0             0.106     0.113        0.757 
+## 10     0.0885      0           0             0.725     0.0115       0.167 
 ## # ... with 21 more rows, and 2 more variables: Prop.500.90 &lt;dbl&gt;,
 ## #   Prop.500.95 &lt;dbl&gt;</code></pre>
 <p>The percent cover of all cover types should add up to 100% (i.e., 1) for each site. We can check this with the function ‘apply’. The argument ‘MARGIN’ specifies whether we want to apply the function FUN to each row (MARGIN=1) or each column (MARGIN=2).</p>
@@ -569,16 +571,16 @@ Forest.class &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>
 <pre><code>## # A tibble: 31 x 38
 ##    `42.ID` `42.n.patches` `42.total.area` `42.prop.landscape`
 ##  *   &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;               &lt;dbl&gt;
-##  1      42              2          623700           0.7965517
-##  2      42              5          311400           0.3981588
-##  3      42             10          295200           0.3770115
-##  4      42              5          244800           0.3119266
-##  5      42              4          297900           0.3791523
-##  6      42              1          666900           0.8478261
-##  7      42              3          557100           0.7082380
-##  8      42              2          694800           0.8812785
-##  9      42              5           82800           0.1056257
-## 10      42              1          567900           0.7252874
+##  1    42.0           2.00          623700               0.797
+##  2    42.0           5.00          311400               0.398
+##  3    42.0          10.0           295200               0.377
+##  4    42.0           5.00          244800               0.312
+##  5    42.0           4.00          297900               0.379
+##  6    42.0           1.00          666900               0.848
+##  7    42.0           3.00          557100               0.708
+##  8    42.0           2.00          694800               0.881
+##  9    42.0           5.00           82800               0.106
+## 10    42.0           1.00          567900               0.725
 ## # ... with 21 more rows, and 34 more variables: `42.patch.density` &lt;dbl&gt;,
 ## #   `42.total.edge` &lt;dbl&gt;, `42.edge.density` &lt;dbl&gt;,
 ## #   `42.landscape.shape.index` &lt;dbl&gt;, `42.largest.patch.index` &lt;dbl&gt;,

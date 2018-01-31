@@ -12,7 +12,7 @@
 
 <meta name="author" content="Rodney Dyer (worked example) and Helene Wagner (adaptation)" />
 
-<meta name="date" content="2018-01-13" />
+<meta name="date" content="2018-01-28" />
 
 <title>Week 0: Intro to R Programming</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Week 0: Intro to R Programming</h1>
 <h4 class="author"><em>Rodney Dyer (worked example) and Helene Wagner (adaptation)</em></h4>
-<h4 class="date"><em>2018-01-13</em></h4>
+<h4 class="date"><em>2018-01-28</em></h4>
 
 
 <div id="TOC">
@@ -166,19 +166,19 @@ x</code></pre></div>
 <pre><code>## [1] 0.099999999999999991673</code></pre>
 <p>Not quite 0.1 is it? Not that far away from it but not exact. That is a general problem, not one that R has any more claim to than any other language and/or implementation. Does this matter much, probably not in the realm of the kinds of things we do in population genetics, it is just something that you should be aware of. You can make random sets of numeric data by using using functions describing various distributions. For example, some random numbers from the normal distribution are:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rnorm</span>(<span class="dv">10</span>)</code></pre></div>
-<pre><code>##  [1]  0.40940184  1.68887329  1.58658843 -0.33090780 -2.28523554
-##  [6]  2.49766159  0.66706617  0.54132734 -0.01339952  0.51010842</code></pre>
+<pre><code>##  [1]  1.2269944  1.2286065  0.8075769 -2.4437267 -0.1566645 -0.5450683
+##  [7]  0.1099575 -2.0511424 -0.2711876  0.2469342</code></pre>
 <p>from the normal distribution with designated mean and standard deviation:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rnorm</span>(<span class="dv">10</span>,<span class="dt">mean=</span><span class="dv">42</span>,<span class="dt">sd=</span><span class="dv">12</span>)</code></pre></div>
-<pre><code>##  [1] 40.02749 47.04834 37.19704 25.55751 53.85406 60.23694 38.29511
-##  [8] 26.96052 49.70690 41.46349</code></pre>
+<pre><code>##  [1] 44.15637 38.49958 41.81830 37.22400 39.47930 30.26521 35.47837
+##  [8] 46.78212 43.84794 47.37431</code></pre>
 <p>A poisson distribution with mean 2:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rpois</span>(<span class="dv">10</span>,<span class="dt">lambda =</span> <span class="dv">2</span>)</code></pre></div>
-<pre><code>##  [1] 0 1 2 2 1 2 1 4 0 0</code></pre>
+<pre><code>##  [1] 1 1 1 2 4 4 1 2 1 2</code></pre>
 <p>and the <span class="math inline">\(\chi^2\)</span> distribution with 1 degree of freedom:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rchisq</span>(<span class="dv">10</span>, <span class="dt">df=</span><span class="dv">1</span>)</code></pre></div>
-<pre><code>##  [1] 4.94217431 0.00823255 0.63358332 1.43652422 0.63569106 0.03885028
-##  [7] 0.69489261 1.62059439 2.06302467 0.10096938</code></pre>
+<pre><code>##  [1] 1.65683225 0.13529978 0.05552018 0.29565491 0.51827657 1.09732999
+##  [7] 0.01821161 0.55987151 0.01601008 1.01389904</code></pre>
 <p>There are several more distributions that if you need to access random numbers, quantiles, probability densities, and cumulative density values are available.</p>
 </div>
 <div id="b-coercion-to-numeric" class="section level3">
@@ -309,26 +309,27 @@ stable</code></pre></div>
 <p>It is common to use logical types to serve as indices for vectors. Say for example, you have a vector of data that you want to select some subset from.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">20</span>)
 data</code></pre></div>
-<pre><code>##  [1] -2.00016494 -0.54479074 -0.25567071 -0.16612104  1.02046391
-##  [6]  0.13622189  0.40716760 -0.06965481 -0.24766434  0.69555081
-## [11]  1.14622836 -2.40309621  0.57273956  0.37472441 -0.42526772
-## [16]  0.95101281 -0.38923718 -0.28433066  0.85740978  1.71962730</code></pre>
+<pre><code>##  [1]  0.52753356  0.96701670  1.56353586 -0.73879761  1.14216389
+##  [6]  1.07994113 -1.45180110 -0.94193881  0.04691168 -1.01498660
+## [11] -0.31369219  0.29247951  1.26187445  0.42110909  0.26332827
+## [16]  0.74730525  2.01304940 -0.59949299  0.56461282 -0.20767641</code></pre>
 <p>Perhaps you are on interested in the non-negative values</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data[ data <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ]</code></pre></div>
-<pre><code>##  [1] 1.0204639 0.1362219 0.4071676 0.6955508 1.1462284 0.5727396 0.3747244
-##  [8] 0.9510128 0.8574098 1.7196273</code></pre>
+<pre><code>##  [1] 0.52753356 0.96701670 1.56353586 1.14216389 1.07994113 0.04691168
+##  [7] 0.29247951 1.26187445 0.42110909 0.26332827 0.74730525 2.01304940
+## [13] 0.56461282</code></pre>
 <p>If you look at the condition being passed to as the index</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span></code></pre></div>
-<pre><code>##  [1] FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE FALSE FALSE  TRUE  TRUE
-## [12] FALSE  TRUE  TRUE FALSE  TRUE FALSE FALSE  TRUE  TRUE</code></pre>
+<pre><code>##  [1]  TRUE  TRUE  TRUE FALSE  TRUE  TRUE FALSE FALSE  TRUE FALSE FALSE
+## [12]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE FALSE</code></pre>
 <p>you see that individually, each value in the data vector is being evaluated as a logical value, satisfying the condition that it is strictly greater than zero. When you pass that as indices to a vector it only shows the indices that are <code>TRUE</code>.</p>
 <p>You can coerce a value into a logical if you understand the rules. Numeric types that equal 0 (zero) are <code>FALSE</code>, always. Any non-zero value is considered <code>TRUE</code>. Here I use the modulus operator, <code>%%</code>, which provides the remainder of a division.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="dv">1</span><span class="op">:</span><span class="dv">20</span> <span class="op">%%</span><span class="st"> </span><span class="dv">2</span></code></pre></div>
 <pre><code>##  [1] 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0</code></pre>
 <p>which used as indices give us</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data[ (<span class="dv">1</span><span class="op">:</span><span class="dv">20</span> <span class="op">%%</span><span class="st"> </span><span class="dv">2</span>) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ]</code></pre></div>
-<pre><code>##  [1] -2.0001649 -0.2556707  1.0204639  0.4071676 -0.2476643  1.1462284
-##  [7]  0.5727396 -0.4252677 -0.3892372  0.8574098</code></pre>
+<pre><code>##  [1]  0.52753356  1.56353586  1.14216389 -1.45180110  0.04691168
+##  [6] -0.31369219  1.26187445  0.26332827  2.01304940  0.56461282</code></pre>
 <p>You can get as complicated in the creation of indices as you like, even using logical operators such as OR and AND. I leave that as an example for you to play with.</p>
 </div>
 </div>
@@ -350,79 +351,108 @@ z</code></pre></div>
 <p>or coearce them into one type that is amenable to all the types of data that you have given it. In this example, a Logical, Character, Constant, and Function are combined resulting in a vector output of type Character.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">w &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="st">&quot;1&quot;</span>, pi, <span class="kw">ls</span>())
 w</code></pre></div>
-<pre><code>##   [1] &quot;TRUE&quot;                    &quot;1&quot;                      
-##   [3] &quot;3.14159265358979&quot;        &quot;a&quot;                      
-##   [5] &quot;ab&quot;                      &quot;abc&quot;                    
-##   [7] &quot;add_var&quot;                 &quot;aic_out&quot;                
-##   [9] &quot;aic_vals&quot;                &quot;aic_weights&quot;            
-##  [11] &quot;alpha&quot;                   &quot;amova.result.ade4&quot;      
-##  [13] &quot;amova.test&quot;              &quot;b&quot;                      
-##  [15] &quot;bc&quot;                      &quot;Buffer.cells&quot;           
-##  [17] &quot;Buffer.nlcd&quot;             &quot;canThrow&quot;               
-##  [19] &quot;Cellsize&quot;                &quot;ci_95&quot;                  
-##  [21] &quot;ci_95_qst&quot;               &quot;class.ID&quot;               
-##  [23] &quot;ColTab&quot;                  &quot;coords.longlat&quot;         
-##  [25] &quot;coords.pop&quot;              &quot;data&quot;                   
-##  [27] &quot;dem_qst&quot;                 &quot;df&quot;                     
-##  [29] &quot;df1&quot;                     &quot;df2&quot;                    
-##  [31] &quot;Dgeo&quot;                    &quot;env&quot;                    
-##  [33] &quot;Fbar&quot;                    &quot;Fest&quot;                   
-##  [35] &quot;Forest&quot;                  &quot;Forest.class&quot;           
-##  [37] &quot;Freq&quot;                    &quot;Frogs&quot;                  
-##  [39] &quot;Frogs.diversity&quot;         &quot;Frogs.genind&quot;           
-##  [41] &quot;Frogs.genpop&quot;            &quot;Frogs.gstudio&quot;          
-##  [43] &quot;Frogs.pegas&quot;             &quot;Frogs.sites&quot;            
-##  [45] &quot;fst&quot;                     &quot;fst_persnp&quot;             
-##  [47] &quot;fst_snp&quot;                 &quot;Fst.per.site&quot;           
-##  [49] &quot;GCtorture&quot;               &quot;GD.ind&quot;                 
-##  [51] &quot;GD.ind.propShared&quot;       &quot;GD.ind.smouse&quot;          
-##  [53] &quot;GD.pop&quot;                  &quot;GD.pop.Edwards&quot;         
-##  [55] &quot;GD.pop.Hedrick&quot;          &quot;GD.pop.Joost&quot;           
-##  [57] &quot;GD.pop.Nei&quot;              &quot;GD.pop.NeiGst&quot;          
-##  [59] &quot;GD.pop.propShared&quot;       &quot;GD.pop.Provesti&quot;        
-##  [61] &quot;GD.pop.Reynolds&quot;         &quot;GD.pop.Rogers&quot;          
-##  [63] &quot;geno_reformat&quot;           &quot;h2&quot;                     
-##  [65] &quot;h2_boot_out&quot;             &quot;het_out&quot;                
-##  [67] &quot;het_snp&quot;                 &quot;Hexp&quot;                   
-##  [69] &quot;Hexp.pop&quot;                &quot;hierfstat_convert&quot;      
-##  [71] &quot;Hobs&quot;                    &quot;Hobs.pop&quot;               
-##  [73] &quot;HWE.test&quot;                &quot;HWE.test.chisq&quot;         
-##  [75] &quot;HWE.test.MC&quot;             &quot;i&quot;                      
-##  [77] &quot;IBD&quot;                     &quot;LD.pair&quot;                
-##  [79] &quot;Map&quot;                     &quot;Matrix&quot;                 
-##  [81] &quot;Mean.inbreeding.per.pop&quot; &quot;mod&quot;                    
-##  [83] &quot;mod_boot&quot;                &quot;mod_boot_qst&quot;           
-##  [85] &quot;mod1&quot;                    &quot;mod1_env&quot;               
-##  [87] &quot;mod2&quot;                    &quot;mod3&quot;                   
-##  [89] &quot;mod3_all_eff&quot;            &quot;mod3_eff&quot;               
-##  [91] &quot;mod3_fam_only&quot;           &quot;mono&quot;                   
-##  [93] &quot;myOrder&quot;                 &quot;NLCD&quot;                   
-##  [95] &quot;NLCD.class&quot;              &quot;NLCD.patch&quot;             
-##  [97] &quot;Null.alleles&quot;            &quot;num_qst&quot;                
-##  [99] &quot;Pairwise.fst&quot;            &quot;Patches&quot;                
-## [101] &quot;PercentForest500&quot;        &quot;phen&quot;                   
-## [103] &quot;phen_env&quot;                &quot;phen_mod&quot;               
-## [105] &quot;phon&quot;                    &quot;pop_rep&quot;                
-## [107] &quot;prof&quot;                    &quot;Prop.landscape&quot;         
-## [109] &quot;Prop.loci.out.of.HWE&quot;    &quot;Prop.pops.out.of.HWE&quot;   
-## [111] &quot;qst&quot;                     &quot;qst_boot_out&quot;           
-## [113] &quot;QstFst_out&quot;              &quot;Radius&quot;                 
-## [115] &quot;ralu.loci&quot;               &quot;ralu.site&quot;              
-## [117] &quot;RasterMaps&quot;              &quot;rasters&quot;                
-## [119] &quot;rat&quot;                     &quot;region&quot;                 
-## [121] &quot;Result&quot;                  &quot;Richness&quot;               
-## [123] &quot;Sites&quot;                   &quot;Sites.class&quot;            
-## [125] &quot;Sites.sf&quot;                &quot;Sites.sp&quot;               
-## [127] &quot;snp&quot;                     &quot;snp_reformat&quot;           
-## [129] &quot;snp_reformat2&quot;           &quot;snp_reformat3&quot;          
-## [131] &quot;stable&quot;                  &quot;stress&quot;                 
-## [133] &quot;subregion&quot;               &quot;Sum&quot;                    
-## [135] &quot;temp&quot;                    &quot;terms&quot;                  
-## [137] &quot;tmp&quot;                     &quot;total_wp_var&quot;           
-## [139] &quot;trait&quot;                   &quot;vot&quot;                    
-## [141] &quot;watchVideoAddin&quot;         &quot;WWP&quot;                    
-## [143] &quot;x&quot;                       &quot;y&quot;                      
-## [145] &quot;z&quot;</code></pre>
+<pre><code>##   [1] &quot;TRUE&quot;                         &quot;1&quot;                           
+##   [3] &quot;3.14159265358979&quot;             &quot;a&quot;                           
+##   [5] &quot;ab&quot;                           &quot;abc&quot;                         
+##   [7] &quot;add_var&quot;                      &quot;aic_out&quot;                     
+##   [9] &quot;aic_vals&quot;                     &quot;aic_weights&quot;                 
+##  [11] &quot;alpha&quot;                        &quot;amova.result&quot;                
+##  [13] &quot;amova.result.ade4&quot;            &quot;amova.test&quot;                  
+##  [15] &quot;b&quot;                            &quot;bc&quot;                          
+##  [17] &quot;Buffer.cells&quot;                 &quot;Buffer.nlcd&quot;                 
+##  [19] &quot;canThrow&quot;                     &quot;Cellsize&quot;                    
+##  [21] &quot;ci_95&quot;                        &quot;ci_95_qst&quot;                   
+##  [23] &quot;class.ID&quot;                     &quot;ColTab&quot;                      
+##  [25] &quot;Components&quot;                   &quot;coords.longlat&quot;              
+##  [27] &quot;coords.pop&quot;                   &quot;corm&quot;                        
+##  [29] &quot;corm.20&quot;                      &quot;corm.50&quot;                     
+##  [31] &quot;corm.GD.pop&quot;                  &quot;dat2&quot;                        
+##  [33] &quot;data&quot;                         &quot;dd.ecogen&quot;                   
+##  [35] &quot;dd.ecogen.Cluster&quot;            &quot;dd.genind.Cluster&quot;           
+##  [37] &quot;dd.site&quot;                      &quot;dd.spatial&quot;                  
+##  [39] &quot;dd.temporal&quot;                  &quot;dem_qst&quot;                     
+##  [41] &quot;dens&quot;                         &quot;Dgen&quot;                        
+##  [43] &quot;Dgeo&quot;                         &quot;env&quot;                         
+##  [45] &quot;fam.eff&quot;                      &quot;fam.var&quot;                     
+##  [47] &quot;Fbar&quot;                         &quot;Fest&quot;                        
+##  [49] &quot;Forest&quot;                       &quot;Forest.class&quot;                
+##  [51] &quot;Freq&quot;                         &quot;Frogs&quot;                       
+##  [53] &quot;Frogs.diversity&quot;              &quot;Frogs.genind&quot;                
+##  [55] &quot;Frogs.genpop&quot;                 &quot;Frogs.gstudio&quot;               
+##  [57] &quot;Frogs.pegas&quot;                  &quot;Frogs.sites&quot;                 
+##  [59] &quot;fst&quot;                          &quot;fst_persnp&quot;                  
+##  [61] &quot;fst_snp&quot;                      &quot;Fst.per.site&quot;                
+##  [63] &quot;GCtorture&quot;                    &quot;GD.ind&quot;                      
+##  [65] &quot;GD.ind.propShared&quot;            &quot;GD.ind.smouse&quot;               
+##  [67] &quot;GD.pop&quot;                       &quot;GD.pop.cGD.gstudio&quot;          
+##  [69] &quot;GD.pop.Dps.gstudio&quot;           &quot;GD.pop.Edwards&quot;              
+##  [71] &quot;GD.pop.Euclidean.gstudio&quot;     &quot;GD.pop.Hedrick&quot;              
+##  [73] &quot;GD.pop.Jaccard.gstudio&quot;       &quot;GD.pop.Joost&quot;                
+##  [75] &quot;GD.pop.Nei&quot;                   &quot;GD.pop.Nei.gstudio&quot;          
+##  [77] &quot;GD.pop.NeiGst&quot;                &quot;GD.pop.PairwiseFst.hierfstat&quot;
+##  [79] &quot;GD.pop.propShared&quot;            &quot;GD.pop.Provesti&quot;             
+##  [81] &quot;GD.pop.Reynolds&quot;              &quot;GD.pop.Rogers&quot;               
+##  [83] &quot;geno_reformat&quot;                &quot;h2&quot;                          
+##  [85] &quot;h2_boot_out&quot;                  &quot;het_out&quot;                     
+##  [87] &quot;het_snp&quot;                      &quot;Hexp&quot;                        
+##  [89] &quot;Hexp.pop&quot;                     &quot;hierfstat_convert&quot;           
+##  [91] &quot;Hobs&quot;                         &quot;Hobs.pop&quot;                    
+##  [93] &quot;HWE.test&quot;                     &quot;HWE.test.chisq&quot;              
+##  [95] &quot;HWE.test.MC&quot;                  &quot;i&quot;                           
+##  [97] &quot;IBD&quot;                          &quot;index&quot;                       
+##  [99] &quot;Lag1.def&quot;                     &quot;LD.pair&quot;                     
+## [101] &quot;Mantel.test&quot;                  &quot;Map&quot;                         
+## [103] &quot;marginal.residuals&quot;           &quot;Matrix&quot;                      
+## [105] &quot;Mean.inbreeding.per.pop&quot;      &quot;mod&quot;                         
+## [107] &quot;mod_boot&quot;                     &quot;mod_boot_qst&quot;                
+## [109] &quot;mod.diff&quot;                     &quot;mod.diff.minus2&quot;             
+## [111] &quot;mod.Fst.temp&quot;                 &quot;mod.Fst.temp.both&quot;           
+## [113] &quot;mod.Fst.temp.C&quot;               &quot;mod.Fst.temp.NLT&quot;            
+## [115] &quot;mod.He&quot;                       &quot;mod.noBlock&quot;                 
+## [117] &quot;mod.noFam&quot;                    &quot;mod.noPop&quot;                   
+## [119] &quot;mod.RA&quot;                       &quot;mod1&quot;                        
+## [121] &quot;mod1_env&quot;                     &quot;mod2&quot;                        
+## [123] &quot;mod3&quot;                         &quot;mod3_all_eff&quot;                
+## [125] &quot;mod3_eff&quot;                     &quot;mod3_fam_only&quot;               
+## [127] &quot;mod4&quot;                         &quot;mod4.ML&quot;                     
+## [129] &quot;mono&quot;                         &quot;myMap&quot;                       
+## [131] &quot;myOrder&quot;                      &quot;myPal&quot;                       
+## [133] &quot;nb.4nn&quot;                       &quot;nb.del&quot;                      
+## [135] &quot;nb.gab&quot;                       &quot;nb.mst&quot;                      
+## [137] &quot;nb.nbd&quot;                       &quot;nb.rel&quot;                      
+## [139] &quot;NLCD&quot;                         &quot;NLCD.class&quot;                  
+## [141] &quot;NLCD.patch&quot;                   &quot;Null.alleles&quot;                
+## [143] &quot;num_qst&quot;                      &quot;one.over.relatedness&quot;        
+## [145] &quot;Pairwise.fst&quot;                 &quot;panel.cor&quot;                   
+## [147] &quot;panel.hist&quot;                   &quot;panel.smooth&quot;                
+## [149] &quot;Patches&quot;                      &quot;PercentForest500&quot;            
+## [151] &quot;phen&quot;                         &quot;phen_env&quot;                    
+## [153] &quot;phen_mod&quot;                     &quot;Plot.data&quot;                   
+## [155] &quot;pop_rep&quot;                      &quot;prof&quot;                        
+## [157] &quot;Prop.landscape&quot;               &quot;Prop.loci.out.of.HWE&quot;        
+## [159] &quot;Prop.pops.out.of.HWE&quot;         &quot;prov.eff&quot;                    
+## [161] &quot;prov.var&quot;                     &quot;qst&quot;                         
+## [163] &quot;qst_boot_out&quot;                 &quot;QstFst_out&quot;                  
+## [165] &quot;Radius&quot;                       &quot;ralu.loci&quot;                   
+## [167] &quot;ralu.site&quot;                    &quot;RasterMaps&quot;                  
+## [169] &quot;rasters&quot;                      &quot;rat&quot;                         
+## [171] &quot;region&quot;                       &quot;res.Fst.temp&quot;                
+## [173] &quot;res.var&quot;                      &quot;Result&quot;                      
+## [175] &quot;Richness&quot;                     &quot;Sites&quot;                       
+## [177] &quot;Sites.class&quot;                  &quot;Sites.sf&quot;                    
+## [179] &quot;Sites.sp&quot;                     &quot;Snails.ecogen&quot;               
+## [181] &quot;Snails.genind&quot;                &quot;Snails.genpop&quot;               
+## [183] &quot;Snails.gstudio&quot;               &quot;Snails.moran&quot;                
+## [185] &quot;snp&quot;                          &quot;snp_reformat&quot;                
+## [187] &quot;snp_reformat2&quot;                &quot;snp_reformat3&quot;               
+## [189] &quot;stable&quot;                       &quot;subregion&quot;                   
+## [191] &quot;Sum&quot;                          &quot;temp&quot;                        
+## [193] &quot;terms&quot;                        &quot;tmp&quot;                         
+## [195] &quot;total_wp_var&quot;                 &quot;trait&quot;                       
+## [197] &quot;watchVideoAddin&quot;              &quot;WWP&quot;                         
+## [199] &quot;WWP.ecogen&quot;                   &quot;WWP.hierfstat&quot;               
+## [201] &quot;x&quot;                            &quot;xy&quot;                          
+## [203] &quot;y&quot;                            &quot;z&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(w)</code></pre></div>
 <pre><code>## [1] &quot;character&quot;</code></pre>
 <p>Accessing elements within a vector are done using the square bracket <code>[]</code> notation. All indices (for vectors and matrices) start at 1 (not zero as is the case for some languages). Getting and setting the components within a vector are accomplished using numeric indices with the assignment operators just like we do for variables containing a single value.</p>
@@ -614,36 +644,36 @@ theList<span class="op">$</span>x</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df &lt;-<span class="st"> </span><span class="kw">data.frame</span>( <span class="dt">ID=</span><span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">Names=</span><span class="kw">c</span>(<span class="st">&quot;Bob&quot;</span>,<span class="st">&quot;Alice&quot;</span>,<span class="st">&quot;Vicki&quot;</span>,<span class="st">&quot;John&quot;</span>,<span class="st">&quot;Sarah&quot;</span>), <span class="dt">Score=</span><span class="dv">100</span> <span class="op">-</span><span class="st"> </span><span class="kw">rpois</span>(<span class="dv">5</span>,<span class="dt">lambda=</span><span class="dv">10</span>))
 df</code></pre></div>
 <pre><code>##   ID Names Score
-## 1  1   Bob    90
-## 2  2 Alice    87
-## 3  3 Vicki    98
+## 1  1   Bob    89
+## 2  2 Alice    95
+## 3  3 Vicki    89
 ## 4  4  John    91
-## 5  5 Sarah    96</code></pre>
+## 5  5 Sarah    92</code></pre>
 <p>You can see that each column is a unified type of data and each row is equivalent to a record. Additional data columns may be added to an existing data.frame as:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df<span class="op">$</span>Passed_Class &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">TRUE</span>,<span class="ot">TRUE</span>,<span class="ot">TRUE</span>,<span class="ot">FALSE</span>,<span class="ot">TRUE</span>)</code></pre></div>
 <p>Since we may have many (thousands?) of rows of observations, a <code>summary()</code> of the data.frame can provide a more compact description.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(df)</code></pre></div>
 <pre><code>##        ID      Names       Score      Passed_Class   
-##  Min.   :1   Alice:1   Min.   :87.0   Mode :logical  
-##  1st Qu.:2   Bob  :1   1st Qu.:90.0   FALSE:1        
+##  Min.   :1   Alice:1   Min.   :89.0   Mode :logical  
+##  1st Qu.:2   Bob  :1   1st Qu.:89.0   FALSE:1        
 ##  Median :3   John :1   Median :91.0   TRUE :4        
-##  Mean   :3   Sarah:1   Mean   :92.4                  
-##  3rd Qu.:4   Vicki:1   3rd Qu.:96.0                  
-##  Max.   :5             Max.   :98.0</code></pre>
+##  Mean   :3   Sarah:1   Mean   :91.2                  
+##  3rd Qu.:4   Vicki:1   3rd Qu.:92.0                  
+##  Max.   :5             Max.   :95.0</code></pre>
 <p>We can add columns of data to the data.frame after the fact using the <code>$</code>-operator to indicate the column name. Depending upon the data type, the summary will provide an overview of what is there.</p>
 </div>
 <div id="b-indexing-data-frames" class="section level3">
 <h3>b) Indexing Data Frames</h3>
 <p>You can access individual items within a <code>data.frame</code> by numeric index such as:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df[<span class="dv">1</span>,<span class="dv">3</span>]</code></pre></div>
-<pre><code>## [1] 90</code></pre>
+<pre><code>## [1] 89</code></pre>
 <p>You can slide indices along rows (which return a new <code>data.frame</code> for you)</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df[<span class="dv">1</span>,]</code></pre></div>
 <pre><code>##   ID Names Score Passed_Class
-## 1  1   Bob    90         TRUE</code></pre>
+## 1  1   Bob    89         TRUE</code></pre>
 <p>or along columns (which give you a vector of data)</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df[,<span class="dv">3</span>]</code></pre></div>
-<pre><code>## [1] 90 87 98 91 96</code></pre>
+<pre><code>## [1] 89 95 89 91 92</code></pre>
 <p>or use the <code>$</code>-operator as you did for the list data type to get direct access to a either all the data or a specific subset therein.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df<span class="op">$</span>Names[<span class="dv">3</span>]</code></pre></div>
 <pre><code>## [1] Vicki
@@ -651,12 +681,12 @@ df</code></pre></div>
 <p>Indices are ordered just like for matrices, rows first then columns. You can also pass a set of indices such as:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>,]</code></pre></div>
 <pre><code>##   ID Names Score Passed_Class
-## 1  1   Bob    90         TRUE
-## 2  2 Alice    87         TRUE
-## 3  3 Vicki    98         TRUE</code></pre>
+## 1  1   Bob    89         TRUE
+## 2  2 Alice    95         TRUE
+## 3  3 Vicki    89         TRUE</code></pre>
 <p>It is also possible to use logical operators as indices. Here I select only those names in the data.frame whose score was &gt;90 and they passed popgen.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df<span class="op">$</span>Names[df<span class="op">$</span>Score <span class="op">&gt;</span><span class="st"> </span><span class="dv">90</span> <span class="op">&amp;</span><span class="st"> </span>df<span class="op">$</span>Passed_Class<span class="op">==</span><span class="ot">TRUE</span>]</code></pre></div>
-<pre><code>## [1] Vicki Sarah
+<pre><code>## [1] Alice Sarah
 ## Levels: Alice Bob John Sarah Vicki</code></pre>
 <p>This is why <code>data.frame</code> objects are very database like. They can contain lots of data and you can extract from them subsets that you need to work on. This is a VERY important feature, one that is vital for reproducible research. Keep you data in one and only one place.</p>
 </div>

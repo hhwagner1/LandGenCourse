@@ -5,7 +5,6 @@ require(sf)
 require(raster)
 require(GeNetIt)
 require(rasterVis)
-require(tmaptools) 
 
 ## ------------------------------------------------------------------------
 data(ralu.site)
