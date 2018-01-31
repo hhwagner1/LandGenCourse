@@ -16,7 +16,7 @@ Imports:
     car,
     checkpoint,
     dplyr,
-    EcoGenetics (>= 1.2.1-5),
+    EcoGenetics (>= 1.2.1-2),
     effsize,
     formatR (>= 1.5),
     GeNetIt,
@@ -69,7 +69,7 @@ Remotes:
     kjgilbert/QstFstComp,
     dyerlab/popgraph,
     dyerlab/gstudio
-    leandroroser/EcoGenetics-devel
+    leandroroser/EcoGenetics-devel (>= 1.2.1-5)
 Suggests: 
     knitr,
     tmaptools,
