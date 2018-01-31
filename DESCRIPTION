@@ -16,7 +16,7 @@ Imports:
     car,
     checkpoint,
     dplyr,
-    EcoGenetics,
+    EcoGenetics (>= 1.2.1-5),
     effsize,
     formatR (>= 1.5),
     GeNetIt,
