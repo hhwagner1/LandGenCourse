@@ -46,7 +46,7 @@ watchVideoAddin <- function() {
         "http://sho.co/19DCV",
         "http://sho.co/19DA2",
         "http://sho.co/19UT5",
-        "http://sho.co/19UT6",
+        "http://sho.co/19Y9F",
         "http://sho.co/19Y08",
         "http://sho.co/19Y09",
         "http://sho.co/19Y0B",
