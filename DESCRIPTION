@@ -1,7 +1,7 @@
 Package: LandGenCourse
 Type: Package
 Title: Interface for course "Landscape Genetic Data Analysis with R"
-Version: 1.2.0
+Version: 1.2.1
 Author: Helene Wagner
 Maintainer: Helene Wagner <hhwagner1@gmail.com>
 Description: Installs four RStudio Addins (Watch Course Video, Start Tutorial, Choose Worked Examples, Open Cheat Sheet), several vignettes, and course data sets.
