@@ -22,8 +22,8 @@ watchVideoAddin <- function() {
                         "Week 4: Metapopulation Genetics (Part 1)"=9,
                         "Week 4: Metapopulation Genetics (Part 2)"=10,
                         "Week 5: Spatial Statistics"=11,
-                        "Week 6: Linear (Mixed) Models in R (Part 1)"=12,
-                        "Week 6: Linear (Mixed) Models in R (Part 2)"=13),
+                        "Week 6: Quantitative Genetics (Part 1)"=12,
+                        "Week 6: Quantitative Genetics (Part 2)"=13),
                   selected = 5
       )
     )
@@ -50,7 +50,7 @@ watchVideoAddin <- function() {
         "http://sho.co/19Y08",
         "http://sho.co/19Y09",
         "http://sho.co/19Y0B",
-        "http://sho.co/19SXN",
+        "http://sho.co/19YGU",
         "http://sho.co/19SXK")[as.numeric(input$video)]
 
       selectedSlides <- c("", "", "",
