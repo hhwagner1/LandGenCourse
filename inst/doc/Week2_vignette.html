@@ -12,7 +12,7 @@
 
 <meta name="author" content="Helene Wagner" />
 
-<meta name="date" content="2018-01-28" />
+<meta name="date" content="2018-02-03" />
 
 <title>Week 2: Spatial Data</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Week 2: Spatial Data</h1>
 <h4 class="author"><em>Helene Wagner</em></h4>
-<h4 class="date"><em>2018-01-28</em></h4>
+<h4 class="date"><em>2018-02-03</em></h4>
 
 
 <div id="TOC">
@@ -142,9 +142,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">require</span>(sp)
 <span class="kw">require</span>(raster)
 <span class="kw">require</span>(GeNetIt)
-<span class="co">#require(tmaptools) </span>
 <span class="kw">require</span>(SDMTools) <span class="co"># for landscape metrics</span>
 <span class="kw">require</span>(tibble)</code></pre></div>
+<p>Package ‘tmaptools’ not automatically installed with ‘LandGenCourse’:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(tmaptools)) <span class="kw">install.packages</span>(<span class="st">&quot;tmaptools&quot;</span>)</code></pre></div>
 </div>
 </div>
 <div id="import-site-data-from-.csv-file" class="section level2">
@@ -215,9 +216,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Before we can combine the sampling locations with other spatial datasets, such as raster data, we need to tell R where on earth these locations are (georeferencing). This is done by specifying the ‘Coordinate Reference System’ (CRS) or a ‘proj4’ string.</p>
 <p>For more information on CRS, see: <a href="https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf" class="uri">https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf</a></p>
 <p>We know that these coordinates are UTM zone 11 (Northern hemisphere) coordinates, hence we can use a helper function to find the correct ‘proj4string’, using function ‘get_proj4’ from the ‘tmaptools’ package. (For the Southern hemisphere, you would add ‘s’ after the zone: “utm11s”). Here we call the function and the package simultaneously (this is good practice, as it helps keep track of where the functions in your code come from).</p>
-<p>Note: Package ‘tmaptools’ has not been automatically installed with ‘LandGenCourse’ to avoid incompatibilities. To use the function, you may first need to install ‘tmaptools’ by running the line with ‘install.packages(“tmaptools”)’ without ‘#’.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#install.packages(&quot;tmaptools&quot;)</span>
-<span class="kw">proj4string</span>(Sites.sp) &lt;-<span class="st"> </span>tmaptools<span class="op">::</span><span class="kw">get_proj4</span>(<span class="st">&quot;utm11&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">proj4string</span>(Sites.sp) &lt;-<span class="st"> </span>tmaptools<span class="op">::</span><span class="kw">get_proj4</span>(<span class="st">&quot;utm11&quot;</span>)</code></pre></div>
 <p>If we had longitude and latitude coordinates, we would modify the command like this: proj4string(Sites.sp) &lt;- tmaptools::get_proj4(“longlat”).</p>
 </div>
 <div id="c-access-data-in-spatialpointsdataframe" class="section level3">

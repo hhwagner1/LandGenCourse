@@ -36,24 +36,32 @@ We will thus have the following data:
 - **WWP_phenotype_data.txt**: Phenotypic measurements for 5 seedlings per tree made in a common garden.
 - **WWP.ecogen**: an 'ecogen' object (package 'EcoGenetics') with SNP genotypes for all trees sampled in the field, and with environmental data collected from each plot within each population.
 
-### c) Required R libraries
+### c) Required R packages
 
-All required packages should have been installed already when you installed 'LandGenCourse'.
+Most required packages should have been installed already when you installed 'LandGenCourse'.
 
 ```{r message=FALSE, warning=TRUE}
-require(LandGenCourse)
-require(lme4)
+library(LandGenCourse)
+library(lme4)
 #require(EcoGenetics)
-require(tibble)
+library(tibble)
 #require(lattice)
 #require(MuMIn)
 #require(predictmeans)
 #require(nlme)
 #require(QstFstComp)
 #require(car)  
+```
 
-#require(ggeffects)     # Not automatically installed with 'LandGenCourse'
+Package 'ggeffects' not automatically installed with 'LandGenCourse':
 
+```{r message=FALSE, warning=TRUE}
+if(!require(ggeffects)) install.packages("ggeffects")
+```
+
+Source two files with additional functions:
+
+```{r message=FALSE, warning=TRUE}
 source(system.file("extdata", "supplemental_R_functions.R", 
                             package = "LandGenCourse"))
 source(system.file("extdata", "panel.cor.r", 
@@ -335,6 +343,11 @@ Interpret the results.
 - Is it meaningful that the red line is less similar to the mean (or median) of the bootstrap distribution as compared to $h^2$?
 
 ## 4. Compare $Q_{st}$ to $F_{st}$ measured from SNP data
+ 
+If you want to learn more about analyzing SNP data in R, here are some resources: 
+
+-  **adegenet SNP tutorial**: http://adegenet.r-forge.r-project.org/files/tutorial-genomics.pdf
+- **popgen.nescent.org** (click on 'Users' tab): http://popgen.nescent.org/
 
 ### a) Import 'ecogen' object 
 

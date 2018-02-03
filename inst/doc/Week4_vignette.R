@@ -9,7 +9,7 @@ require(EcoGenetics)
 #require(sp)
 #require(ggmap)
 #require(ggplot2)
-#require(car)          
+#require(car)  
 
 ## ------------------------------------------------------------------------
 data(dd.ecogen, package = "LandGenCourse")
@@ -58,20 +58,25 @@ car::vif(mod.diff)
 dd.spatial@data$Residuals <- mod.diff$residuals
 sp::bubble(dd.spatial, zcol = "Residuals", col = c("red", "blue"))
 
-## ------------------------------------------------------------------------
+## ----message=FALSE-------------------------------------------------------
 a <- is.element(rownames(dd.spatial@data), c("32", "42"))
+a2 <- c(1:nrow(dd.spatial@data))[a]
 myMap <- ggmap::qmplot(Longitude, Latitude,  data = as.data.frame(dd.spatial),
               source = "stamen", maptype = "toner-lite",  
               col = sign(Residuals), size = abs(Residuals))
-myMap + ggplot2::geom_text(data = as.data.frame(dd.spatial[a,]),
+myMap + ggplot2::geom_text(data = as.data.frame(dd.spatial[a2,]),
                    mapping = ggplot2::aes(Longitude, Latitude, label = SITE),
                    size = 4, col = "black", vjust = 0, nudge_y = -0.015)
-ggplot2::ggsave("ResidualMap.png", width = 7, height = 5.5, units = "in",  
-                dpi = 300)
+
+## ----message=FALSE-------------------------------------------------------
+#require(here)
+#if(!dir.exists(paste0(here(),"/output"))) dir.create(paste0(here(),"/output"))
+#ggplot2::ggsave(paste0(here(),"/output/ResidualMap.png"), 
+#               width = 7, height = 5.5, units = "in",  dpi = 300)
 
 ## ------------------------------------------------------------------------
 mod.diff.minus2 <- lm(scale(FST.GESTE) ~ scale(NLT) + scale(C), 
-               data=dd.spatial[-a,])
+               data=dd.spatial[-a2,])
 summary(mod.diff.minus2)
 
 ## ----fig.height=7, fig.width=8-------------------------------------------

@@ -1,8 +1,8 @@
 ## ----message=FALSE, warning=TRUE-----------------------------------------
-require(LandGenCourse)
-require(lme4)
+library(LandGenCourse)
+library(lme4)
 #require(EcoGenetics)
-require(tibble)
+library(tibble)
 #require(lattice)
 #require(MuMIn)
 #require(predictmeans)
@@ -10,8 +10,10 @@ require(tibble)
 #require(QstFstComp)
 #require(car)  
 
-#require(ggeffects)     # Not automatically installed with 'LandGenCourse'
+## ----message=FALSE, warning=TRUE-----------------------------------------
+if(!require(ggeffects)) install.packages("ggeffects")
 
+## ----message=FALSE, warning=TRUE-----------------------------------------
 source(system.file("extdata", "supplemental_R_functions.R", 
                             package = "LandGenCourse"))
 source(system.file("extdata", "panel.cor.r", 

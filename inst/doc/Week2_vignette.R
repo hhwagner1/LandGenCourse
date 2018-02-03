@@ -3,9 +3,11 @@ require(LandGenCourse)
 require(sp)
 require(raster)
 require(GeNetIt)
-#require(tmaptools) 
 require(SDMTools) # for landscape metrics
 require(tibble)
+
+## ----message=FALSE, warning=TRUE-----------------------------------------
+if(!require(tmaptools)) install.packages("tmaptools")
 
 ## ------------------------------------------------------------------------
 data(ralu.site)
@@ -27,7 +29,6 @@ coordinates(Sites.sp) <- ~coords.x1+coords.x2
 as.tibble(Sites.sp)
 
 ## ------------------------------------------------------------------------
-#install.packages("tmaptools")
 proj4string(Sites.sp) <- tmaptools::get_proj4("utm11")
 
 ## ------------------------------------------------------------------------
