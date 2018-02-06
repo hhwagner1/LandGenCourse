@@ -21,27 +21,31 @@ openCheatsheetAddin <- function() {
     # Listen for 'done' events.
     shiny::observeEvent(input$done, {
 
-    if(input$sheet == "1")
+    if(!dir.exists(file.path(getwd(), "downloads")))
     {
-      utils::browseURL(paste0("file://", system.file("extdata", "RCommands.docx",
-                                                       package = "LandGenCourse")))
+      dir.create(file.path(getwd(), "downloads"), FALSE)
     }
 
+    if(input$sheet == "1")
+    {
+      now<-format(Sys.time(), "%b%d%H%M%S")
+      utils::download.file(paste0("file://", system.file("extdata", "RCommands.docx",
+                                                         package = "LandGenCourse")),
+             destfile=file.path("downloads", paste0("RCommands_", now, ".docx")),
+                           mode="wb")
+      utils::browseURL(paste0("file://", file.path(getwd(), "downloads",
+                                                   paste0("RCommands_", now, ".docx"))))
+    }
 
     if(input$sheet != "1")
     {
-      if(!dir.exists(file.path(getwd(), "downloads")))
-      {
-        dir.create(file.path(getwd(), "downloads"), FALSE)
-      }
-
       selectedFile <- switch(input$sheet,
-                             "1" = "",
-                             "2" = "https://github.com/rstudio/cheatsheets/raw/master/base-r.pdf",
-                             "3" = "https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf",
-                             "4" = "https://github.com/rstudio/cheatsheets/raw/master/data-import.pdf",
-                             "5" = "https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf",
-                             "6" = "https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf")
+        "1" = "",
+        "2" = "https://github.com/rstudio/cheatsheets/raw/master/base-r.pdf",
+        "3" = "https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf",
+        "4" = "https://github.com/rstudio/cheatsheets/raw/master/data-import.pdf",
+        "5" = "https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf",
+        "6" = "https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf")
 
       utils::download.file(selectedFile,
                          destfile=file.path("downloads", basename(selectedFile)),
@@ -51,10 +55,12 @@ openCheatsheetAddin <- function() {
 
 
     cat(paste0("Hints:
-- 'List of R Functions by Tutorial' will open as Word file (doc).
+- 'List of R Functions by Tutorial' will open as Word file (docx).
+- File will be saved to folder 'downloads' in active working directory.
+- A timestamp (date and time) is added to file name to avoid overwriting your notes.
 - Add your notes and save under a new name and/or destination!
 - All other cheat sheets will open in your default PDF viewer.
-- They are saved to folder 'downloads' in your active working directory."))
+- They are also saved to folder 'downloads' in your active working directory."))
 
 
       shiny::stopApp()
