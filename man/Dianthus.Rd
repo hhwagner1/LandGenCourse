@@ -6,13 +6,13 @@
   Site-level data from Rico et al. 2014.
 }
 \usage{Dianthus}
-\format{A SpatialPointsDataFrame with 65 populations and 32 variables, in the following slots:
+\format{A SpatialPointsDataFrame with 65 populations and 31 variables, in the following slots:
 \describe{
   \item{coords}{Spatial coordinates: \describe{
-    \item{x}{}
-    \item{y}{}
+    \item{x}{Easting (Gauss-Krueger GK4)}
+    \item{y}{Northing (Gauss-Krueger GK4)}
   }}
-  \item{proj4string}{Projection: "+proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +datum=potsdam +units=m +no_defs"}
+  \item{proj4string}{CRS("+init=epsg:31468")}
   \item{bbox}{Boundary box: spatial extent}
 
   \item{data}{Patch-level variables: \describe{
@@ -25,13 +25,10 @@
     \item{Elements2008.4}{Number of dynamic structural element types present in 2008 (rock debris, animal burrows, ant hills, erosion)}
     \item{Dc.89}{Species presence/absence in 1989}
     \item{Dc.09}{Species presence/absence in 2009}
-    \item{F}{}
-    \item{Ne}{}
-    \item{I}{}
+    \item{I}{Shannon diversity index}
     \item{Ho}{Observed heterozygosity}
     \item{He}{Expected heterozygosity}
     \item{A}{Rarefied allelic richness}
-    \item{PA}{}
     \item{FIS}{Inbreeding coefficient}
     \item{Eu_pj}{Connectivity index Si, calculated based on Euclidean distances and using binary source patch weights (species presence/absence)}
     \item{Eu_Aj}{Connectivity index Si, calculated based on Euclidean distances and using patch weights proportional to patch size (if species present)}
@@ -48,6 +45,8 @@
     \item{Forest_pj}{Connectivity index Si, calculated based on Euclidean distance but only if there is no forest between source and focal patch, using binary source patch weights (species presence/absence)}
     \item{Forest_Aj}{Connectivity index Si, calculated based on Euclidean distance but only if there is no forest between source and focal patch, using patch weights proportional to patch size (if species present)}
     \item{Forest_Nj}{Connectivity index Si, calculated based on Euclidean distance but only if there is no forest between source and focal patch, using patch weights proportional to the rank of PopSize (ranging from 0 - 4)}
+    \item{Longitude}{Longitude: CRS("+init=epsg:4326")}
+    \item{Latitude}{Latitude: CRS("+init=epsg:4326")}
     }
 }}}
 \references{
