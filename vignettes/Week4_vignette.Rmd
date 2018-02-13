@@ -384,7 +384,7 @@ Given that sample size, what was the statistical power of our test to detect at 
 pwr::pwr.t2n.test(n1=7, n2=5, d=-0.8, alternative = "less")
 ```
 
-So the power to detect at least a large effect, if it exists in the popoulation, was only 0.355, way below the 0.8 (or even 0.95) that we would want to see. For a medium effect, the power is even smaller.
+So the power to detect at least a large effect, if it exists in the population, was only 0.355, way below the 0.8 (or even 0.95) that we would want to see. For a medium effect, the power is even smaller.
 
 ### c) Sample size calculation
 
