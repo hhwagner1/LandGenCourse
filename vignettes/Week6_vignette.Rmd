@@ -1,6 +1,6 @@
 ---
 title: "Week 6: Quantitative Genetics"
-author: "Andrew Eckert, Kati Csillery and Helene Wagner"
+author: "Andrew Eckert, Katalin Csillery and Helene Wagner"
 date: "`r Sys.Date()`"
 show_toc: true
 output:

@@ -14,7 +14,7 @@
 
 <meta name="date" content="2018-01-28" />
 
-<title>Week 5: Spatial Statistics</title>
+<title>Week 4: Spatial Statistics</title>
 
 
 
@@ -154,7 +154,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 dd.spatial &lt;-<span class="st"> </span>dd.site[dd.site<span class="op">@</span>data<span class="op">$</span>Spatial<span class="op">==</span><span class="ot">TRUE</span>,]
 <span class="co">#Snails.site.df &lt;- as.data.frame(dd.spatial)</span></code></pre></div>
 <p>For some analyses, we need to convert geographic coordinates from latitude-longitude format into metric coordinates to facilitate the calcultion of geographic distances. Here we add the metric coordinates (“x” and “Y”) to the <span class="citation">@data</span> slot. We use ‘cbind’ to bind the columns with the coordinates with the columns in <a href="mailto:dd.spaital@data">dd.spaital@data</a>. Because ‘xy’ is listed first, it will be inserted as the first two columns.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">xy &lt;-<span class="st"> </span>SoDA<span class="op">::</span><span class="kw">geoXY</span>(dd.spatial<span class="op">@</span>coords[,<span class="st">'Latitude'</span>], 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">xy &lt;-<span class="st"> </span>SoDA<span class="op">::</span><span class="kw">geoXY</span>(dd.spatial<span class="op">@</span>coords[,<span class="st">'Latitude'</span>],
                   dd.spatial<span class="op">@</span>coords[,<span class="st">'Longitude'</span>])
 dd.spatial<span class="op">@</span>data &lt;-<span class="st"> </span><span class="kw">cbind</span>(xy, dd.spatial<span class="op">@</span>data)
 tibble<span class="op">::</span><span class="kw">as.tibble</span>(dd.spatial<span class="op">@</span>data)</code></pre></div>
@@ -180,13 +180,13 @@ tibble<span class="op">::</span><span class="kw">as.tibble</span>(dd.spatial<spa
 <p>Next, we import and extract the corresponding genetic data.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(dd.ecogen, <span class="dt">package=</span><span class="st">&quot;LandGenCourse&quot;</span>)
 dd.ecogen</code></pre></div>
-<pre><code>## 
+<pre><code>##
 ##                    || ECOGEN CLASS OBJECT ||
 ## ----------------------------------------------------------------------------
-##  Access to slots: &lt;ecoslot.&gt; + &lt;name of the slot&gt; + &lt;(name of the object)&gt; 
+##  Access to slots: &lt;ecoslot.&gt; + &lt;name of the slot&gt; + &lt;(name of the object)&gt;
 ##  See: help(&quot;EcoGenetics accessors&quot;)
 ## ----------------------------------------------------------------------------
-## 
+##
 ##  | slot XY:    | --&gt; 1270 x 2       coordinates
 ##  | slot P:     | --&gt; 0 x 0          phenotypic variables
 ##  | slot G:     | --&gt; 1270 x 10      loci         &gt;&gt; ploidy: 2 || codominant
@@ -202,19 +202,19 @@ dd.ecogen</code></pre></div>
 <li>The argument ‘pop_levels’ refers to the <strong>vector</strong> in the site data that contains the population names. This should be an ID, where each value occurs only once. Here, we use the variable ‘SiteID’ from the <span class="citation">@data</span> tab of dd.spatial.</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dd.ecogen &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span><span class="kw">eco.fill_ecogen_with_df</span>(dd.ecogen,
-             <span class="dt">pop=</span><span class="st">&quot;SiteID&quot;</span>, <span class="dt">pop_levels=</span>dd.site<span class="op">@</span>data<span class="op">$</span>SiteID, 
+             <span class="dt">pop=</span><span class="st">&quot;SiteID&quot;</span>, <span class="dt">pop_levels=</span>dd.site<span class="op">@</span>data<span class="op">$</span>SiteID,
              <span class="dt">XY =</span> dd.site<span class="op">@</span>coords, <span class="dt">E =</span> dd.site<span class="op">@</span>data)</code></pre></div>
 <p>Now we can select individuals in dd.ecogen by the attribute ‘Spatial’.</p>
 <p>Note: it is saver to specify ecogen object slots with double brackets [[“E”]] than with the slot symbol <span class="citation">@E</span>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Snails.ecogen &lt;-<span class="st"> </span>dd.ecogen[dd.ecogen[[<span class="st">&quot;E&quot;</span>]]<span class="op">$</span>Spatial <span class="op">==</span><span class="st"> </span><span class="ot">TRUE</span>,]
 Snails.ecogen</code></pre></div>
-<pre><code>## 
+<pre><code>##
 ##                    || ECOGEN CLASS OBJECT ||
 ## ----------------------------------------------------------------------------
-##  Access to slots: &lt;ecoslot.&gt; + &lt;name of the slot&gt; + &lt;(name of the object)&gt; 
+##  Access to slots: &lt;ecoslot.&gt; + &lt;name of the slot&gt; + &lt;(name of the object)&gt;
 ##  See: help(&quot;EcoGenetics accessors&quot;)
 ## ----------------------------------------------------------------------------
-## 
+##
 ##  | slot XY:    | --&gt; 749 x 2        coordinates
 ##  | slot P:     | --&gt; 0 x 0          phenotypic variables
 ##  | slot G:     | --&gt; 749 x 10       loci         &gt;&gt; ploidy: 2 || codominant
@@ -234,24 +234,24 @@ Snails.ecogen</code></pre></div>
 Snails.genind &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span><span class="kw">ecogen2genind</span>(Snails.ecogen)</code></pre></div>
 <pre><code>## Loading required package: adegenet</code></pre>
 <pre><code>## Loading required package: ade4</code></pre>
-<pre><code>## 
+<pre><code>##
 ##    /// adegenet 2.1.1 is loaded ////////////
-## 
+##
 ##    &gt; overview: '?adegenet'
-##    &gt; tutorials/doc/questions: 'adegenetWeb()' 
+##    &gt; tutorials/doc/questions: 'adegenetWeb()'
 ##    &gt; bug reports/feature requests: adegenetIssues()</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Snails.genind<span class="op">@</span>pop &lt;-<span class="st"> </span>Snails.ecogen<span class="op">@</span>S<span class="op">$</span>SITE</code></pre></div>
 <p>For calculating population-level genetic distances, we aggregate the individual-level data to a ‘genpop’ object with population-level allele frequencies.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Snails.genpop &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">genind2genpop</span>(Snails.genind)</code></pre></div>
-<pre><code>## 
-##  Converting data from a genind to a genpop object... 
-## 
+<pre><code>##
+##  Converting data from a genind to a genpop object...
+##
 ## ...done.</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Snails.genpop</code></pre></div>
 <pre><code>## /// GENPOP OBJECT /////////
-## 
+##
 ##  // 25 populations; 10 loci; 347 alleles; size: 142.1 Kb
-## 
+##
 ##  // Basic content
 ##    @tab:  25 x 347 matrix of allele counts
 ##    @loc.n.all: number of alleles per locus (range: 18-49)
@@ -260,21 +260,21 @@ Snails.genind &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span
 ##    @ploidy: ploidy of each individual  (range: 2-2)
 ##    @type:  codom
 ##    @call: adegenet::genind2genpop(x = Snails.genind)
-## 
+##
 ##  // Optional content
 ##    @other: a list containing: xy</code></pre>
 <p>The object ‘Snails.genpop’ has 25 rows, each representing a population.</p>
 <p>We will also use some functions from the package ‘gstudio’, hence we import the individuals-level genetic data into ‘gstudio’:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Snails.gstudio &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span><span class="kw">ecogen2gstudio</span>(Snails.ecogen)</code></pre></div>
 <pre><code>## Loading required package: gstudio</code></pre>
-<pre><code>## 
+<pre><code>##
 ## Attaching package: 'gstudio'</code></pre>
 <pre><code>## The following objects are masked from 'package:adegenet':
-## 
+##
 ##     alleles, ploidy</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tibble<span class="op">::</span><span class="kw">as.tibble</span>(Snails.gstudio)</code></pre></div>
 <pre><code>## # A tibble: 749 x 17
-##    ID     Latitude Longitude SiteID  SITE  YEAR  Cluster DDE16 DDE4  DDE9 
+##    ID     Latitude Longitude SiteID  SITE  YEAR  Cluster DDE16 DDE4  DDE9
 ##  * &lt;fct&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;fct&gt;   &lt;fct&gt; &lt;fct&gt; &lt;fct&gt;   &lt;S3:&gt; &lt;S3:&gt; &lt;S3:&gt;
 ##  1 PICO0…    -61.5     -61.5 PICO20… PICO  2009  &lt;NA&gt;    208:… 251:… 271:…
 ##  2 PICO0…     16.4      16.4 PICO20… PICO  2009  &lt;NA&gt;    196:… 267:… 350:…
@@ -298,15 +298,15 @@ Snails.genind &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span
 <div id="a-genetic-distances-calculated-from-genind-object" class="section level3">
 <h3>a) Genetic distances calculated from genind object</h3>
 <p>Pairwise Fst with package ‘hierfstat’:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">GD.pop.PairwiseFst.hierfstat &lt;-<span class="st"> </span>hierfstat<span class="op">::</span><span class="kw">pairwise.fst</span>(Snails.genind, 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">GD.pop.PairwiseFst.hierfstat &lt;-<span class="st"> </span>hierfstat<span class="op">::</span><span class="kw">pairwise.fst</span>(Snails.genind,
                                 <span class="dt">pop =</span> <span class="ot">NULL</span>, <span class="dt">res.type =</span> <span class="kw">c</span>(<span class="st">&quot;dist&quot;</span>))</code></pre></div>
 <p>Proportion of shared alleles with package ‘PopGenReport’:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">GD.pop.propShared &lt;-<span class="st"> </span>PopGenReport<span class="op">::</span><span class="kw">pairwise.propShared</span>(Snails.genind)</code></pre></div>
 <p>Several distance matrices with package ‘adegenet’:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">GD.pop.Nei &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">dist.genpop</span>(Snails.genpop, <span class="dt">method=</span><span class="dv">1</span>)   
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">GD.pop.Nei &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">dist.genpop</span>(Snails.genpop, <span class="dt">method=</span><span class="dv">1</span>)
 GD.pop.Edwards &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">dist.genpop</span>(Snails.genpop, <span class="dt">method=</span><span class="dv">2</span>)
-GD.pop.Reynolds &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">dist.genpop</span>(Snails.genpop, <span class="dt">method=</span><span class="dv">3</span>)  
-GD.pop.Rogers &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">dist.genpop</span>(Snails.genpop, <span class="dt">method=</span><span class="dv">4</span>)  
+GD.pop.Reynolds &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">dist.genpop</span>(Snails.genpop, <span class="dt">method=</span><span class="dv">3</span>)
+GD.pop.Rogers &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">dist.genpop</span>(Snails.genpop, <span class="dt">method=</span><span class="dv">4</span>)
 GD.pop.Provesti &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">dist.genpop</span>(Snails.genpop, <span class="dt">method=</span><span class="dv">5</span>)</code></pre></div>
 <p>Additional distance matrices with package ‘mmod’:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">GD.pop.Joost &lt;-<span class="st"> </span>mmod<span class="op">::</span><span class="kw">pairwise_D</span>(Snails.genind, <span class="dt">linearized =</span> <span class="ot">FALSE</span>)
@@ -394,7 +394,7 @@ GD.pop.Dps.gstudio &lt;-gstudio<span class="op">::</span><span class="kw">geneti
 Dgen &lt;-<span class="st"> </span>GD.pop<span class="op">$</span>propShared.PopGenReport
 dens &lt;-<span class="st"> </span>MASS<span class="op">::</span><span class="kw">kde2d</span>(Dgeo, Dgen, <span class="dt">n=</span><span class="dv">300</span>)
 myPal &lt;-<span class="st"> </span><span class="kw">colorRampPalette</span>(<span class="kw">c</span>(<span class="st">&quot;white&quot;</span>,<span class="st">&quot;blue&quot;</span>,<span class="st">&quot;gold&quot;</span>,<span class="st">&quot;orange&quot;</span>,<span class="st">&quot;red&quot;</span>))
-<span class="kw">plot</span>(Dgeo, Dgen, <span class="dt">pch=</span><span class="dv">20</span>, <span class="dt">cex=</span><span class="fl">0.5</span>,  
+<span class="kw">plot</span>(Dgeo, Dgen, <span class="dt">pch=</span><span class="dv">20</span>, <span class="dt">cex=</span><span class="fl">0.5</span>,
     <span class="dt">xlab=</span><span class="st">&quot;Geographic Distance&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Genetic Distance&quot;</span>)
 <span class="kw">image</span>(dens, <span class="dt">col=</span><span class="kw">transp</span>(<span class="kw">myPal</span>(<span class="dv">300</span>), <span class="fl">0.7</span>), <span class="dt">add=</span><span class="ot">TRUE</span>)
 <span class="kw">abline</span>(<span class="kw">lm</span>(Dgen <span class="op">~</span><span class="st"> </span>Dgeo))
@@ -409,19 +409,19 @@ myPal &lt;-<span class="st"> </span><span class="kw">colorRampPalette</span>(<sp
 IBD</code></pre></div>
 <pre><code>## Monte-Carlo test
 ## Call: ade4::mantel.randtest(m1 = Dgen, m2 = Dgeo)
-## 
-## Observation: -0.04134931 
-## 
+##
+## Observation: -0.04134931
+##
 ## Based on 999 replicates
-## Simulated p-value: 0.628 
-## Alternative hypothesis: greater 
-## 
-##       Std.Obs   Expectation      Variance 
+## Simulated p-value: 0.628
+## Alternative hypothesis: greater
+##
+##       Std.Obs   Expectation      Variance
 ## -0.3726089278  0.0004125899  0.0125618636</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attributes</span>(IBD)</code></pre></div>
 <pre><code>## $names
-## [1] &quot;obs&quot;    &quot;alter&quot;  &quot;rep&quot;    &quot;expvar&quot; &quot;pvalue&quot; &quot;plot&quot;   &quot;call&quot;  
-## 
+## [1] &quot;obs&quot;    &quot;alter&quot;  &quot;rep&quot;    &quot;expvar&quot; &quot;pvalue&quot; &quot;plot&quot;   &quot;call&quot;
+##
 ## $class
 ## [1] &quot;mantelrtest&quot;   &quot;randtest&quot;      &quot;lightrandtest&quot;</code></pre>
 <p>For this measures of genetic diversity, the Mantel correlation was actually negative! What about the other measures?</p>
@@ -455,9 +455,9 @@ IBD</code></pre></div>
 <p>Here, we’ll create a population-level Mantel correlogram with the proportion of shared alleles.</p>
 <p>The function ‘eco.cormantel’ has an option ‘latlon=TRUE’ that takes care of the distance calculation from lat-lon coordinates. To uses this option, the coordinates must be in a matrix or data frame with the longitude in the first column and the latitude in the second. Here we can directly use the <span class="citation">@coords</span> slot of dd.spatial.</p>
 <p>The biological hypothesis of isolation-by-distance postulates that genetic distance increases with geographic distance. Hence it makes sense to use a one-sided alternative. Somewhat counter-intutitively, we use ‘alternative=“less”’ to test for positive spatial autocorrelation.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">corm &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span><span class="kw">eco.cormantel</span>(<span class="dt">M =</span> GD.pop<span class="op">$</span>propShared.PopGenReport, 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">corm &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span><span class="kw">eco.cormantel</span>(<span class="dt">M =</span> GD.pop<span class="op">$</span>propShared.PopGenReport,
         <span class="dt">XY =</span> dd.spatial<span class="op">@</span>coords,  <span class="dt">nsim =</span> <span class="dv">199</span>, <span class="dt">latlon=</span><span class="ot">TRUE</span>, <span class="dt">alternative=</span><span class="st">&quot;less&quot;</span>)</code></pre></div>
-<pre><code>## 
+<pre><code>##
  interval 0 / 10 completed
  interval 1 / 10 completed
  interval 2 / 10 completed
@@ -470,18 +470,18 @@ IBD</code></pre></div>
  interval 9 / 10 completed
  interval 10 / 10 completed</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">corm</code></pre></div>
-<pre><code>## 
-##  ############################ 
-##    Mantel statistic 
-##  ############################ 
-## 
-##  &gt; Correlation coefficient used --&gt;  Pearson 
-##   &gt; Number of simulations --&gt;  199 
-##   &gt; Random test --&gt;  permutation 
-##   &gt; P-adjust method --&gt;  holm -sequential: TRUE 
-## 
-##   &gt;  ecoslot.OUT(x): results --&gt;  
-## 
+<pre><code>##
+##  ############################
+##    Mantel statistic
+##  ############################
+##
+##  &gt; Correlation coefficient used --&gt;  Pearson
+##   &gt; Number of simulations --&gt;  199
+##   &gt; Random test --&gt;  permutation
+##   &gt; P-adjust method --&gt;  holm -sequential: TRUE
+##
+##   &gt;  ecoslot.OUT(x): results --&gt;
+##
 ## [[1]]
 ##                             d.mean     obs     exp p.val cardinal
 ## d= 0 - 4228.418           2090.772  0.0687 -0.0131 0.110       28
@@ -494,11 +494,11 @@ IBD</code></pre></div>
 ## d= 29598.925 - 33827.342 30605.163  0.1744 -0.0078 0.080       20
 ## d= 33827.342 - 38055.76  34933.340 -0.0534  0.0134 1.000        5
 ## d= 38055.76 - 42284.178  40442.266  0.0075  0.0106 1.000        5
-## 
-## 
-##  Results table(s) in ecoslot.OUT(x) 
+##
+##
+##  Results table(s) in ecoslot.OUT(x)
 ## --------------------------------------------------------------------------
-##  Access to slots: &lt;ecoslot.&gt; + &lt;name of the slot&gt; + &lt;(name of the object)&gt; 
+##  Access to slots: &lt;ecoslot.&gt; + &lt;name of the slot&gt; + &lt;(name of the object)&gt;
 ##  See: help(&quot;EcoGenetics accessors&quot;)</code></pre>
 <p>The table shows:</p>
 <ul>
@@ -533,10 +533,10 @@ IBD</code></pre></div>
 <li>‘bin’: rule for constructing intervals if no other parameters provided (default: Sturge’s rule)</li>
 </ul>
 <p>The easiest ones to modify are either ‘nclass’ or ‘size’. Here we use ‘size’ to specify that there should be at least 30 (better: 100) pairs in each distance class.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">corm.<span class="dv">20</span> &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span><span class="kw">eco.cormantel</span>(<span class="dt">M =</span> GD.pop<span class="op">$</span>propShared.PopGenReport, 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">corm.<span class="dv">20</span> &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span><span class="kw">eco.cormantel</span>(<span class="dt">M =</span> GD.pop<span class="op">$</span>propShared.PopGenReport,
            <span class="dt">XY =</span> dd.spatial<span class="op">@</span>coords,  <span class="dt">nsim =</span> <span class="dv">199</span>, <span class="dt">latlon=</span><span class="ot">TRUE</span>,
            <span class="dt">alternative=</span><span class="st">&quot;less&quot;</span>, <span class="dt">size=</span><span class="dv">20</span>)</code></pre></div>
-<pre><code>## 
+<pre><code>##
  interval 0 / 15 completed
  interval 1 / 15 completed
  interval 2 / 15 completed
@@ -571,10 +571,10 @@ IBD</code></pre></div>
 ## d= 24981.359 - 27821.987 26371.121  0.0720 -0.0054 1.000       20
 ## d= 27821.987 - 30565.139 29432.906  0.0462  0.0017 1.000       20
 ## d= 30565.139 - 42284.178 34447.541  0.0760  0.0304 1.000       20</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">corm.<span class="dv">50</span> &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span><span class="kw">eco.cormantel</span>(<span class="dt">M =</span> GD.pop<span class="op">$</span>propShared.PopGenReport, 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">corm.<span class="dv">50</span> &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span><span class="kw">eco.cormantel</span>(<span class="dt">M =</span> GD.pop<span class="op">$</span>propShared.PopGenReport,
            <span class="dt">XY =</span> dd.spatial<span class="op">@</span>coords,  <span class="dt">nsim =</span> <span class="dv">199</span>, <span class="dt">latlon=</span><span class="ot">TRUE</span>,
            <span class="dt">alternative=</span><span class="st">&quot;less&quot;</span>, <span class="dt">size=</span><span class="dv">50</span>)</code></pre></div>
-<pre><code>## 
+<pre><code>##
  interval 0 / 6 completed
  interval 1 / 6 completed
  interval 2 / 6 completed
@@ -685,26 +685,26 @@ Lag1.def</code></pre></div>
 </ul>
 <p>Here we use types 1 - 6 to define neighbors in different ways. Then we plot each graph in geographic space. Lines indicate pairs of sites classified as neighbors.</p>
 <p>Note: this function expects metric spatial coordinates (e.g., UTM). Hence we use the columns ‘X’ and ‘Y’ (first two columns) that we added to <a href="mailto:dd.spatial@data">dd.spatial@data</a>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nb.del &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">chooseCN</span>(<span class="dt">xy =</span> dd.spatial<span class="op">@</span>data[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>], 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nb.del &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">chooseCN</span>(<span class="dt">xy =</span> dd.spatial<span class="op">@</span>data[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>],
           <span class="dt">result.type =</span> <span class="st">&quot;nb&quot;</span>, <span class="dt">plot.nb =</span> <span class="ot">FALSE</span>, <span class="dt">type =</span> <span class="dv">1</span>)</code></pre></div>
-<pre><code>## 
+<pre><code>##
 ##      PLEASE NOTE:  The components &quot;delsgs&quot; and &quot;summary&quot; of the
 ##  object returned by deldir() are now DATA FRAMES rather than
 ##  matrices (as they were prior to release 0.0-18).
 ##  See help(&quot;deldir&quot;).
-##  
+##
 ##      PLEASE NOTE: The process that deldir() uses for determining
 ##  duplicated points has changed from that used in version
 ##  0.0-9 of this package (and previously). See help(&quot;deldir&quot;).</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nb.gab &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">chooseCN</span>(<span class="dt">xy =</span> dd.spatial<span class="op">@</span>data[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>], 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nb.gab &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">chooseCN</span>(<span class="dt">xy =</span> dd.spatial<span class="op">@</span>data[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>],
           <span class="dt">result.type =</span> <span class="st">&quot;nb&quot;</span>, <span class="dt">plot.nb =</span> <span class="ot">FALSE</span>, <span class="dt">type =</span> <span class="dv">2</span>)
-nb.rel &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">chooseCN</span>(<span class="dt">xy =</span> dd.spatial<span class="op">@</span>data[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>], 
+nb.rel &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">chooseCN</span>(<span class="dt">xy =</span> dd.spatial<span class="op">@</span>data[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>],
           <span class="dt">result.type =</span> <span class="st">&quot;nb&quot;</span>, <span class="dt">plot.nb =</span> <span class="ot">FALSE</span>, <span class="dt">type =</span> <span class="dv">3</span>)
-nb.mst &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">chooseCN</span>(<span class="dt">xy =</span> dd.spatial<span class="op">@</span>data[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>], 
+nb.mst &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">chooseCN</span>(<span class="dt">xy =</span> dd.spatial<span class="op">@</span>data[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>],
           <span class="dt">result.type =</span> <span class="st">&quot;nb&quot;</span>, <span class="dt">plot.nb =</span> <span class="ot">FALSE</span>, <span class="dt">type =</span> <span class="dv">4</span>)
-nb.nbd &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">chooseCN</span>(<span class="dt">xy =</span> dd.spatial<span class="op">@</span>data[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>], 
+nb.nbd &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">chooseCN</span>(<span class="dt">xy =</span> dd.spatial<span class="op">@</span>data[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>],
           <span class="dt">result.type =</span> <span class="st">&quot;nb&quot;</span>, <span class="dt">plot.nb =</span> <span class="ot">FALSE</span>, <span class="dt">type =</span> <span class="dv">5</span>, <span class="dt">d1=</span><span class="dv">100</span>, <span class="dt">d2=</span><span class="dv">15000</span>)
-nb.4nn &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">chooseCN</span>(<span class="dt">xy =</span> dd.spatial<span class="op">@</span>data[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>], 
+nb.4nn &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span class="kw">chooseCN</span>(<span class="dt">xy =</span> dd.spatial<span class="op">@</span>data[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>],
           <span class="dt">result.type =</span> <span class="st">&quot;nb&quot;</span>, <span class="dt">plot.nb =</span> <span class="ot">FALSE</span>, <span class="dt">type =</span> <span class="dv">6</span>, <span class="dt">k =</span> <span class="dv">4</span>)
 
 <span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">3</span>), <span class="dt">mai=</span><span class="kw">c</span>(<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="fl">0.1</span>, <span class="fl">0.1</span>))
@@ -735,23 +735,23 @@ nb.4nn &lt;-<span class="st"> </span>adegenet<span class="op">::</span><span cla
 <h3>c) Calculating and testing Moran’s I</h3>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">spdep<span class="op">::</span><span class="kw">moran.test</span>(dd.spatial<span class="op">@</span>data<span class="op">$</span>RA, spdep<span class="op">::</span><span class="kw">nb2listw</span>(nb.gab),
                   <span class="dt">alternative=</span><span class="st">&quot;greater&quot;</span>)</code></pre></div>
-<pre><code>## 
+<pre><code>##
 ##  Moran I test under randomisation
-## 
-## data:  dd.spatial@data$RA  
-## weights: spdep::nb2listw(nb.gab)  
-## 
+##
+## data:  dd.spatial@data$RA
+## weights: spdep::nb2listw(nb.gab)
+##
 ## Moran I statistic standard deviate = 1.3823, p-value = 0.08343
 ## alternative hypothesis: greater
 ## sample estimates:
-## Moran I statistic       Expectation          Variance 
+## Moran I statistic       Expectation          Variance
 ##        0.17248968       -0.04166667        0.02400109</code></pre>
 <p>The test statistic is 0.17, and the p-value for a one-sided alternative “greater” (i.e., positive spatial autocorrelation) is 0.0834. The autocorrelation in the variable “RA” was too weak to be statistically significant.</p>
 <p>Let’s do this for all response and predictor variables and extract the value of the Moran I statistics (for first neighbors) and its p-value.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Snails.moran &lt;-<span class="st"> </span><span class="kw">lapply</span>(dd.spatial<span class="op">@</span>data[,<span class="kw">c</span>(<span class="dv">11</span><span class="op">:</span><span class="dv">14</span>, <span class="dv">16</span><span class="op">:</span><span class="dv">21</span>, <span class="dv">23</span>)], 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Snails.moran &lt;-<span class="st"> </span><span class="kw">lapply</span>(dd.spatial<span class="op">@</span>data[,<span class="kw">c</span>(<span class="dv">11</span><span class="op">:</span><span class="dv">14</span>, <span class="dv">16</span><span class="op">:</span><span class="dv">21</span>, <span class="dv">23</span>)],
                        <span class="cf">function</span>(x) spdep<span class="op">::</span><span class="kw">moran.test</span>(x,
                        spdep<span class="op">::</span><span class="kw">nb2listw</span>(nb.gab), <span class="dt">alternative=</span><span class="st">&quot;two.sided&quot;</span>))
-<span class="kw">round</span>(<span class="kw">data.frame</span>(<span class="dt">obs =</span> <span class="kw">sapply</span>(Snails.moran, <span class="cf">function</span>(x) <span class="kw">as.vector</span>(x<span class="op">$</span>estimate[<span class="dv">1</span>])),  
+<span class="kw">round</span>(<span class="kw">data.frame</span>(<span class="dt">obs =</span> <span class="kw">sapply</span>(Snails.moran, <span class="cf">function</span>(x) <span class="kw">as.vector</span>(x<span class="op">$</span>estimate[<span class="dv">1</span>])),
 <span class="dt">p.value =</span> <span class="kw">sapply</span>(Snails.moran, <span class="cf">function</span>(x) x<span class="op">$</span>p.value)),<span class="dv">3</span>)</code></pre></div>
 <pre><code>##              obs p.value
 ## RA         0.172   0.167
