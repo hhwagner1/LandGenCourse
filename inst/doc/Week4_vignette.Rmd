@@ -1,5 +1,5 @@
 ---
-title: "Week 5: Metapopulation Genetics"
+title: "Week 4: Metapopulation Genetics"
 author: "Nusha Keyghobadi, Thomas Lamy and Helene Wagner"
 date: "`r Sys.Date()`"
 show_toc: true
@@ -9,7 +9,7 @@ output:
     fig_width: 4 
     fig_height: 3.5
 vignette: >
-  %\VignetteIndexEntry{Week 5: Metapopulation Genetics}
+  %\VignetteIndexEntry{Week 4: Metapopulation Genetics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

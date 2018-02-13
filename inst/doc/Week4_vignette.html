@@ -12,9 +12,9 @@
 
 <meta name="author" content="Nusha Keyghobadi, Thomas Lamy and Helene Wagner" />
 
-<meta name="date" content="2018-02-03" />
+<meta name="date" content="2018-02-13" />
 
-<title>Week 5: Metapopulation Genetics</title>
+<title>Week 4: Metapopulation Genetics</title>
 
 
 
@@ -68,9 +68,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<h1 class="title toc-ignore">Week 5: Metapopulation Genetics</h1>
+<h1 class="title toc-ignore">Week 4: Metapopulation Genetics</h1>
 <h4 class="author"><em>Nusha Keyghobadi, Thomas Lamy and Helene Wagner</em></h4>
-<h4 class="date"><em>2018-02-03</em></h4>
+<h4 class="date"><em>2018-02-13</em></h4>
 
 
 <div id="TOC">
@@ -224,6 +224,14 @@ tibble<span class="op">::</span><span class="kw">as.tibble</span>(dd.site)</code
 <p>First, we need to extract the samples that belong to the hierarchical data set. There are four clusters: “North”, “East”, “Center” and “South”. We are looking for the observations where the variable “Cluster” has one of these four values, all other observations will have a missing value for “Cluster”. We can use ‘!is.na’ to extract all rows with non-missing values. Then we convert to a ‘genind’ object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dd.ecogen.Cluster &lt;-<span class="st"> </span>dd.ecogen[<span class="op">!</span><span class="kw">is.na</span>(dd.ecogen[[<span class="st">&quot;S&quot;</span>]]<span class="op">$</span>Cluster),]
 dd.genind.Cluster &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span><span class="kw">ecogen2genind</span>(dd.ecogen.Cluster)</code></pre></div>
+<pre><code>## Loading required package: adegenet</code></pre>
+<pre><code>## Loading required package: ade4</code></pre>
+<pre><code>## 
+##    /// adegenet 2.1.1 is loaded ////////////
+## 
+##    &gt; overview: '?adegenet'
+##    &gt; tutorials/doc/questions: 'adegenetWeb()' 
+##    &gt; bug reports/feature requests: adegenetIssues()</code></pre>
 </div>
 <div id="b-hierarchical-amova" class="section level3">
 <h3>b) Hierarchical AMOVA</h3>
@@ -273,9 +281,9 @@ amova.test</code></pre></div>
 ## Adjustment method for multiple comparisons:   none 
 ## Permutation number:   999 
 ##                         Test        Obs    Std.Obs   Alter Pvalue
-## 1  Variations within samples 7.83062999 -82.529294    less  0.001
-## 2 Variations between samples 0.77023554  59.342984 greater  0.001
-## 3 Variations between Cluster 0.04446256   1.805109 greater  0.041</code></pre>
+## 1  Variations within samples 7.83062999 -82.352901    less  0.001
+## 2 Variations between samples 0.77023554  58.133413 greater  0.001
+## 3 Variations between Cluster 0.04446256   1.759279 greater  0.046</code></pre>
 <p>Questions:</p>
 <ul>
 <li>At what level is there stronger differentiation, within or among clusters?</li>
