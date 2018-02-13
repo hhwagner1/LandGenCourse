@@ -43,7 +43,7 @@ Imports:
     proto,
     pwr,
     QstFstComp,
-     raster,
+    raster,
     rasterVis,
     readr,
     RColorBrewer,
@@ -72,6 +72,7 @@ Remotes:
 Suggests: 
     knitr,
     tmaptools,
-    ggeffects
+    ggeffects,
+    spmoran
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
