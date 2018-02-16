@@ -29,12 +29,14 @@ openCheatsheetAddin <- function() {
     if(input$sheet == "1")
     {
       now<-format(Sys.time(), "%b%d%H%M%S")
-      utils::download.file(paste0("file://", system.file("extdata", "RCommands.doc",
-                                                         package = "LandGenCourse")),
-             destfile=file.path("downloads", paste0("RCommands_", now, ".doc")),
-                           mode="wb")
+      file.copy(system.file("extdata", "RCommands.docx", package = "LandGenCourse"),
+                file.path(getwd(),"downloads", paste0("RCommands_", now, ".docx")))
+#      utils::download.file(paste0("file://", system.file("extdata", "RCommands.docx",
+#                                                         package = "LandGenCourse")),
+#             destfile=file.path("downloads", paste0("RCommands_", now, ".docx")),
+#                           mode="wb")
       utils::browseURL(paste0("file://", file.path(getwd(), "downloads",
-                                                   paste0("RCommands_", now, ".doc"))))
+                                                   paste0("RCommands_", now, ".docx"))))
     }
 
     if(input$sheet != "1")
