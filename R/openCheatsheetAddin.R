@@ -5,7 +5,7 @@ openCheatsheetAddin <- function() {
     miniUI::miniContentPanel(
 
       shiny::selectInput("sheet", "Select a Cheat Sheet:",
-                   list("List of R Functions by Tutorial (doc)"=1,
+                   list("List of R Functions by Tutorial (docx)"=1,
                         "Base R"=2,
                         "R Markdown Language"=3,
                         "Data Import"=4,
