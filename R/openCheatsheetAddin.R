@@ -36,7 +36,7 @@ openCheatsheetAddin <- function() {
 #             destfile=file.path("downloads", paste0("RCommands_", now, ".docx")),
 #                           mode="wb")
       utils::browseURL(paste0("file://", file.path(getwd(), "downloads",
-                       paste0("RCommands_", now, ".docx"))), browser=NULL)
+                       paste0("RCommands_", now, ".docx"))))
     }
 
     if(input$sheet != "1")
