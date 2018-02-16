@@ -92,7 +92,9 @@ When fitting linear models, it is always a good idea to look at the correlations
 Dianthus.df <- data.frame(A=Dianthus@data$A, IBD=Dianthus@data$Eu_pj, 
                           IBR=Dianthus@data$Sheint_pj,
                           PatchSize=log(Dianthus@data$Ha), 
-                          x=Dianthus@coords[,1], y=Dianthus@coords[,2])
+                          x=Dianthus@coords[,1], y=Dianthus@coords[,2], 
+                          Longitude=Dianthus@data$Longitude,
+                          Latitude=Dianthus@data$Latitude)
 Dianthus.df <- Dianthus.df[!is.na(Dianthus.df$A),]
 dim(Dianthus.df)
 pairs(Dianthus.df, lower.panel=panel.smooth, upper.panel=panel.cor,
@@ -523,12 +525,15 @@ summary( rv_res$p_vc )
 
 Also, a larger proportion of sites nows has p-values < 0.05.
 
-```{r}
+Let's plot the results onto a gray-scale ('mapcolor = "bw"), Google terrain map ('source = "google", maptype = "terrain") to facilitate interpretation. Note: here the zoom level 'zoom = 12' covers the entire study area, whereas the default value would actually cut off a large number of sites.
+
+```{r fig.height=6, fig.width=7}
 Result <- data.frame(Dianthus.df, b=rv_res$b_vc, p=rv_res$p_vc)
 names(Result)
 
-ggplot(as.data.frame(Result), aes(x, y, col=p.V1 < 0.05, size=b.V1)) +
-  geom_point() + coord_fixed()
+ggmap::qmplot(x=Longitude, y=Latitude, data=Result,
+              source = "google", maptype = "terrain", zoom = 12,
+              col=p.V1 < 0.05, size=b.V1, mapcolor = "bw")
 ```
 
 This is a very different map of results!
