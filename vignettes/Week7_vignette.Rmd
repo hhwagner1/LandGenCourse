@@ -23,6 +23,7 @@ This worked example shows:
 - How to fit a model with spatially autocorrelated errors (GLS).
 - How to fit a spatial simultaneous autoregressive error model (SAR).
 - How to perform spatial filtering with Moran eigenvector maps (MEM).
+- How to fit a spatially varying coefficients model (SVC).
 
 ### b) Data set
 
@@ -92,9 +93,7 @@ When fitting linear models, it is always a good idea to look at the correlations
 Dianthus.df <- data.frame(A=Dianthus@data$A, IBD=Dianthus@data$Eu_pj, 
                           IBR=Dianthus@data$Sheint_pj,
                           PatchSize=log(Dianthus@data$Ha), 
-                          x=Dianthus@coords[,1], y=Dianthus@coords[,2], 
-                          Longitude=Dianthus@data$Longitude,
-                          Latitude=Dianthus@data$Latitude)
+                          x=Dianthus@coords[,1], y=Dianthus@coords[,2])
 Dianthus.df <- Dianthus.df[!is.na(Dianthus.df$A),]
 dim(Dianthus.df)
 pairs(Dianthus.df, lower.panel=panel.smooth, upper.panel=panel.cor,
@@ -247,14 +246,16 @@ Quite a bit of the spatial autocorrelation in allelic richness can be explained 
 One way to account for spatial autocorrelation in the residuals is to fit a Generalized Least Squares model (GLS) with a spatially autocorrelated error structure. 
 See also: http://rfunctions.blogspot.ca/2017/06/how-to-identify-and-remove-spatial.html
 
+### a) Plot empirical variogram
+
 The error structure in a GLS is defined in a geostatistical framework, based on a variogram and as a function of distance between observations. Hence we start with plotting an empirical variogram of the residuals, with a smooth line. Here we specify 'resType = "normalized", which means that the variogram will be fitted to the normalized residuals of the model. The expected value of the semivariance will be 1.
 
 ```{r}
-mod.gls.PatchSize <- nlme::gls(A ~ IBR + PatchSize, data = Dianthus.df)
-summary(mod.gls.PatchSize)
+model.lm <- nlme::gls(A ~ IBR + PatchSize, data = Dianthus.df)
+summary(model.lm)
 
 
-semivario <- nlme::Variogram(mod.gls.PatchSize, form = ~x  + y, 
+semivario <- nlme::Variogram(model.lm, form = ~x  + y, 
                              resType = "normalized")
 plot(semivario, smooth = TRUE)
 lattice::trellis.focus("panel", 1, 1)
@@ -268,36 +269,40 @@ Question:
 - Estimate the range of the variogram from the intersection of the smooth line with the horizontal line.
 - Estimate the nugget effect from the intercept at Distance = 0.
 
+### b) Fit variogram models
+
 We can ask R to fit different types of variogram models to this empirical variogram. The model family (e.g., exponential, gaussian, spherical) determines the general shape of the curve that will be fitted. With 'nugget=T', we indicate that a nugget effect should be fitted. 
 
 ```{r}
-exponential.autocor <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
+mod.corExp <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
                             correlation = nlme::corExp(form = ~ x + y, nugget=T))
 
-gaussian.autocor <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
+mod.corGaus <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
                             correlation = nlme::corGaus(form = ~ x + y, nugget=T))
 
-spherical.autocor <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
+mod.corSpher <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
                             correlation = nlme::corSpher(form = ~ x + y, nugget=T))
 
-#linear.autocor <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
+#mod.corLin <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
 #                            correlation = nlme::corLin(form = ~ x + y, nugget=T))
 
-ratio.autocor <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
+mod.corRatio <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
                             correlation = nlme::corRatio(form = ~ x + y, nugget=T))
 ```
+
+### c) Select best-fitting model
 
 Now we compare all models for which we did not get an error message:
 
 ```{r}
-MuMIn::model.sel(mod.gls.PatchSize, exponential.autocor, gaussian.autocor, 
-          spherical.autocor, ratio.autocor)     
+MuMIn::model.sel(model.lm, mod.corExp, mod.corGaus, 
+                 mod.corSpher, mod.corRatio)     
 ```
 
 The list sorts the models, with the best model on top. The last column 'weight' contains the model weight, which indicate how much support there is for each model, given all other models in the set (see Week 12). Here, the exponential model fitted best, though the ratio model and the model without a spatially correlated error structure fitted the data almost equally well.
 
 ```{r}
-summary(exponential.autocor)  
+summary(mod.corExp)  
 ```
 
 The fitted model with the exponential error structure shows a significant effect for PatchSize but not for the IBR term.
@@ -305,7 +310,7 @@ The fitted model with the exponential error structure shows a significant effect
 We don't get an R-squared value directly, but we can calculate a pseudo R-squared from a regression of the response 'A' on the fitted values.
 
 ```{r}
-summary(lm(A ~ fitted(exponential.autocor), data = Dianthus.df))$r.squared
+summary(lm(A ~ fitted(mod.corExp), data = Dianthus.df))$r.squared
 summary(mod.lm.PatchSize)$r.squared
 ```
 
@@ -313,18 +318,19 @@ The pseudo R-squared is almost identical to the R-squared of the non-spatial 'lm
 
 Let's check some residual plots - in this case, we have to construct them ourselves.
 
-```{r fig.show='hold'}
-plot(fitted(exponential.autocor), residuals(exponential.autocor))
+```{r fig.height=3, fig.width=7}
+par(mfrow=c(1,2), mar=c(4,4,1,1))
+plot(fitted(mod.corExp), residuals(mod.corExp))
 abline(h=0,lty=3)
 
-qqnorm(residuals(exponential.autocor))
-qqline(residuals(exponential.autocor))
+qqnorm(residuals(mod.corExp), main="")
+qqline(residuals(mod.corExp))
 ```
 
 The normal probability plot still looks about the same.
 
 ```{r}
-semivario <- nlme::Variogram(exponential.autocor, form = ~ x + y, 
+semivario <- nlme::Variogram(mod.corExp, form = ~ x + y, 
                              resType = "normalized")
 plot(semivario, smooth = TRUE)
 lattice::trellis.focus("panel", 1, 1)
@@ -338,6 +344,8 @@ The variogam does look better!
 ## 5. Fit spatial simultaneous autoregressive error models (SAR) with package 'spdep'
 
 An alternative way to account for spatial autocorrelation in the residuals is spatial regression with a simultaneous autoregressive error model (SAR).
+
+### a) Fit and compare alternative SAR models
 
 The method 'errorsarlm' fits a simultaneous autoregressive model ('sar') to the error ('error') term of a 'lm' model. 
 
@@ -354,7 +362,9 @@ mod.sar.IBR.d2 <- spdep::errorsarlm(A ~ PatchSize + IBR, data = Dianthus.df,
 MuMIn::model.sel(mod.lm.IBR, mod.sar.IBR.gab, mod.sar.IBR.d1, mod.sar.IBR.d2) 
 ```
 
-The best model ('mod.sar.IBR.d1') is the one with inverse-distance weights ('listw.d1'). Is is only slightly better than the model with the simple weights ('listw.gab'), whereas the nonspatial model and the one with inverse squared distance weights have much less support. 
+The best model ('mod.sar.IBR.d1') is the one with (row-standardized) inverse-distance weights ('listw.d1'). It is only slightly better than the model with the (row-standardized) binary weights ('listw.gab'), whereas the nonspatial model and the one with (row-standardized) inverse squared distance weights have much less support. 
+
+### b) Interpret best-fitting SAR model
 
 Let's have a look at the best model. With the argument 'Nagelkerke = TRUE', we request a pseudo R-squared. 
 
@@ -371,7 +381,7 @@ See tutorial for 'spmoran' package: https://arxiv.org/ftp/arxiv/papers/1703/1703
 
 Both GLS and SAR fitted a spatially correlated error structure of a relatively simple form to the data. Gene flow could be more complex and for example, could create spatial autocorrelation structure that is not the same in all directions or in all parts of the study area. Moran Eigenvector Maps (MEM) allows a more flexible modeling of spatial structure in the data. In spatial filtering, we use MEM spatial eigenvectors to account for any spatial structure while fitting and testing the effect of our predictors.
 
-### Default method
+### a) Default method
 
 The new package 'spmoran' makes this really easy. First, we create the MEM spatial eigenvectors. This implies defining neighbors and weights, but this is well hidden in the code below. The function 'meigen' here takes the coordinates, calculates a minimum spanning tree (so that each site has at least one neighbour), and finds the maximum distance 'h' from the spanning tree. It then calculates neighbor weights as exp(-dij / h). 
 
@@ -382,37 +392,62 @@ The function 'esf' then performs the spatial filtering. Here it uses stepwise se
 ```{r}
 # lm model: using truncated distance matrix (max of min spanning tree distance)
 meig <- spmoran::meigen(coords=xy)
-e_res <- spmoran::esf( y=Dianthus.df$A, x=Dianthus.df[,c("PatchSize", "IBR")],
+sfd.res <- spmoran::esf( y=Dianthus.df$A, x=Dianthus.df[,c("PatchSize", "IBR")],
                        meig=meig, fn = "r2" )
 ```
 
-Let's look at some output:
+The objects created by functions 'meigen' and 'esf' contain a lot of information:
 
-- **e_res$b**: Table with regression results for predictors X.
-- **e_res$r**: Table with regression results for MEM spatial eigenvectors.
-- **e_res$e**: Summary statistics for the entire model.
+- **meigW:** a list returned by function 'meigen', with the following attributes:
+    + **sf:** Matrix of retained spatial eigenvectors.
+    + **ev:** Eigenvalues of retained spatial eigenvectors.
+    + **ev_full:** All (n - 1) eigenvalues.
+- **sfd.res:** a list returned by function 'esf', with the following attributes:
+    + **b:** Table with regression results for predictors X.
+    + **r:** Table with regression results the selected MEM spatial eigenvectors (based on step-wise eigenvector selection).
+    + **e:** Summary statistics for the entire model.
+    + **vif:** Variance inflation factors.
+    + **sf:** Fitted spatially dependent component (i.e., fitted value based on significant MEM spatial eigenvectors)
+    + **pred:** Fitted values.
+    + **resid:** Residuals.
+    
+Let's look at the table 'b' with regression results for the predictors first:
 
 ```{r}
-e_res$b
-e_res$r
-e_res$e
+sfd.res$b
+```
+Again, PatchSize is statistically significant but not IBR.
+
+Next, we look at the table 'r' with regression results for MEM spatial eigenvectors:
+
+```{r}
+sfd.res$r
 ```
 
-- Again, PatchSize is statistically significant but not IBR.
-- 'adjR2' is high (0.437), but this includes the selected MEM spatial eigenvectors! 
+Five MEM spatial eigenvectors were important enough to be included in the model. Here they are ranked by their (absolute value of) slope coefficient, and thus by the strength of their association with the response variable. Eigenvector 'sf6' was by far the most important.
 
-### Using a custom connectivity matrix
+Note: some eigenvectors are included despite having a p-value > 0.05. This may have two reasons. First, the eigenvectors were selected without taking into account predictors X. Second, a different test was used in the stepwise eigenvector selection. The type of test can be specified with an argument 'fn' (see '?esf' helpfile and 'spmoran' tutorial).
+
+Finally, let's look at the summary results for the fitted model:
+
+```{r}
+sfd.res$e
+```
+
+Here, 'adjR2' is rather high (0.437), but this includes the selected MEM spatial eigenvectors! 
+
+### b) Using a custom connectivity matrix
 
 We know already that 'listw.d1' fit the data well, so let's re-run the model with our own definition of spatial weights. With the funciton 'listw2mat', we convert from 'listw' format to a full connnectivity matrix. 
 
 ```{r}
 cmat.d1    <- spdep::listw2mat( listw.d1) 
-meigW  <- spmoran::meigen( cmat = cmat.d1 )
-e_res <- spmoran::esf( y=Dianthus.df$A, x=Dianthus.df[,c("PatchSize", "IBR")],
-                       meig=meigW, fn = "r2" )
-e_res$b
-e_res$r
-e_res$e
+meigw  <- spmoran::meigen( cmat = cmat.d1 )
+sfw.res <- spmoran::esf( y=Dianthus.df$A, x=Dianthus.df[,c("PatchSize", "IBR")],
+                       meig=meigw, fn = "r2" )
+sfw.res$b
+tibble::as.tibble(sfw.res$r)
+sfw.res$e
 ```
 
 Note: the messages tell us that 'cmat' has been made symmetric before analysis, that 27 out of 59 MEM spatial eigenvector (and their eigenvalues, hence 'pairs') were retained initially and subjected to stepwise selection, which then returned 15 statistically significant MEM eigenvectors that were included in the regression model with the predictor variables X (PatchSize and IBR).
@@ -423,24 +458,68 @@ Questions:
 - What could cause a difference in model performance?
 - Does this affect the results for PatchSize and IBR? Compare both parameter estimates and p-value between two two models.
 
-### Random effect model
+### c) Plot spatial eigenvectors
+
+So far, we have treated the MEM spatial eigenvectors as a black box. What kind of patterns do they represent? 
+
+First, we plot all the selected (significant) eigenvectors. A convenient way to do so is converting to a SpatialPointsDataFrame and then use the function 'spplot'.
+
+Here we need tweak the column names of the eigenvectors, which are called "X1", "X2" etc., to match the row names of table 'sf.res$r', which uses "sf1", "sf2" etc. 
+
+- In the first line, we create a data frame 'SF' that combines the coordinates from 'xy' with the eigenvectors from 'meigw'. By specifying 'sf=meigw$sf', the column names will be prefaced by 'sf.', so that "X1" becomes "sf.1". 
+- With the function 'gsub', we substitute "." by an empty vector "", i.e., we remove the period from the name, so that "sf.1" becomes "sf1". This is a bit tricky because of the special meanings of both '.' and '\': we need to double escape (i.e. use '\\') to indicate that '.' should be interpreted and matched literally as a period symbol, not as a wildcard that matches any character. Function 'sub' substitutes the first occurrence of the symbol, whereas 'gsub' substitutes all occurrences.
+
+```{r fig.height=5, fig.width=7}
+SF <- data.frame(xy, sf=meigw$sf)
+names(SF) <- gsub("\\.", "", names(SF))
+sp::coordinates(SF) <- ~ x + y
+sp::spplot(SF, row.names(sfw.res$r), colorkey = TRUE)
+```
+
+The panel starts at the bottom left, so that the most important spatial eigenvector (sf6) is plotted at the bottom left, the second most important (sf22) second from left, etc. 
+
+The smallest numbers are patterns with the largest spatial scale (sf1), which here shows a gradient from East to West. The most important eigenvector (sf6) shows a finer-scale pattern with the highest values (yellow) in the center, lowest values East and West, and intermediate value North and South. 
+
+However, these patterns individually are not meaningful. More importantly, we can plot the total spatial component in the response as a weighted sum of these component patterns, where the weights correspond to the regression coefficients in table 'sf.res$r'. Here we create a panel with two plots, the modeled spatial components 'sf' on the left and the response 'A' on the right (the mean has been removed to make values comparable). 
+
+```{r fig.height=3, fig.width=7}
+SF@data$sf <- sfw.res$sf
+SF@data$A <- scale(Dianthus.df$A, scale = FALSE)
+sp::spplot(SF, c("sf", "A"), colorkey = TRUE)
+```
+
+Obviously, a big part of the variation in allelic richness is already captured by 'sf'. In essence the model then tries to explain the difference between these two sets of values by the predictors "PatchSize" and "IBR".
+
+Let's quantify the correlation of this spatial component with allelic richness, and compare the correlation between the two models:
+
+```{r}
+cor(Dianthus.df$A, data.frame(sfd=sfd.res$sf, sfw=sfw.res$sf))
+```
+
+With the default method (defining neighbors based on a distance cut-off), the spatial component modeled by the significant MEM spatial eigenvectors showed a correlation of 0.625 with the response variable. Using a Gabriel graph with inverse distance weights increased this correlation to 0.772. 
+
+This means that the spatial eigenvectors derived from the Gabriel graph were more effective at capturing the spatial variation in allelic richness than the default method. This spatial component is then controlled for when assessing the relationship between allelic richness and the predictors (PatchSize and IBR).
+
+### d) Random effect model
 
 The previous model selected 15 MEM spatial eigenvectors, and thus fitted 15 additional models. Just like the random effects for family and population in Week 6 lab, we can save a few parameters here by fitting the set of MEM eigenvectors as a random effect. This is done by the function 'resf'. 
 
 ```{r}
-r_res <- spmoran::resf( y=Dianthus.df$A, x=Dianthus.df[,c("PatchSize", "IBR")], 
-               meig = meigW, method = "reml" ) 
-r_res$b
-r_res$s
-r_res$r
-r_res$e
+sfr.res <- spmoran::resf( y=Dianthus.df$A, x=Dianthus.df[,c("PatchSize", "IBR")], 
+               meig = meigw, method = "reml" ) 
+sfr.res$b
+tibble::as.tibble(sfr.res$r)
+sfr.res$e
+sfr.res$s
 ```
 
-Note: we can't compare AIC with the previous models, as the model was fitted with 'reml'. 
+As in Week 6 lab, the conditional R-squared is the variance explained by the fixed effects (PatchSize and IBR) and the random effects (significant MEM spatial eigenvectors) together. It is adjusted for the number of effects that were estimated.
 
-We get an additional output 'r_res$s' with two parameters: 
+Note: we can't compare AIC with the previous models, as the model was fitted with 'reml'.
 
-- **shrink_sf_SE**: when squared, this tells us how much variance was captured by the MEM eigenvectors.
+We get an additional output 'sfr.res$s' with two parameters: 
+
+- **shrink_sf_SE**: when squared, this tells us how much variance was captured by the MEM eigenvectors. 
 - **shrink_sf_alpha**: this give an indication of the spatial scale of the observed pattern. A value above 1 would indicate large-scale spatial structure. Here it seems to be a finer-scale pattern overall.
 
 ## 7. Fit spatially varying coefficients model with package 'spmoran'
@@ -449,7 +528,7 @@ See: https://arxiv.org/ftp/arxiv/papers/1703/1703.04467.pdf
 
 Now comes the coolest part! 
 
-So far, we have fitted the same model for all sites. Spatially weighted regression would allow relaxing this. Spatial filtering with MEM can be used to accomplish the same goal. The main advantage is that we can visualize how the slope parameter estimates, and their p-values, vary across the study area! This is a great exploratory tool that can help us better understand what is going on. 
+So far, we have fitted the same model for all sites. Geographically weighted regression (GWR) would allow relaxing this. Spatial filtering with MEM can be used to accomplish the same goal, and the 'spmoran' tutorial calls this a 'Spatially Varying Coefficients' model (SVC). The main advantage is that we can visualize how the slope parameter estimates, and their p-values, vary across the study area! This is a great exploratory tool that can help us better understand what is going on. 
 
 ### Model with PatchSize and IBR
 
@@ -458,7 +537,7 @@ We fit the model with 'resf_vc'.
 ```{r}
 rv_res <- spmoran::resf_vc( y=Dianthus.df$A, 
                             x = Dianthus.df[,c("PatchSize", "IBR")], 
-                            xconst = NULL, meig = meigW, method = "reml" )
+                            xconst = NULL, meig = meigw, method = "reml" )
 ```
 
 Instead of one slope estimate for each predictor, we now get a different estimate for each combination of parameter and site (sounds like overfitting?). Here's a summary of the distbiution of these estimates.
@@ -514,8 +593,8 @@ Keep in mind that 'IBR' and 'PatchSize' showed a strong correlation. The paramet
 ```{r}
 rv_res <- spmoran::resf_vc( y=Dianthus.df$A, 
                             x = Dianthus.df[,c("IBR")], 
-                            xconst = NULL, meig = meigW, method = "reml" )
-summary( rv_res$p_vc ) 
+                            xconst = NULL, meig = meigw, method = "reml" )
+summary( rv_res$b_vc ) 
 ```
 Now the range of slope estimates is smaller, most sites have a positive estimate.
 
@@ -525,15 +604,12 @@ summary( rv_res$p_vc )
 
 Also, a larger proportion of sites nows has p-values < 0.05.
 
-Let's plot the results onto a gray-scale ('mapcolor = "bw"), Google terrain map ('source = "google", maptype = "terrain") to facilitate interpretation. Note: here the zoom level 'zoom = 12' covers the entire study area, whereas the default value would actually cut off a large number of sites.
-
-```{r fig.height=6, fig.width=7}
-Result <- data.frame(Dianthus.df, b=rv_res$b_vc, p=rv_res$p_vc)
+```{r}
+Result <- data.frame(Dianthus.df, b=rv_res$b_vc, p=rv_res$p_vc, resid=rv_res$resid)
 names(Result)
 
-ggmap::qmplot(x=Longitude, y=Latitude, data=Result,
-              source = "google", maptype = "terrain", zoom = 12,
-              col=p.V1 < 0.05, size=b.V1, mapcolor = "bw")
+ggplot(as.data.frame(Result), aes(x, y, col=p.V1 < 0.05, size=b.V1)) +
+  geom_point() + coord_fixed()
 ```
 
 This is a very different map of results!
