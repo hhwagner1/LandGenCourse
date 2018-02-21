@@ -23,7 +23,9 @@ watchVideoAddin <- function() {
                         "Week 4: Metapopulation Genetics (Part 2)"=10,
                         "Week 5: Spatial Statistics"=11,
                         "Week 6: Quantitative Genetics (Part 1)"=12,
-                        "Week 6: Quantitative Genetics (Part 2)"=13),
+                        "Week 6: Quantitative Genetics (Part 2)"=13,
+                        "Week 7: Spatial Linear Models (Part 1)"=14,
+                        "Week 7: Spatial Linear Models (Part 2)"=15),
                   selected = 5
       )
     )
@@ -51,7 +53,9 @@ watchVideoAddin <- function() {
         "http://sho.co/19Y09",
         "http://sho.co/19Y0B",
         "http://sho.co/19YGU",
-        "http://sho.co/19YMJ")[as.numeric(input$video)]
+        "http://sho.co/19YMJ",
+        "http://sho.co/1A1JX",
+        "http://sho.co/1A162")[as.numeric(input$video)]
 
       selectedSlides <- c("", "", "",
                           "Week0_Slides.pdf",
@@ -63,7 +67,9 @@ watchVideoAddin <- function() {
                           "Week4_Slides.pdf",
                           "Week5_Slides.pdf",
                           "Week6_Slides.pdf",
-                          "Week6_Slides.pdf")[as.numeric(input$video)]
+                          "Week6_Slides.pdf",
+                          "Week7_Slides.pdf",
+                          "Week7_Slides.pdf")[as.numeric(input$video)]
 
       if(!dir.exists(file.path("./downloads")))
       {
