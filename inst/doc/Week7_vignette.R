@@ -23,7 +23,9 @@ ggmap::qmplot(x =  Longitude, y = Latitude, data = Dianthus@data,
 ## ----fig.height=5, fig.width=7-------------------------------------------
 Dianthus.df <- data.frame(A=Dianthus@data$A, IBD=Dianthus@data$Eu_pj, 
                           IBR=Dianthus@data$Sheint_pj,
-                          PatchSize=log(Dianthus@data$Ha), 
+                          PatchSize=log(Dianthus@data$Ha),
+                          Longitude=Dianthus@data$Longitude,
+                          Latitude=Dianthus@data$Latitude,
                           x=Dianthus@coords[,1], y=Dianthus@coords[,2])
 Dianthus.df <- Dianthus.df[!is.na(Dianthus.df$A),]
 dim(Dianthus.df)
@@ -248,12 +250,13 @@ summary( rv_res$b_vc )
 ## ------------------------------------------------------------------------
 summary( rv_res$p_vc ) 
 
-## ------------------------------------------------------------------------
+## ----fig.height=6, fig.width=7-------------------------------------------
 Result <- data.frame(Dianthus.df, b=rv_res$b_vc, p=rv_res$p_vc, resid=rv_res$resid)
 names(Result)
 
-ggplot(as.data.frame(Result), aes(x, y, col=p.V1 < 0.05, size=b.V1)) +
-  geom_point() + coord_fixed()
+ggmap::qmplot(x =  Longitude, y = Latitude, data = Result,
+              source = "google", maptype = "terrain", zoom = 12) +
+  geom_point(aes(col=p.V1 < 0.05, size=b.V1))
 
 ## ----message=FALSE, warning=TRUE, include=FALSE--------------------------
 LandGenCourse::detachAllPackages()
