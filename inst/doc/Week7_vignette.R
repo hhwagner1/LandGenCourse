@@ -27,6 +27,7 @@ Dianthus.df <- data.frame(A=Dianthus@data$A, IBD=Dianthus@data$Eu_pj,
                           Longitude=Dianthus@data$Longitude,
                           Latitude=Dianthus@data$Latitude,
                           x=Dianthus@coords[,1], y=Dianthus@coords[,2])
+
 Dianthus.df <- Dianthus.df[!is.na(Dianthus.df$A),]
 dim(Dianthus.df)
 pairs(Dianthus.df, lower.panel=panel.smooth, upper.panel=panel.cor,
@@ -105,6 +106,7 @@ summary(model.lm)
 
 semivario <- nlme::Variogram(model.lm, form = ~x  + y, 
                              resType = "normalized")
+
 plot(semivario, smooth = TRUE)
 lattice::trellis.focus("panel", 1, 1)
 lattice::panel.abline(h=1)
@@ -254,9 +256,9 @@ summary( rv_res$p_vc )
 Result <- data.frame(Dianthus.df, b=rv_res$b_vc, p=rv_res$p_vc, resid=rv_res$resid)
 names(Result)
 
-ggmap::qmplot(x =  Longitude, y = Latitude, data = Result,
-              source = "google", maptype = "terrain", zoom = 12) +
-  geom_point(aes(col=p.V1 < 0.05, size=b.V1))
+ggmap::qmplot(x=Longitude, y=Latitude, data=Result,
+              source = "google", maptype = "terrain", zoom = 12,
+              col=p.V1 < 0.05, size=b.V1, mapcolor = "bw")
 
 ## ----message=FALSE, warning=TRUE, include=FALSE--------------------------
 LandGenCourse::detachAllPackages()
