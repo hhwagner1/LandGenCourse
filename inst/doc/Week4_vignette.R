@@ -58,7 +58,7 @@ car::vif(mod.diff)
 dd.spatial@data$Residuals <- mod.diff$residuals
 sp::bubble(dd.spatial, zcol = "Residuals", col = c("red", "blue"))
 
-## ----message=FALSE-------------------------------------------------------
+## ----fig.height=4.5, fig.width=7, message=FALSE--------------------------
 a <- is.element(rownames(dd.spatial@data), c("32", "42"))
 a2 <- c(1:nrow(dd.spatial@data))[a]
 myMap <- ggmap::qmplot(Longitude, Latitude,  data = as.data.frame(dd.spatial),

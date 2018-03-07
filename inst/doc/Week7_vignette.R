@@ -23,8 +23,11 @@ ggmap::qmplot(x =  Longitude, y = Latitude, data = Dianthus@data,
 ## ----fig.height=5, fig.width=7-------------------------------------------
 Dianthus.df <- data.frame(A=Dianthus@data$A, IBD=Dianthus@data$Eu_pj, 
                           IBR=Dianthus@data$Sheint_pj,
-                          PatchSize=log(Dianthus@data$Ha), 
+                          PatchSize=log(Dianthus@data$Ha),
+                          Longitude=Dianthus@data$Longitude,
+                          Latitude=Dianthus@data$Latitude,
                           x=Dianthus@coords[,1], y=Dianthus@coords[,2])
+
 Dianthus.df <- Dianthus.df[!is.na(Dianthus.df$A),]
 dim(Dianthus.df)
 pairs(Dianthus.df, lower.panel=panel.smooth, upper.panel=panel.cor,
@@ -97,53 +100,55 @@ spdep::lm.morantest(mod.lm.IBR, listw.gab)
 spdep::lm.morantest(mod.lm.PatchSize, listw.gab)       
 
 ## ------------------------------------------------------------------------
-mod.gls.PatchSize <- nlme::gls(A ~ IBR + PatchSize, data = Dianthus.df)
-summary(mod.gls.PatchSize)
+model.lm <- nlme::gls(A ~ IBR + PatchSize, data = Dianthus.df)
+summary(model.lm)
 
 
-semivario <- nlme::Variogram(mod.gls.PatchSize, form = ~x  + y, 
+semivario <- nlme::Variogram(model.lm, form = ~x  + y, 
                              resType = "normalized")
+
 plot(semivario, smooth = TRUE)
 lattice::trellis.focus("panel", 1, 1)
 lattice::panel.abline(h=1)
 lattice::trellis.unfocus() 
 
 ## ------------------------------------------------------------------------
-exponential.autocor <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
+mod.corExp <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
                             correlation = nlme::corExp(form = ~ x + y, nugget=T))
 
-gaussian.autocor <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
+mod.corGaus <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
                             correlation = nlme::corGaus(form = ~ x + y, nugget=T))
 
-spherical.autocor <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
+mod.corSpher <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
                             correlation = nlme::corSpher(form = ~ x + y, nugget=T))
 
-#linear.autocor <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
+#mod.corLin <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
 #                            correlation = nlme::corLin(form = ~ x + y, nugget=T))
 
-ratio.autocor <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
+mod.corRatio <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
                             correlation = nlme::corRatio(form = ~ x + y, nugget=T))
 
 ## ------------------------------------------------------------------------
-MuMIn::model.sel(mod.gls.PatchSize, exponential.autocor, gaussian.autocor, 
-          spherical.autocor, ratio.autocor)     
+MuMIn::model.sel(model.lm, mod.corExp, mod.corGaus, 
+                 mod.corSpher, mod.corRatio)     
 
 ## ------------------------------------------------------------------------
-summary(exponential.autocor)  
+summary(mod.corExp)  
 
 ## ------------------------------------------------------------------------
-summary(lm(A ~ fitted(exponential.autocor), data = Dianthus.df))$r.squared
+summary(lm(A ~ fitted(mod.corExp), data = Dianthus.df))$r.squared
 summary(mod.lm.PatchSize)$r.squared
 
-## ----fig.show='hold'-----------------------------------------------------
-plot(fitted(exponential.autocor), residuals(exponential.autocor))
+## ----fig.height=3, fig.width=7-------------------------------------------
+par(mfrow=c(1,2), mar=c(4,4,1,1))
+plot(fitted(mod.corExp), residuals(mod.corExp))
 abline(h=0,lty=3)
 
-qqnorm(residuals(exponential.autocor))
-qqline(residuals(exponential.autocor))
+qqnorm(residuals(mod.corExp), main="")
+qqline(residuals(mod.corExp))
 
 ## ------------------------------------------------------------------------
-semivario <- nlme::Variogram(exponential.autocor, form = ~ x + y, 
+semivario <- nlme::Variogram(mod.corExp, form = ~ x + y, 
                              resType = "normalized")
 plot(semivario, smooth = TRUE)
 lattice::trellis.focus("panel", 1, 1)
@@ -166,35 +171,53 @@ summary(mod.sar.IBR.d1, Nagelkerke = TRUE)
 ## ------------------------------------------------------------------------
 # lm model: using truncated distance matrix (max of min spanning tree distance)
 meig <- spmoran::meigen(coords=xy)
-e_res <- spmoran::esf( y=Dianthus.df$A, x=Dianthus.df[,c("PatchSize", "IBR")],
+sfd.res <- spmoran::esf( y=Dianthus.df$A, x=Dianthus.df[,c("PatchSize", "IBR")],
                        meig=meig, fn = "r2" )
 
 ## ------------------------------------------------------------------------
-e_res$b
-e_res$r
-e_res$e
+sfd.res$b
+
+## ------------------------------------------------------------------------
+sfd.res$r
+
+## ------------------------------------------------------------------------
+sfd.res$e
 
 ## ------------------------------------------------------------------------
 cmat.d1    <- spdep::listw2mat( listw.d1) 
-meigW  <- spmoran::meigen( cmat = cmat.d1 )
-e_res <- spmoran::esf( y=Dianthus.df$A, x=Dianthus.df[,c("PatchSize", "IBR")],
-                       meig=meigW, fn = "r2" )
-e_res$b
-e_res$r
-e_res$e
+meigw  <- spmoran::meigen( cmat = cmat.d1 )
+sfw.res <- spmoran::esf( y=Dianthus.df$A, x=Dianthus.df[,c("PatchSize", "IBR")],
+                       meig=meigw, fn = "r2" )
+sfw.res$b
+tibble::as.tibble(sfw.res$r)
+sfw.res$e
+
+## ----fig.height=5, fig.width=7-------------------------------------------
+SF <- data.frame(xy, sf=meigw$sf)
+names(SF) <- gsub("\\.", "", names(SF))
+sp::coordinates(SF) <- ~ x + y
+sp::spplot(SF, row.names(sfw.res$r), colorkey = TRUE)
+
+## ----fig.height=3, fig.width=7-------------------------------------------
+SF@data$sf <- sfw.res$sf
+SF@data$A <- scale(Dianthus.df$A, scale = FALSE)
+sp::spplot(SF, c("sf", "A"), colorkey = TRUE)
 
 ## ------------------------------------------------------------------------
-r_res <- spmoran::resf( y=Dianthus.df$A, x=Dianthus.df[,c("PatchSize", "IBR")], 
-               meig = meigW, method = "reml" ) 
-r_res$b
-r_res$s
-r_res$r
-r_res$e
+cor(Dianthus.df$A, data.frame(sfd=sfd.res$sf, sfw=sfw.res$sf))
+
+## ------------------------------------------------------------------------
+sfr.res <- spmoran::resf( y=Dianthus.df$A, x=Dianthus.df[,c("PatchSize", "IBR")], 
+               meig = meigw, method = "reml" ) 
+sfr.res$b
+tibble::as.tibble(sfr.res$r)
+sfr.res$e
+sfr.res$s
 
 ## ------------------------------------------------------------------------
 rv_res <- spmoran::resf_vc( y=Dianthus.df$A, 
                             x = Dianthus.df[,c("PatchSize", "IBR")], 
-                            xconst = NULL, meig = meigW, method = "reml" )
+                            xconst = NULL, meig = meigw, method = "reml" )
 
 ## ------------------------------------------------------------------------
 summary( rv_res$b_vc ) 
@@ -223,18 +246,19 @@ ggplot(as.data.frame(Result), aes(x, y, col=p.IBR < 0.05, size=b.IBR)) +
 ## ------------------------------------------------------------------------
 rv_res <- spmoran::resf_vc( y=Dianthus.df$A, 
                             x = Dianthus.df[,c("IBR")], 
-                            xconst = NULL, meig = meigW, method = "reml" )
-summary( rv_res$p_vc ) 
+                            xconst = NULL, meig = meigw, method = "reml" )
+summary( rv_res$b_vc ) 
 
 ## ------------------------------------------------------------------------
 summary( rv_res$p_vc ) 
 
-## ------------------------------------------------------------------------
-Result <- data.frame(Dianthus.df, b=rv_res$b_vc, p=rv_res$p_vc)
+## ----fig.height=6, fig.width=7-------------------------------------------
+Result <- data.frame(Dianthus.df, b=rv_res$b_vc, p=rv_res$p_vc, resid=rv_res$resid)
 names(Result)
 
-ggplot(as.data.frame(Result), aes(x, y, col=p.V1 < 0.05, size=b.V1)) +
-  geom_point() + coord_fixed()
+ggmap::qmplot(x=Longitude, y=Latitude, data=Result,
+              source = "google", maptype = "terrain", zoom = 12,
+              col=p.V1 < 0.05, size=b.V1, mapcolor = "bw")
 
 ## ----message=FALSE, warning=TRUE, include=FALSE--------------------------
 LandGenCourse::detachAllPackages()
