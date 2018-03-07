@@ -47,10 +47,24 @@ chooseWEAddin <- function() {
       selectedPath <- (paste0(system.file("doc", selectedFile,
                        package = "LandGenCourse")))
 
+
+      if (file.exists(file.path("downloads", selectedFile))) {
+        cat("File already downloaded, skipping download. Opening file.", "\n");
+      } else {
+        file.copy(from=selectedPath, to=file.path("downloads", selectedFile))
+        cat("Opening file.", "\n");
+      }
+
       switch(input$type,
-             "1" = utils::browseURL(paste0('file://', selectedPath)),
-             "2" = rstudioapi::navigateToFile(selectedPath),
-             "3" = rstudioapi::navigateToFile(selectedPath))
+             "1" = utils::browseURL(file.path("downloads", selectedFile)),
+             "2" = rstudioapi::navigateToFile(file.path("downloads",
+                                                        selectedFile)),
+             "3" = rstudioapi::navigateToFile(file.path("downloads",
+                                                        selectedFile)))
+#      switch(input$type,
+#             "1" = utils::browseURL(paste0('file://', selectedPath)),
+#             "2" = rstudioapi::navigateToFile(selectedPath),
+#             "3" = rstudioapi::navigateToFile(selectedPath))
 
       cat(paste("Opening",selectedFile))
       shiny::stopApp()
