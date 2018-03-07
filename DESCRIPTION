@@ -19,6 +19,7 @@ Imports:
     EcoGenetics (>= 1.2.1-5),
     effsize,
     formatR (>= 1.5),
+    gdistance,
     GeNetIt,
     geosphere,
     ggmap,
@@ -59,6 +60,7 @@ Imports:
     spacetime,
     sp,
     spdep,
+    Sunder,
     swirl (>= 2.4.3),
     swirlify (>= 0.5.1),
     tibble,
@@ -73,6 +75,7 @@ Suggests:
     knitr,
     tmaptools,
     ggeffects,
+    secr,
     spmoran
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
