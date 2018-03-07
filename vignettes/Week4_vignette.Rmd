@@ -213,7 +213,7 @@ Or on a map from the internet, using 'qmplot' from the 'ggmap' package. It expec
 - Plots the map and adds labels for the two potential outliers.
 
 
-```{r message=FALSE}
+```{r fig.height=4.5, fig.width=7, message=FALSE}
 a <- is.element(rownames(dd.spatial@data), c("32", "42"))
 a2 <- c(1:nrow(dd.spatial@data))[a]
 myMap <- ggmap::qmplot(Longitude, Latitude,  data = as.data.frame(dd.spatial),
@@ -384,7 +384,7 @@ Given that sample size, what was the statistical power of our test to detect at 
 pwr::pwr.t2n.test(n1=7, n2=5, d=-0.8, alternative = "less")
 ```
 
-So the power to detect a medium effect was only 0.355, way below the 0.8 (or even 0.95) that we would want to see. 
+So the power to detect at least a large effect, if it exists in the population, was only 0.355, way below the 0.8 (or even 0.95) that we would want to see. For a medium effect, the power is even smaller.
 
 ### c) Sample size calculation
 
