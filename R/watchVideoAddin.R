@@ -57,7 +57,7 @@ watchVideoAddin <- function() {
         "http://sho.co/19YMJ",
         "http://sho.co/1A1KH",
         "http://sho.co/1A1KF",
-        "http://sho.co/1A43B")[as.numeric(input$video)]
+        "http://sho.co/1A44W")[as.numeric(input$video)]
 
       selectedSlides <- c("", "", "",
                           "Week0_Slides.pdf",
