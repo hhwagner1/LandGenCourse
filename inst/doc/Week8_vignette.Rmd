@@ -51,6 +51,25 @@ Package 'secr' not automatically installed with 'LandGenCourse':
 if(!require(secr)) install.packages("secr")
 #library(secr)
 ```
+
+The following 'setup chunk' is used to set the root address of file paths to the root of the project folder.
+
+{r "setup", include=FALSE}
+knitr::opts_knit$set(root.dir = normalizePath("..")) 
+
+```{r}
+here::here()
+getwd()
+```
+
+```{r setup}
+knitr::opts_knit$set(root.dir = normalizePath("..")) 
+```
+
+```{r}
+here::here()
+getwd()
+```
 ## 2. Initialize a landscape
 
 ### a) Create a random landscape 
