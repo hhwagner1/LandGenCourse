@@ -88,6 +88,16 @@ chooseWEAddin <- function() {
 #             "2" = rstudioapi::navigateToFile(selectedPath),
 #             "3" = rstudioapi::navigateToFile(selectedPath))
 
+
+      if(!dir.exists(file.path("output")))
+      dir.create(file.path("output"), recursive=TRUE)
+
+      if(as.numeric(input$example)==11 && as.numeric(input$type)==2)
+      {
+        if(!dir.exists(file.path("output","simout")))
+          dir.create(file.path("output","simout"), recursive=TRUE)
+      }
+
       cat(paste("Opening",outFile))
       shiny::stopApp()
     })
