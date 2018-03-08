@@ -14,6 +14,9 @@ library(PopGenReport )   #load the package
 if(!require(secr)) install.packages("secr")
 #library(secr)
 
+## ----setup---------------------------------------------------------------
+knitr::opts_knit$set(root.dir = normalizePath("..")) 
+
 ## ------------------------------------------------------------------------
 nx=50
 ny=50
@@ -270,10 +273,6 @@ tibble::as.tibble(para.space)
 #  #                           para$n.allels, para$mut.rate,
 #  #                           n.cov=para$n.cov, rec="none")
 #  #}
-
-## ---- eval=F-------------------------------------------------------------
-#  if(!dir.exists(paste0(here::here(),"/output")))
-#      dir.create(paste0(here::here(),"/output/simout"), recursive=TRUE)
 
 ## ------------------------------------------------------------------------
 # create a timer (just to know how long it will take roughly)

@@ -51,6 +51,13 @@ Package 'secr' not automatically installed with 'LandGenCourse':
 if(!require(secr)) install.packages("secr")
 #library(secr)
 ```
+
+The following 'setup chunk' is used to set the root address of file paths to the root of the project folder.
+
+```{r setup}
+knitr::opts_knit$set(root.dir = normalizePath("..")) 
+```
+
 ## 2. Initialize a landscape
 
 ### a) Create a random landscape 
@@ -531,15 +538,6 @@ Simply running the simulation 15 times (number of rows in 'para.space') by itsel
 
 How do we store the repeats seperately in a file? One approach would be to have a different file name for every repeat, but in my view, a cleaner approach is to store all simulation outputs and also store the complete parameter and input information in a file, so everything that is need is in one place. A nice way to do that in R is to create a 'list' object that stores all in a single object, which can be saved (and is automatically packed) and re-loaded as an R object. This is convenient as long as I only want to analyze the results in R, not export to other software. 
 
-First we create in our current R project folder a subfolder named "simout".
-
-```{r, eval=F}
-if(!dir.exists(paste0(here::here(),"/output"))) 
-    dir.create(paste0(here::here(),"/output/simout"), recursive=TRUE)
-```
-
-**NOTE HW: I have replace 'rdata' by 'RData'.
-
 Here we do the following:
 
 - Create a timer with the function 'proc.time' so that we know roughly how long the computations take.
@@ -548,7 +546,7 @@ Here we do the following:
     - Run the simulation with 'steps=para.space$time[i]'.
     - Convert the resulting 'simpop' to a genind object 'gi' (smaller to store)
     - Create a list 'sim' of all simulation parameters we want to store. 
-    - Save the object 'sim' as an 'RData' file with a unique file name in the folder 'simout' that we created above.
+    - Save the object 'sim' as an 'RData' file with a unique file name in the folder 'output/simout' in the project directory.
     - Print a message after each run to report progress and computation time.
     - Flush the output console to make sure it is current (only relevant for console-based versions of R).
 

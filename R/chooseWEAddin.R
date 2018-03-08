@@ -32,7 +32,22 @@ chooseWEAddin <- function() {
     # Listen for 'done' events.
     shiny::observeEvent(input$done, {
 
-      selectedFile <- paste0(c("Week0_BasicR",
+      # selectedFile <- paste0(c("Week0_BasicR",
+      #                          "Week0_Graphics",
+      #                          "Week1_vignette",
+      #                          "Week2_vignette",
+      #                          "Week2_bonus_vignette",
+      #                          "Week3_vignette",
+      #                          "Week4_vignette",
+      #                          "Week5_vignette",
+      #                          "Week6_vignette",
+      #                          "Week7_vignette",
+      #                          "Week8_vignette")[as.numeric(input$example)],
+      #                        c(".html", ".Rmd", ".R")[as.numeric(input$type)])
+
+
+
+      baseName <- c("Week0_BasicR",
                                "Week0_Graphics",
                                "Week1_vignette",
                                "Week2_vignette",
@@ -42,31 +57,48 @@ chooseWEAddin <- function() {
                                "Week5_vignette",
                                "Week6_vignette",
                                "Week7_vignette",
-                               "Week8_vignette")[as.numeric(input$example)],
-                             c(".html", ".Rmd", ".R")[as.numeric(input$type)])
+                               "Week8_vignette")[as.numeric(input$example)]
+      suffix <- c(".html", ".Rmd", ".R")[as.numeric(input$type)]
+      selectedFile <- paste0(baseName, suffix)
+
       selectedPath <- (paste0(system.file("doc", selectedFile,
-                       package = "LandGenCourse")))
+                                          package = "LandGenCourse")))
+      now<-format(Sys.time(), "%b%d%H%M%S")
+      outFile <- paste0(baseName, "_", now, suffix)
 
 
-      if (file.exists(file.path("downloads", selectedFile))) {
-        cat("File already downloaded, skipping download. Opening file.", "\n");
-      } else {
-        file.copy(from=selectedPath, to=file.path("downloads", selectedFile))
-        cat("Opening file.", "\n");
-      }
+      # if (file.exists(file.path("downloads", selectedFile))) {
+      #   cat("File already downloaded, skipping download. Opening file.", "\n");
+      # } else {
+      #   file.copy(from=selectedPath, to=file.path("downloads", selectedFile))
+      #   cat("Opening file.", "\n");
+      # }
+      file.copy(from=selectedPath, to=file.path("downloads", outFile))
+      cat(paste("File saved as: ",
+                file.path(here::here(),"downloads", outFile), "\n"))
 
       switch(input$type,
-             "1" = utils::browseURL(file.path("downloads", selectedFile)),
+             "1" = utils::browseURL(file.path("downloads", outFile)),
              "2" = rstudioapi::navigateToFile(file.path("downloads",
-                                                        selectedFile)),
+                                                        outFile)),
              "3" = rstudioapi::navigateToFile(file.path("downloads",
-                                                        selectedFile)))
+                                                        outFile)))
 #      switch(input$type,
 #             "1" = utils::browseURL(paste0('file://', selectedPath)),
 #             "2" = rstudioapi::navigateToFile(selectedPath),
 #             "3" = rstudioapi::navigateToFile(selectedPath))
 
-      cat(paste("Opening",selectedFile))
+
+      if(!dir.exists(file.path("output")))
+      dir.create(file.path("output"), recursive=TRUE)
+
+      if(as.numeric(input$example)==11 && as.numeric(input$type)==2)
+      {
+        if(!dir.exists(file.path("output","simout")))
+          dir.create(file.path("output","simout"), recursive=TRUE)
+      }
+
+      cat(paste("Opening",outFile))
       shiny::stopApp()
     })
 
