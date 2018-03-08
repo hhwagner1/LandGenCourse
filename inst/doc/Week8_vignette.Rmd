@@ -554,6 +554,8 @@ First we create in our current R project folder a subfolder named "simout".
 
 ```{r, eval=F}
 if(!dir.exists(paste0(here::here(),"/output"))) 
+    dir.create(paste0(here::here(),"/output"), recursive=TRUE)
+if(!dir.exists(paste0(here::here(),"/output/simout"))) 
     dir.create(paste0(here::here(),"/output/simout"), recursive=TRUE)
 ```
 
