@@ -69,9 +69,9 @@ chooseWEAddin <- function() {
 
       if(as.numeric(input$example)==12)
       {
-        file.copy(from=system.file("vignettes", "WE9_Fig1.png", package = "LandGenCourse"),
+        file.copy(from=system.file("extdata", "WE9_Fig1.png", package = "LandGenCourse"),
                   to=file.path("downloads", "WE9_Fig1.png"))
-        file.copy(from=system.file("vignettes", "WE9_Fig2.png", package = "LandGenCourse"),
+        file.copy(from=system.file("extdata", "WE9_Fig2.png", package = "LandGenCourse"),
                   to=file.path("downloads", "WE9_Fig2.png"))
       }
 
