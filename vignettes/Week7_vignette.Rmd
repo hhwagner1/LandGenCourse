@@ -52,7 +52,7 @@ source(system.file("extdata", "panel.cor.r",
 Package 'spmoran' not automatically installed with 'LandGenCourse':
 
 ```{r message=FALSE, warning=TRUE}
-if(!require(spmoran)) install.packages("spmoran")
+if(!require(spmoran)) install.packages("spmoran", repos='http://cran.us.r-project.org')
 #require(spmoran)
 ```
 
@@ -197,6 +197,8 @@ We define weights in three ways (see Week 5 video and tutorial for code explanat
 
 In each case, we row-standardize the weights with the option 'style = "W"'.
 
+Note: when using 'graph2nb', make sure to use the argument 'sym=TRUE'. This means that if A is a neighbour of B, B is also a neighbour of A. The default is 'sym=FALSE', which may result in some sites not having any neighbours assigned (though this would not be evident from the figure!).
+
 ```{r}
 xy <- data.matrix(Dianthus.df[,c("x", "y")])
 nb.gab <- spdep::graph2nb(spdep::gabrielneigh(xy), sym=TRUE)
@@ -251,20 +253,21 @@ See also: http://rfunctions.blogspot.ca/2017/06/how-to-identify-and-remove-spati
 
 ### a) Plot empirical variogram
 
-The error structure in a GLS is defined in a geostatistical framework, based on a variogram and as a function of distance between observations. Hence we start with plotting an empirical variogram of the residuals, with a smooth line. Here we specify 'resType = "normalized", which means that the variogram will be fitted to the normalized residuals of the model. The expected value of the semivariance will be 1.
+The error structure in a GLS is defined in a geostatistical framework, based on a variogram and as a function of distance between observations. Hence we start with plotting an empirical variogram of the residuals, with a smooth line. Here we specify 'resType = "normalized", which means that the variogram will be fitted to the normalized residuals of the model. 
+
+The expected value of the semivariance will be 1. Hence it would make sense to add a horizontal line at 1. However, this is cumbersome with the trellis graphics (using package 'lattice') used by 'nlme'. 
 
 ```{r}
 model.lm <- nlme::gls(A ~ IBR + PatchSize, data = Dianthus.df)
 summary(model.lm)
+semivario <- nlme::Variogram(model.lm, form = ~x  + y, resType = "normalized")
+```
 
+If you want to create your own figure, e.g. with 'ggplot2', you can access the values stores in the data frame 'semivario' to plot the points, and add a smooth line yourself. Then we can add a horizontal line with 'geom_hline'.
 
-semivario <- nlme::Variogram(model.lm, form = ~x  + y, 
-                             resType = "normalized")
-
-plot(semivario, smooth = TRUE)
-lattice::trellis.focus("panel", 1, 1)
-lattice::panel.abline(h=1)
-lattice::trellis.unfocus() 
+```{r}
+ggplot(data=semivario, aes(x=dist, y=variog)) + geom_point() + geom_smooth(se=FALSE) +
+  geom_hline(yintercept=1) + ylim(c(0,1.3)) + xlab("Distance") + ylab("Semivariance")
 ```
 
 Question:
@@ -337,15 +340,53 @@ The normal probability plot still looks about the same.
 semivario <- nlme::Variogram(mod.corExp, form = ~ x + y, 
                              resType = "normalized")
 plot(semivario, smooth = TRUE)
-lattice::trellis.focus("panel", 1, 1)
-lattice::panel.abline(h=1)
-lattice::trellis.unfocus() 
 ```
 
 The variogam does look better!
 
+### d) Plot fitted variogram model
 
-## 5. Fit spatial simultaneous autoregressive error models (SAR) with package 'spdep'
+How can we plot the fitted variogram? Let's first store it in an object 'Fitted.variog', then plot it.
+
+```{r}
+Fitted.variog <- nlme::Variogram(mod.corExp)
+class(Fitted.variog)
+plot(Fitted.variog)
+```
+
+That was easy. If we want to access the fitted values (i.e. the exponential model curve values), this is a bit more involved. 
+
+The object 'Fitted.variog' has two classes: "Variogram" and "data.frame". Technically, it is a data frame (S3) with additional attributes. This raises a challenge, because we access attributes of S3 objects with '$', but we also use '$' to access columns in a data frame. 
+
+If we just print 'Fitted.variog', we only see the data frame. 
+
+```{r}
+head(Fitted.variog)
+```
+
+We can see the attributes listed by using 'str':
+
+```{r}
+str(Fitted.variog)
+```
+
+The line we are looking for is:  '- attr(*, "modelVariog")'. The attributes 'modelVariog' has 50 rows (obs.) and 2 variables: '$variog' and '$dist'. These are the fitted values (i.e., values of the exponential variogram model for 50 distance values).
+
+The notation attr(*, "modelVariog") is a cryptic way of telling us how to access the attribute: use the function 'attr' and provide two arguments: the object names 'Fitted.variog' (represented by the asterisk), and the name of the attribute, in quotes: 'attr(Fitted.variog, "modelVariog")'.
+
+```{r}
+tibble::as.tibble(attr(Fitted.variog, "modelVariog"))
+```
+
+This is useful to know if you want to create your own figures, e.g. with 'ggplot2'.
+
+```{r}
+ggplot(data=Fitted.variog, aes(x=dist, y=variog)) + geom_point() + 
+  ylim(c(0,1.3)) + xlab("Distance") + ylab("Semivariance") + 
+  geom_line(data=attr(Fitted.variog, "modelVariog"), aes(x=dist, y=variog), color="blue")
+```
+
+## 5. Fit spatial simultaneous autoregressive error models (SAR)
 
 An alternative way to account for spatial autocorrelation in the residuals is spatial regression with a simultaneous autoregressive error model (SAR).
 
@@ -402,11 +443,11 @@ sfd.res <- spmoran::esf( y=Dianthus.df$A, x=Dianthus.df[,c("PatchSize", "IBR")],
 
 The objects created by functions 'meigen' and 'esf' contain a lot of information:
 
-- **meigW:** a list returned by function 'meigen', with the following attributes:
+- **'meigW':** a list returned by function 'meigen', with the following attributes:
     + **sf:** Matrix of retained spatial eigenvectors.
     + **ev:** Eigenvalues of retained spatial eigenvectors.
     + **ev_full:** All (n - 1) eigenvalues.
-- **sfd.res:** a list returned by function 'esf', with the following attributes:
+- **'sfd.res':** a list returned by function 'esf', with the following attributes:
     + **b:** Table with regression results for predictors X.
     + **r:** Table with regression results the selected MEM spatial eigenvectors (based on step-wise eigenvector selection).
     + **e:** Summary statistics for the entire model.
@@ -471,11 +512,11 @@ First, we plot all the selected (significant) eigenvectors. A convenient way to 
 Here we need tweak the column names of the eigenvectors, which are called "X1", "X2" etc., to match the row names of table 'sf.res$r', which uses "sf1", "sf2" etc. 
 
 - In the first line, we create a data frame 'SF' that combines the coordinates from 'xy' with the eigenvectors from 'meigw'. By specifying 'sf=meigw$sf', the column names will be prefaced by 'sf.', so that "X1" becomes "sf.1". 
-- With the function 'gsub', we substitute "." by an empty vector "", i.e., we remove the period from the name, so that "sf.1" becomes "sf1". This is a bit tricky because of the special meanings of both '.' and '\': we need to double escape (i.e. use '\\') to indicate that '.' should be interpreted and matched literally as a period symbol, not as a wildcard that matches any character. Function 'sub' substitutes the first occurrence of the symbol, whereas 'gsub' substitutes all occurrences.
+- With the function 'gsub', we substitute "." by an empty vector "", i.e., we remove the period from the name, so that "sf.1" becomes "sf1". This is a bit tricky because of the special meanings of '.': we need to escape (here we use "[.]") to indicate that '.' should be interpreted and matched literally as a period symbol, not as a wildcard that matches any character. Function 'sub' substitutes the first occurrence of the symbol, whereas 'gsub' substitutes all occurrences.
 
 ```{r fig.height=5, fig.width=7}
 SF <- data.frame(xy, sf=meigw$sf)
-names(SF) <- gsub("\\.", "", names(SF))
+names(SF) <- gsub("[.]", "", names(SF))
 sp::coordinates(SF) <- ~ x + y
 sp::spplot(SF, row.names(sfw.res$r), colorkey = TRUE)
 ```

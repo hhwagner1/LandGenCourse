@@ -11,7 +11,7 @@ library(tibble)
 #require(car)  
 
 ## ----message=FALSE, warning=TRUE-----------------------------------------
-if(!require(ggeffects)) install.packages("ggeffects")
+if(!require(ggeffects)) install.packages("ggeffects", repos='http://cran.us.r-project.org')
 
 ## ----message=FALSE, warning=TRUE-----------------------------------------
 source(system.file("extdata", "supplemental_R_functions.R", 

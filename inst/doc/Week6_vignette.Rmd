@@ -56,7 +56,7 @@ library(tibble)
 Package 'ggeffects' not automatically installed with 'LandGenCourse':
 
 ```{r message=FALSE, warning=TRUE}
-if(!require(ggeffects)) install.packages("ggeffects")
+if(!require(ggeffects)) install.packages("ggeffects", repos='http://cran.us.r-project.org')
 ```
 
 Source two files with additional functions:
