@@ -21,7 +21,8 @@ chooseWEAddin <- function() {
                         "Week 5: Spatial Statistics"=8,
                         "Week 6: Quantitative Genetics"=9,
                         "Week 7: Spatial Linear Models"=10,
-                        "Week 8: Simulation"=11),
+                        "Week 8: Simulation Experiments"=11,
+                        "Week 9: Population Structure"=12),
                   selected = 1
       )
     )
@@ -43,7 +44,8 @@ chooseWEAddin <- function() {
                                "Week5_vignette",
                                "Week6_vignette",
                                "Week7_vignette",
-                               "Week8_vignette")[as.numeric(input$example)]
+                               "Week8_vignette",
+                               "Week9_vignette")[as.numeric(input$example)]
 
       suffix <- c(".html", ".Rmd", ".R")[as.numeric(input$type)]
       selectedFile <- paste0(baseName, suffix)
@@ -63,6 +65,14 @@ chooseWEAddin <- function() {
       {
         if(!dir.exists(file.path("output","simout")))
           dir.create(file.path("output","simout"), recursive=TRUE)
+      }
+
+      if(as.numeric(input$example)==12)
+      {
+        file.copy(from=system.file("extdata", "WE9_Fig1.png", package = "LandGenCourse"),
+                  to=file.path("downloads", "WE9_Fig1.png"))
+        file.copy(from=system.file("extdata", "WE9_Fig2.png", package = "LandGenCourse"),
+                  to=file.path("downloads", "WE9_Fig2.png"))
       }
 
       # Copy file to 'downloads' folder:
