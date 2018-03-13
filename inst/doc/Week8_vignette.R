@@ -11,7 +11,7 @@ library(PopGenReport )   #load the package
 #library(Sunder)   # requires mnormt
 
 ## ----message=FALSE, warning=TRUE-----------------------------------------
-if(!require(secr)) install.packages("secr")
+if(!require(secr)) install.packages("secr", repos='http://cran.us.r-project.org')
 #library(secr)
 
 ## ----setup---------------------------------------------------------------

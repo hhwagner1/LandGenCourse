@@ -48,7 +48,7 @@ library(PopGenReport )   #load the package
 Package 'secr' not automatically installed with 'LandGenCourse':
 
 ```{r message=FALSE, warning=TRUE}
-if(!require(secr)) install.packages("secr")
+if(!require(secr)) install.packages("secr", repos='http://cran.us.r-project.org')
 #library(secr)
 ```
 

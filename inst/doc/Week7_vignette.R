@@ -10,7 +10,7 @@ source(system.file("extdata", "panel.cor.r",
                             package = "LandGenCourse"))
 
 ## ----message=FALSE, warning=TRUE-----------------------------------------
-if(!require(spmoran)) install.packages("spmoran")
+if(!require(spmoran)) install.packages("spmoran", repos='http://cran.us.r-project.org')
 #require(spmoran)
 
 ## ------------------------------------------------------------------------
@@ -102,15 +102,11 @@ spdep::lm.morantest(mod.lm.PatchSize, listw.gab)
 ## ------------------------------------------------------------------------
 model.lm <- nlme::gls(A ~ IBR + PatchSize, data = Dianthus.df)
 summary(model.lm)
+semivario <- nlme::Variogram(model.lm, form = ~x  + y, resType = "normalized")
 
-
-semivario <- nlme::Variogram(model.lm, form = ~x  + y, 
-                             resType = "normalized")
-
-plot(semivario, smooth = TRUE)
-lattice::trellis.focus("panel", 1, 1)
-lattice::panel.abline(h=1)
-lattice::trellis.unfocus() 
+## ------------------------------------------------------------------------
+ggplot(data=semivario, aes(x=dist, y=variog)) + geom_point() + geom_smooth(se=FALSE) +
+  geom_hline(yintercept=1) + ylim(c(0,1.3)) + xlab("Distance") + ylab("Semivariance")
 
 ## ------------------------------------------------------------------------
 mod.corExp <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
@@ -151,9 +147,25 @@ qqline(residuals(mod.corExp))
 semivario <- nlme::Variogram(mod.corExp, form = ~ x + y, 
                              resType = "normalized")
 plot(semivario, smooth = TRUE)
-lattice::trellis.focus("panel", 1, 1)
-lattice::panel.abline(h=1)
-lattice::trellis.unfocus() 
+
+## ------------------------------------------------------------------------
+Fitted.variog <- nlme::Variogram(mod.corExp)
+class(Fitted.variog)
+plot(Fitted.variog)
+
+## ------------------------------------------------------------------------
+head(Fitted.variog)
+
+## ------------------------------------------------------------------------
+str(Fitted.variog)
+
+## ------------------------------------------------------------------------
+tibble::as.tibble(attr(Fitted.variog, "modelVariog"))
+
+## ------------------------------------------------------------------------
+ggplot(data=Fitted.variog, aes(x=dist, y=variog)) + geom_point() + 
+  ylim(c(0,1.3)) + xlab("Distance") + ylab("Semivariance") + 
+  geom_line(data=attr(Fitted.variog, "modelVariog"), aes(x=dist, y=variog), color="blue")
 
 ## ------------------------------------------------------------------------
 mod.sar.IBR.gab <- spdep::errorsarlm(A ~ PatchSize + IBR, data = Dianthus.df, 
@@ -194,7 +206,7 @@ sfw.res$e
 
 ## ----fig.height=5, fig.width=7-------------------------------------------
 SF <- data.frame(xy, sf=meigw$sf)
-names(SF) <- gsub("\\.", "", names(SF))
+names(SF) <- gsub("[.]", "", names(SF))
 sp::coordinates(SF) <- ~ x + y
 sp::spplot(SF, row.names(sfw.res$r), colorkey = TRUE)
 
