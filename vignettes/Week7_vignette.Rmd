@@ -52,7 +52,7 @@ source(system.file("extdata", "panel.cor.r",
 Package 'spmoran' not automatically installed with 'LandGenCourse':
 
 ```{r message=FALSE, warning=TRUE}
-if(!require(spmoran)) install.packages("spmoran")
+if(!require(spmoran)) install.packages("spmoran", repos='http://cran.us.r-project.org')
 #require(spmoran)
 ```
 
