@@ -12,7 +12,7 @@
 
 <meta name="author" content="Helene Wagner" />
 
-<meta name="date" content="2018-02-03" />
+<meta name="date" content="2018-03-18" />
 
 <title>Week 2: Spatial Data</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Week 2: Spatial Data</h1>
 <h4 class="author"><em>Helene Wagner</em></h4>
-<h4 class="date"><em>2018-02-03</em></h4>
+<h4 class="date"><em>2018-03-18</em></h4>
 
 
 <div id="TOC">
@@ -145,7 +145,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">require</span>(SDMTools) <span class="co"># for landscape metrics</span>
 <span class="kw">require</span>(tibble)</code></pre></div>
 <p>Package ‘tmaptools’ not automatically installed with ‘LandGenCourse’:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(tmaptools)) <span class="kw">install.packages</span>(<span class="st">&quot;tmaptools&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(tmaptools)) <span class="kw">install.packages</span>(<span class="st">&quot;tmaptools&quot;</span>, 
+                        <span class="dt">repos=</span><span class="st">'http://cran.us.r-project.org'</span>)</code></pre></div>
 </div>
 </div>
 <div id="import-site-data-from-.csv-file" class="section level2">

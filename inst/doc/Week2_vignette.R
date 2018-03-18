@@ -7,7 +7,8 @@ require(SDMTools) # for landscape metrics
 require(tibble)
 
 ## ----message=FALSE, warning=TRUE-----------------------------------------
-if(!require(tmaptools)) install.packages("tmaptools")
+if(!require(tmaptools)) install.packages("tmaptools", 
+                        repos='http://cran.us.r-project.org')
 
 ## ------------------------------------------------------------------------
 data(ralu.site)

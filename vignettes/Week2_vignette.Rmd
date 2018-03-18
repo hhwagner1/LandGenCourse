@@ -59,7 +59,8 @@ require(tibble)
 Package 'tmaptools' not automatically installed with 'LandGenCourse':
 
 ```{r message=FALSE, warning=TRUE}
-if(!require(tmaptools)) install.packages("tmaptools")
+if(!require(tmaptools)) install.packages("tmaptools", 
+                        repos='http://cran.us.r-project.org')
 ```
 
 ## 2. Import site data from .csv file
