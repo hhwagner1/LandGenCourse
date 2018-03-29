@@ -23,7 +23,8 @@ chooseWEAddin <- function() {
                         "Week 7: Spatial Linear Models"=10,
                         "Week 8: Simulation Experiments"=11,
                         "Week 9: Population Structure"=12,
-                        "Week 10: Landscape Resistance"=13),
+                        "Week 10: Landscape Resistance"=13,
+                        "Week 11: Detecting Adaptation"=13),
                   selected = 1
       )
     )
@@ -36,18 +37,19 @@ chooseWEAddin <- function() {
 
     # Input and output file names:
       baseName <- c("Week0_BasicR",
-                               "Week0_Graphics",
-                               "Week1_vignette",
-                               "Week2_vignette",
-                               "Week2_bonus_vignette",
-                               "Week3_vignette",
-                               "Week4_vignette",
-                               "Week5_vignette",
-                               "Week6_vignette",
-                               "Week7_vignette",
-                               "Week8_vignette",
-                               "Week9_vignette",
-                               "Week10_vignette")[as.numeric(input$example)]
+                    "Week0_Graphics",
+                    "Week1_vignette",
+                    "Week2_vignette",
+                    "Week2_bonus_vignette",
+                    "Week3_vignette",
+                    "Week4_vignette",
+                    "Week5_vignette",
+                    "Week6_vignette",
+                    "Week7_vignette",
+                    "Week8_vignette",
+                    "Week9_vignette",
+                    "Week10_vignette",
+                    "Week11_vignette")[as.numeric(input$example)]
 
       suffix <- c(".html", ".Rmd", ".R")[as.numeric(input$type)]
       selectedFile <- paste0(baseName, suffix)
