@@ -24,7 +24,7 @@ chooseWEAddin <- function() {
                         "Week 8: Simulation Experiments"=11,
                         "Week 9: Population Structure"=12,
                         "Week 10: Landscape Resistance"=13,
-                        "Week 11: Detecting Adaptation"=13),
+                        "Week 11: Detecting Adaptation"=14),
                   selected = 1
       )
     )
