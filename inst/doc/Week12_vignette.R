@@ -5,8 +5,8 @@ library(ggplot2)
 #require(usdm)
 
 ## ------------------------------------------------------------------------
-CSFdata <- read.csv(system.file("extdata", "CSF_network.csv", 
-                                        package = "LandGenCourse"))
+CSFdata <- read.csv(system.file("extdata", "CSF_network.csv",
+                                package = "LandGenCourse"))
 head(CSFdata) 
 
 ## ------------------------------------------------------------------------
@@ -87,10 +87,31 @@ mod4 <- MLPE(logDc.km ~ slope + shrub + dev + (1|pop1), CSFdata)
 mod5 <- MLPE(logDc.km ~ soils + slope + solarinsoz + (1|pop1), CSFdata)
 
 ## ------------------------------------------------------------------------
-# Alternative code HW:
-Models <- list(Full=mod1, Landcover=mod2, HumanFootprint=mod3, 
-               EnergyConservation=mod4, Historical=mod5)
-CSF.IC <- data.frame(extractAIC = sapply(Models, extractAIC)[2,],
+MLPEnoREML <- function(variables, data) {
+  mod2 <- lme4::lFormula(variables, data = data, REML = FALSE)
+  dfun <- do.call(lme4::mkLmerDevfun, mod2)
+  opt <- lme4::optimizeLmer(dfun)
+  mod_2 <- lme4::mkMerMod(environment(dfun), opt, mod2$reTrms,fr = mod2$fr)
+  mod2$reTrms$Zt <- ZZ
+
+# Refit the model
+  dfun <- do.call(lme4::mkLmerDevfun, mod2)
+  opt <- lme4::optimizeLmer(dfun)
+  modelout <- lme4::mkMerMod(environment(dfun), opt, mod2$reTrms,fr = mod2$fr)
+  return(modelout)
+}
+
+## ------------------------------------------------------------------------
+mod1noREML <- MLPEnoREML (logDc.km ~ solarinsoz + forest + ag + shrub + dev + (1|pop1), CSFdata)
+mod2noREML <- MLPEnoREML(logDc.km ~ forest + ag + shrub + dev + (1|pop1), CSFdata)
+mod3noREML <- MLPEnoREML(logDc.km ~ ag + dev + (1|pop1), CSFdata)
+mod4noREML <- MLPEnoREML(logDc.km ~ slope + shrub + dev + (1|pop1), CSFdata)
+mod5noREML <- MLPEnoREML(logDc.km ~ soils + slope + solarinsoz + (1|pop1), CSFdata)
+
+## ------------------------------------------------------------------------
+Models <- list(Full=mod1noREML, Landcover=mod2noREML, HumanFootprint=mod3noREML, 
+               EnergyConservation=mod4noREML, Historical=mod5noREML)
+CSF.IC <- data.frame(AIC = sapply(Models, AIC),
                      BIC = sapply(Models, BIC)) 
 CSF.IC
 
@@ -99,7 +120,7 @@ CSF.IC <- data.frame(CSF.IC, k = sapply(Models, function(ls) attr(logLik(ls), "d
 CSF.IC
 
 ## ------------------------------------------------------------------------
-CSF.IC$AICc <- CSF.IC$extractAIC + 2*CSF.IC$k*(CSF.IC$k+1)/(48-CSF.IC$k-1)
+CSF.IC$AICc <- CSF.IC$AIC + 2*CSF.IC$k*(CSF.IC$k+1)/(48-CSF.IC$k-1)
 CSF.IC
 
 ## ------------------------------------------------------------------------
@@ -116,12 +137,13 @@ CSF.IC$BICew <- RL.B/sumRL.B
 round(CSF.IC,3)
 
 ## ------------------------------------------------------------------------
-#summary(mod2)
-summary(Models$Landcover)
+ModelsREML <- list(Full=mod1, Landcover=mod2, HumanFootprint=mod3,
+               EnergyConservation=mod4, Historical=mod5)
 
 ## ------------------------------------------------------------------------
-#confint(mod2, level = 0.95, method = "Wald")
-confint(Models$Landcover, level = 0.95, method = "Wald")
+confint(ModelsREML$Landcover, level = 0.95, method = "Wald")
+confint(ModelsREML$HumanFootprint, level = 0.95, method = "Wald")
+confint(ModelsREML$EnergyConservation, level = 0.95, method = "Wald")
 
 ## ----message=FALSE, warning=TRUE, include=FALSE--------------------------
 LandGenCourse::detachAllPackages()

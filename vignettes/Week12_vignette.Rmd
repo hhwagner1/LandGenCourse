@@ -23,7 +23,7 @@ We will re-analyze a dataset from Goldberg and Waits (2010) using a maximum like
 
 Here's a map of the study area. The lines represent those pair-wise links between sampling locations that we will be considering here (graph model: Delaunay triangulation). 
  
-![Map of study area](Week12_Fig1.png)
+![Map of study area](WE12_Fig1.png)
 
 ### b) Data set
 
@@ -64,8 +64,8 @@ library(ggplot2)
 First, read in the dataset. It is named CSF (Columbia spotted frog) to differentiate it from the RALU dataset you have used in previous labs (same species, very different landscapes). 
 
 ```{r}
-CSFdata <- read.csv(system.file("extdata", "CSF_network.csv", 
-                                        package = "LandGenCourse"))
+CSFdata <- read.csv(system.file("extdata", "CSF_network.csv",
+                                package = "LandGenCourse"))
 head(CSFdata) 
 ```
 
