@@ -53,7 +53,6 @@ Imports:
     rasterVis,
     readr,
     RColorBrewer,
-    rgdal,
     RgoogleMaps,
     rlang,
     rmarkdown,
@@ -83,6 +82,7 @@ Suggests:
     knitr,
     tmaptools,
     ggeffects,
+    rgdal,
     secr,
     spmoran
 VignetteBuilder: knitr
