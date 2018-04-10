@@ -19,15 +19,15 @@ vignette: >
 
 **Goals**: The goal of this worked example is for you to become familiar with creating and analyzing landscape genetic hypotheses using maximum likelihood population effect models (MLPE; Van Strien et al. 2012) and information theory. With this approach, we focus on evaluating evidence for the influence of the (intervening) landscape on link-based metrics (i.e. genetic distance). Incorporating node-based effects (i.e. pond size, etc.) will be covered in the gravity modeling lab. 
 
-We will re-analyze a dataset from Goldberg and Waits 2010 using a maximum likelihood population effect model (MLPE). 
+We will re-analyze a dataset from Goldberg and Waits (2010) using a maximum likelihood population effect model (MLPE). 
+
+Here's a map of the study area. The lines represent those pair-wise links between sampling locations that we will be considering here (graph model: Delaunay triangulation). 
+ 
+![Map of study area](WE12_Fig1.png)
 
 ### b) Data set
 
 In previous labs, you have created genetic distance matrices, so here we are going to start with those data already complete, as are the landscape data. For MLPE, two vectors representing the nodes at the ends of each link must be created. These are already included in the data set (`pop1` and `pop2`). 
-
-Here's a map of the study area. The lines represent those pair-wise links between sampling locations that we will be considering here (graph model: Delaunay triangulation).
-
-![Map of study area](WE12_Fig1.png)
 
 Each row in the file 'CSF_network.csv' represents a link between two pairs of sampling locations. The columns contain the following variables:
 
@@ -64,8 +64,8 @@ library(ggplot2)
 First, read in the dataset. It is named CSF (Columbia spotted frog) to differentiate it from the RALU dataset you have used in previous labs (same species, very different landscapes). 
 
 ```{r}
-CSFdata <- read.csv(system.file("extdata", "CSF_network.csv", 
-                                        package = "LandGenCourse"))
+CSFdata <- read.csv(system.file("extdata", "CSF_network.csv",
+                                package = "LandGenCourse"))
 head(CSFdata) 
 ```
 
@@ -84,6 +84,7 @@ The response Y in our MLPE models will be `logDc.km`, the genetic distance per g
 **This is a pruned network, where the links are only those neighbors in a Delauney trangulation. <Capture.PNG>**
 
 For this exercise, you will test 5 alternative hypotheses. At the end, you will be invited to create your own hypotheses from these variables and test support for them.
+
 
 ## 2. Fitting candidate models
 
@@ -217,9 +218,10 @@ Next we will check to make sure the residuals are normally distributed.
 hist(residuals(mod1)) 
 ```
 
-This can also be done with the qqmath function in package lattice if you are more used to seeing qq plots. These residuals look okay so we will move on (but if this were a publication we would do a closer examination of the shape of the data at larger genetic distances). 
+This can also be done with the `qqmath` function in package lattice if you are more used to seeing qq plots. These residuals look okay so we will move on (but if this were a publication we would do a closer examination of the shape of the data at the ends of the distribution). 
 
-Now we will make a function (called MPLE) to fit the rest of our models, so that we are not typing the same code over and over (which causes errors and long code that is difficult to navigate or update):
+Now we will make a function (called MLPE) to fit the rest of our models, so that we are not typing the same code over and over (which causes errors and long code that is difficult to navigate or update):
+
 
 ```{r}
 MLPE <- function(variables, data) {
@@ -248,17 +250,40 @@ mod5 <- MLPE(logDc.km ~ soils + slope + solarinsoz + (1|pop1), CSFdata)
 
 ### d) Compare evidence for models
 
-Note: package MuMIn will do this for you, but for this exercise it is useful to see all the pieces of what goes into your evaluation. 
+First we need to refit the models with REML = FALSE to get a useable estimate of likelihood for AIC and BIC. To do this, we'll create a new function called MLPEnoREML and use it to fit our 5 models.
+
+```{r}
+MLPEnoREML <- function(variables, data) {
+  mod2 <- lme4::lFormula(variables, data = data, REML = FALSE)
+  dfun <- do.call(lme4::mkLmerDevfun, mod2)
+  opt <- lme4::optimizeLmer(dfun)
+  mod_2 <- lme4::mkMerMod(environment(dfun), opt, mod2$reTrms,fr = mod2$fr)
+  mod2$reTrms$Zt <- ZZ
+
+# Refit the model
+  dfun <- do.call(lme4::mkLmerDevfun, mod2)
+  opt <- lme4::optimizeLmer(dfun)
+  modelout <- lme4::mkMerMod(environment(dfun), opt, mod2$reTrms,fr = mod2$fr)
+  return(modelout)
+}
+```
+
+```{r}
+mod1noREML <- MLPEnoREML (logDc.km ~ solarinsoz + forest + ag + shrub + dev + (1|pop1), CSFdata)
+mod2noREML <- MLPEnoREML(logDc.km ~ forest + ag + shrub + dev + (1|pop1), CSFdata)
+mod3noREML <- MLPEnoREML(logDc.km ~ ag + dev + (1|pop1), CSFdata)
+mod4noREML <- MLPEnoREML(logDc.km ~ slope + shrub + dev + (1|pop1), CSFdata)
+mod5noREML <- MLPEnoREML(logDc.km ~ soils + slope + solarinsoz + (1|pop1), CSFdata)
+```
 
 In information theory, we use information criteria (AIC, BIC) to evaluate the relative distance of our hypothesis from truth. For more information, see Burnham and Anderson (2002).
 
-Note: We use extractAIC here in package lme4, which refits the model using REML = FALSE rather than the function AIC, which reverts to a different package and provides the biased estimate from REML = TRUE.
+Note: package MuMIn will do this for you, but for this exercise it is useful to see all the pieces of what goes into your evaluation. 
 
 ```{r}
-# Alternative code HW:
-Models <- list(Full=mod1, Landcover=mod2, HumanFootprint=mod3, 
-               EnergyConservation=mod4, Historical=mod5)
-CSF.IC <- data.frame(extractAIC = sapply(Models, extractAIC)[2,],
+Models <- list(Full=mod1noREML, Landcover=mod2noREML, HumanFootprint=mod3noREML, 
+               EnergyConservation=mod4noREML, Historical=mod5noREML)
+CSF.IC <- data.frame(AIC = sapply(Models, AIC),
                      BIC = sapply(Models, BIC)) 
 CSF.IC
 ```
@@ -279,7 +304,7 @@ CSF.IC
 Now, calculate AICc and add it to the dataframe:
 
 ```{r}
-CSF.IC$AICc <- CSF.IC$extractAIC + 2*CSF.IC$k*(CSF.IC$k+1)/(48-CSF.IC$k-1)
+CSF.IC$AICc <- CSF.IC$AIC + 2*CSF.IC$k*(CSF.IC$k+1)/(48-CSF.IC$k-1)
 CSF.IC
 ```
 
@@ -316,25 +341,26 @@ In the multi-model inference approach, we can look across all the models in the 
 4.	**Energy conservation model**: slope, shrub, dev
 5.	**Historical model**: soils, slope, solarinso
 
-### f) Confidence intervals for predictors based on single best model
+### f) Confidence intervals for predictors
 
-According to Row et al. (2017), we can use the confidence interval from the variables in the models to identify those that are contributing to landscape resistance. Looking at models 2 and 3, we have some evidence that shrub and forest cover matter, but it's not as strong as the evidence for ag and development. Let's look at the parameter estimates to understand more.
+According to Row et al. (2017), we can use the confidence interval from the variables in the models to identify those that are contributing to landscape resistance. Looking at models 2 and 3, we have some evidence that shrub and forest cover matter, but it's not as strong as the evidence for ag and development. Let's look at the parameter estimates to understand more. Note that for parameter estimation we use the REML estimates.
 
 ```{r}
-#summary(mod2)
-summary(Models$Landcover)
+ModelsREML <- list(Full=mod1, Landcover=mod2, HumanFootprint=mod3,
+               EnergyConservation=mod4, Historical=mod5)
 ```
 
 Now we'll estimate the 95% confidence interval for these estimates:
 
 ```{r}
-#confint(mod2, level = 0.95, method = "Wald")
-confint(Models$Landcover, level = 0.95, method = "Wald")
+confint(ModelsREML$Landcover, level = 0.95, method = "Wald")
+confint(ModelsREML$HumanFootprint, level = 0.95, method = "Wald")
+confint(ModelsREML$EnergyConservation, level = 0.95, method = "Wald")
 ```
 
-In essence, we use the confidence intervals to assess whether we can differentiate the effect of each variable from zero (i.e. statistical significance). The confidence intervals that overlap 0 do not have as much evidence of being important to gene flow, based on simulations in Row et al. (2017). So in this case, there is only strong evidence that agriculture influences the rate of gene flow. Note that because the metric is genetic distance, negative values indicate more gene flow.
+In essence, we use the confidence intervals to assess whether we can differentiate the effect of each variable from zero (i.e. statistical significance). The confidence intervals that overlap 0 do not have as much evidence of being important to gene flow, based on simulations in Row et al. (2017). So in this case, there is strong evidence that agriculture influences the rate of gene flow. Note that because the metric is genetic distance, negative values indicate more gene flow.
 
-**Question 4**:	What evidence is there that shrub and forest matter to gene flow from these analyses? What about slope and shrub? Would you include them in a conclusion about landscape resistance in this system?
+**Question 4**:	What evidence is there that shrub and forest matter to gene flow from these analyses? What about slope? Would you include them in a conclusion about landscape resistance in this system?
 
 **Question 5**:  What evidence is there that development influences gene flow from these analyses? Would you include it in a conclusion about landscape resistance in this system?
 
@@ -351,6 +377,18 @@ Create your own (small) set of hypotheses to rank for evidence using the dataset
 5.  Create confidence intervals from models with high evidence weights.
 
 What can you infer from your analysis about what influences gene flow of this species?
+
+## 4. References
+
+- Burnham KP and DR Anderson. 2002. Model Selection and Multimodel Inference: A Practical Information Theoretic Approach. Chapter 8, p. 437-454. Springer-Verlag, New York.
+
+- Goldberg CS and LP Waits (2010). Comparative landscape genetics of two pond-breeding amphibian species in a highly modified agricultural landscape. Molecular Ecology 19: 3650-3663.
+
+- Row JR, ST Knick, SJ Oyler-McCance, SC Lougheed and BC Fedy (2017). Developing approaches for linear mixed modeling in landscape genetics through landscape-directed dispersal simulations. Ecology & Evolution 7: 3751–3761.
+
+- Van Strien MJ, D Keller and R Holderegger (2012). A new analytical approach to landscape genetic modelling: least‐cost transect analysis and linear mixed models. Molecular Ecology 21: 4010-4023.
+
+
 
 ```{r message=FALSE, warning=TRUE, include=FALSE}
 LandGenCourse::detachAllPackages()
