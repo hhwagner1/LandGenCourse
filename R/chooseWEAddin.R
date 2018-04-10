@@ -25,7 +25,8 @@ chooseWEAddin <- function() {
                         "Week 9: Population Structure"=12,
                         "Week 10: Landscape Resistance"=13,
                         "Week 11: Detecting Adaptation"=14,
-                        "Week 12: Model Selection"=15),
+                        "Week 12: Model Selection"=15,
+                        "Week 13: Gravity Models"=16),
                   selected = 1
       )
     )
@@ -51,7 +52,8 @@ chooseWEAddin <- function() {
                     "Week9_vignette",
                     "Week10_vignette",
                     "Week11_vignette",
-                    "Week12_vignette")[as.numeric(input$example)]
+                    "Week12_vignette",
+                    "Week13_vignette")[as.numeric(input$example)]
 
       suffix <- c(".html", ".Rmd", ".R")[as.numeric(input$type)]
       selectedFile <- paste0(baseName, suffix)
@@ -84,6 +86,11 @@ chooseWEAddin <- function() {
       {
         file.copy(from=system.file("extdata", "WE12_Fig1.png", package = "LandGenCourse"),
                   to=file.path("downloads", "WE12_Fig1.png"))
+      }
+      if(as.numeric(input$example)==16)
+      {
+        file.copy(from=system.file("extdata", "WE13_Fig1.png", package = "LandGenCourse"),
+                  to=file.path("downloads", "WE13_Fig1.png"))
       }
 
       # Copy file to 'downloads' folder:
