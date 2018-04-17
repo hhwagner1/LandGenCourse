@@ -26,7 +26,8 @@ chooseWEAddin <- function() {
                         "Week 10: Landscape Resistance"=13,
                         "Week 11: Detecting Adaptation"=14,
                         "Week 12: Model Selection"=15,
-                        "Week 13: Gravity Models"=16),
+                        "Week 13: Gravity Models"=16,
+                        "Week 14: Contemporary Gene Flow"=17),
                   selected = 1
       )
     )
@@ -53,7 +54,8 @@ chooseWEAddin <- function() {
                     "Week10_vignette",
                     "Week11_vignette",
                     "Week12_vignette",
-                    "Week13_vignette")[as.numeric(input$example)]
+                    "Week13_vignette",
+                    "Week14_vignette")[as.numeric(input$example)]
 
       suffix <- c(".html", ".Rmd", ".R")[as.numeric(input$type)]
       selectedFile <- paste0(baseName, suffix)
