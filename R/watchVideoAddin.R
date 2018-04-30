@@ -26,7 +26,7 @@ watchVideoAddin <- function() {
                         "Week 6: Quantitative Genetics (Part 2)"=13,
                         "Week 7: Spatial Linear Models (Part 1)"=14,
                         "Week 7: Spatial Linear Models (Part 2)"=15,
-                        "Week 8: Simulation Experiments (Part 1)"=16),
+                        "Week 8: Simulation Experiments (Part 1)"=16,
                         "Week 8: Simulation Experiments (Part 2)"=17),
                   selected = 5
       )
