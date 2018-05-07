@@ -46,9 +46,14 @@ library(LandGenCourse)
 #library(parallel)
 #library(doParallel)
 #library(knitr)
+#library(compiler)
 ```
 
 ## 2. Navigating the file system
+
+This Bonus material assumes that you are running R in RStudio within a 'R project'. Therefore, the default workspace when you enter commands in the console should be your R project folder. A discussed in the video, Part 2, the default location when executing code from an R Notebook is the folder where the notebook is stored. If you downloaded this Bonus material from 'LandGenCourse', it should be stored in a folder 'downloads' in your project folder.
+
+More about R projects: https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects.
 
 ### a) Where am I? 
 
@@ -189,6 +194,8 @@ Overall `fread` and `import` were in the order of 50 times faster than `read.csv
 
 The beauty of `import` is that it can handle a wide range of file types (and the list keeps growing): csv, xls, xlsx, html, xml, json, feather, R, RData, rda, rds, psv, tsv, sas7bdat, xpt, sav, dta, xpt, por, rec, mtp, syd, dbf, arff, dif, fwf, csv.gz, CSVY, fst, mat, ods, yml, as well as Fortan files and clipboard imports (Mac and Windows). It recognizes the file type from the extension and uses an appropriate import function.
 
+Note: there is also a fuction `Import` in the `car` package that similarly aims to provide an easy way to import various file formats. However, `car::Import` can be very slow (slower than 'read.csv'), whereas `rio::import` is fast. 
+
 ### b) Check handling of character data
 
 The functions differ not only in their speed but also in how they handle text data (character or factor?), missing values etc. 
@@ -250,6 +257,8 @@ Here's my recommendation for saving R objects/data efficiently:
 - If portability with Python is important: feather
 - If being able to read text file is important: csv
 
+Note: the developer of `feather` does not recommend using it for long-term data storage since its stability with future updates to R or Python can't be guaranteed: https://github.com/wesm/feather/issues/183
+
 Why 'rds' and not 'RData'? In practice, the main advantage of 'rds' is convenience when importing data. 
 
 - with 'readRDS', you can directly assign the imported data to an object, and thus choose the object name.
@@ -305,6 +314,36 @@ Also, in the vein of reproducible research, do not save multiple copies of your 
 - If your code takes a lot of computation time, you may want to export the results (see above).
 - Backup your data and scripts (R Notebooks)!
 - Use version control for your script (R Notebooks)! See Chapter 0 video 'Version Control 101'. The simplest is to include version numbers in the file name: 'myNotebook_v7.Rmd'. A better way is to use e.g. GitHub.
+
+### e) Compile your functions
+
+A recommended way of keeping your code tidy is to write functions for anything you will do more than once. 
+
+- Collect your functions in a separate file (R script), e.g. `myFunctions.R`.
+- At the beginning of your R Notebook, source the R script with the functions with `source("myFunctions.R")`.
+- This will make your code much shorter and thus easier to read.
+- If you need to change some code inside your function, you only have to change it in one place, hence there is less risk of mistakes.
+- Use some kind of version control for your functions file so that you can go back to an older version, and you always know which is the current version.
+
+To further speed up your code, you can compile your function with 'cmpfun':
+
+```{r cmpfun}
+myFunction <- function() {
+    sum(rnorm(1000))/1000
+}
+myFunction.cmp <- compiler::cmpfun(myFunction)
+
+microbenchmark::microbenchmark(myFunction(), myFunction.cmp())
+```
+
+**Question**: Which of the following times are most different between the uncompiled and the compiled versions of this simple function? 
+
+- **min**: minimum time across 'neval' replicates
+- **Quartiles**: 'lq' = lower quartile (25%), 'median', 'uq' = upper quartile (75%)
+- **mean**: mean time across 'neval' replicates
+- **max**: maximum time across 'neval' replicates
+
+In this case, compiling mainly reduced the duration of the longest 25% runs (with longer times than the 75% quartile), which brought down the mean processing time.
 
 ## 4. Profiling your code
 
@@ -412,9 +451,22 @@ profvis::profvis(source(outFile))
 
 ## 5. Creating and executing a Bash R script
 
-### a) Create a Bash R script
+### a) Run R script directly in the Terminal
 
-To execute our R script as a Bash script, we need to add a few lines. 
+Now that we have a stand-alone R script 'myScript.R', we can run it from the command line in the terminal (shell). After navigating to the correct folder, type:
+
+`Rscript myScript.R`
+
+This will source the file and execute the R code. 
+
+- Numerical output will be printed in the termminal. Here, a random number should be returned.
+- Best include code in your R script to export any R objects, data tables or figures that you want to retain. These will be saved in the same folder as the R script (unless you specify file paths).
+
+### b) Create a Bash R script
+
+If you want to run your code on a node or cluster, you may need to take this one step further and include the R code in a bash Rscript. In a bash script, you can add bash commands that govern resource use to submit a job to a node or cluster. Bash scripts are the way of giving instructions to the scheduler of the cluster (e.g. SLURM) for how to manage input and output files.
+
+To execute our R script 'myScript.R' as a Bash script, we need to add a few lines.
 
 - The 'shebang' line `#!/bin/bash` that tells the computer that this is a Bash script, and where to find Bash. Note that here the hashtag symbol does NOT mean that the line is commented out (this line is Unix code, not R code).
 - The line `R --slave << EOF` that declares the rest of the file (until `EOF`) as R code.
@@ -474,7 +526,19 @@ if(file.exists(myPNG))
 }
 ```
 
-### b) Store your session info and package versions
+Here's an annotated example of a bash file that contains instructions for submitting a job to a single node (a single machine with multiple/many cores). 
+
+Note: A copy of the file 'BashExample.sh' should also have been copied into the downloads folder inside your project folder.   
+
+```{r BashExample}
+file.show(system.file("extdata", "BashExample.sh", package = "LandGenCourse"))
+```
+
+Instead of including the R code directly in the bash file, the last line here executes an R script with the `Rscript` command.
+
+Notice the second-last line. Obviously, on the node, R and any relevant packages need to be pre-installed. Different users may need different configurations (different packages or versions) installed, hence each installation has a name, which needs to be specified in the bash script.
+
+### d) Store your session info and package versions
 
 If you use any R packages, load them at the beginning of your script file with `library`. Make sure the packages are installed on the system where you will be running the Bash R script.
 
@@ -521,7 +585,7 @@ More advanced ways for handling the problem of package versions to make sure you
 
 More on the topic: https://timogrossenbacher.ch/2017/07/a-truly-reproducible-r-workflow/
 
-### c) Potential Windows issues
+### e) Potential Windows issues
 
 Check that Bash is installed and ready to use with RStudio:
 

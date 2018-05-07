@@ -11,6 +11,7 @@ library(LandGenCourse)
 #library(parallel)
 #library(doParallel)
 #library(knitr)
+#library(compiler)
 
 ## ----home----------------------------------------------------------------
 getwd()
@@ -108,6 +109,14 @@ load(file.path(here::here(), "output", "gen2.RData"))
 exists("gen")
 exists("gen2")
 
+## ----cmpfun--------------------------------------------------------------
+myFunction <- function() {
+    sum(rnorm(1000))/1000
+}
+myFunction.cmp <- compiler::cmpfun(myFunction)
+
+microbenchmark::microbenchmark(myFunction(), myFunction.cmp())
+
 ## ----myChunkName---------------------------------------------------------
 
 
@@ -162,6 +171,9 @@ if(file.exists(myPNG))
 {
   file.show(myPNG)
 }
+
+## ----BashExample---------------------------------------------------------
+file.show(system.file("extdata", "BashExample.sh", package = "LandGenCourse"))
 
 ## ----platform------------------------------------------------------------
 Session <- devtools::session_info()

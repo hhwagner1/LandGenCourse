@@ -526,10 +526,12 @@ if(file.exists(myPNG))
 }
 ```
 
-Here's an annotated example of a bash file that contains instructions for submitting a job to a single node (a single machine with multiple/many cores). The file 'BashExample.sh' should have been copied into the downloads folder inside your project folder.   
+Here's an annotated example of a bash file that contains instructions for submitting a job to a single node (a single machine with multiple/many cores). 
+
+Note: A copy of the file 'BashExample.sh' should also have been copied into the downloads folder inside your project folder.   
 
 ```{r BashExample}
-file.show(file.path(here::here(), "downloads", "BashExample.sh"))
+file.show(system.file("extdata", "BashExample.sh", package = "LandGenCourse"))
 ```
 
 Instead of including the R code directly in the bash file, the last line here executes an R script with the `Rscript` command.
