@@ -73,10 +73,18 @@ chooseWEAddin <- function() {
       if(!dir.exists(file.path("output")))
         dir.create(file.path("output"), recursive=TRUE)
 
+      if(as.numeric(input$example)==11 && as.numeric(input$type)==2)
+      {
+        if(!dir.exists(file.path("output","simout")))
+          dir.create(file.path("output","simout"), recursive=TRUE)
+      }
+
       if(as.numeric(input$example)==12 && as.numeric(input$type)==2)
       {
         if(!dir.exists(file.path("output","simout")))
           dir.create(file.path("output","simout"), recursive=TRUE)
+        file.copy(from=system.file("extdata", "BashExample.sh", package = "LandGenCourse"),
+                  to=file.path("downloads", "BashExample.sh"))
       }
 
       if(as.numeric(input$example)==13)
