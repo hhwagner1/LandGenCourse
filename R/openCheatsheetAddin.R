@@ -6,11 +6,12 @@ openCheatsheetAddin <- function() {
 
       shiny::selectInput("sheet", "Select a Cheat Sheet:",
                    list("List of R Functions by Tutorial (docx)"=1,
-                        "Base R"=2,
-                        "R Markdown Language"=3,
-                        "Data Import"=4,
-                        "Data Transformation with dplyr"=5,
-                        "Data Visualization with ggplot2"=6),
+                        "List of R Functions by Worked Example (pdf)"=2,
+                        "Base R"=3,
+                        "R Markdown Language"=4,
+                        "Data Import"=5,
+                        "Data Transformation with dplyr"=6,
+                        "Data Visualization with ggplot2"=7),
                   selected = 1
       )
     )
@@ -31,23 +32,27 @@ openCheatsheetAddin <- function() {
       now<-format(Sys.time(), "%b%d%H%M%S")
       file.copy(system.file("extdata", "RCommands.docx", package = "LandGenCourse"),
                 file.path(getwd(),"downloads", paste0("RCommands_", now, ".docx")))
-#      utils::download.file(paste0("file://", system.file("extdata", "RCommands.docx",
-#                                                         package = "LandGenCourse")),
-#             destfile=file.path("downloads", paste0("RCommands_", now, ".docx")),
-#                           mode="wb")
       utils::browseURL(paste0("file://", file.path(getwd(), "downloads",
                        paste0("RCommands_", now, ".docx"))))
     }
 
-    if(input$sheet != "1")
+    if(input$sheet == "2")
+    {
+      file.copy(system.file("extdata", "Index_of_functions.pdf", package = "LandGenCourse"),
+                  file.path(getwd(),"downloads", "Index_of_functions.pdf"))
+      utils::browseURL(paste0("file://", file.path(getwd(), "downloads", "Index_of_functions.pdf")))
+    }
+
+    if(as.numeric(input$sheet) > 2)
     {
       selectedFile <- switch(input$sheet,
         "1" = "",
-        "2" = "https://github.com/rstudio/cheatsheets/raw/master/base-r.pdf",
-        "3" = "https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf",
-        "4" = "https://github.com/rstudio/cheatsheets/raw/master/data-import.pdf",
-        "5" = "https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf",
-        "6" = "https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf")
+        "2" = "",
+        "3" = "https://github.com/rstudio/cheatsheets/raw/master/base-r.pdf",
+        "4" = "https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf",
+        "5" = "https://github.com/rstudio/cheatsheets/raw/master/data-import.pdf",
+        "6" = "https://github.com/rstudio/cheatsheets/raw/master/data-transformation.pdf",
+        "7" = "https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf")
 
       utils::download.file(selectedFile,
                          destfile=file.path("downloads", basename(selectedFile)),
