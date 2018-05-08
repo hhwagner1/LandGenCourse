@@ -142,7 +142,7 @@ file.show(myPath)
 profvis::profvis(source(myPath))
 
 ## ----purl----------------------------------------------------------------
-inFile <- system.file("doc", "Week1_vignette.Rmd", package="LandGenCourse")
+inFile <- system.file("doc", "Week0_Graphics.Rmd", package="LandGenCourse")
 outFile <- file.path(here::here(), "output/myNotebook.R")
 knitr::purl(inFile, output=outFile)
 
@@ -193,13 +193,17 @@ file.show(outPath)
 library(parallel)
 detectCores()
 
+## ----nCores--------------------------------------------------------------
+nCores <- detectCores()
+if(Sys.info()[['sysname']]=="Windows") nCores = 1
+nCores
+
 ## ----mclapply------------------------------------------------------------
 x <- gen[,-1]
 m1 <- lapply(x, mean, na.rm=TRUE)
-m2 <- mclapply(x, mean, na.rm=TRUE, mc.cores=detectCores())
+m2 <- mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)
 
 ## ----microbenchmark4-----------------------------------------------------
-nCores <- detectCores()
 method1 <- function(x) {colMeans(x, na.rm=TRUE)}
 method2 <- function(x) {for(i in 1:ncol(x)) mean(x[,i], na.rm=TRUE)}
 method3 <- function(x) {lapply(x, mean, na.rm=TRUE)}

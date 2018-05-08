@@ -433,10 +433,10 @@ profvis::profvis(source(myPath))
 
 Unfortunately, we can't profile an entire R Notebook (as far as I know). However, we can extract the R code as a script file, then profile the script file. 
 
-We use the function 'purl' from the 'knitr' package to extract the R code from a Notebook (here, we'll use the Week 1 worked example as this runs quickly):
+We use the function 'purl' from the 'knitr' package to extract the R code from a Notebook (here, we'll use the Week 0 vignette on R graphics as this runs quickly):
 
 ```{r purl}
-inFile <- system.file("doc", "Week1_vignette.Rmd", package="LandGenCourse")
+inFile <- system.file("doc", "Week0_Graphics.Rmd", package="LandGenCourse")
 outFile <- file.path(here::here(), "output/myNotebook.R")
 knitr::purl(inFile, output=outFile)
 ```
@@ -447,7 +447,7 @@ Now we can pass the file to `profvis':
 profvis::profvis(source(outFile))
 ```
 
-**Question**: Which lines of code in the Week 1 worked example took the longest to run?
+**Question**: Which lines of code took the longest to run in this example?
 
 ## 5. Creating and executing a Bash R script
 
@@ -621,13 +621,23 @@ library(parallel)
 detectCores()
 ```
 
+**Question**: How many cores does your machine have?
+
+Note: Here we check whether the operating system is 'Windows', in which case we set `nCores = 1`. This means that we will use all cores on Mac or Linux, but only one core on Windows. This is to avoid problems on Windows machines.  
+
+```{r nCores}
+nCores <- detectCores()
+if(Sys.info()[['sysname']]=="Windows") nCores = 1
+nCores
+```
+
 - Code your analysis with `lapply` (and related functions).
 - Replace `lapply` by `mclapply` (and related functions). Use the argument `mc.cores=detectCores()` to automatically detect the number of cores in your machine. 
 
 ```{r mclapply}
 x <- gen[,-1]
 m1 <- lapply(x, mean, na.rm=TRUE)
-m2 <- mclapply(x, mean, na.rm=TRUE, mc.cores=detectCores())
+m2 <- mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)
 ```
 
 Let's benchmark four ways of calculating the mean of each column in our example data set 'gen' with 94 rows and 10,000 columns (SNPs):
@@ -638,7 +648,6 @@ Let's benchmark four ways of calculating the mean of each column in our example 
 - **Method 4**: Multi-core with `mclapply`.
 
 ```{r microbenchmark4}
-nCores <- detectCores()
 method1 <- function(x) {colMeans(x, na.rm=TRUE)}
 method2 <- function(x) {for(i in 1:ncol(x)) mean(x[,i], na.rm=TRUE)}
 method3 <- function(x) {lapply(x, mean, na.rm=TRUE)}
@@ -654,6 +663,8 @@ microbenchmark::microbenchmark(times = 10, unit = "ms",
 - Which method was the fastest? Can you explain this?
 - Which method was slowest?
 - Was `mclapply` faster than `lapply` in this example? 
+
+Note: Obviously you might only expect to see a gain in speed if nCores > 1.
 
 ### b) Replace 'for' by 'foreach' with package 'doParallel'
 
