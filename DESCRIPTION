@@ -78,6 +78,7 @@ Imports:
     sp,
     spatialEco,
     spdep,
+    stringi,
     Sunder,
     swirl (>= 2.4.3),
     swirlify (>= 0.5.1),
