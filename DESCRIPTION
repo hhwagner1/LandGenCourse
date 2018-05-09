@@ -90,7 +90,7 @@ Remotes:
     kjgilbert/QstFstComp,
     dyerlab/popgraph,
     dyerlab/gstudio,
-    leandroroser/EcoGenetics
+    leandroroser/EcoGenetics-devel
 Suggests: 
     checkpoint,
     EcoGenetics,
