@@ -45,17 +45,26 @@ Lamy, T., Pointier, J. P., Jarne, P. and David, P. (2012), Testing metapopulatio
 All required packages should have been installed already when you installed 'LandGenCourse'.
 
 ```{r message=FALSE, warning=TRUE}
-require(LandGenCourse)
-require(EcoGenetics)
-#require(tibble)
-#require(poppr)
-#require(ade4)
-#require(pwr)
-#require(effsize)
-#require(sp)
-#require(ggmap)
-#require(ggplot2)
-#require(car)  
+library(LandGenCourse)
+#library(tibble)
+#library(poppr)
+#library(ade4)
+#library(pwr)
+#library(effsize)
+#library(sp)
+#library(ggmap)
+#library(ggplot2)
+#library(car)  
+```
+
+Package 'EcoGenetics' (devel version from GitHub) may not have been automatically installed with 'LandGenCourse':
+
+```{r message=FALSE, warning=TRUE}
+if(!require(EcoGenetics))
+{
+  devtools::install_github("leandroroser/EcoGenetics-devel")
+}
+library(EcoGenetics)
 ```
 
 ### d) Import data

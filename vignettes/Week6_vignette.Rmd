@@ -53,10 +53,16 @@ library(tibble)
 #require(car)  
 ```
 
-Package 'ggeffects' not automatically installed with 'LandGenCourse':
+Packages 'ggeffects' and 'EcoGenetics' (devel version from GitHub) were not automatically installed with 'LandGenCourse':
 
 ```{r message=FALSE, warning=TRUE}
 if(!require(ggeffects)) install.packages("ggeffects", repos='http://cran.us.r-project.org')
+
+if(!require(EcoGenetics))
+{
+  devtools::install_github("leandroroser/EcoGenetics-devel")
+}
+library(EcoGenetics)
 ```
 
 Source two files with additional functions:
