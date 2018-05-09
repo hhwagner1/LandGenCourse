@@ -1,7 +1,7 @@
 Package: LandGenCourse
 Type: Package
 Title: Interface for course "Landscape Genetic Data Analysis with R"
-Version: 1.4.0
+Version: 1.4.1
 Date: 2018
 Author: Helene Wagner
 Maintainer: Helene Wagner <hhwagner1@gmail.com>
@@ -21,7 +21,6 @@ Imports:
     data.table,
     doParallel,
     dplyr,
-    EcoGenetics (>= 1.2.1-5),
     effsize,
     feather,
     formatR (>= 1.5),
@@ -90,7 +89,8 @@ Remotes:
     krlmlr/here,
     kjgilbert/QstFstComp,
     dyerlab/popgraph,
-    dyerlab/gstudio
+    dyerlab/gstudio,
+    leandroroser/EcoGenetics-devel
 Suggests: 
     fields,
     knitr,
