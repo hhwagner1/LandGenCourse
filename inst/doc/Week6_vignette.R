@@ -12,7 +12,7 @@ library(tibble)
 ## ----message=FALSE, warning=TRUE-----------------------------------------
 if(!require(ggeffects)) install.packages("ggeffects", repos='http://cran.us.r-project.org')
 
-if(!require(EcoGenetics))
+if(!require(EcoGenetics) || packageVersion("EcoGenetics") < "1.2.1.5")
 {
   devtools::install_github("leandroroser/EcoGenetics-devel")
 }

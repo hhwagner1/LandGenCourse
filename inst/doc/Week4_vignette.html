@@ -144,7 +144,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="co">#library(ggplot2)</span>
 <span class="co">#library(car)  </span></code></pre></div>
 <p>Package ‘EcoGenetics’ (devel version from GitHub) may not have been automatically installed with ‘LandGenCourse’:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(EcoGenetics))
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(EcoGenetics) <span class="op">||</span><span class="st"> </span><span class="kw">packageVersion</span>(<span class="st">&quot;EcoGenetics&quot;</span>) <span class="op">&lt;</span><span class="st"> &quot;1.2.1.5&quot;</span>)
 {
   devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;leandroroser/EcoGenetics-devel&quot;</span>)
 }
@@ -229,6 +229,14 @@ tibble<span class="op">::</span><span class="kw">as.tibble</span>(dd.site)</code
 <p>First, we need to extract the samples that belong to the hierarchical data set. There are four clusters: “North”, “East”, “Center” and “South”. We are looking for the observations where the variable “Cluster” has one of these four values, all other observations will have a missing value for “Cluster”. We can use ‘!is.na’ to extract all rows with non-missing values. Then we convert to a ‘genind’ object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dd.ecogen.Cluster &lt;-<span class="st"> </span>dd.ecogen[<span class="op">!</span><span class="kw">is.na</span>(dd.ecogen[[<span class="st">&quot;S&quot;</span>]]<span class="op">$</span>Cluster),]
 dd.genind.Cluster &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span><span class="kw">ecogen2genind</span>(dd.ecogen.Cluster)</code></pre></div>
+<pre><code>## Loading required package: adegenet</code></pre>
+<pre><code>## Loading required package: ade4</code></pre>
+<pre><code>## 
+##    /// adegenet 2.1.1 is loaded ////////////
+## 
+##    &gt; overview: '?adegenet'
+##    &gt; tutorials/doc/questions: 'adegenetWeb()' 
+##    &gt; bug reports/feature requests: adegenetIssues()</code></pre>
 </div>
 <div id="b-hierarchical-amova" class="section level3">
 <h3>b) Hierarchical AMOVA</h3>
@@ -278,9 +286,9 @@ amova.test</code></pre></div>
 ## Adjustment method for multiple comparisons:   none 
 ## Permutation number:   999 
 ##                         Test        Obs    Std.Obs   Alter Pvalue
-## 1  Variations within samples 4.42799478 -81.993747    less  0.001
-## 2 Variations between samples 0.50644882  57.969438 greater  0.001
-## 3 Variations between Cluster 0.02770227   1.746947 greater  0.043</code></pre>
+## 1  Variations within samples 4.42799478 -81.769327    less  0.001
+## 2 Variations between samples 0.50644882  55.609017 greater  0.001
+## 3 Variations between Cluster 0.02770227   1.590047 greater  0.060</code></pre>
 <p>Questions:</p>
 <ul>
 <li>At what level is there stronger differentiation, within or among clusters?</li>

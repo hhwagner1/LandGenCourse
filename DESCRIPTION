@@ -19,6 +19,7 @@ Imports:
     cowplot,
     data.table,
     doParallel,
+    devtools,
     dplyr,
     effsize,
     formatR (>= 1.5),
@@ -37,6 +38,7 @@ Imports:
     maps,
     mapplots,
     maptools,
+    Matrix,
     MASS,
     methods,
     microbenchmark,
@@ -91,6 +93,7 @@ Remotes:
     leandroroser/EcoGenetics-devel
 Suggests: 
     checkpoint,
+    EcoGenetics,
     feather,
     fields,
     knitr,

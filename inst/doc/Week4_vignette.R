@@ -11,7 +11,7 @@ library(LandGenCourse)
 #library(car)  
 
 ## ----message=FALSE, warning=TRUE-----------------------------------------
-if(!require(EcoGenetics))
+if(!require(EcoGenetics) || packageVersion("EcoGenetics") < "1.2.1.5")
 {
   devtools::install_github("leandroroser/EcoGenetics-devel")
 }
