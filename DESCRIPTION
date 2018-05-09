@@ -15,14 +15,12 @@ Imports:
     adegenet (>= 2.1.0),
     base64enc,
     car,
-    checkpoint,
     compiler,
     cowplot,
     data.table,
     doParallel,
     dplyr,
     effsize,
-    feather,
     formatR (>= 1.5),
     gdistance,
     GeNetIt,
@@ -92,6 +90,8 @@ Remotes:
     dyerlab/gstudio,
     leandroroser/EcoGenetics-devel
 Suggests: 
+    checkpoint,
+    feather,
     fields,
     knitr,
     LEA,
