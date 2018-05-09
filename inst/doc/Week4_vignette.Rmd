@@ -45,17 +45,26 @@ Lamy, T., Pointier, J. P., Jarne, P. and David, P. (2012), Testing metapopulatio
 All required packages should have been installed already when you installed 'LandGenCourse'.
 
 ```{r message=FALSE, warning=TRUE}
-require(LandGenCourse)
-require(EcoGenetics)
-#require(tibble)
-#require(poppr)
-#require(ade4)
-#require(pwr)
-#require(effsize)
-#require(sp)
-#require(ggmap)
-#require(ggplot2)
-#require(car)  
+library(LandGenCourse)
+#library(tibble)
+#library(poppr)
+#library(ade4)
+#library(pwr)
+#library(effsize)
+#library(sp)
+#library(ggmap)
+#library(ggplot2)
+#library(car)  
+```
+
+Package 'EcoGenetics' (devel version from GitHub) may not have been automatically installed with 'LandGenCourse':
+
+```{r message=FALSE, warning=TRUE}
+if(!require(EcoGenetics))
+{
+  devtools::install_github("leandroroser/EcoGenetics-devel")
+}
+library(EcoGenetics)
 ```
 
 ### d) Import data
@@ -384,7 +393,7 @@ Given that sample size, what was the statistical power of our test to detect at 
 pwr::pwr.t2n.test(n1=7, n2=5, d=-0.8, alternative = "less")
 ```
 
-So the power to detect at least a large effect, if it exists in the popoulation, was only 0.355, way below the 0.8 (or even 0.95) that we would want to see. For a medium effect, the power is even smaller.
+So the power to detect at least a large effect, if it exists in the population, was only 0.355, way below the 0.8 (or even 0.95) that we would want to see. For a medium effect, the power is even smaller.
 
 ### c) Sample size calculation
 

@@ -1,17 +1,22 @@
 ## ----message=FALSE, warning=TRUE-----------------------------------------
 library(LandGenCourse)
 library(lme4)
-#require(EcoGenetics)
 library(tibble)
-#require(lattice)
-#require(MuMIn)
-#require(predictmeans)
-#require(nlme)
-#require(QstFstComp)
-#require(car)  
+#library(lattice)
+#library(MuMIn)
+#library(predictmeans)
+#library(nlme)
+#library(QstFstComp)
+#library(car)  
 
 ## ----message=FALSE, warning=TRUE-----------------------------------------
 if(!require(ggeffects)) install.packages("ggeffects", repos='http://cran.us.r-project.org')
+
+if(!require(EcoGenetics))
+{
+  devtools::install_github("leandroroser/EcoGenetics-devel")
+}
+library(EcoGenetics)
 
 ## ----message=FALSE, warning=TRUE-----------------------------------------
 source(system.file("extdata", "supplemental_R_functions.R", 
