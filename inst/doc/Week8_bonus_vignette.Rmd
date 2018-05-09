@@ -526,19 +526,30 @@ if(file.exists(myPNG))
 }
 ```
 
+### d) Moving to a node or cluster?
+
+The example bash file and advice in this section have been provided by Hossam Abdel Moniem, thanks!
+
 Here's an annotated example of a bash file that contains instructions for submitting a job to a single node (a single machine with multiple/many cores). 
 
 Note: A copy of the file 'BashExample.sh' should also have been copied into the downloads folder inside your project folder.   
 
 ```{r BashExample}
-file.show(system.file("extdata", "BashExample.sh", package = "LandGenCourse"))
+writeLines(readLines(system.file("extdata", "BashExample.sh", package = "LandGenCourse")))
 ```
 
 Instead of including the R code directly in the bash file, the last line here executes an R script with the `Rscript` command.
 
 Notice the second-last line. Obviously, on the node, R and any relevant packages need to be pre-installed. Different users may need different configurations (different packages or versions) installed, hence each installation has a name, which needs to be specified in the bash script.
 
-### d) Store your session info and package versions
+Note: Make sure that all packages that you need (and their dependencies), as well as the package `unixtools`, have been installed on the node or cluster (i.e., they are part of the installation you will be using). Install `unixtools` with: `install.packages("unixtools",,"http://rforge.net/")`
+
+Further reading:
+
+- Bash script tutorial: https://ryanstutorials.net/bash-scripting-tutorial/
+- Scheduling a job with SLURM commands: https://www.rc.fas.harvard.edu/resources/documentation/convenient-slurm-commands/
+
+### e) Store your session info and package versions
 
 If you use any R packages, load them at the beginning of your script file with `library`. Make sure the packages are installed on the system where you will be running the Bash R script.
 
@@ -585,7 +596,7 @@ More advanced ways for handling the problem of package versions to make sure you
 
 More on the topic: https://timogrossenbacher.ch/2017/07/a-truly-reproducible-r-workflow/
 
-### e) Potential Windows issues
+### f) Potential Windows issues
 
 Check that Bash is installed and ready to use with RStudio:
 

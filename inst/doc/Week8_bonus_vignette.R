@@ -173,7 +173,7 @@ if(file.exists(myPNG))
 }
 
 ## ----BashExample---------------------------------------------------------
-file.show(system.file("extdata", "BashExample.sh", package = "LandGenCourse"))
+writeLines(readLines(system.file("extdata", "BashExample.sh", package = "LandGenCourse")))
 
 ## ----platform------------------------------------------------------------
 Session <- devtools::session_info()
