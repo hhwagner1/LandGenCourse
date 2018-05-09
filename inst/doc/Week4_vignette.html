@@ -12,7 +12,7 @@
 
 <meta name="author" content="Nusha Keyghobadi, Thomas Lamy and Helene Wagner" />
 
-<meta name="date" content="2018-02-16" />
+<meta name="date" content="2018-05-09" />
 
 <title>Week 4: Metapopulation Genetics</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Week 4: Metapopulation Genetics</h1>
 <h4 class="author"><em>Nusha Keyghobadi, Thomas Lamy and Helene Wagner</em></h4>
-<h4 class="date"><em>2018-02-16</em></h4>
+<h4 class="date"><em>2018-05-09</em></h4>
 
 
 <div id="TOC">
@@ -133,17 +133,22 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="c-required-r-libraries" class="section level3">
 <h3>c) Required R libraries</h3>
 <p>All required packages should have been installed already when you installed ‘LandGenCourse’.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">require</span>(LandGenCourse)
-<span class="kw">require</span>(EcoGenetics)
-<span class="co">#require(tibble)</span>
-<span class="co">#require(poppr)</span>
-<span class="co">#require(ade4)</span>
-<span class="co">#require(pwr)</span>
-<span class="co">#require(effsize)</span>
-<span class="co">#require(sp)</span>
-<span class="co">#require(ggmap)</span>
-<span class="co">#require(ggplot2)</span>
-<span class="co">#require(car)  </span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(LandGenCourse)
+<span class="co">#library(tibble)</span>
+<span class="co">#library(poppr)</span>
+<span class="co">#library(ade4)</span>
+<span class="co">#library(pwr)</span>
+<span class="co">#library(effsize)</span>
+<span class="co">#library(sp)</span>
+<span class="co">#library(ggmap)</span>
+<span class="co">#library(ggplot2)</span>
+<span class="co">#library(car)  </span></code></pre></div>
+<p>Package ‘EcoGenetics’ (devel version from GitHub) may not have been automatically installed with ‘LandGenCourse’:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(EcoGenetics) <span class="op">||</span><span class="st"> </span><span class="kw">packageVersion</span>(<span class="st">&quot;EcoGenetics&quot;</span>) <span class="op">&lt;</span><span class="st"> &quot;1.2.1.5&quot;</span>)
+{
+  devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;leandroroser/EcoGenetics-devel&quot;</span>)
+}
+<span class="kw">library</span>(EcoGenetics)</code></pre></div>
 </div>
 <div id="d-import-data" class="section level3">
 <h3>d) Import data</h3>
@@ -180,16 +185,16 @@ tibble<span class="op">::</span><span class="kw">as.tibble</span>(dd.site)</code
 <pre><code>## # A tibble: 42 x 24
 ##    SiteID   SITE   YEAR Spatial MultiYear APE   Cluster     n    RA    He
 ##  * &lt;chr&gt;    &lt;fct&gt; &lt;int&gt; &lt;lgl&gt;   &lt;lgl&gt;     &lt;lgl&gt; &lt;fct&gt;   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 PICO2006 PICO   2006 F       T         F     &lt;NA&gt;       34  11.2 0.897
-##  2 PICO2007 PICO   2007 F       T         F     &lt;NA&gt;       24  11.4 0.911
-##  3 PICO2009 PICO   2009 T       T         F     &lt;NA&gt;       32  11.4 0.896
-##  4 ROC2006  ROC    2006 T       T         F     &lt;NA&gt;       32  11.2 0.831
-##  5 ROC2007  ROC    2007 F       T         F     &lt;NA&gt;       32  11.0 0.820
-##  6 SEN2006  SEN    2006 F       T         F     &lt;NA&gt;       32  11.2 0.876
-##  7 SEN2007  SEN    2007 T       T         F     &lt;NA&gt;       30  11.6 0.880
-##  8 VEE2006  VEE    2006 F       T         F     &lt;NA&gt;       31  10.5 0.864
-##  9 VEE2007  VEE    2007 F       T         F     &lt;NA&gt;       32  11.3 0.854
-## 10 VEE2008  VEE    2008 T       T         F     &lt;NA&gt;       31  11.2 0.871
+##  1 PICO2006 PICO   2006 FALSE   TRUE      FALSE &lt;NA&gt;       34  11.2 0.897
+##  2 PICO2007 PICO   2007 FALSE   TRUE      FALSE &lt;NA&gt;       24  11.4 0.911
+##  3 PICO2009 PICO   2009 TRUE    TRUE      FALSE &lt;NA&gt;       32  11.4 0.896
+##  4 ROC2006  ROC    2006 TRUE    TRUE      FALSE &lt;NA&gt;       32  11.2 0.831
+##  5 ROC2007  ROC    2007 FALSE   TRUE      FALSE &lt;NA&gt;       32  11.0 0.82 
+##  6 SEN2006  SEN    2006 FALSE   TRUE      FALSE &lt;NA&gt;       32  11.2 0.876
+##  7 SEN2007  SEN    2007 TRUE    TRUE      FALSE &lt;NA&gt;       30  11.6 0.88 
+##  8 VEE2006  VEE    2006 FALSE   TRUE      FALSE &lt;NA&gt;       31  10.5 0.864
+##  9 VEE2007  VEE    2007 FALSE   TRUE      FALSE &lt;NA&gt;       32  11.3 0.854
+## 10 VEE2008  VEE    2008 TRUE    TRUE      FALSE &lt;NA&gt;       31  11.2 0.871
 ## # ... with 32 more rows, and 14 more variables: f &lt;dbl&gt;, s &lt;dbl&gt;,
 ## #   Type &lt;fct&gt;, FST.GESTE &lt;dbl&gt;, Size &lt;dbl&gt;, V &lt;dbl&gt;, C &lt;dbl&gt;, Stab &lt;dbl&gt;,
 ## #   D &lt;int&gt;, APA &lt;int&gt;, NLT &lt;dbl&gt;, Fst.temp &lt;dbl&gt;, Longitude &lt;dbl&gt;,
@@ -224,6 +229,14 @@ tibble<span class="op">::</span><span class="kw">as.tibble</span>(dd.site)</code
 <p>First, we need to extract the samples that belong to the hierarchical data set. There are four clusters: “North”, “East”, “Center” and “South”. We are looking for the observations where the variable “Cluster” has one of these four values, all other observations will have a missing value for “Cluster”. We can use ‘!is.na’ to extract all rows with non-missing values. Then we convert to a ‘genind’ object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dd.ecogen.Cluster &lt;-<span class="st"> </span>dd.ecogen[<span class="op">!</span><span class="kw">is.na</span>(dd.ecogen[[<span class="st">&quot;S&quot;</span>]]<span class="op">$</span>Cluster),]
 dd.genind.Cluster &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span><span class="kw">ecogen2genind</span>(dd.ecogen.Cluster)</code></pre></div>
+<pre><code>## Loading required package: adegenet</code></pre>
+<pre><code>## Loading required package: ade4</code></pre>
+<pre><code>## 
+##    /// adegenet 2.1.1 is loaded ////////////
+## 
+##    &gt; overview: '?adegenet'
+##    &gt; tutorials/doc/questions: 'adegenetWeb()' 
+##    &gt; bug reports/feature requests: adegenetIssues()</code></pre>
 </div>
 <div id="b-hierarchical-amova" class="section level3">
 <h3>b) Hierarchical AMOVA</h3>
@@ -243,24 +256,24 @@ dd.genind.Cluster &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</
 ## ade4::amova(samples = xtab, distances = xdist, structures = xstruct)
 ## 
 ## $results
-##                                 Df    Sum Sq   Mean Sq
-## Between Cluster                  3  106.2413 35.413781
-## Between samples Within Cluster   8  249.6422 31.205270
-## Within samples                 353 2764.2124  7.830630
-## Total                          364 3120.0959  8.571692
+##                                 Df     Sum Sq   Mean Sq
+## Between Cluster                  3   67.27429 22.424764
+## Between samples Within Cluster   8  158.37917 19.797396
+## Within samples                 353 1563.08216  4.427995
+## Total                          364 1788.73562  4.914109
 ## 
 ## $componentsofcovariance
 ##                                                 Sigma           %
-## Variations  Between Cluster                0.04446256   0.5142958
-## Variations  Between samples Within Cluster 0.77023554   8.9092691
-## Variations  Within samples                 7.83062999  90.5764351
-## Total variations                           8.64532809 100.0000000
+## Variations  Between Cluster                0.02770227   0.5582719
+## Variations  Between samples Within Cluster 0.50644882  10.2062461
+## Variations  Within samples                 4.42799478  89.2354820
+## Total variations                           4.96214587 100.0000000
 ## 
 ## $statphi
 ##                             Phi
-## Phi-samples-total   0.094235649
-## Phi-samples-Cluster 0.089553260
-## Phi-Cluster-total   0.005142958</code></pre>
+## Phi-samples-total   0.107645180
+## Phi-samples-Cluster 0.102635446
+## Phi-Cluster-total   0.005582719</code></pre>
 <p>Then we test whether each variance component is statistically significant (i.e., significantly larger than zero).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">amova.test &lt;-<span class="st"> </span>ade4<span class="op">::</span><span class="kw">randtest</span>(amova.result, <span class="dt">nrepet =</span> <span class="dv">999</span>)
 amova.test</code></pre></div>
@@ -272,10 +285,10 @@ amova.test</code></pre></div>
 ## 
 ## Adjustment method for multiple comparisons:   none 
 ## Permutation number:   999 
-##                         Test        Obs   Std.Obs   Alter Pvalue
-## 1  Variations within samples 7.83062999 -82.82810    less  0.001
-## 2 Variations between samples 0.77023554  58.37654 greater  0.001
-## 3 Variations between Cluster 0.04446256   1.88705 greater  0.036</code></pre>
+##                         Test        Obs    Std.Obs   Alter Pvalue
+## 1  Variations within samples 4.42799478 -81.769327    less  0.001
+## 2 Variations between samples 0.50644882  55.609017 greater  0.001
+## 3 Variations between Cluster 0.02770227   1.590047 greater  0.060</code></pre>
 <p>Questions:</p>
 <ul>
 <li>At what level is there stronger differentiation, within or among clusters?</li>
@@ -610,7 +623,7 @@ res.Fst.temp</code></pre></div>
 ##       sig.level = 0.05
 ##           power = 0.3552962
 ##     alternative = less</code></pre>
-<p>So the power to detect at least a large effect, if it exists in the popoulation, was only 0.355, way below the 0.8 (or even 0.95) that we would want to see. For a medium effect, the power is even smaller.</p>
+<p>So the power to detect at least a large effect, if it exists in the population, was only 0.355, way below the 0.8 (or even 0.95) that we would want to see. For a medium effect, the power is even smaller.</p>
 </div>
 <div id="c-sample-size-calculation" class="section level3">
 <h3>c) Sample size calculation</h3>

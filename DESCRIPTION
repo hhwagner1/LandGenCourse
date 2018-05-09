@@ -1,7 +1,7 @@
 Package: LandGenCourse
 Type: Package
 Title: Interface for course "Landscape Genetic Data Analysis with R"
-Version: 1.4.0
+Version: 1.4.1
 Date: 2018
 Author: Helene Wagner
 Maintainer: Helene Wagner <hhwagner1@gmail.com>
@@ -15,15 +15,13 @@ Imports:
     adegenet (>= 2.1.0),
     base64enc,
     car,
-    checkpoint,
     compiler,
     cowplot,
     data.table,
     doParallel,
+    devtools,
     dplyr,
-    EcoGenetics (>= 1.2.1-5),
     effsize,
-    feather,
     formatR (>= 1.5),
     gdistance,
     GeNetIt,
@@ -40,6 +38,7 @@ Imports:
     maps,
     mapplots,
     maptools,
+    Matrix,
     MASS,
     methods,
     microbenchmark,
@@ -78,6 +77,7 @@ Imports:
     sp,
     spatialEco,
     spdep,
+    stringi,
     Sunder,
     swirl (>= 2.4.3),
     swirlify (>= 0.5.1),
@@ -89,8 +89,12 @@ Remotes:
     krlmlr/here,
     kjgilbert/QstFstComp,
     dyerlab/popgraph,
-    dyerlab/gstudio
+    dyerlab/gstudio,
+    leandroroser/EcoGenetics-devel
 Suggests: 
+    checkpoint,
+    EcoGenetics,
+    feather,
     fields,
     knitr,
     LEA,

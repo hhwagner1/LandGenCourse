@@ -1,16 +1,23 @@
 ## ----message=FALSE, warning=TRUE-----------------------------------------
-#require(adegenet)
-#require(ade4)
-require(LandGenCourse)
-#require(tibble)
-require(EcoGenetics)
-#require(gstudio)
-#require(hierfstat)
-#require(PopGenReport)
-#require(mmod)
-#require(spdep)
-#require(SoDA)
-#require(MASS)
+#library(adegenet)
+#library(ade4)
+library(LandGenCourse)
+#library(tibble)
+#library(gstudio)
+#library(hierfstat)
+#library(PopGenReport)
+#library(mmod)
+#library(spdep)
+#library(SoDA)
+#library(MASS)
+library(sp)
+
+## ----message=FALSE, warning=TRUE-----------------------------------------
+if(!require(EcoGenetics) || packageVersion("EcoGenetics") < "1.2.1.5")
+{
+  devtools::install_github("leandroroser/EcoGenetics-devel")
+}
+library(EcoGenetics)
 
 ## ------------------------------------------------------------------------
 data(dd.site)

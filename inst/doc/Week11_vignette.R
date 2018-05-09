@@ -57,29 +57,40 @@ pred.PC1 <- vegan::scores(pred.pca, choices=1,
                           display="sites", scaling=0)
 
 ## ---- snmf, results="hide"-----------------------------------------------
-LEA::write.geno(gen.imp, "genotypes.geno")
+outfile <- file.path(here::here(), "output", "genotypes.geno")
+LEA::write.geno(gen.imp, outfile)
 findK <- NULL
-findK <- LEA::snmf("genotypes.geno", 
-                   K=1:6, ploidy=2, entropy=T, rep=1, project = "new")
-plot(findK)
+findK <- LEA::snmf(outfile, K=1:6, ploidy=2, entropy=T, rep=1, project = "new")
+#plot(findK)
+
+#LEA::write.geno(gen.imp, "genotypes.geno")
+#findK <- NULL
+#findK <- LEA::snmf("genotypes.geno", 
+#                   K=1:6, ploidy=2, entropy=T, rep=1, project = "new")
+#plot(findK)
 
 ## ---- setK---------------------------------------------------------------
 K <- 3
 
 ## ---- LFMM, results="hide"-----------------------------------------------
-write.table(gen.imp, file="gen.lfmm", 
+write.table(gen.imp, file=file.path(here::here(), "output", "gen.lfmm"), 
             row.names=F, col.names=F)
-write.table(pred.PC1, file="PC1.env", 
+write.table(pred.PC1, file=file.path(here::here(), "output","PC1.env"), 
             row.names=F, col.names=F)
 
 
 ## ---- LFMM1, results="hide"----------------------------------------------
 wolf.lfmm <- NULL
 
-wolf.lfmm <- LEA::lfmm("gen.lfmm", "PC1.env", K=K, project="new", 
-                       repetitions=3, iterations=4000, burnin=2000)
+wolf.lfmm <- LEA::lfmm(
+  input.file=file.path(here::here(), "output", "gen.lfmm"),
+  environment.file=file.path(here::here(), "output", "PC1.env"), 
+  K=K, project="new", repetitions=3, iterations=4000, burnin=2000)
 
-#wolf.lfmm <- lfmm("gen.lfmm", "PC1.env", K=K, project="new", repetitions=10, iterations=5000, burnin=2500)
+#wolf.lfmm <- LEA::lfmm(
+#  input.file=file.path(here::here(), "output", "gen.lfmm"), 
+#  environment.file=file.path(here::here(), "output", "PC1.env"), 
+#  K=K, project="new", repetitions=10, iterations=5000, burnin=2500)
 
 ## ------------------------------------------------------------------------
 zs <- LEA::z.scores(wolf.lfmm, K=K, d=1)
