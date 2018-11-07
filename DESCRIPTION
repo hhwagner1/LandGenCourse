@@ -10,7 +10,7 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 2.10)
 Imports:
-    ade4(>= 1.7-8),
+    ade4 (>= 1.7-8),
     adegenet (>= 2.1.0),
     base64enc,
     car,
