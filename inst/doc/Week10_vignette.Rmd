@@ -1,6 +1,6 @@
 ---
 title: "Week 10: Landscape Resistance"
-author: "Melanie Murphy, Jeff Bowman, Robby Marrotte and Helene Wagner"
+author: "Melanie Murphy, Jeff Bowman and Robby Marrotte"
 date: "`r Sys.Date()`"
 show_toc: true
 output:

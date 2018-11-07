@@ -1,7 +1,8 @@
 Package: LandGenCourse
 Type: Package
 Title: Interface for course "Landscape Genetic Data Analysis with R"
-Version: 1.3.2
+Version: 1.4.2
+Date: 2018
 Author: Helene Wagner
 Maintainer: Helene Wagner <hhwagner1@gmail.com>
 Description: Installs four RStudio Addins (Watch Course Video, Start Tutorial, Choose Worked Examples, Open Cheat Sheet), several vignettes, and course data sets.
@@ -14,9 +15,12 @@ Imports:
     adegenet (>= 2.1.0),
     base64enc,
     car,
-    checkpoint,
+    compiler,
+    cowplot,
+    data.table,
+    doParallel,
+    devtools,
     dplyr,
-    EcoGenetics (>= 1.2.1-5),
     effsize,
     formatR (>= 1.5),
     gdistance,
@@ -33,25 +37,33 @@ Imports:
     lme4,
     maps,
     mapplots,
+    maptools,
+    Matrix,
     MASS,
     methods,
+    microbenchmark,
     miniUI (>= 0.1.1),
     mmod,
     MuMIn,
     mvtnorm,
     nlme,
+    parallel,
     pegas,
     PopGenReport,
     poppr,
     predictmeans,
     proto,
+    profvis,
+    purrr,
     pwr,
     QstFstComp,
+    RANN,
     raster,
     rasterVis,
     readr,
     RColorBrewer,
     RgoogleMaps,
+    rio,
     rlang,
     rmarkdown,
     rstudioapi (>= 0.5),
@@ -63,24 +75,32 @@ Imports:
     SoDA,
     spacetime,
     sp,
+    spatialEco,
     spdep,
+    stringi,
     Sunder,
     swirl (>= 2.4.3),
     swirlify (>= 0.5.1),
     tibble,
+    usdm,
     vegan,
     popgraph
 Remotes:
     krlmlr/here,
     kjgilbert/QstFstComp,
     dyerlab/popgraph,
-    dyerlab/gstudio
+    dyerlab/gstudio,
+    leandroroser/EcoGenetics-devel
 Suggests: 
+    checkpoint,
+    EcoGenetics,
+    feather,
     fields,
     knitr,
     LEA,
     tmaptools,
     ggeffects,
+    rgdal,
     qvalue,
     secr,
     spmoran

@@ -1,5 +1,13 @@
 startTutorialAddin <- function() {
 
+  # Install EcoGenetics unless version 1.2.1-5 is already installed:
+  if(!("EcoGenetics" %in% rownames(installed.packages())) ||
+     packageVersion("EcoGenetics") < "1.2.1.5")
+  {
+    devtools::install_github("leandroroser/EcoGenetics-devel")
+  }
+
+  # Install swirl course:
   course_name <- "Landscape_Genetics_R_Course"
   path <- file.path(swirlify::swirl_courses_dir(),
                     swirlify::make_pathname(course_name))
@@ -7,6 +15,7 @@ startTutorialAddin <- function() {
 
   swirl::install_course_github("hhwagner1", course_name)
 
+  # Print instructions:
   cat("\n","To start a tutorial:","\n",
       "- type: require(swirl)", "\n",
       "- type: swirl()", "\n",
