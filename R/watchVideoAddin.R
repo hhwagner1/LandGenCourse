@@ -45,7 +45,7 @@ watchVideoAddin <- function() {
       selectedVideo <- c(
         "https://www.dropbox.com/s/4jogqfu3xpeuged/Intro_RStudio_small.mp4?dl=0",
         "https://www.dropbox.com/s/598kwim7x09m47t/Intro_LandGenCourse_small.mp4?dl=0",
-        "https://www.dropbox.com/s/hxij2c18hckc1uv/Intro_RNotebooks.mp4?dl=0",
+        "https://www.dropbox.com/s/cqhf88lla8byuwx/Intro_RNotebooks_15.mp4?dl=0",
         "http://sho.co/19EFD",
         "http://sho.co/19DCV",
         "http://sho.co/19DA2",
