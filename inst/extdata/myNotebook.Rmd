@@ -1,0 +1,34 @@
+---
+title: "My R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+This file contains the same code as the file "myScript.R", but in the format of a simple R Notebook.
+
+## Generate data
+
+```{r}
+x <- rnorm(100)
+```
+
+## Calculate mean
+
+```{r}
+mean(x)
+```
+
+## Histogram
+
+```{r}
+hist(x)
+```
+
+## Normal probability plot
+
+```{r}
+qqnorm(x)
+```
+
+
