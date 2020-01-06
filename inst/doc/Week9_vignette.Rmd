@@ -49,12 +49,13 @@ require(LandGenCourse)
 The package 'LEA' is available from the 'Bioconductor' repository. Also, package 'fields' was not installed with 'LandGenCourse' automatically due to compatibility issues. 
 
 ```{r message=FALSE, warning=TRUE}
-if(!require(fields)) install.packages("fields", repos='http://cran.us.r-project.org')
-if(!require(LEA)) {
-  source("http://bioconductor.org/biocLite.R")
-  biocLite("LEA", ask=FALSE, suppressUpdates=TRUE)
+if(!requireNamespace("fields", quietly = TRUE)) install.packages("fields", repos='http://cran.us.r-project.org')
+  
+if(!requireNamespace("LEA", quietly = TRUE)) {  
+  if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+  BiocManager::install("LEA")
 }
-#require(LEA)
 ```
 
 ## 2. Simulated data: 2-island model

@@ -44,6 +44,7 @@ All packages should have been installed already with the package `LandGenCourse`
 library(LandGenCourse)
 library(dplyr)
 library(ggplot2)
+library(ggmap)
 #library(gstudio)
 #library(pegas)
 #library(vegan)
@@ -86,7 +87,7 @@ To create a map with `qmplot` (see Week 4), here we do the following:
 
 - Use functions from `dplyr` to get mean coordinates per population
 - Convert the coordinates to lat-lon coordinates with `sf_project` from the `sf` package. We use the EPSG reference numbers (http://epsg.io/) to specify the 'from' and 'to' coordinate systems. 
-- Download a "terrain" map from "google", with zoom level 12.
+- Download a "terrain" map from "stamen", with zoom level 12.
 - Add population labels with `geom_text`. We specify an offset along the x-axis,`nudge_x`, and for sites 'A25' and 'A26' also an offset along the y-axis to prevent labels from overlapping.
 
 ```{r fig.height=5, fig.width=7}
@@ -96,8 +97,9 @@ Coords <- data.frame(Coords, sf::sf_project(from = "+init=epsg:31468",
           to = "+init=epsg:4326", pts = Coords[c("X", "Y")]))
 names(Coords)[4:5] <- c("Longitude", "Latitude")
 
-MyMap <- ggmap::qmplot(Longitude, Latitude, data=Coords, 
-                       source = "google", maptype="terrain", zoom=12) 
+bbox <- make_bbox(lon = Longitude, lat = Latitude, data = Coords, f=0.2)
+
+MyMap <- ggmap(get_stamenmap(bbox, maptype="terrain", zoom=12, force=TRUE)) 
 MyMap + geom_text(data = Coords, mapping = aes(Longitude, Latitude, 
               label = Population), size = 4, col = "black", hjust = 0, 
               nudge_x = 0.005, nudge_y = c(0,0,0.002,-0.001,0,0,0)) 

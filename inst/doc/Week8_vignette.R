@@ -1,41 +1,41 @@
-## ----message=FALSE, warning=TRUE-----------------------------------------
+## ----message=FALSE, warning=TRUE----------------------------------------------
 library(LandGenCourse)
 library(PopGenReport )   #load the package
 #library(secr)            #to create a random habitat
 #library(gdistance)
 #library(mmod)
-#library(raster)
+library(raster)
 #library(tibble)
 #library(here)
 #library(ggplot2)
 #library(Sunder)   # requires mnormt
 
-## ----message=FALSE, warning=TRUE-----------------------------------------
+## ----message=FALSE, warning=TRUE----------------------------------------------
 if(!require(secr)) install.packages("secr", repos='http://cran.us.r-project.org')
 #library(secr)
 
-## ----setup---------------------------------------------------------------
+## ----setup--------------------------------------------------------------------
 knitr::opts_knit$set(root.dir = normalizePath("..")) 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 nx=50
 ny=50
 set.seed(555) #(to make sure we have the same example running)
 #tempmask<-secr::make.mask(nx=nx,ny=ny,spacing=1)
 tempgrid<-secr::make.grid(nx=nx,ny=ny,spacing=1)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 r <- secr::raster(secr::randomHabitat(secr::as.mask(tempgrid), 
                                       p = 0.5, A = 0.5))
-table(raster::values(r), exclude="")
+table(values(r), exclude="")
 
-## ------------------------------------------------------------------------
-raster::values(r)[is.na(values(r))==T]<-10
-table(raster::values(r), exclude="")
+## -----------------------------------------------------------------------------
+values(r)[is.na(values(r))==T]<-10
+table(values(r), exclude="")
 par(mar=c(1,1,1,1))
 plot(r)
 
-## ---- echo=TRUE----------------------------------------------------------
+## ---- echo=TRUE---------------------------------------------------------------
 createpops <- function(n=10, minDist=5, landscape=r, habitat=1, plot=TRUE)
 { 
   HabitatCells <- c(1:length(landscape))[values(landscape)==habitat]
@@ -61,11 +61,11 @@ createpops <- function(n=10, minDist=5, landscape=r, habitat=1, plot=TRUE)
   return(Selected)
 }
 
-## ---- echo=TRUE----------------------------------------------------------
+## ---- echo=TRUE---------------------------------------------------------------
 par(mar=c(1,1,1,1))
 createpops(n=8, minDist = 3, landscape = r, plot = TRUE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 para<- list()
 #Define populations (dynamics)
 para$n.pops=8
@@ -77,7 +77,7 @@ para$sex.ratio <- 0.5
 para$n.cov <- 3 
 #number of covariates (before the loci in the data.frame, do not change this!!)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 
 #reproduction
 para$n.offspring = 2
@@ -94,7 +94,7 @@ para$n.allels <- 10
 para$n.loci <- 20
 para$mut.rate <- 0.001
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 par(mar=c(1,1,1,1))
 para$method <- "leastcost" #rSPDdistance, commute
 para$NN <- 8  #number of neighbours for the cost distance method
@@ -132,54 +132,54 @@ para$NN <- 8  #number of neighbours for the cost distance method
   para
 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 simpops.0 <- PopGenReport::init.popgensim(para$n.pops, para$n.ind, 
                            para$sex.ratio, para$n.loci, 
                            para$n.allels, para$locs, para$n.cov )  
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 names(simpops.0)  #the names of the subpopulations
 head(simpops.0$A[,1:6]) # a list of the first 6 individuals and columns of population A
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 gsp <- PopGenReport::pops2genind(simpops.0, locs =para$locs)
 gsp #check the genind object
 summary(gsp)  #some summary statistics
 round(mmod::pairwise_Gst_Nei(gsp),5)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 gen.mat <- PopGenReport::pairwise.fstb(gsp)  
 round(gen.mat ,5)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 PopGenReport::wassermann(eucl.mat = eucl.mat, cost.mats = list(cost=cost.mat), 
                            gen.mat = gen.mat, plot=F)$mantel.tab
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 simpops <- PopGenReport::run.popgensim(simpops.0, steps=3, cost.mat, 
                          n.offspring=para$n.offspring, n.ind=para$n.ind,
                          para$mig.rate, para$disp.max, para$disp.rate, 
                          para$n.allels, para$mut.rate,
                          n.cov=para$n.cov, rec="none")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 gsp <- PopGenReport::pops2genind(simpops, para$locs, para$n.cov)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 gen.mat <- PopGenReport::pairwise.fstb(gsp)   
 round(gen.mat ,3)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 PopGenReport::wassermann(eucl.mat = eucl.mat, cost.mats = list(cost=cost.mat), 
              gen.mat = gen.mat, plot=F)$mantel.tab
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 res <- PopGenReport::wassermann(eucl.mat = eucl.mat, 
                                 cost.mats = list(cost=cost.mat), 
                                 gen.mat = gen.mat, plot=F)$mantel.tab
 res[res$model == "Gen ~cost | Euclidean", "p"]
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 getArray <- function(gen)
 {
   tmp <- Reduce(rbind,lapply(split(data.frame(gen@tab), gen@pop), 
@@ -194,11 +194,11 @@ getArray <- function(gen)
   return(Array)
 }
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 Array <- getArray(gsp)
 dim(Array)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 D.G <- as.matrix(dist(para$locs))
 D.E <- cost.mat
 nit <- 10^2   ## just for the example, should be much larger, e.g. 50000
@@ -210,13 +210,13 @@ output <- Sunder::MCMCCV(Array,D.G,D.E,
                      n.validation.set=dim(Array)[1]*dim(Array)[2]/10,
                      print.pct=FALSE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 names(which.max(output$mod.lik))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 print(output$mod.lik)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 getSunder <- function(gen=gsp, locs=para$locs, cost=cost.mat, nit=10^2)
 {
   Array <- getArray(gen)
@@ -232,20 +232,20 @@ getSunder <- function(gen=gsp, locs=para$locs, cost=cost.mat, nit=10^2)
   return(names(which.max(output$mod.lik)))
 }
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 getSunder()
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 timesteps <- seq(from=5 , to=45, by=20)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 repeats <- factor(1:5)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 para.space <- expand.grid(rep=repeats, time=timesteps)
 tibble::as.tibble(para.space)
 
-## ---- eval =F------------------------------------------------------------
+## ---- eval =F-----------------------------------------------------------------
 #  #initialize
 #  simpops.0 <- PopGenReport::init.popgensim(para$n.pops, para$n.ind,
 #                             para$sex.ratio, para$n.loci,
@@ -257,7 +257,7 @@ tibble::as.tibble(para.space)
 #                           para$n.allels, para$mut.rate,
 #                           n.cov=para$n.cov, rec="none")
 
-## ---- eval=F-------------------------------------------------------------
+## ---- eval=F------------------------------------------------------------------
 #  #for (i in 1:nrow(para.space))
 #  #{
 #  #  #initialize
@@ -274,7 +274,7 @@ tibble::as.tibble(para.space)
 #  #                           n.cov=para$n.cov, rec="none")
 #  #}
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # create a timer (just to know how long it will take roughly)
 timer0 <- round(proc.time()[3],2)
 
@@ -311,10 +311,10 @@ for (i in 1:nrow(para.space))
 }
 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 head(dir(paste0(here::here(), "/output/simout")))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 res <- data.frame(rep=NA, time=NA, fst=NA, r.Eucl=NA, p.Eucl=NA, 
                   r.cost=NA, p.cost=NA, Sunder=NA)
 
@@ -347,13 +347,13 @@ for (i in 1:length(filenames))
                            cost=sim$cost.mat, nit=10^2) #if you have time, set nit=10^3
 }
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 head(res)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 ggplot2::ggplot(res, ggplot2::aes(x=time, y=fst)) + 
          ggplot2::geom_point(position = ggplot2::position_jitter(w = 0.5))
 
-## ----message=FALSE, warning=TRUE, include=FALSE--------------------------
+## ----message=FALSE, warning=TRUE, include=FALSE-------------------------------
 LandGenCourse::detachAllPackages()
 
