@@ -43,21 +43,25 @@ Most required packages should have been installed already when you installed 'La
 ```{r message=FALSE, warning=TRUE}
 library(LandGenCourse)
 library(lme4)
-#require(EcoGenetics)
-library(methods)
 library(tibble)
-#require(lattice)
-#require(MuMIn)
-#require(predictmeans)
-#require(nlme)
-#require(QstFstComp)
-#require(car)  
+#library(lattice)
+#library(MuMIn)
+#library(predictmeans)
+#library(nlme)
+#library(QstFstComp)
+#library(car)  
 ```
 
-Package 'ggeffects' not automatically installed with 'LandGenCourse':
+Packages 'ggeffects' and 'EcoGenetics' (devel version from GitHub) not automatically installed with 'LandGenCourse':
 
 ```{r message=FALSE, warning=TRUE}
 if(!require(ggeffects)) install.packages("ggeffects", repos='http://cran.us.r-project.org')
+
+if(!require(EcoGenetics) || packageVersion("EcoGenetics") < "1.2.1.5")
+{
+  devtools::install_github("leandroroser/EcoGenetics-devel")
+}
+library(EcoGenetics)
 ```
 
 Source two files with additional functions:
