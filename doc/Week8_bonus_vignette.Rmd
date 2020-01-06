@@ -1,0 +1,749 @@
+---
+title: "Week 8: Bonus Material"
+author: "Helene Wagner"
+date: "`r Sys.Date()`"
+show_toc: true
+output:
+  knitr:::html_vignette:
+    toc: yes
+    fig_width: 4 
+    fig_height: 3.5
+vignette: >
+  %\VignetteIndexEntry{Week 8: Bonus Material}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+## 1. Overview of Bonus Material
+
+### a) Goals 
+
+This Bonus Material provides some introductory worked examples for:
+
+- Navigating the file system
+- Benchmarking file import and export functions
+- Profiling an R script
+- Creating and executing a Bash R script
+- Parallelizing code
+
+### b) Data set
+
+We will use the wolf SNP data (Schweizer et al., 2016) from the Week 11 worked example. The genetic data are individual-based, and are input as allele counts (i.e. 0/1/2) for each locus. We are using a randomly sampled subset of 10,000 single nucleotide polymorphism (SNP) markers from the full data set (which contains 42,587 SNPs).
+
+### c) Required R libraries
+
+All required packages should have been installed already when you installed 'LandGenCourse'.
+
+```{r library, message=FALSE, warning=TRUE}
+library(LandGenCourse)
+#library(microbenchmark)
+#library(profvis)
+#library(here)
+#library(readr)
+#library(data.table)
+#library(feather)
+#library(rio)
+#library(devtools)
+#library(parallel)
+#library(doParallel)
+#library(knitr)
+#library(compiler)
+```
+
+## 2. Navigating the file system
+
+This Bonus material assumes that you are running R in RStudio within a 'R project'. Therefore, the default workspace when you enter commands in the console should be your R project folder. A discussed in the video, Part 2, the default location when executing code from an R Notebook is the folder where the notebook is stored. If you downloaded this Bonus material from 'LandGenCourse', it should be stored in a folder 'downloads' in your project folder.
+
+More about R projects: https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects.
+
+### a) Where am I? 
+
+Let's see where we are. 
+
+```{r home}
+getwd()
+here::here()
+Sys.getenv("HOME")
+R.home()
+```
+**Question:** Copy-paste the commands in the chunk above directly into the Console and run them there. Do you get the same paths?
+
+- `getwd()`: If you execute the chunk, or knit the notebook, this will return the locatio of the R Notebook. If you copy-paste it into the console, it will return the project folder. 
+- `here::here`: This should return the project folder in both cases. 
+- `Sys.getenv("HOME")`: This should return your home directory on the local machine. Note: "HOME" must be in all capitals.
+- `R.home`: This shows the location where R is installed on your computer.
+
+### b) Accessing a system file
+
+The example data set is available in the 'extdata' folder of the 'LandGenCoures' package. This is how we import the data in the Week 11 Worked Example:
+
+```{r gen}
+gen <- read.csv(system.file("extdata", "wolf_geno_samp_10000.csv", 
+                            package = "LandGenCourse"), row.names=1)
+dim(gen)
+```
+
+Let's unpack this code. What does the function `system.file` do? Let's compare it to `R.home`.
+
+```{r R.home}
+R.home()
+system.file()
+```
+
+So, `system.file` goes to the R home and, without additional arguments, locates the folder 'library' with the subfolder 'base'. 
+
+What happens when we add the arguments? 
+```{r system.file}
+system.file(package = "LandGenCourse")
+system.file("extdata", "wolf_geno_samp_10000.csv", 
+                            package = "LandGenCourse")
+```
+
+Compare the paths to those from the previous chunk!
+
+- When we specify the package argument, `system.file` modifies the path to the location where the package is stored.
+- The remaining, unnamed arguments are interpreted as a path and added at the end: within package 'LandGenCourse', go to folder 'extdata' and locate file "wolf_geno_samp_10000.csv".
+
+This is pretty cool! To be honest, I have no clue where such files are stored, and the absolute path would be different anyways on my Mac and on my Windows machine.
+
+### c) File manipulation
+
+We can use R's file manipulation functions to do things with the file before even importing the data. Let's check the file size:
+
+```{r file.size}
+myFile <- system.file("extdata", "wolf_geno_samp_10000.csv", 
+                            package = "LandGenCourse")
+file.size(myFile)
+cat("File size: ", file.size(myFile) / 10^6, " MB")
+```
+
+The number returned is in byte, hence we divide by 1 million (10^6) to get megabyte (MB).
+
+Other useful functions include (see help file: '?files'):
+
+- `file.create`: creates file, truncates name if name already exists
+- `file.exist`: checks whether a file with this name exists at location
+- `file.remove`: attempts to delete file 
+- `file.rename`: attempts to rename file
+- `file.append`: attempts to append one file to another
+- `file.copy`: copies file 'from' 'to' (set 'overwrite=TRUE' to allow overwriting an existing file)
+- `download.file`: download a file from the internet
+- `unzip`: unzip a zip archive (there is also a function `zip`, also `untar` and `tar` for tar archives)
+- `dir`: list content of folder (=directory)
+- `dir.exist`: check whether a folder with this name exists at location
+- `dir.create`: creates a folder (does not work when knitting R Notebook!)
+
+What other files are available? The function `dir` lists all files and subfolders in a specific folder. The question then is which folder to specify?
+
+**Question:** What do you think the following commands will return?
+
+- dir()
+- dir(here::here())
+- dir(system.file(package = "LandGenCourse"))
+- dir(system.file("extdata", package = "LandGenCourse"))
+- dir(myFile)
+
+Give it a try:
+
+```{r dir}
+dir()
+dir(here::here())
+dir(system.file(package = "LandGenCourse"))
+dir(system.file("extdata", package = "LandGenCourse"))
+dir(myFile)
+```
+
+- `dir()`: the content of the last folder to which you navigated.
+- `dir(here::here())`: the content of your project folder.
+- `dir(system.file(package = "LandGenCourse"))`: the content of the package.
+- `dir(system.file("extdata", package = "LandGenCourse"))`: the content of the folder 'extdata' in the package.
+- `dir(myFile)`: nothing (this is a file, not a folder).
+
+## 3. Benchmarking file import and export options 
+
+See also Chapter 5 in "Efficient R Programming": https://csgillespie.github.io/efficientR/input-output.html
+
+### a) Benchmark methods for importing csv files
+
+The file 'myFile' has 2MB and thus a reasonable size to compare the speed of different import and export functions.
+
+Let's benchmark the function `read.csv` used in Week 11. We use the function `microbenchmark` from the package `microbenchmark` to compare the speed of four different functions that can import a 'csv' file. 
+
+Note: Here we execute each function only once to save time, typically you would set `times = 10` or so. Also, `read_csv` will print a warning about a missing column name. This is because the first column here contains the row names and does not have a column name. We'll ignore this here, as we can use the first column as an example to compare how character data are being imported.
+
+```{r microbenchmark1}
+x = myFile
+microbenchmark::microbenchmark(times = 1, unit = "ms", 
+          read.csv(x), readr::read_csv(x), data.table::fread(x),
+          rio::import(x))
+```
+
+Would it be faster if we first loaded the packages so that we could call the functions directly?
+
+Note: you can list several independent commands on the same line by separating the with a semi-colon ';'. Also, the chunk setting `message=FALSE` here suppresses the warning message from `read_csv`. 
+
+```{r microbenchmark2, message=FALSE}
+library(readr); library(data.table); library(rio); library(microbenchmark)
+
+microbenchmark(times = 1, unit = "ms", 
+          read.csv(x), read_csv(x), fread(x), import(x))
+```
+
+Yes, the import was faster when the packages were already loaded.
+
+Overall `fread` and `import` were in the order of 50 times faster than `read.csv` and `read_csv`! The two had practically the same speed, which is little surprising: for 'csv' files, `import` uses the function `fread`. 
+
+The beauty of `import` is that it can handle a wide range of file types (and the list keeps growing): csv, xls, xlsx, html, xml, json, feather, R, RData, rda, rds, psv, tsv, sas7bdat, xpt, sav, dta, xpt, por, rec, mtp, syd, dbf, arff, dif, fwf, csv.gz, CSVY, fst, mat, ods, yml, as well as Fortan files and clipboard imports (Mac and Windows). It recognizes the file type from the extension and uses an appropriate import function.
+
+Note: there is also a fuction `Import` in the `car` package that similarly aims to provide an easy way to import various file formats. However, `car::Import` can be very slow (slower than 'read.csv'), whereas `rio::import` is fast. 
+
+### b) Check handling of character data
+
+The functions differ not only in their speed but also in how they handle text data (character or factor?), missing values etc. 
+
+The first column in 'myFile' is an ID variable that should be used as row names. Let's compare what the four methods did with this. The following code determines, for each import method, the class of the first column (IDs), and the class (or classes) of the resulting object.
+
+Note: here we use double square brackets to subset the first column. Strictly speaking, we interpret 'gen' as a list of vectors. With a data.frame, we could also access the first column by gen[,1]. However, this would not return what we want for 'tbl' of 'data.table' objects. Always double check.
+
+```{r class, message=FALSE}
+gen <- read.csv(x); c(class(gen[[1]]), class(gen))
+gen <- read_csv(x); c(class(gen[[1]]), class(gen))
+gen <- fread(x); c(class(gen[[1]]), class(gen))
+gen <- import(x); c(class(gen[[1]]), class(gen))
+```
+
+- The function `read.csv` interprets any text as 'factor', the other functions use 'character' as default. Always double check!  
+- All of these functions have optional arguments for specifying how each column how it should be interpreted (see help files). 
+- With the functions `fread` and `import`, you can set the argument 'stringsAsFactors = TRUE' to import all text data as factors.
+
+### c) Binary files
+
+Binary files are not readable by users (or other software) but provide an efficient way of storing data. Let's compare file size and input/output speed between text files (csv) and different types of binary files (RData, rds, feather). We'll also export the 'csv' file so that we have it in the same location.
+
+```{r binary}
+gen <- import(myFile)
+
+export(gen, file.path(here::here(), "output", "gen.csv"))
+save(gen, file=file.path(here::here(), "output", "gen.RData"))
+saveRDS(gen, file=file.path(here::here(), "output", "gen.rds"))
+export(gen, file=file.path(here::here(), "output", "gen.feather"))
+
+c(csv=file.size(file.path(here::here(), "output", "gen.csv")),
+  RData=file.size(file.path(here::here(), "output", "gen.RData")),
+  rds=file.size(file.path(here::here(), "output", "gen.rds")),
+  feather=file.size(file.path(here::here(), "output", "gen.feather")))/10^6
+  
+```
+
+- The 'csv' file is 2 MB (first row). 
+- The R binary files 'RData' and 'rds' are much smaller! 
+- In contrast, the 'feather' file (last row) is twice as large here than the 'csv' file, and more than 10 times larger than 'rds'! 
+
+Let's benchmark the import again. We can use the function `import` for all of them. This is so fast that we can actually do it 10 times.
+
+```{r microbenchmark3}
+microbenchmark(times = 10, unit = "ms", 
+          csv= import(file.path(here::here(), "output", "gen.csv")),
+          RData=import(file.path(here::here(), "output", "gen.RData")),
+          rds=import(file.path(here::here(), "output", "gen.rds")),
+          feather=import(file.path(here::here(), "output", "gen.feather")))
+```
+
+Look at the column 'mean'. Importing any of the binary files was at least twice as fast as importing the 'csv' file with the underlying function `fread` (which was already 50 times faster than `read.csv`). 
+
+Here's my recommendation for saving R objects/data efficiently:
+
+- If object is not in tabular form: rds (can store any R object)
+- If storage space is most important: rds 
+- If portability with Python is important: feather
+- If being able to read text file is important: csv
+
+Note: the developer of `feather` does not recommend using it for long-term data storage since its stability with future updates to R or Python can't be guaranteed: https://github.com/wesm/feather/issues/183
+
+Why 'rds' and not 'RData'? In practice, the main advantage of 'rds' is convenience when importing data. 
+
+- with 'readRDS', you can directly assign the imported data to an object, and thus choose the object name.
+- with 'load', you have to do this in two steps. When using 'load', the loaded object will inherit the name from the object that was stored. 
+
+```{r load1}
+# Let's delete any copy of 'gen' from the workspace:
+rm(gen)
+
+# Create object 'myData' in a single step from 'rds' file:
+myData <- readRDS(file.path(here::here(), "output", "gen.rds"))
+
+# Two steps when importing 'RData': first, load the stored object:
+load(file.path(here::here(), "output", "gen.RData")) 
+# then assign to the new object 'myData':
+myData <- gen
+```
+
+Note that when you use `load`, the object name is NOT taken from the file name! This means that you may not know what object you are loading, if the object and file names are different.
+
+Let's test this. Here we save the object 'gen' in file 'gen2.RData', then load it.
+
+```{r load2}
+# Export 'gen' to a file with a different name 'gen2.RData':
+save(gen, file=file.path(here::here(), "output", "gen2.RData"))
+rm(gen)
+
+# Load:
+load(file.path(here::here(), "output", "gen2.RData")) 
+
+# What is the name of the loaded object?
+exists("gen")
+exists("gen2")
+```
+
+We see that an object 'gen' exists (TRUE), but an object 'gen2' does not exist (FALSE). The name of the loaded object is thus 'gen'. 
+
+### d) Should you save your R workspace?
+
+When you close RStudio, you may be asked whether you want to save your workspace. What happens when you do this, and should you do so?
+
+- When you save your workspace, all objects from the workspace are saved in one binary file '.RData' (unless you provide a name, like 'myWorkspace.Rdata').
+- This may result in a large file!
+- There are other downsides: you may accidentally overwrite an object. And your code will not be portable because it depends on a copy of the workspace.
+- The general recommendation is to NOT save your workspace, but save your dataset and your R scripts (or Notebooks). This means that you can always recreate all the objects needed.
+
+Also, in the vein of reproducible research, do not save multiple copies of your data set. Instead:
+
+- Save the raw data (with the original file name and extension, e.g. if you downloaded it from the internet - this will help identify the source)
+- Save all the data manipulation steps (such as checking for errors, excluding rows, recoding variables, etc.) in an R Notebook and document them (what you are doing, why and when).
+- Save the 'clean' dataset (result from data manipulation), preferably as a binary file (especially if it is large). Keep only one copy (you can always recreate it).
+- Save your data analysis in another R Notebook (or multiple) that starts with importing the 'clean' dataset. If your code runs quickly, this is sufficient to recreate your results.
+- If your code takes a lot of computation time, you may want to export the results (see above).
+- Backup your data and scripts (R Notebooks)!
+- Use version control for your script (R Notebooks)! See Chapter 0 video 'Version Control 101'. The simplest is to include version numbers in the file name: 'myNotebook_v7.Rmd'. A better way is to use e.g. GitHub.
+
+### e) Compile your functions
+
+A recommended way of keeping your code tidy is to write functions for anything you will do more than once. 
+
+- Collect your functions in a separate file (R script), e.g. `myFunctions.R`.
+- At the beginning of your R Notebook, source the R script with the functions with `source("myFunctions.R")`.
+- This will make your code much shorter and thus easier to read.
+- If you need to change some code inside your function, you only have to change it in one place, hence there is less risk of mistakes.
+- Use some kind of version control for your functions file so that you can go back to an older version, and you always know which is the current version.
+
+To further speed up your code, you can compile your function with 'cmpfun':
+
+```{r cmpfun}
+myFunction <- function() {
+    sum(rnorm(1000))/1000
+}
+myFunction.cmp <- compiler::cmpfun(myFunction)
+
+microbenchmark::microbenchmark(myFunction(), myFunction.cmp())
+```
+
+**Question**: Which of the following times are most different between the uncompiled and the compiled versions of this simple function? 
+
+- **min**: minimum time across 'neval' replicates
+- **Quartiles**: 'lq' = lower quartile (25%), 'median', 'uq' = upper quartile (75%)
+- **mean**: mean time across 'neval' replicates
+- **max**: maximum time across 'neval' replicates
+
+In this case, compiling mainly reduced the duration of the longest 25% runs (with longer times than the 75% quartile), which brought down the mean processing time.
+
+## 4. Profiling your code
+
+### a) Named chunks
+
+An simple way to identify parts of your code that may be slow is to:
+
+- Name each chunk in your R Notebook
+- Knit the notebook
+- Monitor the R markdown pane while the notebook is knitted: which chunks seem to take a lot of time?
+
+To name a chunk, click on the wheel symbol at the top right of the grey chunk area and enter a one-word name. 
+
+Here's an example of a named chunk: the name 'myChunkName' has been added in the curly brackets `{r, myChunkName}`. You can add a name manually in the same way.
+
+```{r myChunkName}
+
+```
+
+More generally, this is where chunk options are added in the R Notebook. Here's a long list of chunk options: https://yihui.name/knitr/options/
+
+### b) Profiling some lines of code with 'profvis'
+
+With the `profvis` package (from CRAN), we can provide code as an argument to the `profvis` function. Within the round brackets `profvis()`, use curly brackets to allow for multiple lines of code: `profvis({ })`
+
+Note: here we use the chunk option 'include=FALSE' to suppress the output (figures created by the code), we only want to get the profile for the code.
+
+```{r profvis1, include=FALSE}
+profvis::profvis({
+  x <- rnorm(100)
+  mean(x)
+  hist(x)
+  qqnorm(x)
+})
+```
+
+The results will be opened in a 'Profile' tab. The upper part has again two tabs (the lower part is less intuitive to interpret, we'll ignore it here):
+
+- **Flame Graph**: this plots horizontal bars indicating the amount of memory and time used by each line of code, in the original order of the code.
+- **Data**: code is sorted by resource use, with the most 'costly' line `qqnorm` at the top of the list. You can click on the triangle before each line to see more detail.
+
+The results may depend on the speed of your computer. With my machine, I get a value of 20 for `hist` and another 30 for `qqnorm`, but nothing for the other lines. Check the sample interval at the bottom of the 'Profile' tab: time was estimated by observing every 10 milliseconds what the computer was doing. The other lines must have been too fast to be recorded.
+
+RStudio has a built-in menu for profiling that does the same thing. Check it out:
+
+- Select the four lines of code above, from `x <- rnorm(100)` until `qqnorm(x)`
+- In RStudio's menu, click on 'Profile' > 'Profile Selected Line(s)'.
+
+### c) Profiling an R script with 'profvis'
+
+The function `profvis` can also profile an entire R script. To try this, let's first create a small R script with the four lines of code that we profiled above.
+
+Note: Obviously, what we do here is not a recommended way of creating and saving an R script. Normally, you would write the code directly into a script file in the 'Source' tab in RStudio and save it with menu commands.
+
+- We open a file connection, and as the file does not exist yet, it will be created. 
+- We use a relative path to save the file in the 'output' folder in the workspace. 
+- With `writeLines`, we write each line into the file, but we need to wrap each line in quotes.
+- Then we close the file connection.
+- Finally, we use `file.show` to show the file in a tab.
+
+Note: An 'output' folder should have been created already when you accessed this worked example with the Addin. We are not creating the folder with 'dir.create' because this would not work when knitting the R Notebook.
+
+```{r Rscript}
+myPath <- file.path(here::here(), "output/myScript.R")
+fileConn <- file(myPath)
+writeLines(c("x <- rnorm(100)",
+             "mean(x)",
+             "hist(x)",
+             "qqnorm(x)"), fileConn)
+close(fileConn)
+file.show(myPath)
+```
+
+Check the tab 'R Information', which should now display the content of the file 'myScript.R'. Are the quotes still there? 
+
+Now we can pass the file to `profvis`:
+
+```{r profvis2}
+profvis::profvis(source(myPath))
+```
+
+- The 'Flame Graph' should look the same as before. 
+- The content of the 'Data' tab is different. Click on the triangle before 'source' to navigate to: 'source' > 'withVisible' > 'eval' > 'eval'.
+- That's where the actual lines of code are profiled. 
+
+### d) Converting an R Notebook to an R script
+
+Unfortunately, we can't profile an entire R Notebook (as far as I know). However, we can extract the R code as a script file, then profile the script file. 
+
+The file 'myNotebook.Rmd' contains the same R code as our file 'myScript.R', but in the format of an R Notebook, with R markdown text (e.g. titles) and several chunks of code. 
+
+Note: With 'file.show', the Notebook is opened with a simple text editor (without the coloring etc.). Alternatively, you could run 'file.edit' to open it with the familiar RStudio editor.
+
+```{r myNotebook}
+inFile <- system.file("extdata", "myNotebook.Rmd", package = "LandGenCourse")
+file.show(inFile)
+#file.edit(inFile)
+```
+
+We can use the function 'purl' from the 'knitr' package to extract the R code from the R Notebook file 'myNotebook.Rmd':
+
+```{r purl}
+outFile <- file.path(here::here(), "output/myNotebook.R")
+knitr::purl(inFile, output=outFile, quiet=TRUE)
+file.show(outFile)
+```
+
+**Question**: Compare the two files (they should be open, check the tabs of the source pane). 
+
+- How are the chunks from the Notebook file divided in the new script file? 
+- What happened to the titles and text?
+- What about the header information?
+
+Now we can pass the file to `profvis':
+
+```{r profvis3}
+profvis::profvis(source(outFile), prof_output=file.path(here::here(), "output/output.prof"))
+```
+
+**Question**: Which lines of code took the longest to run in this example?
+
+## 5. Creating and executing a Bash R script
+
+### a) Run R script directly in the Terminal
+
+Now that we have a stand-alone R script 'myScript.R', we can run it from the command line in the terminal (shell). After navigating to the correct folder, type:
+
+`Rscript myScript.R`
+
+This will source the file and execute the R code. 
+
+- Numerical output will be printed in the termminal. Here, a random number should be returned.
+- Best include code in your R script to export any R objects, data tables or figures that you want to retain. These will be saved in the same folder as the R script (unless you specify file paths).
+
+### b) Create a Bash R script
+
+If you want to run your code on a node or cluster, you may need to take this one step further and include the R code in a bash Rscript. In a bash script, you can add bash commands that govern resource use to submit a job to a node or cluster. Bash scripts are the way of giving instructions to the scheduler of the cluster (e.g. SLURM) for how to manage input and output files.
+
+To execute our R script 'myScript.R' as a Bash script, we need to add a few lines.
+
+- The 'shebang' line `#!/bin/bash` that tells the computer that this is a Bash script, and where to find Bash. Note that here the hashtag symbol does NOT mean that the line is commented out (this line is Unix code, not R code).
+- The line `R --slave << EOF` that declares the rest of the file (until `EOF`) as R code.
+- The end of file `EOF` marker.
+
+Let's modify the previous code and write it into a Bash file. As an additional challenge, our code contains two figures, which won't be written anywhere unless we change the code to write them into a file:
+
+- We create a graphics file 'my_plot.png' that is 800 pixels wide and 400 pixels high. 
+- With `par(mfrow=c(1,2))`, we specify that the two plots should be plotted side-by-side. Then we create the plots. 
+- We close the graphics device (png file) with `dev.off`. 
+
+Note: We use single quotes for the file name here, 'my_plot.png', as they are nested within a set of double quotes. R pretty much considers single and double quotes as synonyms, which allows us to nest them either way: '""' or "''".
+
+```{r BashScript}
+myPath <- file.path(here::here(), "output/myBashScript.sh")
+fileConn <- file(myPath)
+writeLines(c("#!/bin/bash",
+             "R --slave << EOF",
+             "x <- rnorm(100)",
+             "mean(x)",
+             "png('my_plot.png', height = 400, width = 800)",
+             "par(mfrow=c(1,2))", 
+             "hist(x)", 
+             "qqnorm(x)",
+             "dev.off()",
+             "EOF"), fileConn)
+close(fileConn)
+file.show(myPath)
+```
+
+### c) Executing a Bash R script
+
+On Mac / Unix / Linux, this is straight-forward:
+
+1. **Open terminal**:
+    - From the RStudio menu, select 'Tools' > 'Terminal' > 'New Terminal'. This will open an Terminal tab in RStudio. Alternatively, you could select 'Tools' > 'Shell' to open a Shell in a new window outside RStudio.
+    - Check the prompt: it should start with the name of your computer, then a colon, then the name of your project folder, then your use name followed '$'.
+2. **Navigate to Bash file**:    
+    - Enter `ls` to list the content of the project folder.
+    - Enter `cd output` to change directory to the subfolder 'output'.
+    - Repeat `ls` to list the content of the 'output' folder. The Bash script 'myBashScript.sh' should be listed there.
+3. **Execute Bash file**:
+    - Enter `chmod +x myBashScript.sh` to change file permission for the script.
+    - Enter `./myBashScript.sh` to execute the script.
+4. **Find output**:
+    - The output from `mean(x)` is printed in the terminal, it should look like this: `[1] -0.07731751`.
+    - This is followed 'null device' and the number 1, which tells us that a graphics device has been closed.
+    - Enter `ls` to list the content of the project folder. The graphics file 'my_plot.png' should now be listed. 
+
+Use R again to open the graphics file (the code here first checks whether the file exists):
+
+```{r my_plot.png}
+myPNG <- file.path(here::here(), "output/my_plot.png")
+if(file.exists(myPNG))
+{
+  file.show(myPNG)
+}
+```
+
+### d) Moving to a node or cluster?
+
+The example bash file and advice in this section have been provided by Hossam Abdel Moniem, thanks!
+
+Here's an annotated example of a bash file that contains instructions for submitting a job to a single node (a single machine with multiple/many cores). 
+
+Note: A copy of the file 'BashExample.sh' should also have been copied into the downloads folder inside your project folder.   
+
+```{r BashExample}
+writeLines(readLines(system.file("extdata", "BashExample.sh", package = "LandGenCourse")))
+```
+
+Instead of including the R code directly in the bash file, the last line here executes an R script with the `Rscript` command.
+
+Notice the second-last line. Obviously, on the node, R and any relevant packages need to be pre-installed. Different users may need different configurations (different packages or versions) installed, hence each installation has a name, which needs to be specified in the bash script.
+
+Note: Make sure that all packages that you need (and their dependencies), as well as the package `unixtools`, have been installed on the node or cluster (i.e., they are part of the installation you will be using). Install `unixtools` with: `install.packages("unixtools",,"http://rforge.net/")`
+
+Further reading:
+
+- Bash script tutorial: https://ryanstutorials.net/bash-scripting-tutorial/
+- Scheduling a job with SLURM commands: https://www.rc.fas.harvard.edu/resources/documentation/convenient-slurm-commands/
+
+### e) Store your session info and package versions
+
+If you use any R packages, load them at the beginning of your script file with `library`. Make sure the packages are installed on the system where you will be running the Bash R script.
+
+A big issue with R is that package updates may make your code break. At least at the end of any project (such as the analyses for a manuscript), save your session information.
+
+Here we use the function `session_info` from the `devtools` package (preferred over the R base function `sessionInfo`). We store the information as an object, 'Session', of class 'session_info' that has two list elements:
+
+- **platform**: Information about R version, your computer's operating system, etc.
+- **packages**: List of all packages, including their version, installation date and repository (CRAN, Github etc.). All packages that are currently loaded will be marked with an asterisk.
+
+Platform:
+
+```{r platform}
+Session <- devtools::session_info()
+Session$platform
+```
+
+Packages: here we display only the first six lines, as the list may be long.
+
+```{r packages}
+head(Session$packages)
+```
+
+Exporting the session information is a bit tricky because 'Session' is not in tabular format, and what we want to export is the formatted output, not the object itself. 
+
+Also, we will add a time stamp to the file name. This achieves two goals: avoid overwriting earlier files, and keep a record of the date of the session information.
+
+- `capture.output`: captures the output of a function (here: `devtools::session_info()`)
+- `writeLines`: writes the captured output into a file, here a text file.
+- `Sys.Date`: returns the current date. Here we specify the format as "%Y-%m-%d", i.e., 'Year-month-day'.
+
+```{r session_info, include=FALSE}
+today <-format(Sys.Date(), "%Y-%m-%d")
+outFile <- paste0("SessionInfo", "_", today, ".txt")
+outPath <- file.path(here::here(), "output", outFile)
+writeLines(capture.output(devtools::session_info()), outPath)
+file.show(outPath)
+```
+
+More advanced ways for handling the problem of package versions to make sure you can run your code in the future without compatibility issues include:
+
+- Package 'packrat': bundle all your current package version. This can become quite large.
+- Package 'checkpoint': access daily snapshots of CRAN for any given date. Note that checkpoint only covers packages from CRAN, not other repositories like GitHub. 
+
+More on the topic: https://timogrossenbacher.ch/2017/07/a-truly-reproducible-r-workflow/
+
+### f) Potential Windows issues
+
+Check that Bash is installed and ready to use with RStudio:
+
+- In the RStudio menu, select 'Tools' > 'Global options' > 'Terminal'. 
+- Make sure some form of Bash (e.g., Git Bash) is listed under 'Shell: New terminals open with:'.
+
+If this does not work, try installing 'Git for Windows', which will also install Bash: http://neondataskills.org/setup/setup-git-bash-R
+
+
+Here's a detailed multi-part tutorial on running R from the command line, with R scripts and Bash R scripts, with some additional information on Windows:
+
+- **Introduction**: https://github.com/gastonstat/tutorial-R-noninteractive/blob/master/01-introduction.Rmd
+- **Batch mode**: https://github.com/gastonstat/tutorial-R-noninteractive/blob/master/02-batch-mode.Rmd
+- **Executing R scripts**: https://github.com/gastonstat/tutorial-R-noninteractive/blob/master/03-rscript.Rmd
+- **Bash R scripts**: https://github.com/gastonstat/tutorial-R-noninteractive/blob/master/04-shell-script.Rmd
+- **Redirection**: https://github.com/gastonstat/tutorial-R-noninteractive/blob/master/05-redirection.Rmd
+
+## 6. Parallelizing code
+
+Note that the following issues may create problems when developing Bash R scripts on Windows that you want to run e.g. on a Linux cluster or another Unix-type system;
+
+- File paths are different, and system files are stored in a different place.
+- End-of-line symbols are different
+
+### a) Replace 'lapply' by 'mclapply' with package 'parallel'
+
+Note: while this will run on a Windows without causing an error, it will only be faster on Mac / Unix.
+
+With the package 'parallel', it is really easy to use all cores of your local machine (as long as you are on a Mac / Unix / Linux system). Let's check the number of cores available:
+
+```{r parallel}
+library(parallel)
+detectCores()
+```
+
+**Question**: How many cores does your machine have?
+
+Note: Here we check whether the operating system is 'Windows', in which case we set `nCores = 1`. This means that we will use all cores on Mac or Linux, but only one core on Windows. This is to avoid problems on Windows machines.  
+
+```{r nCores}
+nCores <- detectCores()
+if(Sys.info()[['sysname']]=="Windows") nCores = 1
+nCores
+```
+
+- Code your analysis with `lapply` (and related functions).
+- Replace `lapply` by `mclapply` (and related functions). Use the argument `mc.cores=detectCores()` to automatically detect the number of cores in your machine. 
+
+```{r mclapply}
+x <- gen[,-1]
+m1 <- lapply(x, mean, na.rm=TRUE)
+m2 <- mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)
+```
+
+Let's benchmark four ways of calculating the mean of each column in our example data set 'gen' with 94 rows and 10,000 columns (SNPs):
+
+- **Method 1**: The dedicated function `colMeans` from base R. 
+- **Method 2**: A `for` loop.
+- **Method 3**: Vectorization with `lapply`
+- **Method 4**: Multi-core with `mclapply`.
+
+```{r microbenchmark4}
+method1 <- function(x) {colMeans(x, na.rm=TRUE)}
+method2 <- function(x) {for(i in 1:ncol(x)) mean(x[,i], na.rm=TRUE)}
+method3 <- function(x) {lapply(x, mean, na.rm=TRUE)}
+method4 <- function(x) {mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)}
+
+microbenchmark::microbenchmark(times = 10, unit = "ms",
+                               method1(x), method2(x), method3(x), method4(x))
+
+```
+
+**Question**: Compare the mean
+
+- Which method was the fastest? Can you explain this?
+- Which method was slowest?
+- Was `mclapply` faster than `lapply` in this example? 
+
+Note: Obviously you might only expect to see a gain in speed if nCores > 1.
+
+### b) Replace 'for' by 'foreach' with package 'doParallel'
+
+On Windows, it is easier to use the package 'doParallel' with the function 'foreach'. Here's a detailed introduction: http://127.0.0.1:26758/help/library/doParallel/doc/gettingstartedParallel.pdf.	
+
+- Use `makeCluster` to specify the number of cores to be used. The default is half the number of cores. 
+- Check number of clusters by printing `cl`.
+- Register the cluster with `registerDoParallel`. If you omit this step, the code will not use parallel computing.
+
+The following code is commented out to avoid problems when knitting the Notebook. You may uncomment and run it.
+
+```{r doParallel}
+library(doParallel)
+#cl <- makeCluster(2)
+#cl
+#registerDoParallel(cl)
+```
+
+Now we adapt the code in two steps:
+
+- The code is a little different with `foreach` than with `for`, as we use a pipe-like syntax with `%do%`, which means, for each value of *i*, do the following.
+- Thus, `%do%` is only a pipe operator, it does not result in parallelisation yet. 
+- To make this parallel, replace `%do%` by `%dopar%`.
+
+```{r foreach}
+m1 <- for(i in 1:ncol(x)) mean(x[,i], na.rm=TRUE)
+m2 <- foreach(i = 1:ncol(x)) %do% (mean(x[,i], na.rm=TRUE))
+#m3 <- foreach(i = 1:ncol(x)) %dopar% (mean(x[,i], na.rm=TRUE))
+```
+
+Let's benchmark this again. We'll only do 3 replicates this time (uncomment before running this code).
+
+```{r microbenchmark5}
+#method1 <- function(x) {colMeans(x, na.rm=TRUE)}
+#method2 <- function(x) {for(i in 1:ncol(x)) mean(x[,i], na.rm=TRUE)}
+#method3 <- function(x) {lapply(x, mean, na.rm=TRUE)}
+#method4 <- function(x) {mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)}
+#method5 <- function(x) {foreach(i = 1:ncol(x)) %do% (mean(x[,i], na.rm=TRUE))}
+#method6 <- function(x) {foreach(i = 1:ncol(x)) %dopar% (mean(x[,i], na.rm=TRUE))}
+
+#microbenchmark::microbenchmark(times = 3, unit = "ms",method1(x), method2(x), method3(x), method4(x), method5(x), method6(x))
+```
+
+Whether parallelisation is faster depends on the type of task and on your system. In this case, both versions that used parallelisation were actually slower than the sequential code (at least on my system). 
+
+Of course, this will not always be the case, it may depend on:
+
+- What type and size of computational task you are running.
+- How many nodes you can use in parallel. The initial 'cost' of coordinating the task among cores may not be worth it if you only have two cores to use anyways, but with 20 cores, the gain will be higher.
+- Whether all cores are in the same node, or whether you distribute the work among multiple nodes (this will increase the cost of coordination, but potentially also give you access to many more cores).
+
+
+```{r detach, message=FALSE, warning=TRUE, include=FALSE}
+LandGenCourse::detachAllPackages()
+```
