@@ -433,18 +433,34 @@ profvis::profvis(source(myPath))
 
 Unfortunately, we can't profile an entire R Notebook (as far as I know). However, we can extract the R code as a script file, then profile the script file. 
 
-We use the function 'purl' from the 'knitr' package to extract the R code from a Notebook (here, we'll use the Week 0 vignette on R graphics as this runs quickly):
+The file 'myNotebook.Rmd' contains the same R code as our file 'myScript.R', but in the format of an R Notebook, with R markdown text (e.g. titles) and several chunks of code. 
+
+Note: With 'file.show', the Notebook is opened with a simple text editor (without the coloring etc.). Alternatively, you could run 'file.edit' to open it with the familiar RStudio editor.
+
+```{r myNotebook}
+inFile <- system.file("extdata", "myNotebook.Rmd", package = "LandGenCourse")
+file.show(inFile)
+#file.edit(inFile)
+```
+
+We can use the function 'purl' from the 'knitr' package to extract the R code from the R Notebook file 'myNotebook.Rmd':
 
 ```{r purl}
-inFile <- system.file("doc", "Week0_Graphics.Rmd", package="LandGenCourse")
 outFile <- file.path(here::here(), "output/myNotebook.R")
-knitr::purl(inFile, output=outFile)
+knitr::purl(inFile, output=outFile, quiet=TRUE)
+file.show(outFile)
 ```
+
+**Question**: Compare the two files (they should be open, check the tabs of the source pane). 
+
+- How are the chunks from the Notebook file divided in the new script file? 
+- What happened to the titles and text?
+- What about the header information?
 
 Now we can pass the file to `profvis':
 
 ```{r profvis3}
-profvis::profvis(source(outFile))
+profvis::profvis(source(outFile), prof_output=file.path(here::here(), "output/output.prof"))
 ```
 
 **Question**: Which lines of code took the longest to run in this example?

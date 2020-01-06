@@ -263,7 +263,7 @@ Working directory confusion: If you are working within an R project folder, then
 Frogs.gstudio <- read_population(path=system.file("extdata", "ralu.loci.csv", 
                                                   package = "LandGenCourse"), 
                    type="separated", locus.columns=c(3:10), 
-                   phased=NULL, sep=",", header=TRUE)
+                   phased=FALSE, sep=",", header=TRUE)
 ```
 
 ### c) Check imported data
@@ -286,5 +286,8 @@ str(Frogs.gstudio)
 The following code detaches all packages except for some basic ones:
 
 ```{r message=FALSE, warning=TRUE, include=FALSE}
+#detach("package:adegenet", unload=TRUE)
+#detach("package:ade4", unload=TRUE)
+#detach("package:gstudio", unload=TRUE)
 LandGenCourse::detachAllPackages()
 ```

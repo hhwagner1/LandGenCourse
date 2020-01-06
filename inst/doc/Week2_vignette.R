@@ -1,213 +1,289 @@
-## ----message=FALSE, warning=TRUE-----------------------------------------
-require(LandGenCourse)
-require(sp)
-require(raster)
-require(GeNetIt)
-require(SDMTools) # for landscape metrics
-require(tibble)
+## ----message=FALSE, warning=TRUE----------------------------------------------
+library(LandGenCourse)
+library(landscapemetrics)
+library(dplyr)
+library(sp)
+library(raster)
+library(GeNetIt)
+library(tibble)
 
-## ----message=FALSE, warning=TRUE-----------------------------------------
-if(!require(tmaptools)) install.packages("tmaptools", 
-                        repos='http://cran.us.r-project.org')
+## ----message=FALSE, warning=TRUE----------------------------------------------
+if(!require(tmaptools)) install.packages("tmaptools")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data(ralu.site)
 class(ralu.site)
 Sites <- data.frame(ralu.site@coords, ralu.site@data)
 class(Sites)
-as.tibble(Sites)
+head(Sites)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 #require(here)
 #if(!dir.exists(paste0(here(),"/output"))) dir.create(paste0(here(),"/output"))
 #write.csv(Sites, file=paste0(here(),"/output/ralu.site.csv"), 
 #          quote=FALSE, row.names=FALSE)
 #Sites <- read.csv(paste0(here(),"/output/ralu.site.csv"), header=TRUE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 Sites.sp <- Sites
 coordinates(Sites.sp) <- ~coords.x1+coords.x2
-as.tibble(Sites.sp)
 
-## ------------------------------------------------------------------------
-proj4string(Sites.sp) <- tmaptools::get_proj4("utm11")
+## -----------------------------------------------------------------------------
+proj4string(Sites.sp) <- tmaptools::get_proj4("utm11")$proj4string
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
+Sites.sp.longlat <- sp::spTransform(Sites.sp, 
+                      CRSobj = tmaptools::get_proj4("longlat")$proj4string)
+head(Sites.sp.longlat@coords)
+
+## -----------------------------------------------------------------------------
 slotNames(Sites.sp)
 
-## ------------------------------------------------------------------------
-as.tibble(Sites.sp@coords)
+## -----------------------------------------------------------------------------
+head(Sites.sp@coords)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 Sites.sp@proj4string
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 ralu.site@proj4string
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 Sites.sp@proj4string <- ralu.site@proj4string
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data(rasters)
 class(rasters)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 RasterMaps <- stack(rasters)
 class(RasterMaps)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 RasterMaps
 
-## ----fig.width=8, fig.height=5.5-----------------------------------------
+## ----fig.width=8, fig.height=5.5----------------------------------------------
 plot(RasterMaps)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 layerStats(RasterMaps, 'pearson', na.rm=T)
 
-## ----fig.width=4.45, fig.height=4----------------------------------------
+## ----fig.width=4.45, fig.height=4---------------------------------------------
 par(mar=c(3,3,1,2))
 plot(raster(RasterMaps, layer="ffp"), col=rev(rainbow(9)))
 points(Sites.sp, pch=21, col="black", bg="white")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 Sites.sp@data <- data.frame(Sites.sp@data, extract(RasterMaps, Sites.sp))
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 table(Sites.sp@data$nlcd)
 
-## ------------------------------------------------------------------------
-NLCD <- raster(RasterMaps, layer="nlcd")
-NLCD.class <- SDMTools::ClassStat(NLCD,cellsize=30)
+## -----------------------------------------------------------------------------
+nlcd <- raster(RasterMaps, layer = "nlcd")
 
-## ------------------------------------------------------------------------
-?ClassStat
+landscapemetrics::check_landscape(nlcd)
 
-## ----fig.width=4.45, fig.height=4----------------------------------------
-par(mar=c(3,3,1,2))
-Forest <- (NLCD==42)
-plot(Forest)
-points(Sites.sp, pch=21, bg="yellow", col="black")
+## -----------------------------------------------------------------------------
+landscapemetrics::list_lsm(level = "landscape", type = "diversity metric")
 
-## ------------------------------------------------------------------------
-Patches <- SDMTools::ConnCompLabel(Forest)
-NLCD.patch <- SDMTools::PatchStat(Patches,cellsize=30)
-dim(NLCD.patch)
+landscapemetrics::list_lsm(metric = "area")
 
-## ------------------------------------------------------------------------
-as.tibble(NLCD.patch)
+landscapemetrics::list_lsm(level = c("class", "landscape"), type = "aggregation metric", 
+                           simplify = TRUE)
 
-## ------------------------------------------------------------------------
-?PatchStat
+## -----------------------------------------------------------------------------
+# calculate percentage of landscape of class
+percentage_class <- lsm_c_pland(landscape = nlcd)
 
-## ------------------------------------------------------------------------
-a <- extract.data(Sites.sp@coords, Patches)   # get patch IDs
-a[a==0] <- NA                                 # these are the non-forested areas
-Sites.sp@data$ForestPatchSize <- NLCD.patch[a,"area"]
-Sites.sp@data$ForestPatchSize[is.na(a)] <- 0  # set patch size to zero for nonforested
+percentage_class
+
+## -----------------------------------------------------------------------------
+metrics <- rbind(
+  landscapemetrics::lsm_c_pladj(nlcd), 
+  landscapemetrics::lsm_l_pr(nlcd),
+  landscapemetrics::lsm_l_shdi(nlcd)
+  )
+
+metrics
+
+## -----------------------------------------------------------------------------
+nlcd_patch <- landscapemetrics::calculate_lsm(landscape = nlcd,
+                                              level = "patch")
+nlcd_patch
+
+## -----------------------------------------------------------------------------
+unique(nlcd_patch$metric)
+
+## -----------------------------------------------------------------------------
+nlcd_landscape_aggr <- landscapemetrics::calculate_lsm(landscape = nlcd, 
+                                                       level = "landscape", 
+                                                       type = "aggregation metric")
+nlcd_landscape_aggr
+
+## -----------------------------------------------------------------------------
+nlcd_subset <- landscapemetrics::calculate_lsm(landscape = nlcd, 
+                                               what = c("lsm_c_pladj", 
+                                                        "lsm_l_pr", 
+                                                        "lsm_l_shdi"))
+nlcd_subset
+
+## -----------------------------------------------------------------------------
+id_largest <- nlcd_patch %>% # previously calculated patch metrics
+  dplyr::filter(metric == "area") %>% # only patch area
+  dplyr::arrange(-value) %>% # order by decreasing size
+  dplyr::filter(value > quantile(value, probs = 0.95)) %>% # get only patches larger than 95% quantile
+  dplyr::pull(id) # get only patch id
+
+id_largest
+
+## -----------------------------------------------------------------------------
+nlcd_subset_full_a <- landscapemetrics::calculate_lsm(nlcd, 
+                                                      what = c("lsm_c_pladj", 
+                                                               "lsm_l_pr", 
+                                                               "lsm_l_shdi"), 
+                                                      full_name = TRUE)
+nlcd_subset_full_a
+
+## -----------------------------------------------------------------------------
+nlcd_subset_full_b <- dplyr::left_join(x = nlcd_subset,
+                                       y = lsm_abbreviations_names,
+                                       by = c("metric", "level"))
+
+nlcd_subset_full_b
+
+## -----------------------------------------------------------------------------
+forest_patch_metrics <- dplyr::filter(nlcd_patch, class == 42)
+
+## -----------------------------------------------------------------------------
+# connected components labeling of landscape
+cc_nlcd <- landscapemetrics::get_patches(nlcd, directions = 8)
+
+# show name of each class
+sapply(cc_nlcd, function(x) names(x)) 
+
+# the fourth list entry is class forest
+cc_forest_a <- cc_nlcd[4]
+cc_forest_b <- landscapemetrics::get_patches(nlcd, class = 42) # watch out: result is list with one entry
+
+cc_forest_a
+cc_forest_b
+
+## -----------------------------------------------------------------------------
+show_patches(landscape = nlcd, class = c(42, 52), labels = FALSE)
+
+## ----warning=FALSE------------------------------------------------------------
+show_cores(landscape = nlcd, class = c(42), edge_depth = 5, labels = FALSE)
+
+## -----------------------------------------------------------------------------
+show_lsm(landscape = nlcd, class = c(42, 52), what = "lsm_p_area", labels = FALSE)
+
+## -----------------------------------------------------------------------------
+# extract patch area of all classes:
+patch_size_sp <- extract_lsm(landscape = nlcd, y = Sites.sp, what = "lsm_p_area")
+
+# because we are only interested in the forest patch size, we set all area of class != 42 to 0:
+patch_size_sp_forest <- dplyr::mutate(patch_size_sp, 
+                                      value = dplyr::case_when(class == 42 ~ value, 
+                                                               class != 42 ~ 0))
+# add data to sp object:
+Sites.sp@data$ForestPatchSize <- patch_size_sp_forest$value
 Sites.sp@data$ForestPatchSize
 
-## ----fig.width=4.45, fig.height=4----------------------------------------
-par(mar=c(3,3,1,2))
-bubble(Sites.sp, "ForestPatchSize", fill=FALSE, key.entries=as.numeric(names(table(Sites.sp@data$ForestPatchSize))))
+## ----fig.width=4.45, fig.height=4---------------------------------------------
+par(mar = c(3,3,1,2))
+bubble(Sites.sp, "ForestPatchSize", fill = FALSE, key.entries = as.numeric(names(table(Sites.sp@data$ForestPatchSize))))
 
-## ------------------------------------------------------------------------
-Radius <- 500    # Define buffer radius
-Cellsize <- 30   # Indicate cell size in meters
+## -----------------------------------------------------------------------------
+nlcd_sampled <- landscapemetrics::sample_lsm(landscape = nlcd, 
+                                             what = c("lsm_l_ta", 
+                                                      "lsm_c_np",
+                                                      "lsm_c_pland", 
+                                                      "lsm_c_ai"),
+                                             shape = "square",
+                                             y = Sites.sp, 
+                                             size = 500)
+nlcd_sampled
 
-## ------------------------------------------------------------------------
-Sites.class <- list()
-class.ID <- levels(ratify(NLCD))[[1]]
+## -----------------------------------------------------------------------------
+# sample some metrics within buffer around sample location and returning sample
+# plots as raster
+nlcd_sampled_plots <- landscapemetrics::sample_lsm(landscape = nlcd, 
+                                                   what = c("lsm_l_ta",
+                                                            "lsm_c_np",
+                                                            "lsm_c_pland",
+                                                            "lsm_c_ai"),
+                                                   shape = "square",
+                                                   y = Sites.sp, 
+                                                   size = 500, 
+                                                   return_raster = TRUE)
 
-for(i in 1:nrow(Sites.sp@data))
-{
-  # Identify all cells that lie within buffer around site i:
-  Buffer.cells <- extract(NLCD, Sites.sp[i,], cellnumbers=TRUE, 
-                          buffer=Radius)[[1]][,1]
-  
-  # Copy land cover map and delete all values outside of buffer:
-  Buffer.nlcd <- NLCD
-  values(Buffer.nlcd)[-Buffer.cells] <- NA
-  
-  # Calculate class-level metrics for cells within buffer:
-  Result <- ClassStat(Buffer.nlcd,cellsize=Cellsize)
-  
-  # Merge Results table with 'class.ID' to ensure that all cover types
-  # are listed for all sites, even if they are not present in buffer,
-  # write results into ith element of list 'Sites.class':
-  Sites.class[[i]] <- merge(class.ID, Result, all=TRUE, by.x="ID", by.y="class")
-}
-# Add labels for list elements
-names(Sites.class) <- Sites.sp@data$SiteName
+nlcd_sampled_plots
 
-## ------------------------------------------------------------------------
-as.tibble(Sites.class[[2]])
+## ---- fig.width=8, fig.height=5.5---------------------------------------------
+unique_plots <- unique(nlcd_sampled_plots$raster_sample_plots)[1:4]
 
-## ------------------------------------------------------------------------
-# Extract one variable, 'prop.landscape', for one cover type 42 (Evergreen Forest)
-# (this returns a vector with a single value for each site)
+par(mfrow = c(2,2))
+plot(unique_plots[[1]], 
+     main = paste(Sites.sp$SiteName[1]), 
+     col = rev(rainbow(9)))
+plot(unique_plots[[2]],
+     main = paste(Sites.sp$SiteName[2]),
+     col = rev(rainbow(9)))
+plot(unique_plots[[3]],
+     main = paste(Sites.sp$SiteName[3]), 
+     col = rev(rainbow(9)))
+plot(unique_plots[[4]],
+     main = paste(Sites.sp$SiteName[4]), 
+     col = rev(rainbow(9)))
+par(mfrow = c(1,1))
 
-PercentForest500 <- rep(NA, length(Sites.class))  # Create empty results vector
-for(i in 1:length(Sites.class))
-{
-  # For site i, select row with cover type '42' and column 'prop.landscape':
-  PercentForest500[i] <- Sites.class[[i]][class.ID$ID==42, "prop.landscape"]
-}
+## -----------------------------------------------------------------------------
+percentage_forest_500_a <- dplyr::pull(dplyr::filter(nlcd_sampled, 
+                                                     class == 42, 
+                                                     metric == "pland"), value)
+percentage_forest_500_a
 
-# If there are any sites with no forest in buffer, set value to 0:
-PercentForest500[is.na(PercentForest500)] <- 0
+## -----------------------------------------------------------------------------
+percentage_forest_500_b <- nlcd_sampled %>% 
+  dplyr::filter(class == 42, 
+                metric == "pland") %>% 
+  dplyr::pull(value)
+percentage_forest_500_b
 
-# Print results:
-PercentForest500
+## -----------------------------------------------------------------------------
+# filter for percentage of landscape
+percentage_forest_500_df <- dplyr::filter(nlcd_sampled,
+                                          metric == "pland")
 
-## ------------------------------------------------------------------------
-# Create empty matrix for storing results:
-Prop.landscape <- matrix(data=NA, nrow=length(Sites.class), ncol=length(class.ID$ID))
+percentage_forest_500_df
 
-# Create row and column names:
-dimnames(Prop.landscape) <- list(names(Sites.class),
-                                 paste("Prop.500", class.ID$ID, sep="."))
+## -----------------------------------------------------------------------------
+# group by plot_id and sum all percentages
+pland_sum_a <- dplyr::summarize(dplyr::group_by(percentage_forest_500_df, 
+                                                by = plot_id), 
+                                sum_pland = sum(value))
+pland_sum_a
 
-# For each site i, extract "prop.landscape" for all cover types
-# and write results into row i of Prop.landscape:
-for(i in 1:length(Sites.class))
-{
-  Prop.landscape[i,] <- Sites.class[[i]][,"prop.landscape"]
-}
+## -----------------------------------------------------------------------------
+pland_sum_b <- percentage_forest_500_df %>% 
+  dplyr::group_by(plot_id) %>% 
+  dplyr::summarize(sum_pland = sum(value))
+pland_sum_b
 
-# Set any missing values to 0:
-Prop.landscape[is.na(Prop.landscape)] <- 0
+## -----------------------------------------------------------------------------
+# filter for class == 42 (forest)
+forest_500_df <- dplyr::filter(nlcd_sampled,
+                               class == 42)
 
-# Convert matrix to data frame:
-Prop.landscape <- as.data.frame(Prop.landscape)
-as.tibble(Prop.landscape)
+# data.frame with id and name of site
+SiteName_df <- data.frame(id = 1:length(Sites.sp$SiteName), site_name = Sites.sp$SiteName)
 
-## ------------------------------------------------------------------------
-apply(X=Prop.landscape, MARGIN=1, FUN=sum)
+# add site_name to metrics using plot_id and id of sampling sites
+forest_500_df <- dplyr::left_join(forest_500_df, SiteName_df, by = c("plot_id" = "id"))
 
-## ------------------------------------------------------------------------
-# Create empty matrix for storing results:
-Forest.class <- matrix(data=NA, nrow=length(Sites.class), 
-                       ncol=ncol(Sites.class[[1]]))
+forest_500_df
 
-# Create row and column names:
-dimnames(Forest.class) <- list(names(Sites.class),
-                                 paste("42",names(Sites.class[[1]]), sep="."))
-
-# For each site i, extract all landscape metrics for cover type 42
-# and write results into row i of Forest.class:
-for(i in 1:length(Sites.class))
-{
-  Forest.class[i,] <- unlist(Sites.class[[i]][class.ID$ID==42,])
-}
-
-# Convert matrix to data frame:
-Forest.class <- as.data.frame(Forest.class)
-as.tibble(Forest.class)
-
-## ------------------------------------------------------------------------
-Sites.sp@data <- data.frame(Sites.sp@data, Prop.landscape,
-                                Forest.class) 
-
-## ----message=FALSE, warning=TRUE, include=FALSE--------------------------
+## ----message=FALSE, warning=TRUE----------------------------------------------
 LandGenCourse::detachAllPackages()
 

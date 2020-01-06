@@ -9,6 +9,7 @@ output:
     fig_width: 4 
     fig_height: 3.5
 vignette: >
+
   %\VignetteIndexEntry{Week 4: Metapopulation Genetics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -46,25 +47,17 @@ All required packages should have been installed already when you installed 'Lan
 
 ```{r message=FALSE, warning=TRUE}
 library(LandGenCourse)
-#library(tibble)
-#library(poppr)
-#library(ade4)
-#library(pwr)
-#library(effsize)
-#library(sp)
-#library(ggmap)
-#library(ggplot2)
-#library(car)  
-```
-
-Package 'EcoGenetics' (devel version from GitHub) may not have been automatically installed with 'LandGenCourse':
-
-```{r message=FALSE, warning=TRUE}
-if(!require(EcoGenetics) || packageVersion("EcoGenetics") < "1.2.1.5")
-{
-  devtools::install_github("leandroroser/EcoGenetics-devel")
-}
 library(EcoGenetics)
+library(methods)
+#require(tibble)
+#require(poppr)
+#require(ade4)
+#require(pwr)
+#require(effsize)
+#require(sp)
+#require(ggmap)
+#require(ggplot2)
+#require(car)  
 ```
 
 ### d) Import data

@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Rodney Dyer (worked example) and Helene Wagner (adaptation)" />
+
+<meta name="date" content="2020-01-05" />
+
+<title>Week 0: Intro to R Programming</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 800px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 20px;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 0;
+padding: 4px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table:not([class]) {
+margin: auto;
+min-width: 40%;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table[summary="R argblock"] {
+width: 100%;
+border: none;
+}
+table:not([class]) th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table:not([class]) td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table:not([class]), table:not([class]) th, table:not([class]) td {
+border-left-style: none;
+border-right-style: none;
+}
+table:not([class]) tr.odd {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 13px;
+padding-bottom: 1px;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f5f5f5;
+border-radius: 3px;
+color: #333;
+}
+pre {
+overflow-x: auto;
+border-radius: 3px;
+margin: 5px 0 10px 0;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: white;
+border: #f5f5f5 1px solid;
+}
+pre:not([class]) code {
+color: #444;
+background-color: white;
+}
+code {
+font-family: monospace;
+font-size: 90%;
+}
+p > code, li > code {
+padding: 2px 4px;
+color: #d14;
+border: 1px solid #e1e1e8;
+white-space: inherit;
+}
+div.figure {
+text-align: center;
+}
+table > caption, div.figure p.caption {
+font-style: italic;
+}
+table > caption span, div.figure p.caption span {
+font-style: normal;
+font-weight: bold;
+}
+p {
+margin: 0 0 10px;
+}
+table:not([class]) {
+margin: auto auto 10px auto;
+}
+img:not([class]) {
+background-color: #FFFFFF;
+padding: 2px;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+max-width: 100%;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f5f5f5;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f5f5f5;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f5f5f5;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+div.r-help-page {
+background-color: #f9f9f9;
+border-bottom: #ddd 1px solid;
+margin-bottom: 10px;
+padding: 10px;
+}
+div.r-help-page:hover {
+background-color: #f4f4f4;
+}
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Week 0: Intro to R Programming</h1>
+<h4 class="author">Rodney Dyer (worked example) and Helene Wagner (adaptation)</h4>
+<h4 class="date">2020-01-05</h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#overview">1. Overview</a></li>
+<li><a href="#data-types">2. Data Types</a><ul>
+<li><a href="#numeric-data-types">2.1. Numeric Data Types</a><ul>
+<li><a href="#a-numeric-data">a) Numeric data</a></li>
+<li><a href="#b-coercion-to-numeric">b) Coercion to Numeric</a></li>
+</ul></li>
+<li><a href="#characters">2.2. Characters</a><ul>
+<li><a href="#a-character-data">a) Character data</a></li>
+<li><a href="#b-concatenation-of-characters">b) Concatenation of Characters</a></li>
+<li><a href="#c-coercion-to-characters">c) Coercion to Characters</a></li>
+</ul></li>
+<li><a href="#factors">2.3. Factors</a><ul>
+<li><a href="#a-factor-vs.character">a) Factor vs. Character</a></li>
+<li><a href="#b-missing-levels-in-factors">b) Missing Levels in Factors</a></li>
+</ul></li>
+<li><a href="#logical-types">2.4. Logical Types</a></li>
+</ul></li>
+<li><a href="#data-containers">3. Data Containers</a><ul>
+<li><a href="#vectors">3.1. Vectors</a></li>
+<li><a href="#matrices">3.2. Matrices</a></li>
+<li><a href="#lists">3.3. Lists</a></li>
+<li><a href="#data-frames">3.4. Data Frames</a><ul>
+<li><a href="#a-data-frames-as-spreadsheets">a) Data Frames as spreadsheets</a></li>
+<li><a href="#b-indexing-data-frames">b) Indexing Data Frames</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#programming">4. Programming</a><ul>
+<li><a href="#function-writing">4.1. Function Writing</a></li>
+<li><a href="#variable-scope">4.2. Variable Scope</a></li>
+<li><a href="#decision-making">4.3. Decision Making</a><ul>
+<li><a href="#a-the-if-pattern">a) The if Pattern</a></li>
+<li><a href="#b-the-if-else-pattern">b) The <code>if-else</code> Pattern</a></li>
+</ul></li>
+<li><a href="#flow-control">4.4. Flow Control</a><ul>
+<li><a href="#a-the-for-loop">a) The for() Loop</a></li>
+<li><a href="#b-short-circuiting-the-loop">b) Short Circuiting the Loop</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="overview" class="section level1">
+<h1>1. Overview</h1>
+<p>This worked example is adapted from “Applied Population Genetics” by Rodney Dyer. The entire book is available here: <a href="http://dyerlab.github.io/applied_population_genetics/index.html" class="uri">http://dyerlab.github.io/applied_population_genetics/index.html</a></p>
+<p>R is a statistical programming language, and it thus requires users to work with code. This can be intimidating at first. Working through this document will help you get up to speed with basic R concepts and notation. Whether you are new to R or need a refresher, this worked example will get you to the level expected for the ‘Landscape Genetics with R’ lab course. The main topics covered here are:</p>
+<ul>
+<li>R data types (how data are stored in R: numeric, character, etc.)</li>
+<li>R containers (how data are organized: vectors, data frames, etc.)</li>
+<li>R functions (how to tell R what to do)</li>
+</ul>
+<p>See also video “Week 0: Intro to R Notebooks” for options how to work this this document as .html or .Rmd.</p>
+</div>
+<div id="data-types" class="section level1">
+<h1>2. Data Types</h1>
+<p>The data we work with comes in many forms—integers, stratum, categories, genotypes, etc.—all of which we need to be able to work with in our analyses. In this chapter, the basic data types we will commonly use in population genetic analyses. This section covers some of the basic types of data we will use in R. These include numbers, character, factors, and logical data types. We will also introduce the locus object from the gstudio library and see how it is just another data type that we can manipulate in R.</p>
+<p>The very first hurdle you need to get over is the oddness in the way in which R assigns values to variables.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">variable &lt;-<span class="st"> </span>value</a></code></pre></div>
+<p>Yes that is a less-than and dash character. This is the assignment operator that historically has been used and it is the one that I will stick with. In some cases you can use the ‘=’ to assign variables instead but then it takes away the R-ness of R itself. For decision making, the equality operator (e.g., is this equal to that) is the double equals sign ‘==’. We will get into that below where we talk about logical types and later in decision making.</p>
+<p>If you are unaware of what type a particular variable may be, you can always use the <code>type()</code> function and R will tell you.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">class</span>( variable )</a></code></pre></div>
+<p>R also has a pretty good help system built into itself. You can get help for any function by typing a question mark in front of the function name. This is a particularly awesome features because at the end of the help file, there is often examples of its usage, which are priceless. Here is the documentation for the ‘help’ function as given by:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">?help</a></code></pre></div>
+<p>There are also package vignettes available (for most packages you download) that provide additional information on the routines, data sets, and other items included in these packages. You can get a list of vignettes currently installed on your machine by:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">vignette</span>()</a></code></pre></div>
+<p>and vignettes for a particular package by passing the package name as an argument to the function itself.</p>
+<div id="numeric-data-types" class="section level2">
+<h2>2.1. Numeric Data Types</h2>
+<div id="a-numeric-data" class="section level3">
+<h3>a) Numeric data</h3>
+<p>The quantitative measurements we make are often numeric, in that they can be represented as as a number with a decimal component (think weight, height, latitude, soil moisture, ear wax viscosity, etc.). The most basic type of data in R, is the numeric type and represents both integers and floating point numbers (n.b., there is a strict integer data type but it is often only needed when interfacing with other C libraries and can for what we are doing be disregarded).</p>
+<p>Assigning a value to a variable is easy</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="dv">3</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">x</a></code></pre></div>
+<pre><code>## [1] 3</code></pre>
+<p>By default, R automatically outputs whole numbers numbers within decimal values appropriately.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">y &lt;-<span class="st"> </span><span class="dv">22</span><span class="op">/</span><span class="dv">7</span></a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">y</a></code></pre></div>
+<pre><code>## [1] 3.142857</code></pre>
+<p>If there is a mix of whole numbers and numbers with decimals together in a container such as</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">c</span>(x,y)</a></code></pre></div>
+<pre><code>## [1] 3.000000 3.142857</code></pre>
+<p>then both are shown with decimals. The <code>c()</code> part here is a function that combines several data objects together into a vector and is very useful. In fact, the use of vectors are are central to working in R and functions almost all the functions we use on individual variables can also be applied to vectors.</p>
+<p>A word of caution should be made about numeric data types on any computer. Consider the following example.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="fl">.3</span> <span class="op">/</span><span class="st"> </span><span class="dv">3</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">x</a></code></pre></div>
+<pre><code>## [1] 0.1</code></pre>
+<p>which is exactly what we’d expect. However, the way in which computers store decimal numbers plays off our notion of significant digits pretty well. Look what happens when I print out x but carry out the number of decimal places.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw">print</span>(x, <span class="dt">digits=</span><span class="dv">20</span>)</a></code></pre></div>
+<pre><code>## [1] 0.099999999999999991673</code></pre>
+<p>Not quite 0.1 is it? Not that far away from it but not exact. That is a general problem, not one that R has any more claim to than any other language and/or implementation. Does this matter much, probably not in the realm of the kinds of things we do in population genetics, it is just something that you should be aware of. You can make random sets of numeric data by using using functions describing various distributions. For example, some random numbers from the normal distribution are:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw">rnorm</span>(<span class="dv">10</span>)</a></code></pre></div>
+<pre><code>##  [1] -0.2398908  1.4733628  0.3906342  0.7296515  0.2171079  0.1813204
+##  [7] -0.7702311  0.6342796 -0.1761031 -0.7276893</code></pre>
+<p>from the normal distribution with designated mean and standard deviation:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw">rnorm</span>(<span class="dv">10</span>,<span class="dt">mean=</span><span class="dv">42</span>,<span class="dt">sd=</span><span class="dv">12</span>)</a></code></pre></div>
+<pre><code>##  [1] 27.404263 36.550927 47.834756 25.427737  6.801843 41.809784 29.348573
+##  [8] 41.414208 51.220500 39.425619</code></pre>
+<p>A poisson distribution with mean 2:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw">rpois</span>(<span class="dv">10</span>,<span class="dt">lambda =</span> <span class="dv">2</span>)</a></code></pre></div>
+<pre><code>##  [1] 2 1 1 4 1 1 3 2 2 3</code></pre>
+<p>and the <span class="math inline">\(\chi^2\)</span> distribution with 1 degree of freedom:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">rchisq</span>(<span class="dv">10</span>, <span class="dt">df=</span><span class="dv">1</span>)</a></code></pre></div>
+<pre><code>##  [1] 0.008536287 1.267930545 0.270552433 1.589942779 0.064780767 0.161558768
+##  [7] 2.449100583 0.023839247 9.571396263 0.664720877</code></pre>
+<p>There are several more distributions that if you need to access random numbers, quantiles, probability densities, and cumulative density values are available.</p>
+</div>
+<div id="b-coercion-to-numeric" class="section level3">
+<h3>b) Coercion to Numeric</h3>
+<p>All data types have the potential ability to take another variable and coerce it into their type. Some combinations make sense, and some do not. For example, if you load in a CSV data file using read_csv(), and at some point a stray non-numeric character was inserted into one of the cells on your spreadsheet, R will interpret the entire column as a character type rather than as a numeric type. This can be a very frustrating thing, spreadsheets should generally be considered evil as they do all kinds of stuff behind the scenes and make your life less awesome.</p>
+<p>Here is an example of coercion of some data that is initially defined as a set of characters</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;42&quot;</span>,<span class="st">&quot;99&quot;</span>)</a>
+<a class="sourceLine" id="cb23-2" data-line-number="2">x</a></code></pre></div>
+<pre><code>## [1] &quot;42&quot; &quot;99&quot;</code></pre>
+<p>and is coerced into a numeric type using the as.numeric() function.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">y &lt;-<span class="st"> </span><span class="kw">as.numeric</span>( x )</a>
+<a class="sourceLine" id="cb25-2" data-line-number="2">y</a></code></pre></div>
+<pre><code>## [1] 42 99</code></pre>
+<p>It is a built-in feature of the data types in R that they all have (or should have if someone is producing a new data type and is being courteous to their users) an <code>as.X()</code> function. This is where the data type decides if the values asked to be coerced are reasonable or if you need to be reminded that what you are asking is not possible. Here is an example where I try to coerce a non-numeric variable into a number.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">x &lt;-<span class="st"> &quot;The night is dark and full of terrors...&quot;</span></a>
+<a class="sourceLine" id="cb27-2" data-line-number="2"><span class="kw">as.numeric</span>( x )</a></code></pre></div>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre><code>## [1] NA</code></pre>
+<p>By default, the result should be NA (missing data/non-applicable) if you ask for things that are not possible.</p>
+</div>
+</div>
+<div id="characters" class="section level2">
+<h2>2.2. Characters</h2>
+<div id="a-character-data" class="section level3">
+<h3>a) Character data</h3>
+<p>A collection of letters, number, and or punctuation is represented as a character data type. These are enclosed in either single or double quotes and are considered a single entity. For example, my name can be represented as:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1">prof &lt;-<span class="st"> &quot;Rodney J. Dyer&quot;</span></a>
+<a class="sourceLine" id="cb30-2" data-line-number="2">prof</a></code></pre></div>
+<pre><code>## [1] &quot;Rodney J. Dyer&quot;</code></pre>
+<p>In R, character variables are considered to be a single entity, that is the entire prof variable is a single unit, not a collection of characters. This is in part due to the way in which vectors of variables are constructed in the language. For example, if you are looking at the length of the variable I assigned my name to you see</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1"><span class="kw">length</span>(prof)</a></code></pre></div>
+<pre><code>## [1] 1</code></pre>
+<p>which shows that there is only one ‘character’ variable. If, as is often the case, you are interested in knowing how many characters are in the variable prof, then you use the</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1"><span class="kw">nchar</span>(prof)</a></code></pre></div>
+<pre><code>## [1] 14</code></pre>
+<p>function instead. This returns the number of characters (even the non-printing ones like tabs and spaces.</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="kw">nchar</span>(<span class="st">&quot; </span><span class="ch">\t</span><span class="st"> &quot;</span>)</a></code></pre></div>
+<pre><code>## [1] 3</code></pre>
+<p>As all other data types, you can define a vector of character values using the <code>c()</code> function.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1">x &lt;-<span class="st"> &quot;I am&quot;</span></a>
+<a class="sourceLine" id="cb38-2" data-line-number="2">y &lt;-<span class="st"> &quot;not&quot;</span></a>
+<a class="sourceLine" id="cb38-3" data-line-number="3">z &lt;-<span class="st"> 'a looser'</span></a>
+<a class="sourceLine" id="cb38-4" data-line-number="4">terms &lt;-<span class="st"> </span><span class="kw">c</span>(x,y,z)</a>
+<a class="sourceLine" id="cb38-5" data-line-number="5">terms</a></code></pre></div>
+<pre><code>## [1] &quot;I am&quot;     &quot;not&quot;      &quot;a looser&quot;</code></pre>
+<p>And looking at the <code>length()</code> and <code>nchar()</code> of this you can see how these operations differ.</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="kw">length</span>(terms)</a></code></pre></div>
+<pre><code>## [1] 3</code></pre>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" data-line-number="1"><span class="kw">nchar</span>(terms)</a></code></pre></div>
+<pre><code>## [1] 4 3 8</code></pre>
+</div>
+<div id="b-concatenation-of-characters" class="section level3">
+<h3>b) Concatenation of Characters</h3>
+<p>Another common use of characters is concatenating them into single sequences. Here we use the function <code>paste()</code> and can set the separators (or characters that are inserted between entities when we collapse vectors). Here is an example, entirely fictional and only provided for instructional purposes only.</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1"><span class="kw">paste</span>(terms, <span class="dt">collapse=</span><span class="st">&quot; &quot;</span>)</a></code></pre></div>
+<pre><code>## [1] &quot;I am not a looser&quot;</code></pre>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" data-line-number="1"><span class="kw">paste</span>(x,z)</a></code></pre></div>
+<pre><code>## [1] &quot;I am a looser&quot;</code></pre>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" data-line-number="1"><span class="kw">paste</span>(x,z,<span class="dt">sep=</span><span class="st">&quot; not &quot;</span>)</a></code></pre></div>
+<pre><code>## [1] &quot;I am not a looser&quot;</code></pre>
+</div>
+<div id="c-coercion-to-characters" class="section level3">
+<h3>c) Coercion to Characters</h3>
+<p>A character data type is often the most basal type of data you can work with. For example, consider the case where you have named sample locations. These can be kept as a character data type or as a factor (see below). There are benefits and drawbacks to each representation of the same data (see below). By default (as of the version of R I am currently using when writing this book), if you use a function like read_table() to load in an external file, columns of character data will be treated as factors. This can be good behavior if all you are doing is loading in data and running an analysis, or it can be a total pain in the backside if you are doing more manipulative analyses.</p>
+<p>Here is an example of coercing a numeric type into a character type using the <code>as.character()</code> function.</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="dv">42</span></a>
+<a class="sourceLine" id="cb50-2" data-line-number="2">x</a></code></pre></div>
+<pre><code>## [1] 42</code></pre>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" data-line-number="1">y &lt;-<span class="st"> </span><span class="kw">as.character</span>(x)</a>
+<a class="sourceLine" id="cb52-2" data-line-number="2">y</a></code></pre></div>
+<pre><code>## [1] &quot;42&quot;</code></pre>
+</div>
+</div>
+<div id="factors" class="section level2">
+<h2>2.3. Factors</h2>
+<div id="a-factor-vs.character" class="section level3">
+<h3>a) Factor vs. Character</h3>
+<p>A factor is a categorical data type. If you are coming from SAS, these are class variables. If you are not, then perhaps you can think of them as mutually exclusive classifications. For example, an sample may be assigned to one particular locale, one particular region, and one particular species. Across all the data you may have several species, regions, and locales. These are finite, and defined, sets of categories. One of the more common headaches encountered by people new to R is working with factor types and trying to add categories that are not already defined.</p>
+<p>Since factors are categorical, it is in your best interest to make sure you label them in as descriptive as a fashion as possible. You are not saving space or cutting down on computational time to take shortcuts and label the locale for Rancho Santa Maria as RSN or pop3d or 5. Our computers are fast and large enough, and our programmers are cleaver enough, to not have to rename our populations in numeric format to make them work (hello STRUCTURE I’m calling you out here). The only thing you have to loose by adopting a reasonable naming scheme is confusion in your output.</p>
+<p>To define a factor type, you use the function <code>factor()</code> and pass it a vector of values.</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" data-line-number="1">region &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;North&quot;</span>,<span class="st">&quot;North&quot;</span>,<span class="st">&quot;South&quot;</span>,<span class="st">&quot;East&quot;</span>,<span class="st">&quot;East&quot;</span>,<span class="st">&quot;South&quot;</span>,<span class="st">&quot;West&quot;</span>,<span class="st">&quot;West&quot;</span>,<span class="st">&quot;West&quot;</span>)</a>
+<a class="sourceLine" id="cb54-2" data-line-number="2">region &lt;-<span class="st"> </span><span class="kw">factor</span>( region )</a>
+<a class="sourceLine" id="cb54-3" data-line-number="3">region</a></code></pre></div>
+<pre><code>## [1] North North South East  East  South West  West  West 
+## Levels: East North South West</code></pre>
+<p>When you print out the values, it shows you all the levels present for the factor. If you have levels that are not present in your data set, when you define it, you can tell R to consider additional levels of this factor by passing the optional levels= argument as:</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb56-1" data-line-number="1">region &lt;-<span class="st"> </span><span class="kw">factor</span>( region, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;North&quot;</span>,<span class="st">&quot;South&quot;</span>,<span class="st">&quot;East&quot;</span>,<span class="st">&quot;West&quot;</span>,<span class="st">&quot;Central&quot;</span>))</a>
+<a class="sourceLine" id="cb56-2" data-line-number="2">region</a></code></pre></div>
+<pre><code>## [1] North North South East  East  South West  West  West 
+## Levels: North South East West Central</code></pre>
+<p>If you try to add a data point to a factor list that does not have the factor that you are adding, it will give you an error (or ‘barf’ as I like to say).</p>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb58-1" data-line-number="1">region[<span class="dv">1</span>] &lt;-<span class="st"> &quot;Bob&quot;</span></a></code></pre></div>
+<pre><code>## Warning in `[&lt;-.factor`(`*tmp*`, 1, value = &quot;Bob&quot;): invalid factor level, NA
+## generated</code></pre>
+<p>Now, I have to admit that the Error message in its entirety, with its <code>“[&lt;-.factor</code>(<code>*tmp*</code>, 1, value = “Bob”)“` part is, perhaps, not the most informative. Agreed. However, the “invalid factor level” does tell you something useful. Unfortunately, the programmers that put in the error handling system in R did not quite adhere to the spirit of the “fail loudly” mantra. It is something you will have to get good at. Google is your friend, and if you post a questions to (<a href="http://stackoverflow.org" class="uri">http://stackoverflow.org</a>) or the R user list without doing serious homework, put on your asbestos shorts!</p>
+<p>Unfortunately, the error above changed the first element of the region vector to NA (missing data). I’ll turn it back before we move too much further.</p>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" data-line-number="1">region[<span class="dv">1</span>] &lt;-<span class="st"> &quot;North&quot;</span></a></code></pre></div>
+<p>Factors in R can be either unordered (as say locale may be since locale A is not <code>&gt;</code>, <code>=</code>, or <code>&lt;</code> locale B) or they may be ordered categories as in <code>Small &lt; Medium &lt; Large &lt; X-Large</code>. When you create the factor, you need to indicate if it is an ordered type (by default it is not). If the factors are ordered in some way, you can also create an ordination on the data. If you do not pass a levels= option to the <code>factors()</code> function, it will take the order in which they occur in data you pass to it. If you want to specify an order for the factors specifically, pass the optional <code>levels=</code> and they will be ordinated in the order given there.</p>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" data-line-number="1">region &lt;-<span class="st"> </span><span class="kw">factor</span>( region, <span class="dt">ordered=</span><span class="ot">TRUE</span>, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;West&quot;</span>, <span class="st">&quot;North&quot;</span>, <span class="st">&quot;South&quot;</span>, <span class="st">&quot;East&quot;</span>) )</a>
+<a class="sourceLine" id="cb61-2" data-line-number="2">region</a></code></pre></div>
+<pre><code>## [1] North North South East  East  South West  West  West 
+## Levels: West &lt; North &lt; South &lt; East</code></pre>
+</div>
+<div id="b-missing-levels-in-factors" class="section level3">
+<h3>b) Missing Levels in Factors</h3>
+<p>There are times when you have a subset of data that do not have all the potential categories.</p>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb63-1" data-line-number="1">subregion &lt;-<span class="st"> </span>region[ <span class="dv">3</span><span class="op">:</span><span class="dv">9</span> ]</a>
+<a class="sourceLine" id="cb63-2" data-line-number="2">subregion</a></code></pre></div>
+<pre><code>## [1] South East  East  South West  West  West 
+## Levels: West &lt; North &lt; South &lt; East</code></pre>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb65-1" data-line-number="1"><span class="kw">table</span>( subregion )</a></code></pre></div>
+<pre><code>## subregion
+##  West North South  East 
+##     3     0     2     2</code></pre>
+</div>
+</div>
+<div id="logical-types" class="section level2">
+<h2>2.4. Logical Types</h2>
+<p>A logical type is either TRUE or FALSE, there is no in-between. It is common to use these types in making decisions (see if-else decisions) to check a specific condition being satisfied. To define logical variables you can either use the TRUE or FALSE directly</p>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb67-1" data-line-number="1">canThrow &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">FALSE</span>, <span class="ot">TRUE</span>, <span class="ot">FALSE</span>, <span class="ot">FALSE</span>, <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb67-2" data-line-number="2">canThrow</a></code></pre></div>
+<pre><code>## [1] FALSE  TRUE FALSE FALSE FALSE</code></pre>
+<p>or can implement some logical condition</p>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb69-1" data-line-number="1">stable &lt;-<span class="st"> </span><span class="kw">c</span>( <span class="st">&quot;RGIII&quot;</span> <span class="op">==</span><span class="st"> </span><span class="dv">0</span>, <span class="kw">nchar</span>(<span class="st">&quot;Marshawn&quot;</span>) <span class="op">==</span><span class="st"> </span><span class="dv">8</span>)</a>
+<a class="sourceLine" id="cb69-2" data-line-number="2">stable</a></code></pre></div>
+<pre><code>## [1] FALSE  TRUE</code></pre>
+<p>on the variables. Notice here how each of the items is actually evaluated as to determine the truth of each expression. In the first case, the character is not equal to zero and in the second, the number of characters (what <code>nchar()</code> does) is indeed equal to 8 for the character string “Marshawn”.</p>
+<p>It is common to use logical types to serve as indices for vectors. Say for example, you have a vector of data that you want to select some subset from.</p>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb71-1" data-line-number="1">data &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">20</span>)</a>
+<a class="sourceLine" id="cb71-2" data-line-number="2">data</a></code></pre></div>
+<pre><code>##  [1] -1.90551158 -0.81553095  1.01419202 -0.21450648  0.87277500  1.71812259
+##  [7] -0.93767638 -1.36924046  0.40300295  2.44065387  1.08130069  0.59667804
+## [13] -0.81723401  0.03827978  0.74889338  1.66261895  0.15215905 -0.24429224
+## [19] -0.54918684  0.39828746</code></pre>
+<p>Perhaps you are on interested in the non-negative values</p>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb73-1" data-line-number="1">data[ data <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ]</a></code></pre></div>
+<pre><code>##  [1] 1.01419202 0.87277500 1.71812259 0.40300295 2.44065387 1.08130069
+##  [7] 0.59667804 0.03827978 0.74889338 1.66261895 0.15215905 0.39828746</code></pre>
+<p>If you look at the condition being passed to as the index</p>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb75-1" data-line-number="1">data <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span></a></code></pre></div>
+<pre><code>##  [1] FALSE FALSE  TRUE FALSE  TRUE  TRUE FALSE FALSE  TRUE  TRUE  TRUE  TRUE
+## [13] FALSE  TRUE  TRUE  TRUE  TRUE FALSE FALSE  TRUE</code></pre>
+<p>you see that individually, each value in the data vector is being evaluated as a logical value, satisfying the condition that it is strictly greater than zero. When you pass that as indices to a vector it only shows the indices that are <code>TRUE</code>.</p>
+<p>You can coerce a value into a logical if you understand the rules. Numeric types that equal 0 (zero) are <code>FALSE</code>, always. Any non-zero value is considered <code>TRUE</code>. Here I use the modulus operator, <code>%%</code>, which provides the remainder of a division.</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb77-1" data-line-number="1"><span class="dv">1</span><span class="op">:</span><span class="dv">20</span> <span class="op">%%</span><span class="st"> </span><span class="dv">2</span></a></code></pre></div>
+<pre><code>##  [1] 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0</code></pre>
+<p>which used as indices give us</p>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb79-1" data-line-number="1">data[ (<span class="dv">1</span><span class="op">:</span><span class="dv">20</span> <span class="op">%%</span><span class="st"> </span><span class="dv">2</span>) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ]</a></code></pre></div>
+<pre><code>##  [1] -1.9055116  1.0141920  0.8727750 -0.9376764  0.4030030  1.0813007
+##  [7] -0.8172340  0.7488934  0.1521590 -0.5491868</code></pre>
+<p>You can get as complicated in the creation of indices as you like, even using logical operators such as OR and AND. I leave that as an example for you to play with.</p>
+</div>
+</div>
+<div id="data-containers" class="section level1">
+<h1>3. Data Containers</h1>
+<p>We almost never work with a single datum<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, rather we keep lots of data. Moreover, the kinds of data are often heterogeneous, including categorical (Populations, Regions), continuous (coordinates, rainfall, elevation), imagry (hyperspectral, LiDAR), and perhaps even genetic. R has a very rich set of containers into which we can stuff our data as we work with it. Here these container types are examined and the restrictions and benefits associated with each type are explained.</p>
+<div id="vectors" class="section level2">
+<h2>3.1. Vectors</h2>
+<p>We have already seen several examples of several vectors in action (see the introduction to Numeric data types for example). A vector of objects is simply a collection of them, often created using the <code>c()</code> function (<em>c</em> for combine). Vectorized data is restricted to having homogeneous data types—you cannot mix character and numeric types in the same vector. If you try to mix types, R will either coerce your data into a reasonable type</p>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb81-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb81-2" data-line-number="2">x</a></code></pre></div>
+<pre><code>## [1] 1 2 3</code></pre>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb83-1" data-line-number="1">y &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">TRUE</span>,<span class="ot">TRUE</span>,<span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb83-2" data-line-number="2">y</a></code></pre></div>
+<pre><code>## [1]  TRUE  TRUE FALSE</code></pre>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb85-1" data-line-number="1">z &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;I&quot;</span>,<span class="st">&quot;am&quot;</span>,<span class="st">&quot;not&quot;</span>,<span class="st">&quot;a&quot;</span>,<span class="st">&quot;looser&quot;</span>)</a>
+<a class="sourceLine" id="cb85-2" data-line-number="2">z</a></code></pre></div>
+<pre><code>## [1] &quot;I&quot;      &quot;am&quot;     &quot;not&quot;    &quot;a&quot;      &quot;looser&quot;</code></pre>
+<p>or coearce them into one type that is amenable to all the types of data that you have given it. In this example, a Logical, Character, Constant, and Function are combined resulting in a vector output of type Character.</p>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb87-1" data-line-number="1">w &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="st">&quot;1&quot;</span>, pi, <span class="kw">ls</span>())</a>
+<a class="sourceLine" id="cb87-2" data-line-number="2">w</a></code></pre></div>
+<pre><code>##  [1] &quot;TRUE&quot;             &quot;1&quot;                &quot;3.14159265358979&quot; &quot;canThrow&quot;        
+##  [5] &quot;data&quot;             &quot;prof&quot;             &quot;region&quot;           &quot;stable&quot;          
+##  [9] &quot;subregion&quot;        &quot;terms&quot;            &quot;x&quot;                &quot;y&quot;               
+## [13] &quot;z&quot;</code></pre>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb89-1" data-line-number="1"><span class="kw">class</span>(w)</a></code></pre></div>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+<p>Accessing elements within a vector are done using the square bracket <code>[]</code> notation. All indices (for vectors and matrices) start at 1 (not zero as is the case for some languages). Getting and setting the components within a vector are accomplished using numeric indices with the assignment operators just like we do for variables containing a single value.</p>
+<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb91-1" data-line-number="1">x</a></code></pre></div>
+<pre><code>## [1] 1 2 3</code></pre>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb93-1" data-line-number="1">x[<span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">2</span></a>
+<a class="sourceLine" id="cb93-2" data-line-number="2">x[<span class="dv">3</span>] &lt;-<span class="st"> </span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb93-3" data-line-number="3">x</a></code></pre></div>
+<pre><code>## [1] 2 2 1</code></pre>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb95-1" data-line-number="1">x[<span class="dv">2</span>]</a></code></pre></div>
+<pre><code>## [1] 2</code></pre>
+<p>A common type of vector is that of a sequences. We use sequences all the time, to iterate through a list, to counting generations, etc. There are a few ways to generate sequences, depending upon the step sequence. For a sequence of whole numbers, the easiest is through the use of the colon operator.</p>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb97-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">6</span></a>
+<a class="sourceLine" id="cb97-2" data-line-number="2">x</a></code></pre></div>
+<pre><code>## [1] 1 2 3 4 5 6</code></pre>
+<p>This provides a nice shorthand for getting the values X:Y from X to Y, inclusive. It is also possible to go backwards using this operator, counting down from X to Y as in:</p>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb99-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="dv">5</span><span class="op">:</span><span class="dv">2</span></a>
+<a class="sourceLine" id="cb99-2" data-line-number="2">x</a></code></pre></div>
+<pre><code>## [1] 5 4 3 2</code></pre>
+<p>The only constraint here is that we are limited to a step size of 1.0. It is possible to use non-integers as the bounds, it will just count up by 1.0 each time.</p>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb101-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="fl">3.2</span><span class="op">:</span><span class="fl">8.4</span></a>
+<a class="sourceLine" id="cb101-2" data-line-number="2">x</a></code></pre></div>
+<pre><code>## [1] 3.2 4.2 5.2 6.2 7.2 8.2</code></pre>
+<p>If you are interested in making a sequence with a step other than 1.0, you can use the <code>seq()</code> function. If you do not provide a step value, it defaults to 1.0.</p>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb103-1" data-line-number="1">y &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">6</span>)</a>
+<a class="sourceLine" id="cb103-2" data-line-number="2">y</a></code></pre></div>
+<pre><code>## [1] 1 2 3 4 5 6</code></pre>
+<p>But if you do, it will use that instead.</p>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb105-1" data-line-number="1">z &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">20</span>,<span class="dt">by=</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb105-2" data-line-number="2">z</a></code></pre></div>
+<pre><code>##  [1]  1  3  5  7  9 11 13 15 17 19</code></pre>
+<p>It is also possible to create a vector of objects as repetitions using the <code>rep()</code> (for repeat) function.</p>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb107-1" data-line-number="1"><span class="kw">rep</span>(<span class="st">&quot;Beetlejuice&quot;</span>,<span class="dv">3</span>)</a></code></pre></div>
+<pre><code>## [1] &quot;Beetlejuice&quot; &quot;Beetlejuice&quot; &quot;Beetlejuice&quot;</code></pre>
+<p>If you pass a vector of items to <code>rep()</code>, it can repeat these as either a vector being repeated (the default value)</p>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb109-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;No&quot;</span>,<span class="st">&quot;Free&quot;</span>,<span class="st">&quot;Lunch&quot;</span>)</a>
+<a class="sourceLine" id="cb109-2" data-line-number="2"><span class="kw">rep</span>(x,<span class="dt">time=</span><span class="dv">3</span>)</a></code></pre></div>
+<pre><code>## [1] &quot;No&quot;    &quot;Free&quot;  &quot;Lunch&quot; &quot;No&quot;    &quot;Free&quot;  &quot;Lunch&quot; &quot;No&quot;    &quot;Free&quot;  &quot;Lunch&quot;</code></pre>
+<p>or as each item in the vector repeated.</p>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb111-1" data-line-number="1"><span class="kw">rep</span>(x,<span class="dt">each=</span><span class="dv">3</span>)</a></code></pre></div>
+<pre><code>## [1] &quot;No&quot;    &quot;No&quot;    &quot;No&quot;    &quot;Free&quot;  &quot;Free&quot;  &quot;Free&quot;  &quot;Lunch&quot; &quot;Lunch&quot; &quot;Lunch&quot;</code></pre>
+</div>
+<div id="matrices" class="section level2">
+<h2>3.2. Matrices</h2>
+<p>A matrix is a 2- or higher dimensional container, most commonly used to store numeric data types. There are some libraries that use matrices in more than two dimensions (rows and columns and sheets), though you will not run across them too often. Here I restrict myself to only 2-dimensional matrices.</p>
+<p>You can define a matrix by giving it a set of values and an indication of the number of rows and columns you want. The easiest matrix to try is one with empty values:</p>
+<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb113-1" data-line-number="1"><span class="kw">matrix</span>(<span class="dt">nrow=</span><span class="dv">2</span>, <span class="dt">ncol=</span><span class="dv">2</span>)</a></code></pre></div>
+<pre><code>##      [,1] [,2]
+## [1,]   NA   NA
+## [2,]   NA   NA</code></pre>
+<p>Perhaps more useful is one that is pre-populated with values.</p>
+<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb115-1" data-line-number="1"><span class="kw">matrix</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">nrow=</span><span class="dv">2</span> )</a></code></pre></div>
+<pre><code>##      [,1] [,2]
+## [1,]    1    3
+## [2,]    2    4</code></pre>
+<p>Notice that here, there were four entries and I only specified the number of rows required. By default the ‘filling-in’ of the matrix will proceed down column (<em>by-column</em>). In this example, we have the first column with the first two entries and the last two entries down the second column. If you want it to fill by row, you can pass the optional argument</p>
+<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb117-1" data-line-number="1"><span class="kw">matrix</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">nrow=</span><span class="dv">2</span>, <span class="dt">byrow=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>##      [,1] [,2]
+## [1,]    1    2
+## [2,]    3    4</code></pre>
+<p>and it will fill <em>by-row</em>.</p>
+<p>When filling matrices, the default size and the size of the data being added to the matrix are critical. For example, I can create a matrix as:</p>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb119-1" data-line-number="1">Y &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>),<span class="dt">ncol=</span><span class="dv">2</span>,<span class="dt">byrow=</span><span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb119-2" data-line-number="2">Y</a></code></pre></div>
+<pre><code>##      [,1] [,2]
+## [1,]    1    2
+## [2,]    3    4
+## [3,]    5    6</code></pre>
+<p>or</p>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb121-1" data-line-number="1">X &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>),<span class="dt">nrow=</span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb121-2" data-line-number="2">X</a></code></pre></div>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    1    3    5
+## [2,]    2    4    6</code></pre>
+<p>and both produce a similar matrix, only transposed.</p>
+<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb123-1" data-line-number="1">X <span class="op">==</span><span class="st"> </span><span class="kw">t</span>(Y)</a></code></pre></div>
+<pre><code>##      [,1] [,2] [,3]
+## [1,] TRUE TRUE TRUE
+## [2,] TRUE TRUE TRUE</code></pre>
+<p>In the example above, the number of rows (or columns) was a clean multiple of the number of entries. However, if it is not, R will fill in values.</p>
+<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb125-1" data-line-number="1">X &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>),<span class="dt">ncol=</span><span class="dv">4</span>, <span class="dt">byrow=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>## Warning in matrix(c(1, 2, 3, 4, 5, 6), ncol = 4, byrow = TRUE): data length [6]
+## is not a sub-multiple or multiple of the number of columns [4]</code></pre>
+<p>Notice how you get a warning from the interpreter. But that does not stop it from filling in the remaining slots by starting over in the sequence of numbers you passed to it.</p>
+<div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb127-1" data-line-number="1">X</a></code></pre></div>
+<pre><code>##      [,1] [,2] [,3] [,4]
+## [1,]    1    2    3    4
+## [2,]    5    6    1    2</code></pre>
+<p>The dimensionality of a matrix (and <code>data.frame</code> as we will see shortly) is returned by the <code>dim()</code> function. This will provide the number of rows and columns as a vector.</p>
+<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb129-1" data-line-number="1"><span class="kw">dim</span>(X)</a></code></pre></div>
+<pre><code>## [1] 2 4</code></pre>
+<p>Accessing elements to retrieve or set their values within a matrix is done using the square brackets just like for a vector but you need to give <code>[row,col]</code> indices. Again, these are 1-based so that</p>
+<div class="sourceCode" id="cb131"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb131-1" data-line-number="1">X[<span class="dv">1</span>,<span class="dv">3</span>]</a></code></pre></div>
+<pre><code>## [1] 3</code></pre>
+<p>is the entry in the 1st row and 3rd column.</p>
+<p>You can also use ‘slices’ through a matrix to get the rows</p>
+<div class="sourceCode" id="cb133"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb133-1" data-line-number="1">X[<span class="dv">1</span>,]</a></code></pre></div>
+<pre><code>## [1] 1 2 3 4</code></pre>
+<p>or columns</p>
+<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb135-1" data-line-number="1">X[,<span class="dv">3</span>]</a></code></pre></div>
+<pre><code>## [1] 3 1</code></pre>
+<p>of data. Here you just omit the index for the entity you want to span. Notice that when you grab a slice, even if it is a column, is given as a vector.</p>
+<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb137-1" data-line-number="1"><span class="kw">length</span>(X[,<span class="dv">3</span>])</a></code></pre></div>
+<pre><code>## [1] 2</code></pre>
+<p>You can grab a sub-matrix using slices if you give a range (or sequence) of indices.</p>
+<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb139-1" data-line-number="1">X[,<span class="dv">2</span><span class="op">:</span><span class="dv">3</span>]</a></code></pre></div>
+<pre><code>##      [,1] [,2]
+## [1,]    2    3
+## [2,]    6    1</code></pre>
+<p>If you ask for values from a matrix that exceed its dimensions, R will give you an error.</p>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb141-1" data-line-number="1">X[<span class="dv">1</span>,<span class="dv">8</span>]</a></code></pre></div>
+<pre><code>## Error in X[1, 8] : subscript out of bounds
+## Calls: &lt;Anonymous&gt; ... handle -&gt; withCallingHandlers -&gt; withVisible -&gt; eval -&gt; eval
+## Execution halted</code></pre>
+<p>There are a few cool extensions of the <code>rep()</code> function that can be used to create matrices as well. They are optional values that can be passed to the function.</p>
+<ul>
+<li><code>times=x</code>: This is the default option that was occupied by the ‘3’ in the example above and represents the number of times that first argument will be repeated.<br />
+</li>
+<li><code>each=x</code> This will take each element in the first argument are repeat them <code>each</code> times.<br />
+</li>
+<li><code>length.out=x</code>: This make the result equal in length to <code>x</code>.</li>
+</ul>
+<p>In combination, these can be quite helpful. Here is an example using numeric sequences in which it is necessary to find the index of all entries in a 3x2 matrix. To make the indices, I bind two columns together using <code>cbind()</code>. There is a matching row binding function, denoted as <code>rbind()</code> (perhaps not so surprisingly). What is returned is a matrix</p>
+<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb143-1" data-line-number="1">indices &lt;-<span class="st"> </span><span class="kw">cbind</span>( <span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dt">each=</span><span class="dv">3</span>), <span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>,<span class="dt">times=</span><span class="dv">2</span>), <span class="kw">rep</span>(<span class="dv">5</span>,<span class="dt">length.out=</span><span class="dv">6</span>)  )</a>
+<a class="sourceLine" id="cb143-2" data-line-number="2">indices</a></code></pre></div>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    1    1    5
+## [2,]    1    2    5
+## [3,]    1    3    5
+## [4,]    2    1    5
+## [5,]    2    2    5
+## [6,]    2    3    5</code></pre>
+</div>
+<div id="lists" class="section level2">
+<h2>3.3. Lists</h2>
+<p>A list is a type of vector but is indexed by ‘keys’ rather than by numeric indices. Moreover, lists can contain heterogeneous types of data (e.g., values of different <code>class</code>), which is not possible in a vector type. For example, consider the list</p>
+<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb145-1" data-line-number="1">theList &lt;-<span class="st"> </span><span class="kw">list</span>( <span class="dt">x=</span><span class="kw">seq</span>(<span class="dv">2</span>,<span class="dv">40</span>, <span class="dt">by=</span><span class="dv">2</span>), <span class="dt">dog=</span>LETTERS[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>], <span class="dt">hasStyle=</span><span class="kw">logical</span>(<span class="dv">5</span>) )</a>
+<a class="sourceLine" id="cb145-2" data-line-number="2"><span class="kw">summary</span>(theList)</a></code></pre></div>
+<pre><code>##          Length Class  Mode     
+## x        20     -none- numeric  
+## dog       5     -none- character
+## hasStyle  5     -none- logical</code></pre>
+<p>which is defined with a numeric, a character, and a logical component. Each of these entries can be different in length as well as type. Once defined, the entries may be observed as:</p>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb147-1" data-line-number="1">theList</a></code></pre></div>
+<pre><code>## $x
+##  [1]  2  4  6  8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40
+## 
+## $dog
+## [1] &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;D&quot; &quot;E&quot;
+## 
+## $hasStyle
+## [1] FALSE FALSE FALSE FALSE FALSE</code></pre>
+<p>Once created, you can add variables to the list using the $-operator followed by the name of the key for the new entry.</p>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb149-1" data-line-number="1">theList<span class="op">$</span>my_favoriate_number &lt;-<span class="st"> </span><span class="fl">2.9</span> <span class="op">+</span><span class="st"> </span>3i</a></code></pre></div>
+<p>or use double brackets and the name of the variable as a character string.</p>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb150-1" data-line-number="1">theList[[<span class="st">&quot;lotto numbers&quot;</span>]] &lt;-<span class="st"> </span><span class="kw">rpois</span>(<span class="dv">7</span>,<span class="dt">lambda=</span><span class="dv">42</span>)</a></code></pre></div>
+<p>The keys currently in the list are given by the <code>names()</code> function</p>
+<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb151-1" data-line-number="1"><span class="kw">names</span>(theList)</a></code></pre></div>
+<pre><code>## [1] &quot;x&quot;                   &quot;dog&quot;                 &quot;hasStyle&quot;           
+## [4] &quot;my_favoriate_number&quot; &quot;lotto numbers&quot;</code></pre>
+<p>Getting and setting values within a list are done the same way using either the <code>$</code>-operator</p>
+<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb153-1" data-line-number="1">theList<span class="op">$</span>x</a></code></pre></div>
+<pre><code>##  [1]  2  4  6  8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40</code></pre>
+<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb155-1" data-line-number="1">theList<span class="op">$</span>x[<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="dv">42</span></a>
+<a class="sourceLine" id="cb155-2" data-line-number="2">theList<span class="op">$</span>x</a></code></pre></div>
+<pre><code>##  [1]  2 42  6  8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40</code></pre>
+<p>or the double brackets</p>
+<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb157-1" data-line-number="1">theList[[<span class="st">&quot;x&quot;</span>]]</a></code></pre></div>
+<pre><code>##  [1]  2 42  6  8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40</code></pre>
+<p>or using a numeric index, but that numeric index is looks to the results of <code>names()</code> to figure out which key to use.</p>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb159-1" data-line-number="1">theList[[<span class="dv">2</span>]]</a></code></pre></div>
+<pre><code>## [1] &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;D&quot; &quot;E&quot;</code></pre>
+<p>The use of the double brackets in essence provides a direct link to the variable in the list whose name is second in the <code>names()</code> function (<em>dog</em> in this case). If you want to access elements within that variable, then you add a second set of brackets on after the double ones.</p>
+<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb161-1" data-line-number="1">theList[[<span class="dv">1</span>]][<span class="dv">3</span>]</a></code></pre></div>
+<pre><code>## [1] 6</code></pre>
+<p>This deviates from the matrix approach as well as from how we access entries in a <code>data.frame</code> (described next). It is not a single square bracket with two indices, that gives you an error:</p>
+<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb163-1" data-line-number="1">theList[<span class="dv">1</span>,<span class="dv">3</span>] </a></code></pre></div>
+<pre><code>## Error in theList[1, 3] : incorrect number of dimensions
+## Calls: &lt;Anonymous&gt; ... handle -&gt; withCallingHandlers -&gt; withVisible -&gt; eval -&gt; eval
+## Execution halted</code></pre>
+<p>List are rather robust objects that allow you to store a wide variety of data types (including nested lists). Once you get the indexing scheme down, it they will provide nice solutions for many of your computational needs.</p>
+</div>
+<div id="data-frames" class="section level2">
+<h2>3.4. Data Frames</h2>
+<div id="a-data-frames-as-spreadsheets" class="section level3">
+<h3>a) Data Frames as spreadsheets</h3>
+<p>The <code>data.frame</code> is the default data container in R. It is analogous to both a spreadsheet, at least in the way that I have used spreadsheets in the past, as well as a database. If you consider a single spreadsheet containing measurements and observations from your research, you may have many columns of data, each of which may be a different kind of data. There may be <code>factors</code> representing designations such as species, regions, populations, sex, flower color, etc. Other columns may contain numeric data types for items such as latitude, longitude, dbh, and nectar sugar content. You may also have specialized columns such as dates collected, genetic loci, and any other information you may be collecting.</p>
+<p>On a spreadsheet, each column has a unified data type, either quantified with a value or as a missing value, <code>NA</code>, in each row. Rows typically represent the sampling unit, perhaps individual or site, along which all of these various items have been measured or determined. A <code>data.frame</code> is similar to this, at least conceptually. You define a <code>data.frame</code> by designating the columns of data to be used. You do not need to define all of them, more can be added later. The values passed can be sequences, collections of values, or computed parameters. For example:</p>
+<div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb165-1" data-line-number="1">df &lt;-<span class="st"> </span><span class="kw">data.frame</span>( <span class="dt">ID=</span><span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">Names=</span><span class="kw">c</span>(<span class="st">&quot;Bob&quot;</span>,<span class="st">&quot;Alice&quot;</span>,<span class="st">&quot;Vicki&quot;</span>,<span class="st">&quot;John&quot;</span>,<span class="st">&quot;Sarah&quot;</span>), <span class="dt">Score=</span><span class="dv">100</span> <span class="op">-</span><span class="st"> </span><span class="kw">rpois</span>(<span class="dv">5</span>,<span class="dt">lambda=</span><span class="dv">10</span>))</a>
+<a class="sourceLine" id="cb165-2" data-line-number="2">df</a></code></pre></div>
+<pre><code>##   ID Names Score
+## 1  1   Bob    91
+## 2  2 Alice    92
+## 3  3 Vicki    94
+## 4  4  John    90
+## 5  5 Sarah    87</code></pre>
+<p>You can see that each column is a unified type of data and each row is equivalent to a record. Additional data columns may be added to an existing data.frame as:</p>
+<div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb167-1" data-line-number="1">df<span class="op">$</span>Passed_Class &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">TRUE</span>,<span class="ot">TRUE</span>,<span class="ot">TRUE</span>,<span class="ot">FALSE</span>,<span class="ot">TRUE</span>)</a></code></pre></div>
+<p>Since we may have many (thousands?) of rows of observations, a <code>summary()</code> of the data.frame can provide a more compact description.</p>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb168-1" data-line-number="1"><span class="kw">summary</span>(df)</a></code></pre></div>
+<pre><code>##        ID      Names       Score      Passed_Class   
+##  Min.   :1   Alice:1   Min.   :87.0   Mode :logical  
+##  1st Qu.:2   Bob  :1   1st Qu.:90.0   FALSE:1        
+##  Median :3   John :1   Median :91.0   TRUE :4        
+##  Mean   :3   Sarah:1   Mean   :90.8                  
+##  3rd Qu.:4   Vicki:1   3rd Qu.:92.0                  
+##  Max.   :5             Max.   :94.0</code></pre>
+<p>We can add columns of data to the data.frame after the fact using the <code>$</code>-operator to indicate the column name. Depending upon the data type, the summary will provide an overview of what is there.</p>
+</div>
+<div id="b-indexing-data-frames" class="section level3">
+<h3>b) Indexing Data Frames</h3>
+<p>You can access individual items within a <code>data.frame</code> by numeric index such as:</p>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb170-1" data-line-number="1">df[<span class="dv">1</span>,<span class="dv">3</span>]</a></code></pre></div>
+<pre><code>## [1] 91</code></pre>
+<p>You can slide indices along rows (which return a new <code>data.frame</code> for you)</p>
+<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb172-1" data-line-number="1">df[<span class="dv">1</span>,]</a></code></pre></div>
+<pre><code>##   ID Names Score Passed_Class
+## 1  1   Bob    91         TRUE</code></pre>
+<p>or along columns (which give you a vector of data)</p>
+<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb174-1" data-line-number="1">df[,<span class="dv">3</span>]</a></code></pre></div>
+<pre><code>## [1] 91 92 94 90 87</code></pre>
+<p>or use the <code>$</code>-operator as you did for the list data type to get direct access to a either all the data or a specific subset therein.</p>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb176-1" data-line-number="1">df<span class="op">$</span>Names[<span class="dv">3</span>]</a></code></pre></div>
+<pre><code>## [1] Vicki
+## Levels: Alice Bob John Sarah Vicki</code></pre>
+<p>Indices are ordered just like for matrices, rows first then columns. You can also pass a set of indices such as:</p>
+<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb178-1" data-line-number="1">df[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>,]</a></code></pre></div>
+<pre><code>##   ID Names Score Passed_Class
+## 1  1   Bob    91         TRUE
+## 2  2 Alice    92         TRUE
+## 3  3 Vicki    94         TRUE</code></pre>
+<p>It is also possible to use logical operators as indices. Here I select only those names in the data.frame whose score was &gt;90 and they passed popgen.</p>
+<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb180-1" data-line-number="1">df<span class="op">$</span>Names[df<span class="op">$</span>Score <span class="op">&gt;</span><span class="st"> </span><span class="dv">90</span> <span class="op">&amp;</span><span class="st"> </span>df<span class="op">$</span>Passed_Class<span class="op">==</span><span class="ot">TRUE</span>]</a></code></pre></div>
+<pre><code>## [1] Bob   Alice Vicki
+## Levels: Alice Bob John Sarah Vicki</code></pre>
+<p>This is why <code>data.frame</code> objects are very database like. They can contain lots of data and you can extract from them subsets that you need to work on. This is a VERY important feature, one that is vital for reproducible research. Keep you data in one and only one place.</p>
+</div>
+</div>
+</div>
+<div id="programming" class="section level1">
+<h1>4. Programming</h1>
+<p>One of the strengths of R as an analysis platform is that it is a language rather than a program. With programs, such as SPSS &amp; JMP, you are limited by the functionality that the designers thought would be necessary to meet the broadest audience. In R, you can rely upon simple functions or you can create entire analysis and simulation programs de novo. To do this, we need to dig into flow control and decision making processes, both of which you need for doing more in-depth programming.</p>
+<div id="function-writing" class="section level2">
+<h2>4.1. Function Writing</h2>
+<p>Here we look at how to create an R function. Writing small functions like this is a huge benefit to you as an analyst and this is a great place to start. A function in R is defined as:</p>
+<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb182-1" data-line-number="1">function_name &lt;-<span class="st"> </span><span class="cf">function</span>( arguments ) { Stuff you want the <span class="cf">function</span> to do }</a></code></pre></div>
+<p>You define a function name for whatever you like and assign it the stuff to the right. In R, the function named <code>function()</code> is a special one, it tells R that you are about to create a little routine and you want that set of code to be available to you for later use under the name of whatever you named it. This allows a tremendous amount of flexibility as you develop your own set of routines and analyses for your work. The part that actually does stuff is after the function call. It may be that the function that you create does need some data (those are the arguments) or you may not need any input in to the function (in which you pass no arguments). It all depends upon what you are creating.</p>
+<p>The key to understanding functions is that they are encapsulations of code—a shortcut for a sequence of instructions if you will not have to type over and over again. The less typing you do, the lower the probability that you will have errors (and all code has errors).</p>
+<p>Here is an example of some code that I’m going to develop into a function. This function will allow me to determine if one genotype could possibly be the offspring of the other genotype.</p>
+<div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb183-1" data-line-number="1"><span class="kw">library</span>(gstudio)</a>
+<a class="sourceLine" id="cb183-2" data-line-number="2">loc1 &lt;-<span class="st"> </span><span class="kw">locus</span>( <span class="kw">c</span>(<span class="dv">128</span>,<span class="dv">130</span>) )</a>
+<a class="sourceLine" id="cb183-3" data-line-number="3">loc2 &lt;-<span class="st"> </span><span class="kw">locus</span>( <span class="kw">c</span>(<span class="dv">128</span>,<span class="dv">128</span>) )</a>
+<a class="sourceLine" id="cb183-4" data-line-number="4"><span class="kw">cat</span>( loc1, loc2 )</a></code></pre></div>
+<pre><code>## 128:130 128:128</code></pre>
+<p>We start out with two loci, a <code>128:130</code> heterozygote and a <code>128:128</code> homozygote. These may represent repeat motifs at a microsatellite locus or some other co-dominant genotype. First, I’ll break the locus into a vector of genotypes.</p>
+<div class="sourceCode" id="cb185"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb185-1" data-line-number="1">off.alleles &lt;-<span class="st"> </span><span class="kw">alleles</span>( loc1 )</a>
+<a class="sourceLine" id="cb185-2" data-line-number="2">off.alleles</a></code></pre></div>
+<pre><code>## [1] &quot;128&quot; &quot;130&quot;</code></pre>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb187-1" data-line-number="1">mom.alleles &lt;-<span class="st"> </span><span class="kw">alleles</span>( loc2 )</a>
+<a class="sourceLine" id="cb187-2" data-line-number="2">mom.alleles</a></code></pre></div>
+<pre><code>## [1] &quot;128&quot; &quot;128&quot;</code></pre>
+<p>To be a valid potential offspring there should be at least one of the alleles in the parent that matches the allele in the offspring. The <code>intersect()</code> function returns the set of values common to both vectors.</p>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb189-1" data-line-number="1">shared &lt;-<span class="st"> </span><span class="kw">intersect</span>( off.alleles, mom.alleles )</a>
+<a class="sourceLine" id="cb189-2" data-line-number="2">shared</a></code></pre></div>
+<pre><code>## [1] &quot;128&quot;</code></pre>
+<p>If it has at least one of the alleles present (it could have both if parent and offspring are both the same heterozygote) then you cannot exclude this individual as a potential offspring. If there are no alleles in common, then the value returned is an empty vector.</p>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb191-1" data-line-number="1">loc3 &lt;-<span class="st"> </span><span class="kw">locus</span>( <span class="kw">c</span>(<span class="dv">132</span>,<span class="dv">132</span>))</a>
+<a class="sourceLine" id="cb191-2" data-line-number="2">dad.alleles &lt;-<span class="st"> </span><span class="kw">alleles</span>( loc3 )</a>
+<a class="sourceLine" id="cb191-3" data-line-number="3"><span class="kw">intersect</span>( mom.alleles, dad.alleles )</a></code></pre></div>
+<pre><code>## character(0)</code></pre>
+<p>This logic can be shoved into a function. You have to wrap it into a set of curly brackets. I use the length of the result from the intersect() to return from the function. Potential values for</p>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb193-1" data-line-number="1">potential_offspring &lt;-<span class="st"> </span><span class="cf">function</span>( parent, offspring ) {</a>
+<a class="sourceLine" id="cb193-2" data-line-number="2">  off &lt;-<span class="st"> </span><span class="kw">alleles</span>( offspring )</a>
+<a class="sourceLine" id="cb193-3" data-line-number="3">  par &lt;-<span class="st"> </span><span class="kw">alleles</span>( loc2 )</a>
+<a class="sourceLine" id="cb193-4" data-line-number="4">  shared &lt;-<span class="st"> </span><span class="kw">intersect</span>( off, par )</a>
+<a class="sourceLine" id="cb193-5" data-line-number="5">  <span class="kw">return</span>( <span class="kw">length</span>( shared ) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> )</a>
+<a class="sourceLine" id="cb193-6" data-line-number="6">}</a></code></pre></div>
+<p>Now, you can call this function anytime you need, just passing it two genotypes. If they can be offspring it returns TRUE, as in the comparison between 128:130 and 128:128 genotypes.</p>
+<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb194-1" data-line-number="1"><span class="kw">potential_offspring</span>(loc1, loc2)</a></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<p>And it returns FALSE for the comparison between 128:128 and 132:132.</p>
+<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb196-1" data-line-number="1"><span class="kw">potential_offspring</span>(loc2, loc3)</a></code></pre></div>
+<pre><code>## [1] FALSE</code></pre>
+</div>
+<div id="variable-scope" class="section level2">
+<h2>4.2. Variable Scope</h2>
+<p>There is a lot more information on writing functions and we will get into that as we progress through the text. However, it is important that I bring this up now. The value assigned to a variable is defined by its scope. Consider the following code</p>
+<div class="sourceCode" id="cb198"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb198-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="dv">10</span></a></code></pre></div>
+<p>and the function defined as</p>
+<div class="sourceCode" id="cb199"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb199-1" data-line-number="1">do_it &lt;-<span class="st"> </span><span class="cf">function</span>( x ) {</a>
+<a class="sourceLine" id="cb199-2" data-line-number="2">  x &lt;-<span class="st"> </span>x <span class="op">+</span><span class="st"> </span><span class="dv">10</span></a>
+<a class="sourceLine" id="cb199-3" data-line-number="3">  <span class="kw">return</span>( x )</a>
+<a class="sourceLine" id="cb199-4" data-line-number="4">}</a></code></pre></div>
+<p>When I call the function, the variable x that is the argument of the function is not the same variable that is in the environment that I assigned a value of 10. The x in the function argument is what we call “local to that function” in that within the curly brackets that follow (and any number of curly brackets nested within those, the value of x is given whatever was passed to the function.</p>
+</div>
+<div id="decision-making" class="section level2">
+<h2>4.3. Decision Making</h2>
+<p>We interact with our data in many ways and introspection of the values we have in the variables we are working with are of prime importance. Decision making in your code is where you evaluate your data and make a choice of outcomes based upon some criteria. Here is some example data that we can use as we explore the basics of <code>if()</code>, <code>if(){} else{}</code>, and <code>if(){} elif(){} else{}</code> coding patterns.</p>
+<div id="a-the-if-pattern" class="section level3">
+<h3>a) The if Pattern</h3>
+<p>The most basic version of decision making is asking a single question and if the answer is TRUE then do something. The <code>if(){}</code> function does this and has the form</p>
+<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb200-1" data-line-number="1"><span class="cf">if</span>( CRITERIA ) {</a>
+<a class="sourceLine" id="cb200-2" data-line-number="2">    DO_SOMETHING</a>
+<a class="sourceLine" id="cb200-3" data-line-number="3">}</a></code></pre></div>
+<p>You pass a logical statement (or something that can be coerced into a logical type) to the function as the CRITERIA and if it evaluates to <code>TRUE</code>, then the contents of the <code>DO_SOMETHING</code> are executed. If the value of <code>CRITERIA</code> is not <code>TRUE</code> the <code>DO_SOMETHING</code> is skipped entirely—it is not even seen by the interpreter.</p>
+<p>Here we can test this out using the loci defined above along with the is_heterozygote() function. This function takes one or more locus objects and returns TRUE/FALSE if they are or are not a heterozygote.</p>
+<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb201-1" data-line-number="1"><span class="kw">is_heterozygote</span>( <span class="kw">c</span>(loc1, loc2) )</a></code></pre></div>
+<pre><code>## [1]  TRUE FALSE</code></pre>
+<p>If we shove that function into the <code>if()</code> parameters we can use its evaluation of the heterozygous state of the locus to do something interesting, say tell us it is a heterozygote—it is admittedly a contrived example, but hey you try to make easy examples, it is not easy.</p>
+<div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb203-1" data-line-number="1"><span class="cf">if</span>( <span class="kw">is_heterozygote</span>(loc1) ){</a>
+<a class="sourceLine" id="cb203-2" data-line-number="2">  <span class="kw">print</span>(<span class="st">&quot;It's a het!&quot;</span>)</a>
+<a class="sourceLine" id="cb203-3" data-line-number="3">}</a></code></pre></div>
+<pre><code>## [1] &quot;It's a het!&quot;</code></pre>
+<p>If the <code>is_heterozygote()</code> function returns a value of FALSE, then the contents of the <code>if()</code> function (the stuff within the curly brackets is skipped entirely.</p>
+<div class="sourceCode" id="cb205"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb205-1" data-line-number="1"><span class="cf">if</span>( <span class="kw">is_heterozygote</span>(loc2) ){</a>
+<a class="sourceLine" id="cb205-2" data-line-number="2">  <span class="kw">print</span>(<span class="st">&quot;It's a het!&quot;</span>)</a>
+<a class="sourceLine" id="cb205-3" data-line-number="3">}</a></code></pre></div>
+<p>Notice, there was no indication of any of that code inside the curly brackets. The if-else Pattern If there are more than on thing you want to potentially do when making a decision, you can add an else clause after the if pattern. Here if is_heterozygote() returns FALSE, the contents of the else{} clause will be executed. Here is the heterozygote example</p>
+<div class="sourceCode" id="cb206"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb206-1" data-line-number="1"><span class="cf">if</span>( <span class="kw">is_heterozygote</span>(loc1) ) {</a>
+<a class="sourceLine" id="cb206-2" data-line-number="2">  <span class="kw">cat</span>(loc1, <span class="st">&quot;is a heterozygote&quot;</span>)</a>
+<a class="sourceLine" id="cb206-3" data-line-number="3">} <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb206-4" data-line-number="4">  <span class="kw">cat</span>(loc1, <span class="st">&quot;is a homozygote&quot;</span>)</a>
+<a class="sourceLine" id="cb206-5" data-line-number="5">}</a></code></pre></div>
+<pre><code>## 128:130 is a heterozygote</code></pre>
+<p>and the homozygote one</p>
+<div class="sourceCode" id="cb208"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb208-1" data-line-number="1"><span class="cf">if</span>( <span class="kw">is_heterozygote</span>(loc2) ) {</a>
+<a class="sourceLine" id="cb208-2" data-line-number="2">  <span class="kw">cat</span>(loc2, <span class="st">&quot;is a heterozygote&quot;</span>)</a>
+<a class="sourceLine" id="cb208-3" data-line-number="3">} <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb208-4" data-line-number="4">  <span class="kw">cat</span>(loc2, <span class="st">&quot;is a homozygote&quot;</span>)</a>
+<a class="sourceLine" id="cb208-5" data-line-number="5">}</a></code></pre></div>
+<pre><code>## 128:128 is a homozygote</code></pre>
+<p>There is a slightly shorter version of this that is available for the lazy programmer and lets be honest, all programmers are lazy and the more you can accomplish with fewer strokes on the keyboard the better (this is how we got emacs and vim). I generally don’t teach the shortcuts up front, but this one is short and readily apparent so it may be more helpful than confusing. The <code>ifelse()</code> function has three parts, the condition, the result if <code>TRUE</code>, and the result if <code>FALSE</code>.</p>
+<div class="sourceCode" id="cb210"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb210-1" data-line-number="1">ans &lt;-<span class="st"> </span><span class="kw">ifelse</span>( <span class="kw">is_heterozygote</span>( <span class="kw">c</span>(loc1, loc2)) , <span class="st">&quot;heterozygote&quot;</span>, <span class="st">&quot;Not&quot;</span>)</a>
+<a class="sourceLine" id="cb210-2" data-line-number="2">ans</a></code></pre></div>
+<pre><code>## [1] &quot;heterozygote&quot; &quot;Not&quot;</code></pre>
+<p>So iterating through the x vector, the condition <code>x&gt;0</code> is evaluated and if TRUE the sqrt() of the value is returned, else the NA is given. It is compact and easy to use so you may run into it often.</p>
+</div>
+<div id="b-the-if-else-pattern" class="section level3">
+<h3>b) The <code>if-else</code> Pattern</h3>
+<p>It is possible to test many conditions in a single sequence by stringing together else-if conditions. The point that is important here is that the first condition that evaluates to TRUE will be executed and all remaining ones will be skipped, even if they also are logically TRUE. This means that it is important to figure out the proper order of asking your conditions. Here is an example function that determines if none, one, or both of the genotypes passed to it are heterozygotes. By default, I step through every one of the potential options of available on this comparison.<br />
+1. The first is a heterozygote and the second one isn’t 2. The first one isn’t and the second one is 3. Both are heterozygotes 4. The last state (both are not)</p>
+<p>Here is the function.</p>
+<div class="sourceCode" id="cb212"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb212-1" data-line-number="1">which_is_het &lt;-<span class="st"> </span><span class="cf">function</span>( A, B) {</a>
+<a class="sourceLine" id="cb212-2" data-line-number="2">  <span class="cf">if</span>( <span class="kw">is_heterozygote</span>(A) <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span><span class="kw">is_heterozygote</span>(B) ) {</a>
+<a class="sourceLine" id="cb212-3" data-line-number="3">    <span class="kw">print</span>(<span class="st">&quot;First is heterozygote&quot;</span>)</a>
+<a class="sourceLine" id="cb212-4" data-line-number="4">  } <span class="cf">else</span> <span class="cf">if</span>( <span class="op">!</span><span class="kw">is_heterozygote</span>(A) <span class="op">&amp;</span><span class="st"> </span><span class="kw">is_heterozygote</span>(B) ){</a>
+<a class="sourceLine" id="cb212-5" data-line-number="5">    <span class="kw">print</span>(<span class="st">&quot;Second is heterozygote&quot;</span>)</a>
+<a class="sourceLine" id="cb212-6" data-line-number="6">  } <span class="cf">else</span> <span class="cf">if</span>( <span class="kw">is_heterozygote</span>(A) <span class="op">&amp;</span><span class="st"> </span><span class="kw">is_heterozygote</span>(B) ){</a>
+<a class="sourceLine" id="cb212-7" data-line-number="7">    <span class="kw">print</span>(<span class="st">&quot;Both are heterozygotes&quot;</span>)</a>
+<a class="sourceLine" id="cb212-8" data-line-number="8">  } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb212-9" data-line-number="9">    <span class="kw">print</span>( <span class="st">&quot;Neither are heterozygotes&quot;</span>)</a>
+<a class="sourceLine" id="cb212-10" data-line-number="10">  }</a>
+<a class="sourceLine" id="cb212-11" data-line-number="11">}</a></code></pre></div>
+<p>It is possible that the order of these CRITERIA could be changed, the important thing to remember is that the sequence of if - else if - else if etc. will terminate the very first time one of the CRITERIA is evaluated to be <code>TRUE</code>.</p>
+</div>
+</div>
+<div id="flow-control" class="section level2">
+<h2>4.4. Flow Control</h2>
+<p>Flow control is the process of iterating across objects and perhaps doing operations on those objects. The R language has several mechanisms that you can use to control the flow of a script or bit of code.</p>
+<div id="a-the-for-loop" class="section level3">
+<h3>a) The for() Loop</h3>
+<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb213-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">8</span>,<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">6</span>)</a>
+<a class="sourceLine" id="cb213-2" data-line-number="2">x</a></code></pre></div>
+<pre><code>## [1] 3 8 5 4 6</code></pre>
+<p>You can iterate through this vector using a for() loop. This is a simple function that has the form:</p>
+<div class="sourceCode" id="cb215"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb215-1" data-line-number="1"><span class="cf">for</span>( SOME_SEQUENCE ){</a>
+<a class="sourceLine" id="cb215-2" data-line-number="2">  DO_SOMETHING</a>
+<a class="sourceLine" id="cb215-3" data-line-number="3">}</a></code></pre></div>
+<p>Where the <code>SOME_SEQUENCE</code> component is a sequence of values either specified OR calculated and the <code>DO_SOMETHING</code> is the thing you want to do with each of the values in the sequence. Usually, there is a variable defined in the <code>SOME_SEQUENCE</code> component and the value of that variable is used. Here are a few examples. The first goes through the existing vector directly and assigns (in sequential order) the entries of ‘x’ to the variable val. We can then do whatever we want with the value in val (though if we change it, nothing happens to the original x vector).</p>
+<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb216-1" data-line-number="1"><span class="cf">for</span>( val <span class="cf">in</span> x ){</a>
+<a class="sourceLine" id="cb216-2" data-line-number="2">  <span class="kw">print</span>(val)</a>
+<a class="sourceLine" id="cb216-3" data-line-number="3">}</a></code></pre></div>
+<pre><code>## [1] 3
+## [1] 8
+## [1] 5
+## [1] 4
+## [1] 6</code></pre>
+<p>We can also specify a sequence directly and then use it as an index. Here I use an index variable named i to take on the integer seqeunce equal in length to the length of the original <code>x</code> variable. Then I can iterate through the original vector and use that index variable to grab the value I want.</p>
+<div class="sourceCode" id="cb218"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb218-1" data-line-number="1"><span class="cf">for</span>( i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(x)){</a>
+<a class="sourceLine" id="cb218-2" data-line-number="2">  <span class="kw">print</span>( x[i] )</a>
+<a class="sourceLine" id="cb218-3" data-line-number="3">}</a></code></pre></div>
+<pre><code>## [1] 3
+## [1] 8
+## [1] 5
+## [1] 4
+## [1] 6</code></pre>
+<p>Both give us the same output, namely a way to go through the variable <code>x</code>. However, there may be a need to use the latter approach in your calculations. For example, perhaps I want to do some other operation on the values. In this very contrived example that follows, I want to perform operations on the values in <code>x</code> depending on if they are even or odd. For the odd ones, I add the corresponding value in <code>y</code> and if not I subtract it. Sure, this is totally contrived and I cannot think of a reason why I would be doing this, but if I need to know what index (row, column or whatever) an entry is during the iteration process, then I need to use this approach over the <code>for( val in x)</code> approach.</p>
+<div class="sourceCode" id="cb220"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb220-1" data-line-number="1">y &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">5</span></a>
+<a class="sourceLine" id="cb220-2" data-line-number="2"><span class="cf">for</span>( i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(x)){</a>
+<a class="sourceLine" id="cb220-3" data-line-number="3">  <span class="cf">if</span>( x[i] <span class="op">%%</span><span class="st"> </span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb220-4" data-line-number="4">    <span class="kw">print</span>( x[i] <span class="op">+</span><span class="st"> </span>y[i])</a>
+<a class="sourceLine" id="cb220-5" data-line-number="5">  <span class="cf">else</span></a>
+<a class="sourceLine" id="cb220-6" data-line-number="6">    <span class="kw">print</span>( x[i] <span class="op">-</span><span class="st"> </span>y[i] )</a>
+<a class="sourceLine" id="cb220-7" data-line-number="7">}</a></code></pre></div>
+<pre><code>## [1] 4
+## [1] 6
+## [1] 8
+## [1] 0
+## [1] 1</code></pre>
+</div>
+<div id="b-short-circuiting-the-loop" class="section level3">
+<h3>b) Short Circuiting the Loop</h3>
+<p>It is possible to short circuit the looping process using the keywords next and break, though in my programming style, I consider their use in my source files as evidence of inelegant code. That said, you may need them on occasion.</p>
+<p>The next keyword basically stops all commands after that during the current iteration of the loop. It does not terminate the loop itself, it just stops the commands that follow it this time through. Here is an example that uses the modulus operator, <code>%%</code> (e.g., the remainder after division), to print out only those numbers that are divisible by three.</p>
+<div class="sourceCode" id="cb222"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb222-1" data-line-number="1"><span class="cf">for</span>( i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">20</span> ){</a>
+<a class="sourceLine" id="cb222-2" data-line-number="2">  <span class="cf">if</span>( i <span class="op">%%</span><span class="st"> </span><span class="dv">3</span> )</a>
+<a class="sourceLine" id="cb222-3" data-line-number="3">    <span class="cf">next</span></a>
+<a class="sourceLine" id="cb222-4" data-line-number="4">  <span class="kw">cat</span>(<span class="st">&quot;The value of i =&quot;</span>,i,<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</a>
+<a class="sourceLine" id="cb222-5" data-line-number="5">}</a></code></pre></div>
+<pre><code>## The value of i = 3 
+## The value of i = 6 
+## The value of i = 9 
+## The value of i = 12 
+## The value of i = 15 
+## The value of i = 18</code></pre>
+<p>The use of break to exit the loop entirely is perhaps more commonly encountered. When this keyword is encountered, the loop terminates immediately, as if it reached the send of the sequence.</p>
+<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb224-1" data-line-number="1"><span class="cf">for</span>( i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>){</a>
+<a class="sourceLine" id="cb224-2" data-line-number="2">  <span class="cf">if</span>( i <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span> )</a>
+<a class="sourceLine" id="cb224-3" data-line-number="3">    <span class="cf">break</span></a>
+<a class="sourceLine" id="cb224-4" data-line-number="4">  <span class="kw">cat</span>(<span class="st">&quot;The value of i=&quot;</span>,i,<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>)</a>
+<a class="sourceLine" id="cb224-5" data-line-number="5">}</a></code></pre></div>
+<pre><code>## The value of i= 1 
+## The value of i= 2</code></pre>
+</div>
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>The word <em>data</em> is plural, datum is singular<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+
+<script type="text/javascript">
+window.onload = function() {
+  var i, fig = 1, caps = document.getElementsByClassName('caption');
+  for (i = 0; i < caps.length; i++) {
+    var cap = caps[i];
+    if (cap.parentElement.className !== 'figure' || cap.nodeName !== 'P')
+      continue;
+    cap.innerHTML = '<span>Figure ' + fig + ':</span> ' + cap.innerHTML;
+    fig++;
+  }
+  fig = 1;
+  caps = document.getElementsByTagName('caption');
+  for (i = 0; i < caps.length; i++) {
+    var cap = caps[i];
+    if (cap.parentElement.nodeName !== 'TABLE') continue;
+    cap.innerHTML = '<span>Table ' + fig + ':</span> ' + cap.innerHTML;
+    fig++;
+  }
+}
+</script>
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
