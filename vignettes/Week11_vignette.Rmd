@@ -41,13 +41,16 @@ library(LandGenCourse)
 
 The packages 'LEA' and 'qvalue' are available from the 'Bioconductor' repository. 
 ```{r message=FALSE, warning=TRUE}
-if(!require(qvalue)) {
-  source("http://bioconductor.org/biocLite.R")
-  biocLite("qvalue", ask=FALSE, suppressUpdates=TRUE)  
-} 
-if(!require(LEA)) {
-  source("http://bioconductor.org/biocLite.R")
-  biocLite("LEA", ask=FALSE, suppressUpdates=TRUE)
+if(!requireNamespace("qvalue", quietly = TRUE)) {  
+  if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+  BiocManager::install("qvalue")
+}
+
+if(!requireNamespace("LEA", quietly = TRUE)) {  
+  if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+  BiocManager::install("LEA")
 }
 #require(LEA)
 #require(qvalue)
@@ -56,7 +59,7 @@ if(!require(LEA)) {
 The following 'setup chunk' is used to set the root address of file paths to the folder 'output' in the project folder.
 
 ```{r setup}
-knitr::opts_knit$set(root.dir = normalizePath("../output")) 
+knitr::opts_knit$set(root.dir = normalizePath(paste0(here::here(),"/output"))) 
 ```
 
 ## 2. Import and prepare the data
@@ -287,7 +290,7 @@ Let's make a quick plot of the RDA output using the default plotting in `vegan`:
 
 ```{r, simple_plot, fig.width=4, fig.height=4, fig.show='hold'}
 plot(wolf.rda, scaling=3)          # default is axes 1 and 2
-plot(wolf.rda, c(1,3), scaling=3)  # axes 1 and 3
+plot(wolf.rda, choices = c(1,3), scaling=3)  # axes 1 and 3
 ```
 
 Here, the SNPs are in red (in the center of each plot), and the individuals are the black circles. The blue vectors are the environmental predictors. The relative arrangement of these items in the ordination space reflects their relationship with the ordination axes, which are linear combinations of the predictor variables.

@@ -38,7 +38,7 @@ library(PopGenReport )   #load the package
 #library(secr)            #to create a random habitat
 #library(gdistance)
 #library(mmod)
-#library(raster)
+library(raster)
 #library(tibble)
 #library(here)
 #library(ggplot2)
@@ -85,14 +85,14 @@ Note: there may be a warning about non-missing arguments, you can ignore it.
 ```{r }
 r <- secr::raster(secr::randomHabitat(secr::as.mask(tempgrid), 
                                       p = 0.5, A = 0.5))
-table(raster::values(r), exclude="")
+table(values(r), exclude="")
 ```
 
 Now we set all missing values (i.e., non-habitat) to 10 and verify this again with 'table'.  
 
 ```{r }
-raster::values(r)[is.na(values(r))==T]<-10
-table(raster::values(r), exclude="")
+values(r)[is.na(values(r))==T]<-10
+table(values(r), exclude="")
 par(mar=c(1,1,1,1))
 plot(r)
 ```
