@@ -1,7 +1,7 @@
 Package: LandGenCourse
 Type: Package
 Title: Interface for course "Landscape Genetic Data Analysis with R"
-Version: 1.4.3
+Version: 1.4.4
 Date: 2018
 Author: Helene Wagner
 Maintainer: Helene Wagner <hhwagner1@gmail.com>
