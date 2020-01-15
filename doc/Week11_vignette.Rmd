@@ -59,6 +59,7 @@ if(!requireNamespace("LEA", quietly = TRUE)) {
 The following 'setup chunk' is used to set the root address of file paths to the folder 'output' in the project folder.
 
 ```{r setup}
+if(!dir.exists(paste0(here::here(),"/output"))) dir.create(paste0(here::here(),"/output"))
 knitr::opts_knit$set(root.dir = normalizePath(paste0(here::here(),"/output"))) 
 ```
 

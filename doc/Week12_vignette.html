@@ -12,7 +12,7 @@
 
 <meta name="author" content="Caren Goldberg" />
 
-<meta name="date" content="2020-01-05" />
+<meta name="date" content="2020-01-14" />
 
 <title>Week 12: Model Selection</title>
 
@@ -339,7 +339,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Week 12: Model Selection</h1>
 <h4 class="author">Caren Goldberg</h4>
-<h4 class="date">2020-01-05</h4>
+<h4 class="date">2020-01-14</h4>
 
 
 <div id="TOC">
@@ -409,8 +409,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="d-import-data" class="section level3">
 <h3>d) Import data</h3>
 <p>First, read in the dataset. It is named CSF (Columbia spotted frog) to differentiate it from the RALU dataset you have used in previous labs (same species, very different landscapes).</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">CSFdata &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;CSF_network.csv&quot;</span>,</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">                                <span class="dt">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>))</a>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">CSFdata &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;CSF_network.csv&quot;</span>, </a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">                                        <span class="dt">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>))</a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw">head</span>(CSFdata) </a></code></pre></div>
 <pre><code>##   Id         Name  logDc.km   LENGTH     slope solarinso    soils         ag
 ## 1  1 CeGr to FeCr -5.664895 5449.643 11.328851  16332.75 thirteen 0.00000000

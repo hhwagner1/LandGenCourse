@@ -81,17 +81,18 @@ We also import site-level data from Tables 2 - 5 in Lamy et al. (2012). Use '?dd
 
 ```{r}
 data(dd.site, package = "LandGenCourse")
-tibble::as.tibble(dd.site)
+tibble::as_tibble(dd.site)
 ?dd.site
 ```
-With the help file for 'dd.site', check the meaning of the following explanatory variables:
+
+**Questions**: with the help file for 'dd.site', check the meaning of the following explanatory variables:
 
 - What does 'APE' refer to, and how is it different from 'APA'?
 - What does 'NLT' represent, and is it calculated independently from 'Size'?
 - What does 'Type' mean, and what about 'V' and 'D'?
 - To understand how connectivity 'C' and stability 'Stab' were calculated, you'll need to consult Lamy et al. (2012).
 
-Hypotheses - which explanatory variables would you expect to affect:
+**Your hypothesis**: which explanatory variables would you expect to affect:
 
 - Genetic diversity within local populations?
 - Genetic differentiation among local populations?
@@ -139,7 +140,7 @@ amova.test <- ade4::randtest(amova.result, nrepet = 999)
 amova.test
 ```
 
-Questions:
+**Questions**: 
 
 - At what level is there stronger differentiation, within or among clusters? 
 - What does this mean biologically?
@@ -167,7 +168,7 @@ cor(dd.spatial@data[ , c("FST.GESTE", "NLT", "C", "D")],
     use="pairwise.complete")
 ```
 
-Questions:
+**Questions**: 
 
 - Is there genetic evidence for higher drift in small populations?
 - Is there genetic evidence for higher gene flow among well connected patches?
@@ -264,7 +265,7 @@ par(mfrow=c(1,1))
 ## 4. What determines genetic diversity?
 
 - Can the same predictors (population size and connectivity) explain genetic diversity? 
-- Is patch size ('Size') a good proxy for population size (as often used in ecological studies)? 
+- Is patch size ('Size') a good proxy for population size (as often used in ecological studies)?
 - Which measure of genetic diversity shows the stronger response, allelic richness (rarefied) or expected heterozygosity?
 
 ### a) Correlation matrix
@@ -273,6 +274,8 @@ par(mfrow=c(1,1))
 cor(dd.spatial@data[, c("RA", "He", "Size", "NLT", "C", "D")],
     use="pairwise.complete")
 ```
+
+**Questions**: 
 
 - How strongly are the two diversity measures 'RA' and 'He' correlated?
 - Are 'NLT' and 'C' strongly correlated with the diversity measures 'RA' and 'He'? 
@@ -402,6 +405,8 @@ More than 20 sites in each group would have been needed to detect a large effect
 Hence, these particular results are inconclusive. There was a trend showing a large effect size but power was very low. This aspect of the study should ideally be repeated with a larger sample size before reaching any conclusions. 
 
 Note however that using additional evidence (e.g., population assignment tests), Lamy et al. (2012) concluded that extinctions were in fact less common in this system than previously assumed – in many cases of apparent extinction, individuals may still be present but just not detected.
+
+
 
 ```{r message=FALSE, warning=TRUE, include=FALSE}
 LandGenCourse::detachAllPackages()

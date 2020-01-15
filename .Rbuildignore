@@ -4,3 +4,5 @@
 ^output$
 ^vignettes\TempVignettes
 
+^doc$
+^Meta$

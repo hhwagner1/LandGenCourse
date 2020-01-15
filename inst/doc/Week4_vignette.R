@@ -19,7 +19,7 @@ dd.ecogen
 
 ## -----------------------------------------------------------------------------
 data(dd.site, package = "LandGenCourse")
-tibble::as.tibble(dd.site)
+tibble::as_tibble(dd.site)
 ?dd.site
 
 ## -----------------------------------------------------------------------------
@@ -144,6 +144,34 @@ pwr::pwr.t2n.test(n1=7, n2=5, d=-0.8, alternative = "less")
 pwr::pwr.t.test(power = 0.8, d = -0.8, alternative = "less")
 pwr::pwr.t.test(power = 0.8, d = -0.5, alternative = "less")
 
-## ----message=FALSE, warning=TRUE, include=FALSE-------------------------------
-LandGenCourse::detachAllPackages()
+## -----------------------------------------------------------------------------
+library(gstudio)
+library(dplyr)
+library(EcoGenetics)
+library(ggplot2)
+
+## -----------------------------------------------------------------------------
+Pulsatilla.gstudio <- read_population(path=system.file("extdata",
+                           "pulsatilla_genotypes.csv", 
+                           package = "LandGenCourse"), 
+                   type="column", locus.columns=c(6:19), 
+                   phased=FALSE, sep=",", header=TRUE)
+
+## -----------------------------------------------------------------------------
+Adults <- Pulsatilla.gstudio %>% filter(OffID == 0)
+
+## -----------------------------------------------------------------------------
+Adults.genind <- adegenet::df2genind(X=Adults[,c(6:12)], sep=":", ncode=NULL,   
+                          ind.names=Adults$ID, loc.names=NULL, 
+                          pop=Adults$Population, NA.char="", ploidy=2, 
+                          type="codom", strata=NULL, hierarchy=NULL)
+Adults.genind
+
+## -----------------------------------------------------------------------------
+
+
+## -----------------------------------------------------------------------------
+Adults.ecogen <- EcoGenetics::gstudio2ecogen(Adults, struct = "Population",
+                     lat = "Y", lon = "X")
+Adults.ecogen
 

@@ -1,6 +1,6 @@
 ---
-title: "Week 10: Landscape Resistance"
-author: "Melanie Murphy, Jeff Bowman and Robby Marrotte"
+title: "Week 10: Landscape resistance"
+author: "Melanie Murphy, Jeff Bowman, Robby Marrotte and Helene Wagner"
 date: "`r Sys.Date()`"
 show_toc: true
 output:
@@ -9,7 +9,7 @@ output:
     fig_width: 4 
     fig_height: 3.5
 vignette: >
-  %\VignetteIndexEntry{Week 10: Landscape Resistance}
+  %\VignetteIndexEntry{Week 10: Landscape resistance}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -64,8 +64,8 @@ library(ggplot2)
 First, read in the dataset. It is named CSF (Columbia spotted frog) to differentiate it from the RALU dataset you have used in previous labs (same species, very different landscapes). 
 
 ```{r}
-CSFdata <- read.csv(system.file("extdata", "CSF_network.csv",
-                                package = "LandGenCourse"))
+CSFdata <- read.csv(system.file("extdata", "CSF_network.csv", 
+                                        package = "LandGenCourse"))
 head(CSFdata) 
 ```
 

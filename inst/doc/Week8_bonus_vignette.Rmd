@@ -219,6 +219,12 @@ gen <- import(x); c(class(gen[[1]]), class(gen))
 
 Binary files are not readable by users (or other software) but provide an efficient way of storing data. Let's compare file size and input/output speed between text files (csv) and different types of binary files (RData, rds, feather). We'll also export the 'csv' file so that we have it in the same location.
 
+First we make sure an `output` folder exists in the R project:
+
+```{r}
+if(!dir.exists(paste0(here::here(),"/output"))) dir.create(paste0(here::here(),"/output"))
+```
+
 ```{r binary}
 gen <- import(myFile)
 

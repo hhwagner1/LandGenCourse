@@ -5,8 +5,8 @@ library(ggplot2)
 #require(usdm)
 
 ## -----------------------------------------------------------------------------
-CSFdata <- read.csv(system.file("extdata", "CSF_network.csv",
-                                package = "LandGenCourse"))
+CSFdata <- read.csv(system.file("extdata", "CSF_network.csv", 
+                                        package = "LandGenCourse"))
 head(CSFdata) 
 
 ## -----------------------------------------------------------------------------

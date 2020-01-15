@@ -67,9 +67,10 @@ Below, however, we'll import it from a comma separated file (.csv), as this is t
 
 ### b) Excel file 
 
-First we need to copy the file `ralu.loci.csv` to the `downloads` folder inside your project folder.
+First we need to copy the file `ralu.loci.csv` to the `downloads` folder inside your project folder. The first line checks that the folder `downloads` exists and creates it if needed.
 
 ```{r}
+if(!dir.exists(paste0(here(),"/downloads"))) dir.create(paste0(here(),"/downloads"))
 file.copy(system.file("extdata", "ralu.loci.csv", package = "LandGenCourse"),
           paste0(here(), "/downloads/ralu.loci.csv"), overwrite=FALSE)
 ```

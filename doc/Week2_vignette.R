@@ -77,6 +77,9 @@ points(Sites.sp, pch=21, col="black", bg="white")
 Sites.sp@data <- data.frame(Sites.sp@data, extract(RasterMaps, Sites.sp))
 
 ## -----------------------------------------------------------------------------
+mean(Sites.sp@data$ffp)
+
+## -----------------------------------------------------------------------------
 table(Sites.sp@data$nlcd)
 
 ## -----------------------------------------------------------------------------
@@ -284,6 +287,7 @@ forest_500_df <- dplyr::left_join(forest_500_df, SiteName_df, by = c("plot_id" =
 
 forest_500_df
 
-## ----message=FALSE, warning=TRUE----------------------------------------------
+## ----message=FALSE, warning=TRUE, include=FALSE-------------------------------
+# The following code detaches all packages except for some basic ones:
 LandGenCourse::detachAllPackages()
 
