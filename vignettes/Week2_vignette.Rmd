@@ -79,6 +79,8 @@ class(Sites)
 head(Sites)
 ```
 
+**Question**: What are the variable names for the spatial coordinates?
+
 To illustrate importing spatial data from Excel, here we export the data as a csv file, import it again as a data frame, then convert it to a SpatialPointsDataFrame. First we create a folder `output` if it does not yet exist. 
 
 Note: to run the code, remove all the hashtags `#` at the beginning of the lines to uncomment them. This part assumes that you have writing permission on your computer. Alternatively, try setting up your R project folder on an external drive where you have writing permission.
@@ -132,6 +134,8 @@ Sites.sp.longlat <- sp::spTransform(Sites.sp,
                       CRSobj = tmaptools::get_proj4("longlat")$proj4string)
 head(Sites.sp.longlat@coords)
 ```
+
+**Question**: Where on earth is this? You can enter the coordinates from the "longlat" projection in Google maps. Note that Google expects the Latitude (Y coordinate) first, then the Longitude (X coordinate). Here, coords.x1 is the longitude (X) and coords.x2 is the latitude (Y). Thus, to locate the first site in Google maps, you will need to enter `45.15708, -114.5977`. Where is it located?  
 
 ### d) Access data in 'SpatialPointsDataFrame'
 
@@ -227,6 +231,8 @@ plot(raster(RasterMaps, layer="ffp"), col=rev(rainbow(9)))
 points(Sites.sp, pch=21, col="black", bg="white")
 ```
 
+**Question**: Recall that 'ffp' stands for frost free period (in days). What do you think is the average length of the frost free period at theses sampling sites?
+
 ### c) Extract raster values at sampling locations
 
 The following code adds six variables to the data slot of Sites.sp. Technically we combine the columns of the existing data frame `Sites.sp` with the new columns in a new data frame with the same name. 
@@ -236,13 +242,22 @@ R notices the difference in projection (CRS) between the sampling point data and
 ```{r}
 Sites.sp@data <- data.frame(Sites.sp@data, extract(RasterMaps, Sites.sp))
 ```
-What land cover type is assigned to the most sampling units? Let's tabulate them.
 
-Note: land cover types are coded by numbers. A total of 21 sites are classified as `42`. Check here what the numbers mean: https://www.mrlc.gov/nlcd06_leg.php
+Let's calcualate the mean length of the frost free period for these sites:
+
+```{r}
+mean(Sites.sp@data$ffp)
+```
+
+What land cover type is assigned to the most sampling units? Let's tabulate them.
 
 ```{r}
 table(Sites.sp@data$nlcd)
 ```
+
+Note: land cover types are coded by numbers. Check here what the numbers mean: https://www.mrlc.gov/data/legends/national-land-cover-database-2016-nlcd2016-legend
+
+**Question**: A total of 21 sites are classified as `42`. What is this most frequent land cover type? 
 
 
 ## 4. Calculate landscape metrics
@@ -270,7 +285,9 @@ landscapemetrics::list_lsm(level = c("class", "landscape"), type = "aggregation 
                            simplify = TRUE)
 ``` 
 
-### a) Calculate patch-, class- and landscape level landscape metrics 
+### a) Calculate patch-, class- and landscape level landscape metrics
+
+Note: This section explains different ways of calculating a selection of landscape metrics from a raster map with 'landscapemetrics'. If this seems too technical for a first go, you may jump to section 4b.
 
 To calculate a single metric, just use the corresponding function. The result of all landscape metric functions is always an identically structured `tibble` (i.e. an advanced `data.frame`). The first coloumn is the layer id (only interesting for e.g. a `RasterStack`). The second coloumn specifies the level ('patch', 'class' or 'landscape'). The third coloumn is the class ID (`NA` on landscape level) and the fourth coloumn is the patch ID (`NA` on class- and landscape level). Lastly, The fith coloumn is the abbreviation of the metric and finally the corresponding value in the last coloumn.
 
@@ -280,6 +297,11 @@ percentage_class <- lsm_c_pland(landscape = nlcd)
 
 percentage_class
 ```
+
+**Questions**:
+
+- What percentage of the overall landscape (total map) is evergreen forest (class 42)?
+- What percentage of the landscape is classified as wetlands (classes 90 and 95)?
 
 Because the resulting `tibble` is type stable, you can easily row-bind (`rbind`) different metrics (even of different levels): 
 
@@ -367,15 +389,15 @@ nlcd_subset_full_b <- dplyr::left_join(x = nlcd_subset,
 nlcd_subset_full_b
 ``` 
 
-# b) Calculate patch-level landscape metrics for 'Evergreen Forest'
+### b) Calculate patch-level landscape metrics for 'Evergreen Forest'
 
-To only get the results for class 42 (forest), you can just `dplyr::filter()` the `tibble` (or use any other subset method you prefer). 
+To only get the results for class 42 (evergreen forest), you can just `dplyr::filter()` the `tibble` (or use any other subset method you prefer). 
 
 ```{r}
 forest_patch_metrics <- dplyr::filter(nlcd_patch, class == 42)
 ```
 
-All functions make heavy use of connected components labeling to delineate patches (neighbouring cells of the same class). To get all patches of every class you can just use `get_patches()`. To get only a certain class, just specify the `class` argument and the neighbourhood rule can be chosen between 8-neighbour rule or 4-neighbour rule.
+All functions make heavy use of connected components labeling to delineate patches (neighbouring cells of the same class). To get all patches of every class you can just use `get_patches()`. To get only a certain class, just specify the `class` argument and the neighbourhood rule can be chosen between 8-neighbour rule or 4-neighbour rule with the argument `directions`.
 
 ```{r}
 # connected components labeling of landscape
@@ -412,6 +434,8 @@ Lastly, you can plot the map and fill each patch with the corresponding metric v
 show_lsm(landscape = nlcd, class = c(42, 52), what = "lsm_p_area", labels = FALSE)
 ``` 
 
+### c) Extract forest patch size at samplig locations
+
 Let's add forest patch size to the `Sites.sp` data. To extract landscape metrics of the patch in which each sampling point is located, use `extract_lsm()`. Which metrics are extracted can be specified by the `what` argument (similar to `calculate_lsm()`). However, only patch-level metrics are available. Please be aware, that the resulting `tibble` now has a new column, namely the ID of the sampling point (in the same order as the input points).
 
 ```{r}
@@ -427,18 +451,16 @@ Sites.sp@data$ForestPatchSize <- patch_size_sp_forest$value
 Sites.sp@data$ForestPatchSize
 ```
 
-Plot a bubble map of forest patch size at each sampling location.
+### d) Plot a bubble map of forest patch size at sampling locations
 
 ```{r fig.width=4.45, fig.height=4}
 par(mar = c(3,3,1,2))
 bubble(Sites.sp, "ForestPatchSize", fill = FALSE, key.entries = as.numeric(names(table(Sites.sp@data$ForestPatchSize))))
 ```
 
-## 5. Sample landscape metrics at sampling locations
+## 5. Sample landscape metrics within buffer around sampling locations
 
-### a) Calculate metrics in a buffer around sampling locations
-
-The package `landscapemetrics` has a built-in function to sample metrics in a buffer around sampling locations `y`. You can choose the `shape` of the buffer (either a circle or a square) and, with the argument `what`, which metrics to sample (similar to `calculate_lsm()`).
+The package `landscapemetrics` has a built-in function `sample_lsm` to sample metrics in a buffer around sampling locations, which are provided with argument `y`. You can choose the `shape` of the buffer window (either a circle or a square) and, with the argument `what`, which metrics to sample (similar to `calculate_lsm()`).
 
 The argument `size` specifies the buffer size in map units (e.g., meters): radius for circles, half of the side length for squares. Here, the value `size = 500` results in a square window of 1000 m x 1000 m centered at the sampling location. 
 
@@ -570,10 +592,35 @@ forest_500_df
 
 Done!
 
-Note: check this week's bonus material if you want to see how to use the new 'sf' library for spatial data, and how to export the site data to an shapefile that you can import into a GIS.
+Note: check this week's bonus material if you want to see how to use the new 'sf' library for spatial data, and how to export the site data to a shapefile that you can import into a GIS.
 
-The following code detaches all packages except for some basic ones:
+## 6. R Exercise Week 2
 
-```{r message=FALSE, warning=TRUE}
+**Task:** Create a bubble plot of the number of genotyped individuals in the dataset `pulsatilla_genotypes.csv`, using Latitude/Longitude coordinates.
+
+**Hints:**
+
+a) **Load libraries**: Load libraries `gstudio`, `dplyr`, `tibble` and `sp`. 
+b) **Import data**: Re-use your code from Week 1 exercise to import the dataset `pulsatilla_genotypes.csv` into `gstudio`. Recall that the resulting object is a data.frame. Check the variables with function `str`. Which variables contain the sites and the spatial coordinates?
+c) **Summarize by site**: Use the function `group_by` from library `dplyr` to group individuals (rows) by site (using pipe notation: `%>%`), and add the function `summarize` to count the number of genotyped individuals per population (i.e., sampling site). Recall that this can be done with nesting the function `n` within `summarize`:  
+`summarize(nIndiv = n())`.   
+Write the result into a new object `Pulsatilla`.
+d) **Add mean coordinates**: You can nest multiple functions within `summarize` and separate them with a comma. E.g., to calculate both sample size and the mean of a variable `myVar`, you could write:  
+`summarize(nIndiv = n(), myMean = n(myVar))`  
+Modify your code to calculate number of genotyped individuals for each site and their mean X and Y coordinates. Your object 'Pulsatilla' should now have three columns, one with the number of individuals and two with the mean coordinates. Display the dataset with `as_tibble` to check.
+e) **Convert to spatial object**: Modify code from section 2.a to convert your dataframe `Pulsatilla` to a "SpatialPointsDataFrame" object (package `sp`). Make sure to adjust the correct variable names for the coordinates (i.e., the variable names that you assigned in the previous step for the mean X and Y coordinates).
+f) **Specify known projection**: Specify the proj4string as follows:   
+`proj4string(Pulsatilla) <- CRS("+init=epsg:31468")`
+g) **Transform projection**: Adapt code from section 2.c to transform the projection to the "longlat" coordinate system, and write it into an object `Pulsatilla.longlat`. Display the `coords` slot of `Pulsatilla.longlat` and check on Google maps where the first site is located.
+h) **Create bubble plot**: Adapt code from section 4.c to create a bubble plot of the number of individuals per population. Note: you may drop the argument `key.entries` as it has a default.
+i) **Save data as R object**: Save the object `Pulsatilla.longlat` as an R object using the following code:  
+`saveRDS(Pulsatilla.longlat, file = paste0(here::here(), "/output/Pulsatilla.longlat.rds"))`.  
+We will need it for a later R exercise.
+
+**Question:** Where on earth are the sites in the *Pulsatilla* dataset located?
+
+
+```{r message=FALSE, warning=TRUE, include=FALSE}
+# The following code detaches all packages except for some basic ones:
 LandGenCourse::detachAllPackages()
 ```
