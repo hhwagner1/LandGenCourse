@@ -49,6 +49,7 @@ All required packages should have been installed already when you installed 'Lan
 library(LandGenCourse)
 library(EcoGenetics)
 library(methods)
+library(ggplot2)
 #require(tibble)
 #require(poppr)
 #require(ade4)
@@ -56,7 +57,6 @@ library(methods)
 #require(effsize)
 #require(sp)
 #require(ggmap)
-#require(ggplot2)
 #require(car)  
 ```
 
@@ -175,7 +175,30 @@ cor(dd.spatial@data[ , c("FST.GESTE", "NLT", "C", "D")],
 - Are the two factors confounded for this data set?
 - Would you prefer 'C' or 'D' to quantify patch connectivity? Does it matter? What does this mean biologically?
 
-### b) Regression model
+### b) Scatterplots
+
+Let's plot the response variable FST.GESTE against each of the two predictors NLT and C. Here, we use functions from the package `ggplot2` (already loaded) to define two ggplot objects `NLT.plot` and `C.plot`, then we plot them side-by-side with the function `cowplot::plot_grid`. 
+
+- For NLT.plot, we define the dataset as `dd.spatial@data`, the x-axis as variable NLT, the y-axis as variable FST.GESTE, and the labels as variable SITE. 
+- We add points with geom_point.
+- We add a regression line (`geom_smooth`), make it linear (`method = lm`) and add a shaded area for plus/minus 1 SE of the mean for a given value of x (`se = TRUE`).
+- We add backfilled labels (`geom_label`), define their size (`size`), and move them up a little along the y-axis (`nudge_y`)
+
+```{r fig.height=4, fig.width=8}
+NLT.plot <- ggplot(dd.spatial@data, aes(x=NLT, y=FST.GESTE, label=SITE)) + 
+  geom_point() + 
+  geom_smooth(method = lm, se = TRUE) +
+  geom_text(size=2, nudge_x=0, nudge_y=0.01, check_overlap=TRUE)
+
+C.plot <- ggplot(dd.spatial@data, aes(x=C, y=FST.GESTE, label=SITE)) + 
+  geom_point() +
+  geom_smooth(method = lm, se = TRUE) +
+  geom_text(size=2.5, nudge_x=0, nudge_y=0.01, check_overlap=TRUE)
+
+cowplot::plot_grid(NLT.plot, C.plot)
+```
+
+### c) Regression model
 
 The two predictors 'NLT' and 'C' are not strongly correlated. We'll fit a regression model with both predictors. Here we use function 'scale' to standardize each variable, so that we can interpret the regression slope coefficients as partial correlation coefficients (beta coefficients). 
 
@@ -189,7 +212,7 @@ Is the model valid? Let's check the residual plots:
 
 ```{r fig.height=7, fig.width=8}
 par(mfrow=c(2,2))
-plot(mod.diff, labels.id = names(residuals(mod.diff)))
+plot(mod.diff, labels.id = dd.spatial@data$SITE)
 par(mfrow=c(1,1))
 ```
 
@@ -199,7 +222,7 @@ If we had more than two predictors, it would be a good idea to calculate varianc
 car::vif(mod.diff)
 ```
 
-### c) Which populations don't fit the general pattern?
+### d) Which populations don't fit the general pattern?
 
 Let's plot the residuals in space. The function 'bubble' from the package 'sp' evaluates the projection information of the SpatialPointsDataFrame 'dd.spatial'. 
 
@@ -210,21 +233,21 @@ sp::bubble(dd.spatial, zcol = "Residuals", col = c("red", "blue"))
 
 Or on a map from the internet, using 'qmplot' from the 'ggmap' package. It expects lat-lon coordinates that are stored in a data frame, not a SpatialPointsDataFrame. If we convert 'dd.spatial' with the function  'as.data.frame', R will return a data frame with the site variables and with the coordinates appended as additional columns. The code below does the following (see Week 4 video, part 2):
 
-- Creates an index 'a' that lists identifies the two potential outliers by their row names (logical),
-- Creates a vectors 'a2' that contains the row numbers of the potential outliers, 
-- Grabs a grayscale map from the internet, plots all ponds with size and color according to their residuals, and stores the resulting map in the object 'myMap'.
-- Plots the map and adds labels for the two potential outliers.
-
+- Creates an index `a` that lists identifies the two potential outliers by their SITE names (logical),
+- Creates a vectors `a2` that contains the row numbers of the potential outliers, 
+- Grabs a grayscale map from the internet, plots all ponds with size and color according to their residuals, and stores the resulting map in the object `myMap`.
+- Plots the map and adds labels for the two potential outliers.The argument `size` affects font size and `label.padding` determines the size of the textbox for the label. 
 
 ```{r fig.height=4.5, fig.width=7, message=FALSE}
-a <- is.element(rownames(dd.spatial@data), c("32", "42"))
+a <- is.element(dd.spatial@data$SITE, c("DESB", "PTC"))
 a2 <- c(1:nrow(dd.spatial@data))[a]
 myMap <- ggmap::qmplot(Longitude, Latitude,  data = as.data.frame(dd.spatial),
-              source = "stamen", maptype = "toner-lite",  
+              source = "stamen", maptype = "toner-lite", force=TRUE,  
               col = sign(Residuals), size = abs(Residuals))
-myMap + ggplot2::geom_text(data = as.data.frame(dd.spatial[a2,]),
+myMap + ggplot2::geom_label(data = as.data.frame(dd.spatial[a2,]),
                    mapping = ggplot2::aes(Longitude, Latitude, label = SITE),
-                   size = 4, col = "black", vjust = 0, nudge_y = -0.015)
+                   size = 4, label.padding = unit(0.2, "lines"), 
+                   col = "black", vjust = 0, nudge_x = 0, nudge_y = -0.015)
 ```
 
 Exports the last plot as a 'png' (Portable Network Graphics) file, specifying canvas size and resolution. To run the code, uncomment by removing '#' at the beginning of each line.
@@ -241,7 +264,7 @@ What might explain the large residuals for the two sites 'PTC' and 'DESB'?
 - Site 'PTC' lies on the tip of a peninsula and thus is very isolated geographically.
 - Site 'DESB' is a very instable site that can frequently dry out during the dry season, as it is shallow and lies in the comparatively dry northern part of the island. In addition, although 'DESB' is surrounded by many ponds, these ponds never get connected to 'DESB' hydrologically during the rainy season. Therefore, immigration can only occur via cattle or birds, which are much less important drivers of gene flow than immigration by hydrological connectivity during the rainy season.  
 
-### d) Regression model without outliers
+### e) Regression model without outliers
 
 We can use the same index 'a' to exclude the potential outliers from the regression model:
 
@@ -257,7 +280,7 @@ summary(mod.diff.minus2)
 
 ```{r fig.height=7, fig.width=8}
 par(mfrow=c(2,2))
-plot(mod.diff.minus2, labels.id = names(residuals(mod.diff)))
+plot(mod.diff.minus2, labels.id = dd.spatial@data$SITE[-a2])
 par(mfrow=c(1,1))
 ```
 
@@ -294,7 +317,7 @@ summary(mod.RA)
 
 ```{r fig.height=7, fig.width=8}
 par(mfrow=c(2,2))
-plot(mod.RA)
+plot(mod.RA, labels.id = dd.spatial@data$SITE)
 par(mfrow=c(1,1))
 ```
 
@@ -307,7 +330,7 @@ summary(mod.He)
 
 ```{r fig.height=7, fig.width=8}
 par(mfrow=c(2,2))
-plot(mod.He)
+plot(mod.He, labels.id = dd.spatial@data$SITE)
 par(mfrow=c(1,1))
 ```
 
@@ -405,6 +428,35 @@ More than 20 sites in each group would have been needed to detect a large effect
 Hence, these particular results are inconclusive. There was a trend showing a large effect size but power was very low. This aspect of the study should ideally be repeated with a larger sample size before reaching any conclusions. 
 
 Note however that using additional evidence (e.g., population assignment tests), Lamy et al. (2012) concluded that extinctions were in fact less common in this system than previously assumed – in many cases of apparent extinction, individuals may still be present but just not detected.
+
+## 7. R Exercise Week 4
+
+**Task:** Build on your previous exercises and plot the sites on a map downloaded from the internet. Explore the relationships between Hexp, census population size and percent forest cover within 500 m of the site (forest may act as a barrier for grassland plants). 
+
+**Hints:**
+
+a) **Load packages**: You may want to load the packages `dplyr` and `ggplot2`. Alternatively, you can use `::` to call functions from packages.
+b) **Import your datasets from Weeks 2 & 3 R Exercises**. Here's an example for your code, adapt it as needed to import the R objects "Pulsatilla.longlat.rds" (SpatialPointsDataFrame, Week 2) and "H.pop.rds" (Week 3) that you saved previously:
+`Pulsatilla.longlat <- readRDS(paste0(here::here(), "/output/Pulsatilla.longlat.rds"))` 
+c) **Plot sites on map from internet**: To get started, you may use this code (note the names of the variables with the spatial coordinates): 
+`myMap <- ggmap::qmplot(x=meanX, y=meanY,  data = as.data.frame(Pulsatilla.longlat), source = "stamen", maptype = "toner-lite")`
+Next, modify code from section 3.d to add labels for all sites and plot the map.
+d) **Combine data**: Use the function `dplyr::left_join` to add the variables from the dataset `H.pop` to the data frame in the @data slot of `Pulsatilla.longlat`. Notes: 
+
+    - This is important, as the order of populations may not be the same in the two datasets. 
+    - Remember to check the structure of the datasets (variable names and types) first so that you know which are the ID variables that you can use to match sites. 
+    - If the two ID variables are not of the same type (e.g., one if a `factor`, the other is `character`), it is best to change the format of one (e.g., with `as.character`) before doing the left-join.
+
+e) **Scatterplot with regression line**: Create a scatterplot of Hexp (y axis) plotted against nIndiv (x axis). Add a regression line and, if possible, label points. You may modify code from section 3.b  using the `ggplot2` package, or use base R functions.  
+f) **Regression analysis**: Adapt code from section 3.c to perform a regression of `Hexp` (response variable) on the predictor `nIndiv`. Create residual plots and inspect them. What is the main issue here? 
+
+**Questions:** There is one influential point in the regression analysis:
+
+- Which site is it?
+- Where is it located (north / east / south / west)?
+- What makes it an influential point (large residual, leverage, or both)?
+- What would happen to the regression line and the R-squared if this point was omitted?
+
 
 
 

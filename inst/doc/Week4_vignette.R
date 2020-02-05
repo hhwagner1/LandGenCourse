@@ -2,6 +2,7 @@
 library(LandGenCourse)
 library(EcoGenetics)
 library(methods)
+library(ggplot2)
 #require(tibble)
 #require(poppr)
 #require(ade4)
@@ -9,7 +10,6 @@ library(methods)
 #require(effsize)
 #require(sp)
 #require(ggmap)
-#require(ggplot2)
 #require(car)  
 
 ## -----------------------------------------------------------------------------
@@ -42,6 +42,19 @@ dd.spatial <- dd.site[dd.site@data$Spatial==TRUE, ]
 cor(dd.spatial@data[ , c("FST.GESTE", "NLT", "C", "D")], 
     use="pairwise.complete")
 
+## ----fig.height=4, fig.width=8------------------------------------------------
+NLT.plot <- ggplot(dd.spatial@data, aes(x=NLT, y=FST.GESTE, label=SITE)) + 
+  geom_point() + 
+  geom_smooth(method = lm, se = TRUE) +
+  geom_text(size=2, nudge_x=0, nudge_y=0.01, check_overlap=TRUE)
+
+C.plot <- ggplot(dd.spatial@data, aes(x=C, y=FST.GESTE, label=SITE)) + 
+  geom_point() +
+  geom_smooth(method = lm, se = TRUE) +
+  geom_text(size=2.5, nudge_x=0, nudge_y=0.01, check_overlap=TRUE)
+
+cowplot::plot_grid(NLT.plot, C.plot)
+
 ## -----------------------------------------------------------------------------
 mod.diff <- lm(scale(FST.GESTE) ~ scale(NLT) + scale(C), 
                data=dd.spatial)
@@ -49,7 +62,7 @@ summary(mod.diff)
 
 ## ----fig.height=7, fig.width=8------------------------------------------------
 par(mfrow=c(2,2))
-plot(mod.diff, labels.id = names(residuals(mod.diff)))
+plot(mod.diff, labels.id = dd.spatial@data$SITE)
 par(mfrow=c(1,1))
 
 ## -----------------------------------------------------------------------------
@@ -60,14 +73,15 @@ dd.spatial@data$Residuals <- mod.diff$residuals
 sp::bubble(dd.spatial, zcol = "Residuals", col = c("red", "blue"))
 
 ## ----fig.height=4.5, fig.width=7, message=FALSE-------------------------------
-a <- is.element(rownames(dd.spatial@data), c("32", "42"))
+a <- is.element(dd.spatial@data$SITE, c("DESB", "PTC"))
 a2 <- c(1:nrow(dd.spatial@data))[a]
 myMap <- ggmap::qmplot(Longitude, Latitude,  data = as.data.frame(dd.spatial),
-              source = "stamen", maptype = "toner-lite",  
+              source = "stamen", maptype = "toner-lite", force=TRUE,  
               col = sign(Residuals), size = abs(Residuals))
-myMap + ggplot2::geom_text(data = as.data.frame(dd.spatial[a2,]),
+myMap + ggplot2::geom_label(data = as.data.frame(dd.spatial[a2,]),
                    mapping = ggplot2::aes(Longitude, Latitude, label = SITE),
-                   size = 4, col = "black", vjust = 0, nudge_y = -0.015)
+                   size = 4, label.padding = unit(0.2, "lines"), 
+                   col = "black", vjust = 0, nudge_x = 0, nudge_y = -0.015)
 
 ## ----message=FALSE------------------------------------------------------------
 #require(here)
@@ -82,7 +96,7 @@ summary(mod.diff.minus2)
 
 ## ----fig.height=7, fig.width=8------------------------------------------------
 par(mfrow=c(2,2))
-plot(mod.diff.minus2, labels.id = names(residuals(mod.diff)))
+plot(mod.diff.minus2, labels.id = dd.spatial@data$SITE[-a2])
 par(mfrow=c(1,1))
 
 ## -----------------------------------------------------------------------------
@@ -95,7 +109,7 @@ summary(mod.RA)
 
 ## ----fig.height=7, fig.width=8------------------------------------------------
 par(mfrow=c(2,2))
-plot(mod.RA)
+plot(mod.RA, labels.id = dd.spatial@data$SITE)
 par(mfrow=c(1,1))
 
 ## -----------------------------------------------------------------------------
@@ -104,7 +118,7 @@ summary(mod.He)
 
 ## ----fig.height=7, fig.width=8------------------------------------------------
 par(mfrow=c(2,2))
-plot(mod.He)
+plot(mod.He, labels.id = dd.spatial@data$SITE)
 par(mfrow=c(1,1))
 
 ## -----------------------------------------------------------------------------
@@ -144,34 +158,6 @@ pwr::pwr.t2n.test(n1=7, n2=5, d=-0.8, alternative = "less")
 pwr::pwr.t.test(power = 0.8, d = -0.8, alternative = "less")
 pwr::pwr.t.test(power = 0.8, d = -0.5, alternative = "less")
 
-## -----------------------------------------------------------------------------
-library(gstudio)
-library(dplyr)
-library(EcoGenetics)
-library(ggplot2)
-
-## -----------------------------------------------------------------------------
-Pulsatilla.gstudio <- read_population(path=system.file("extdata",
-                           "pulsatilla_genotypes.csv", 
-                           package = "LandGenCourse"), 
-                   type="column", locus.columns=c(6:19), 
-                   phased=FALSE, sep=",", header=TRUE)
-
-## -----------------------------------------------------------------------------
-Adults <- Pulsatilla.gstudio %>% filter(OffID == 0)
-
-## -----------------------------------------------------------------------------
-Adults.genind <- adegenet::df2genind(X=Adults[,c(6:12)], sep=":", ncode=NULL,   
-                          ind.names=Adults$ID, loc.names=NULL, 
-                          pop=Adults$Population, NA.char="", ploidy=2, 
-                          type="codom", strata=NULL, hierarchy=NULL)
-Adults.genind
-
-## -----------------------------------------------------------------------------
-
-
-## -----------------------------------------------------------------------------
-Adults.ecogen <- EcoGenetics::gstudio2ecogen(Adults, struct = "Population",
-                     lat = "Y", lon = "X")
-Adults.ecogen
+## ----message=FALSE, warning=TRUE, include=FALSE-------------------------------
+LandGenCourse::detachAllPackages()
 
