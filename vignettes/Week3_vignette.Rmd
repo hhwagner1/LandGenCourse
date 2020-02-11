@@ -228,7 +228,15 @@ round(Null.alleles$null.allele.freq$summary1,2)}
 round(Null.alleles$null.allele.freq$summary2,2)}   
 ```
 
-For this example, both methods suggest that there may be null alleles in most loci. However, the estimates of the frequency of null alleles differ a lot between the two methods.
+For this example, both methods suggest that there may be null alleles in most loci. However, the estimates of the frequency of null alleles differ a lot between the two methods. 
+
+A different approach for estimating null alleles at microsatellite loci, based on the Estimation-Maximization algorithm, is implemented in `FreeNA` (outside of the R environment). `FreeNA` will directly provide Fst values and some other measurements using the corrected allele frequencies: https://www1.montpellier.inra.fr/CBGP/software/FreeNA/
+
+Relevant papers for the Estimation-Maximization algorithm:
+
+- Kalinowski et al. (2006), Conservation Genetics 7:991–995, doi: 10.1007/s10592-006-9134-9.
+- Chapuis and Estoup (2007), Mol. Biol. Evol. 24:621–631, doi: 10.1093/molbev/msl191.
+
 
 ### f) Overall interpretation
 

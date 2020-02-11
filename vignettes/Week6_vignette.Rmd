@@ -164,7 +164,8 @@ First we calculate the marginal residuals by predicting values with fixed effect
 ```{r}
 marginal.residuals <- mod4@frame$d13c - predict(mod4, re.form=NA)
 plot(mod4@frame$block, marginal.residuals)
-predictmeans::CookD(mod4)
+#predictmeans::CookD(mod4)
+plot(cooks.distance(mod4))
 ```
 
 The residual plots did not indicate any major problem. Hence we can proceed with interpreting the results.
@@ -179,7 +180,7 @@ How much of the variation in $d^{13}C$' is explained by the fixed and random eff
 In both statistics, the denominator is a sum of the fixed-effects variance, the random effect variance, and the residual variance.
 
 ```{r}
-MuMIn::r.squaredGLMM(mod3)
+MuMIn::r.squaredGLMM(mod4)
 ```
 
 The fixed effect 'block' had a small effect of about 2.5%. The total model explained about 23%, most of which was due to the random effects.
@@ -224,7 +225,7 @@ anova(mod4, mod.noFam, refit=FALSE)
 We can do a similar test for the fixed effecs. Here we have only one effect.
 
 ```{r}
-mod.noBlock <- lmer(d13c ~ 1  + (1 | population) + (1 | family), data=phen, REML=FALSE)
+mod.noBlock <- lmer(d13c ~ 1  + (1 | population) + (1 | family), data=phen, REML=TRUE)
 mod.noFam <- lmer(d13c ~ 1  + (1 | population) + block, data=phen, REML=TRUE)
 anova(mod4, mod.noBlock, refit=TRUE, REML=FALSE)
 ```
@@ -273,27 +274,10 @@ h2 <- (one.over.relatedness*Components$fam.var) / sum(Components)
 h2
 ```
 
-Inspect your value of $h^2$. What does it mean? 
+**Question:** Inspect your value of $h^2$. What does it mean? 
 
-We have generated a point estimate for $h^2$. It represents the average $h^2$ across populations after removing the genetic effects due to population differences. Would it not be nice to also have a confidence interval? We can do that through an approach known as parametric bootstrapping. This approach simulates data using the fitted model a large number of times. Using the resulting distribution, you can create confidence intervals using the appropriate symmetric quantiles of the distribution. To see this, please
-do the following using the mod_boot function in "supplemental_R_functions.R". 
-
-Note: It will takes a few moments to run the first line! (The rest of the lab will run without this chunk of R code).  
-
-```{r}
-par(mar=c(1, 2, 1, 1))
-h2_boot_out <- mod_boot(model = mod4, nboot = 1000)
-ci_95 <- quantile(h2_boot_out, probs = c(0.025, 0.50, 0.975))
-ci_95
-boxplot(h2_boot_out, range=5); abline(h = h2, col = "red") 
-```
-
-Interpret the numerical 95% confidence intervals 'ci_95' and boxplot with our original $h^2$ estimate (red line: 0.405) for comparison to the bootstrap distribution. 
-
-- Do you think that $h^2$ is statistically different than zero? 
-- Is this consistent with the AIC results from Part 1? 
-- Is it meaningful that the red line is very similar to the mean (or median) of the bootstrap distribution? 
-- How would you change the code for a 99% confidence interval?
+We have generated a point estimate for $h^2$. It represents the average $h^2$ across populations after removing the genetic effects due to population differences. To take this further and also get a SE (so that you can construct a confidence interval), you could check out this R package:
+https://bioconductor.org/packages/release/bioc/html/GeneticsPed.html
 
 ### b) Estimate trait differentiation
 
@@ -320,28 +304,11 @@ qst <- num_qst/dem_qst
 qst
 ```
 
-Inspect your 'qst' value:
+**Question:** Inspect your 'qst' value:
 
 - What does it mean? 
 - Look at the quantities in the equation above, what is the denominator equal to? Is it the total phenotypic variance or the total genetic variance?
 
-Now, we can again look at a confidence interval using parametric bootstrapping. Again, please use the function 'mod_boot_qst' that is also located in "supplemental_R_functions.R". 
-
-Note: As before, it will takes a few moments to run the first line! (The rest of the lab will run without this chunk of R code).
-
-```{r}
-par(mar=c(1, 2, 1, 1))
-qst_boot_out <- mod_boot_qst(model = mod3, nboot = 1000)
-ci_95_qst <- quantile(qst_boot_out, probs = c(0.025, 0.50, 0.975)) 
-ci_95_qst
-boxplot(qst_boot_out); abline(h = qst, col = "red")
-```
-
-Interpret the results. 
-
-- Do you think that $Q_{ST}$ is statistically different than zero? 
-- Is this consistent with the AIC results from Part 1? 
-- Is it meaningful that the red line is less similar to the mean (or median) of the bootstrap distribution as compared to $h^2$?
 
 ## 4. Compare $Q_{st}$ to $F_{st}$ measured from SNP data
  
@@ -405,7 +372,7 @@ The output contains the following elements:
 
 Note: the values are somewhat different from what we calculated, most likely because the function 'QstFstComp' did not account for the block effect.
 
-Inspect the first and third elements of the list 'QstFst_out': 
+**Questions:** Inspect the first and third elements of the list 'QstFst_out': 
 
 - For the observed values, is $Q_{ST} > F_{ST}$? 
 - Which alternative is most appropriate here?
@@ -485,7 +452,7 @@ How to read this plot:
 - Each cell in the upper triangle shows the correlation coefficient r, and the p-value for the correlation, between the two variables that define the corresponding row and column. (A larger font indicates a stronger correlation, though this seems to be inconsistent).
 - Each cell in the lower triangle shows a scatterplot of the two variables that define the corresponding row and column. A smooth regression line is shown in red.
 
-Questions:
+**Questions:**
 
 - Which site variables show the strongest correlation with the population effect?
 - Which site variables are significantly correlated with the population effect?
@@ -495,4 +462,64 @@ Questions:
 ```{r message=FALSE, warning=TRUE, include=FALSE}
 LandGenCourse::detachAllPackages()
 ```
+
+
+## 7. R Exercise Week 6
+
+**Task:** Test whether observed heterozygosity of *Pulsatilla vulgaris* adults depends on census population size. Fit a model at the individual level where you include a random effect for population.
+
+**Hints:**
+
+a) **Load packages**: 
+
+    - Please install the package `inbreedR` (to calculate individual measures of heterozygosity) from CRAN, if it is not yet installed.
+    - You may want to load the packages `dplyr` and `ggplot2`. Alternatively, you can use `::` to call functions from packages. 
+
+b) **Import data and extract adults**. 
+
+    - Use the code below to import the data.
+    - Use `dplyr::filter` to extract adults with `OffID == 0`.
+
+
+    `Pulsatilla <- read.csv(system.file("extdata","pulsatilla_genotypes.csv", 
+                            package = "LandGenCourse")`
+
+c) **Calculate multilocus heterozygosity**: Use package `inbreedR` to calculate multilocus heterozygosity for each adult. 
+
+    - Use the function `inbreedR::convert_raw(x)`, where x is the matrix of genotypes only (no ID or other non-genetic data), with two columns per locus. Check the help file of the function `convert_raw`.
+    - Use the function `inbreedR::MLH` to calculate observed heterozygosity for each individual. 
+    - Add the result as a variable `het` to the adults dataset.
+
+
+    Example code from `inbreedR::MLH` help file:
+  `data(mouse_msats)
+  genotypes <- convert_raw(mouse_msats)
+  het <- MLH(genotypes)`
+
+
+d) **Add population-level data**: 
+
+    - Import the file "pulsatilla_population.csv" with the code below. 
+    - Do a left-join to add the data to your adults dataset.
+    - Check the dataset.
+
+
+    `Pop.data <- read.csv(system.file("extdata", "pulsatilla_population.csv", 
+                            package = "LandGenCourse"))`
+
+e) **Scatterplot with regression line**: Use ggplot2 to create a scatterplot of adult heterozygosity against census population size (`population.size`), with a regression line.
+
+f) **Fit linear mixed model**: Adapt code from section 3.c to perform a regression of individual-level observed heterozygosity (response variable) on census population size (predictor), including population as a random effect. Fit the model with REML and print a summary.
+
+g) **Test fixed effect**: Adapt code from section 2.f to test the fixed effect with function `car::Anova`.
+
+h) **Check residual plots**: Adapt code from section 2.d to create residual plots. 
+
+
+**Questions:** There is one influential point in the regression analysis:
+
+- What was the direction of the relationship, did heterozygosity increase or decrease with census population size? 
+- Was the fixed effect statistically significant?
+- Was the model valid, or was there a problem with the residual plots?
+- What would be the main issue, and what remedy could you suggest?
 
