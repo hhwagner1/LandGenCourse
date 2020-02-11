@@ -275,6 +275,12 @@ tibble::as.tibble(para.space)
 #  #}
 
 ## -----------------------------------------------------------------------------
+if(!dir.exists(paste0(here::here(),"/output"))) 
+  dir.create(paste0(here::here(),"/output"))
+if(!dir.exists(paste0(here::here(),"/output/simout")))
+  dir.create(paste0(here::here(),"/output/simout"))
+
+## -----------------------------------------------------------------------------
 # create a timer (just to know how long it will take roughly)
 timer0 <- round(proc.time()[3],2)
 

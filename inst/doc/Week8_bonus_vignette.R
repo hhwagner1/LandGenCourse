@@ -64,6 +64,9 @@ gen <- read_csv(x); c(class(gen[[1]]), class(gen))
 gen <- fread(x); c(class(gen[[1]]), class(gen))
 gen <- import(x); c(class(gen[[1]]), class(gen))
 
+## -----------------------------------------------------------------------------
+if(!dir.exists(paste0(here::here(),"/output"))) dir.create(paste0(here::here(),"/output"))
+
 ## ----binary-------------------------------------------------------------------
 gen <- import(myFile)
 

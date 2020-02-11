@@ -9,6 +9,7 @@ library(here)
 data(ralu.loci)
 
 ## -----------------------------------------------------------------------------
+if(!dir.exists(paste0(here(),"/downloads"))) dir.create(paste0(here(),"/downloads"))
 file.copy(system.file("extdata", "ralu.loci.csv", package = "LandGenCourse"),
           paste0(here(), "/downloads/ralu.loci.csv"), overwrite=FALSE)
 

@@ -51,10 +51,11 @@ predictmeans::residplot(mod4, group="population", level=1)
 ## -----------------------------------------------------------------------------
 marginal.residuals <- mod4@frame$d13c - predict(mod4, re.form=NA)
 plot(mod4@frame$block, marginal.residuals)
-predictmeans::CookD(mod4)
+#predictmeans::CookD(mod4)
+plot(cooks.distance(mod4))
 
 ## -----------------------------------------------------------------------------
-MuMIn::r.squaredGLMM(mod3)
+MuMIn::r.squaredGLMM(mod4)
 
 ## -----------------------------------------------------------------------------
 summary(mod4)
@@ -75,7 +76,7 @@ anova(mod4, mod.noPop, refit=FALSE)
 anova(mod4, mod.noFam, refit=FALSE)
 
 ## -----------------------------------------------------------------------------
-mod.noBlock <- lmer(d13c ~ 1  + (1 | population) + (1 | family), data=phen, REML=FALSE)
+mod.noBlock <- lmer(d13c ~ 1  + (1 | population) + (1 | family), data=phen, REML=TRUE)
 mod.noFam <- lmer(d13c ~ 1  + (1 | population) + block, data=phen, REML=TRUE)
 anova(mod4, mod.noBlock, refit=TRUE, REML=FALSE)
 
@@ -99,13 +100,6 @@ h2 <- (one.over.relatedness*Components$fam.var) / sum(Components)
 h2
 
 ## -----------------------------------------------------------------------------
-par(mar=c(1, 2, 1, 1))
-h2_boot_out <- mod_boot(model = mod4, nboot = 1000)
-ci_95 <- quantile(h2_boot_out, probs = c(0.025, 0.50, 0.975))
-ci_95
-boxplot(h2_boot_out, range=5); abline(h = h2, col = "red") 
-
-## -----------------------------------------------------------------------------
 num_qst <- 0.3295^2
 dem_qst <- 0.3295^2 + (8*(0.2857^2))
 qst <- num_qst/dem_qst
@@ -116,13 +110,6 @@ num_qst <- Components$prov.var
 dem_qst <- Components$prov.var + (8*Components$fam.var)
 qst <- num_qst/dem_qst
 qst
-
-## -----------------------------------------------------------------------------
-par(mar=c(1, 2, 1, 1))
-qst_boot_out <- mod_boot_qst(model = mod3, nboot = 1000)
-ci_95_qst <- quantile(qst_boot_out, probs = c(0.025, 0.50, 0.975)) 
-ci_95_qst
-boxplot(qst_boot_out); abline(h = qst, col = "red")
 
 ## -----------------------------------------------------------------------------
 data(WWP.ecogen, package="LandGenCourse")

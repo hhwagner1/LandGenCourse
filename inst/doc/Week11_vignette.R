@@ -18,6 +18,7 @@ if(!requireNamespace("LEA", quietly = TRUE)) {
 #require(qvalue)
 
 ## ----setup--------------------------------------------------------------------
+if(!dir.exists(paste0(here::here(),"/output"))) dir.create(paste0(here::here(),"/output"))
 knitr::opts_knit$set(root.dir = normalizePath(paste0(here::here(),"/output"))) 
 
 ## ----load---------------------------------------------------------------------
