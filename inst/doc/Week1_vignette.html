@@ -8,11 +8,11 @@
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <meta name="author" content="Helene Wagner" />
 
-<meta name="date" content="2020-01-14" />
+<meta name="date" content="2020-02-10" />
 
 <title>Week 1: Importing Genetic Data</title>
 
@@ -339,7 +339,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Week 1: Importing Genetic Data</h1>
 <h4 class="author">Helene Wagner</h4>
-<h4 class="date">2020-01-14</h4>
+<h4 class="date">2020-02-10</h4>
 
 
 <div id="TOC">
@@ -425,9 +425,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="b-excel-file" class="section level3">
 <h3>b) Excel file</h3>
-<p>First we need to copy the file <code>ralu.loci.csv</code> to the <code>downloads</code> folder inside your project folder.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">file.copy</span>(<span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;ralu.loci.csv&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>),</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">          <span class="kw">paste0</span>(<span class="kw">here</span>(), <span class="st">&quot;/downloads/ralu.loci.csv&quot;</span>), <span class="dt">overwrite=</span><span class="ot">FALSE</span>)</a></code></pre></div>
+<p>First we need to copy the file <code>ralu.loci.csv</code> to the <code>downloads</code> folder inside your project folder. The first line checks that the folder <code>downloads</code> exists and creates it if needed.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="cf">if</span>(<span class="op">!</span><span class="kw">dir.exists</span>(<span class="kw">paste0</span>(<span class="kw">here</span>(),<span class="st">&quot;/downloads&quot;</span>))) <span class="kw">dir.create</span>(<span class="kw">paste0</span>(<span class="kw">here</span>(),<span class="st">&quot;/downloads&quot;</span>))</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw">file.copy</span>(<span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;ralu.loci.csv&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>),</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">          <span class="kw">paste0</span>(<span class="kw">here</span>(), <span class="st">&quot;/downloads/ralu.loci.csv&quot;</span>), <span class="dt">overwrite=</span><span class="ot">FALSE</span>)</a></code></pre></div>
 <pre><code>## [1] FALSE</code></pre>
 <p>Check that the file <code>ralu.loci.csv</code> is now in the folder <code>downloads</code> within your project folder. From your file system, you can open it with Excel. Note that in Excel, the columns with the loci must be explicitly defined as ‘text’, otherwise Excel is likely to interpret them as times.</p>
 <p><strong>Excel instructions:</strong></p>
