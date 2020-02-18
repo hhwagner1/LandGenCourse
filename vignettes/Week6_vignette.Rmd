@@ -459,9 +459,6 @@ How to read this plot:
 - OVerall, does the population effect appear to be related to the environment?
 
 
-```{r message=FALSE, warning=TRUE, include=FALSE}
-LandGenCourse::detachAllPackages()
-```
 
 
 ## 7. R Exercise Week 6
@@ -523,3 +520,7 @@ h) **Check residual plots**: Adapt code from section 2.d to create residual plot
 - Was the model valid, or was there a problem with the residual plots?
 - What would be the main issue, and what remedy could you suggest?
 
+
+```{r message=FALSE, warning=TRUE, include=FALSE}
+LandGenCourse::detachAllPackages()
+```
