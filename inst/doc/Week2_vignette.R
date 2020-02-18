@@ -135,9 +135,9 @@ nlcd_subset
 id_largest <- nlcd_patch %>% # previously calculated patch metrics
   dplyr::filter(metric == "area") %>% # only patch area
   dplyr::arrange(-value) %>% # order by decreasing size
-  dplyr::filter(value > quantile(value, probs = 0.95)) %>% # get only patches larger than 95% quantile
-  dplyr::pull(id) # get only patch id
+  dplyr::filter(value > quantile(value, probs = 0.95)) # get only patches larger than 95% quantile
 
+id_largest <- id_largest$id # get only patch id
 id_largest
 
 ## -----------------------------------------------------------------------------

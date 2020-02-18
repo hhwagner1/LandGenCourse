@@ -12,7 +12,7 @@
 
 <meta name="author" content="Rodney Dyer (worked example) and Helene Wagner (adaptation)" />
 
-<meta name="date" content="2020-02-10" />
+<meta name="date" content="2020-02-18" />
 
 <title>Week 0: Intro to R Programming</title>
 
@@ -339,7 +339,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Week 0: Intro to R Programming</h1>
 <h4 class="author">Rodney Dyer (worked example) and Helene Wagner (adaptation)</h4>
-<h4 class="date">2020-02-10</h4>
+<h4 class="date">2020-02-18</h4>
 
 
 <div id="TOC">
@@ -435,19 +435,19 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <pre><code>## [1] 0.099999999999999991673</code></pre>
 <p>Not quite 0.1 is it? Not that far away from it but not exact. That is a general problem, not one that R has any more claim to than any other language and/or implementation. Does this matter much, probably not in the realm of the kinds of things we do in population genetics, it is just something that you should be aware of. You can make random sets of numeric data by using using functions describing various distributions. For example, some random numbers from the normal distribution are:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw">rnorm</span>(<span class="dv">10</span>)</a></code></pre></div>
-<pre><code>##  [1]  0.07216758 -0.43465184 -0.13905170  1.49887226  0.91408572 -0.73602248
-##  [7]  0.08507730 -0.27678675 -1.09048673 -1.67618803</code></pre>
+<pre><code>##  [1] -1.17652538  0.75689014 -0.43833699 -0.69502514 -1.82862567 -1.20526821
+##  [7]  2.03355154  0.04837061 -0.26090751 -0.04136386</code></pre>
 <p>from the normal distribution with designated mean and standard deviation:</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw">rnorm</span>(<span class="dv">10</span>,<span class="dt">mean=</span><span class="dv">42</span>,<span class="dt">sd=</span><span class="dv">12</span>)</a></code></pre></div>
-<pre><code>##  [1] 23.15432 27.59206 46.16022 19.93265 39.65001 56.68299 58.07452 20.82443
-##  [9] 56.76570 47.21244</code></pre>
+<pre><code>##  [1] 30.31234 45.33808 18.03637 49.06406 43.14507 43.77966 33.75995 40.54220
+##  [9] 43.32845 60.04935</code></pre>
 <p>A poisson distribution with mean 2:</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw">rpois</span>(<span class="dv">10</span>,<span class="dt">lambda =</span> <span class="dv">2</span>)</a></code></pre></div>
-<pre><code>##  [1] 5 2 6 3 4 3 0 1 1 1</code></pre>
+<pre><code>##  [1] 0 3 3 5 4 0 1 1 3 3</code></pre>
 <p>and the <span class="math inline">\(\chi^2\)</span> distribution with 1 degree of freedom:</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">rchisq</span>(<span class="dv">10</span>, <span class="dt">df=</span><span class="dv">1</span>)</a></code></pre></div>
-<pre><code>##  [1] 0.849163075 0.018875922 0.203726184 0.003277502 0.050805378 0.247187265
-##  [7] 1.440550435 0.321118052 0.283627121 1.796273368</code></pre>
+<pre><code>##  [1] 1.0696278 0.2591955 1.1435436 0.8771772 0.5408808 0.3901878 0.9790844
+##  [8] 0.3380074 0.6241323 0.0692477</code></pre>
 <p>There are several more distributions that if you need to access random numbers, quantiles, probability densities, and cumulative density values are available.</p>
 </div>
 <div id="b-coercion-to-numeric" class="section level3">
@@ -578,26 +578,25 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>It is common to use logical types to serve as indices for vectors. Say for example, you have a vector of data that you want to select some subset from.</p>
 <div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb71-1" data-line-number="1">data &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">20</span>)</a>
 <a class="sourceLine" id="cb71-2" data-line-number="2">data</a></code></pre></div>
-<pre><code>##  [1]  0.23930053 -0.69036308 -0.05639051  1.47911494 -1.51111030 -0.56669222
-##  [7]  1.12211006  0.45404997 -0.99572900 -0.94423426 -0.59274642  1.14069297
-## [13]  1.24385923  0.83939765  1.30836464 -0.13634189  0.42408002 -1.18295000
-## [19]  1.29397302  0.42488123</code></pre>
+<pre><code>##  [1]  0.67585336 -0.68003913 -0.02930966 -1.23343558  0.65027453 -0.51943012
+##  [7] -1.22219669  2.14490324  0.13638762 -0.23412146 -0.99935444  1.97715103
+## [13] -0.40420098 -1.42440668  0.45901829 -1.11099360 -0.25672658 -0.62347101
+## [19] -0.22332274 -0.64644339</code></pre>
 <p>Perhaps you are on interested in the non-negative values</p>
 <div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb73-1" data-line-number="1">data[ data <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ]</a></code></pre></div>
-<pre><code>##  [1] 0.2393005 1.4791149 1.1221101 0.4540500 1.1406930 1.2438592 0.8393977
-##  [8] 1.3083646 0.4240800 1.2939730 0.4248812</code></pre>
+<pre><code>## [1] 0.6758534 0.6502745 2.1449032 0.1363876 1.9771510 0.4590183</code></pre>
 <p>If you look at the condition being passed to as the index</p>
 <div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb75-1" data-line-number="1">data <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span></a></code></pre></div>
-<pre><code>##  [1]  TRUE FALSE FALSE  TRUE FALSE FALSE  TRUE  TRUE FALSE FALSE FALSE  TRUE
-## [13]  TRUE  TRUE  TRUE FALSE  TRUE FALSE  TRUE  TRUE</code></pre>
+<pre><code>##  [1]  TRUE FALSE FALSE FALSE  TRUE FALSE FALSE  TRUE  TRUE FALSE FALSE  TRUE
+## [13] FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE</code></pre>
 <p>you see that individually, each value in the data vector is being evaluated as a logical value, satisfying the condition that it is strictly greater than zero. When you pass that as indices to a vector it only shows the indices that are <code>TRUE</code>.</p>
 <p>You can coerce a value into a logical if you understand the rules. Numeric types that equal 0 (zero) are <code>FALSE</code>, always. Any non-zero value is considered <code>TRUE</code>. Here I use the modulus operator, <code>%%</code>, which provides the remainder of a division.</p>
 <div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb77-1" data-line-number="1"><span class="dv">1</span><span class="op">:</span><span class="dv">20</span> <span class="op">%%</span><span class="st"> </span><span class="dv">2</span></a></code></pre></div>
 <pre><code>##  [1] 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0</code></pre>
 <p>which used as indices give us</p>
 <div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb79-1" data-line-number="1">data[ (<span class="dv">1</span><span class="op">:</span><span class="dv">20</span> <span class="op">%%</span><span class="st"> </span><span class="dv">2</span>) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span> ]</a></code></pre></div>
-<pre><code>##  [1]  0.23930053 -0.05639051 -1.51111030  1.12211006 -0.99572900 -0.59274642
-##  [7]  1.24385923  1.30836464  0.42408002  1.29397302</code></pre>
+<pre><code>##  [1]  0.67585336 -0.02930966  0.65027453 -1.22219669  0.13638762 -0.99935444
+##  [7] -0.40420098  0.45901829 -0.25672658 -0.22332274</code></pre>
 <p>You can get as complicated in the creation of indices as you like, even using logical operators such as OR and AND. I leave that as an example for you to play with.</p>
 </div>
 </div>
@@ -814,21 +813,21 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div class="sourceCode" id="cb165"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb165-1" data-line-number="1">df &lt;-<span class="st"> </span><span class="kw">data.frame</span>( <span class="dt">ID=</span><span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dt">Names=</span><span class="kw">c</span>(<span class="st">&quot;Bob&quot;</span>,<span class="st">&quot;Alice&quot;</span>,<span class="st">&quot;Vicki&quot;</span>,<span class="st">&quot;John&quot;</span>,<span class="st">&quot;Sarah&quot;</span>), <span class="dt">Score=</span><span class="dv">100</span> <span class="op">-</span><span class="st"> </span><span class="kw">rpois</span>(<span class="dv">5</span>,<span class="dt">lambda=</span><span class="dv">10</span>))</a>
 <a class="sourceLine" id="cb165-2" data-line-number="2">df</a></code></pre></div>
 <pre><code>##   ID Names Score
-## 1  1   Bob    87
-## 2  2 Alice    93
-## 3  3 Vicki    89
-## 4  4  John    92
-## 5  5 Sarah    96</code></pre>
+## 1  1   Bob    88
+## 2  2 Alice    92
+## 3  3 Vicki    91
+## 4  4  John    96
+## 5  5 Sarah    87</code></pre>
 <p>You can see that each column is a unified type of data and each row is equivalent to a record. Additional data columns may be added to an existing data.frame as:</p>
 <div class="sourceCode" id="cb167"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb167-1" data-line-number="1">df<span class="op">$</span>Passed_Class &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="ot">TRUE</span>,<span class="ot">TRUE</span>,<span class="ot">TRUE</span>,<span class="ot">FALSE</span>,<span class="ot">TRUE</span>)</a></code></pre></div>
 <p>Since we may have many (thousands?) of rows of observations, a <code>summary()</code> of the data.frame can provide a more compact description.</p>
 <div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb168-1" data-line-number="1"><span class="kw">summary</span>(df)</a></code></pre></div>
 <pre><code>##        ID      Names       Score      Passed_Class   
 ##  Min.   :1   Alice:1   Min.   :87.0   Mode :logical  
-##  1st Qu.:2   Bob  :1   1st Qu.:89.0   FALSE:1        
-##  Median :3   John :1   Median :92.0   TRUE :4        
-##  Mean   :3   Sarah:1   Mean   :91.4                  
-##  3rd Qu.:4   Vicki:1   3rd Qu.:93.0                  
+##  1st Qu.:2   Bob  :1   1st Qu.:88.0   FALSE:1        
+##  Median :3   John :1   Median :91.0   TRUE :4        
+##  Mean   :3   Sarah:1   Mean   :90.8                  
+##  3rd Qu.:4   Vicki:1   3rd Qu.:92.0                  
 ##  Max.   :5             Max.   :96.0</code></pre>
 <p>We can add columns of data to the data.frame after the fact using the <code>$</code>-operator to indicate the column name. Depending upon the data type, the summary will provide an overview of what is there.</p>
 </div>
@@ -836,14 +835,14 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h3>b) Indexing Data Frames</h3>
 <p>You can access individual items within a <code>data.frame</code> by numeric index such as:</p>
 <div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb170-1" data-line-number="1">df[<span class="dv">1</span>,<span class="dv">3</span>]</a></code></pre></div>
-<pre><code>## [1] 87</code></pre>
+<pre><code>## [1] 88</code></pre>
 <p>You can slide indices along rows (which return a new <code>data.frame</code> for you)</p>
 <div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb172-1" data-line-number="1">df[<span class="dv">1</span>,]</a></code></pre></div>
 <pre><code>##   ID Names Score Passed_Class
-## 1  1   Bob    87         TRUE</code></pre>
+## 1  1   Bob    88         TRUE</code></pre>
 <p>or along columns (which give you a vector of data)</p>
 <div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb174-1" data-line-number="1">df[,<span class="dv">3</span>]</a></code></pre></div>
-<pre><code>## [1] 87 93 89 92 96</code></pre>
+<pre><code>## [1] 88 92 91 96 87</code></pre>
 <p>or use the <code>$</code>-operator as you did for the list data type to get direct access to a either all the data or a specific subset therein.</p>
 <div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb176-1" data-line-number="1">df<span class="op">$</span>Names[<span class="dv">3</span>]</a></code></pre></div>
 <pre><code>## [1] Vicki
@@ -851,12 +850,12 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>Indices are ordered just like for matrices, rows first then columns. You can also pass a set of indices such as:</p>
 <div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb178-1" data-line-number="1">df[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>,]</a></code></pre></div>
 <pre><code>##   ID Names Score Passed_Class
-## 1  1   Bob    87         TRUE
-## 2  2 Alice    93         TRUE
-## 3  3 Vicki    89         TRUE</code></pre>
+## 1  1   Bob    88         TRUE
+## 2  2 Alice    92         TRUE
+## 3  3 Vicki    91         TRUE</code></pre>
 <p>It is also possible to use logical operators as indices. Here I select only those names in the data.frame whose score was &gt;90 and they passed popgen.</p>
 <div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb180-1" data-line-number="1">df<span class="op">$</span>Names[df<span class="op">$</span>Score <span class="op">&gt;</span><span class="st"> </span><span class="dv">90</span> <span class="op">&amp;</span><span class="st"> </span>df<span class="op">$</span>Passed_Class<span class="op">==</span><span class="ot">TRUE</span>]</a></code></pre></div>
-<pre><code>## [1] Alice Sarah
+<pre><code>## [1] Alice Vicki
 ## Levels: Alice Bob John Sarah Vicki</code></pre>
 <p>This is why <code>data.frame</code> objects are very database like. They can contain lots of data and you can extract from them subsets that you need to work on. This is a VERY important feature, one that is vital for reproducible research. Keep you data in one and only one place.</p>
 </div>
