@@ -354,15 +354,17 @@ nlcd_subset
 
 The resulting `tibble` is easy to integrate into a workflow. For example, to get the ordered patch IDs of the 5% largest patches, the following code could be used.
 
-The pipe operator %>% from the `dplyr` package passes the resulting object automatically to the next function as first argument:
+The pipe operator %>% from the `dplyr` package passes the resulting object automatically to the next function as first argument. 
+
+Note: the last step (pulling the id variable only) could be done by adding this to the pipe: `%>% dplyr::pull(id)`. Due to some package inconsistencies, this sometimes created an error. Here we extract the id variable in a separate step as a work-around.
 
 ```{r}
 id_largest <- nlcd_patch %>% # previously calculated patch metrics
   dplyr::filter(metric == "area") %>% # only patch area
   dplyr::arrange(-value) %>% # order by decreasing size
-  dplyr::filter(value > quantile(value, probs = 0.95)) %>% # get only patches larger than 95% quantile
-  dplyr::pull(id) # get only patch id
+  dplyr::filter(value > quantile(value, probs = 0.95)) # get only patches larger than 95% quantile
 
+id_largest <- id_largest$id # get only patch id
 id_largest
 ```
 
