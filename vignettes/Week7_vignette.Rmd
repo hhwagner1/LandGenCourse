@@ -40,11 +40,13 @@ Note: the function 'library' will always load the package, even if it is already
 
 ```{r message=FALSE, warning=TRUE}
 library(LandGenCourse)
-#require(here)
-#require(spdep)
-#require(nlme)
-#require(lattice)
-#require(MuMIn)
+#library(here)
+#libraryspdep)
+library(nlme)
+#library(lattice)
+#library(MuMIn)
+#library(gridExtra)
+#library(dplyr)
 library(spatialreg)
 library(ggplot2)
 library(ggmap)
@@ -98,15 +100,23 @@ bbox <- make_bbox(lon = Longitude, lat = Latitude, data = Dianthus@data, f = 0.2
 
 Now we can obtain a stamen map for the study area from the internet and add points for the sampling sites. Here we use a terrain map. 
 
-Note: here we use the 'terrain' map from source 'stamen', which is freely available. Starting in mid 2018, accessing maps from Google with 'source = google' requires an API key.
+Note: here we use two types of maps from the source 'stamen', which is freely available: a `terrain` map and a `toner` map. Starting in mid 2018, accessing maps from Google with 'source = google' requires an API key.
 
-```{r}
-ggmap(get_stamenmap(bbox, maptype = "terrain", zoom=12)) + 
+To plot the maps side-by-side, we first write each map into an object, then use the function `gridExtra::grid.arrange` to plot them on the same row. This works for a wide range of figures, including `ggplot2` or `trellis`-type plots.
+
+```{r fig.height=4, fig.width=7, message=FALSE}
+StamenMap.terrain <- ggmap(get_stamenmap(bbox, maptype = "terrain", zoom=12)) + 
   geom_point(aes(x =  Longitude, y = Latitude), data = Dianthus.longlat@data, 
              colour = "black", size = 2)
+
+StamenMap.toner <- ggmap::ggmap(get_stamenmap(bbox, maptype = "toner", zoom=12, force = TRUE)) + 
+  geom_point(aes(x =  Longitude, y = Latitude), data = Dianthus.longlat@data, 
+             colour = "black", size = 2) 
+
+gridExtra::grid.arrange(StamenMap.terrain, StamenMap.toner, nrow=1)
 ```
 
-As you can see from the map, most sites lie on the steep slopes between an upper and a lower Jurassic plateau. A few sites lie at the forest edge on the upper plateau, typically in areas where the soil is too shallow to allow crop farming. With in the study area, all known sites were sampled. Additional sites are expected to be found mainly in the valley system in the Southwest.
+As you can see from the terrain map, most sites lie on the steep slopes between an upper and a lower Jurassic plateau. A few sites lie at the forest edge on the upper plateau, typically in areas where the soil is too shallow to allow crop farming. With in the study area, all known sites were sampled. Additional sites are expected to be found mainly in the valley system in the Southwest.
 
 There are three types of stamen maps: terrain, toner (black and white), and watercolor. Terrain and toner maps have three components each (background, labels, lines), which can be downloaded individually if needed. Hence, the argument 'maptype' has the following options:
 
@@ -123,15 +133,6 @@ There are three types of stamen maps: terrain, toner (black and white), and wate
 - toner-lite
 - watercolor
 
-Let's see what a 'toner' map would look like:
-
-```{r message=FALSE}
-ggmap::ggmap(get_stamenmap(bbox, maptype = "toner", zoom=12, force = TRUE)) + 
-  geom_point(aes(x =  Longitude, y = Latitude), data = Dianthus.longlat@data, 
-             colour = "black", size = 2) 
-  
-```
-
 ### c) Explore correlations
 
 When fitting linear models, it is always a good idea to look at the correlations first. 
@@ -140,17 +141,25 @@ When fitting linear models, it is always a good idea to look at the correlations
 Dianthus.df <- data.frame(A=Dianthus@data$A, IBD=Dianthus@data$Eu_pj, 
                           IBR=Dianthus@data$Sheint_pj,
                           PatchSize=log(Dianthus@data$Ha),
+                          System=Dianthus@data$System,
                           Longitude=Dianthus@data$Longitude,
                           Latitude=Dianthus@data$Latitude,
                           x=Dianthus@coords[,1], y=Dianthus@coords[,2])
 
+# Define 'System' for ungrazed patches
+Dianthus.df$System=as.character(Dianthus@data$System)
+Dianthus.df$System[is.na(Dianthus.df$System)] <- "Ungrazed"
+Dianthus.df$System <- factor(Dianthus.df$System, 
+                             levels=c("Ungrazed", "East", "South", "West"))
+
+# Remove patches with missing values for A
 Dianthus.df <- Dianthus.df[!is.na(Dianthus.df$A),]
 dim(Dianthus.df)
-pairs(Dianthus.df, lower.panel=panel.smooth, upper.panel=panel.cor,
-      diag.panel=panel.hist)
+pairs(Dianthus.df[,-c(5:7)], lower.panel=panel.smooth, 
+      upper.panel=panel.cor, diag.panel=panel.hist)
 ```
 
-Questions:
+**Questions:**
 
 - How strong is the association between 'Eu_pj' and 'A'? What does this suggest about the hypothesis of IBD?
 - How strong is the association between 'Sheint_pj' and 'A'? What does this suggest about the hypothesis of sheep-mediated gene flow (IBR)?
@@ -158,11 +167,19 @@ Questions:
 - Is logHa correlated with 'IBD' or 'IBR'?
 - Are any of the variables correlated with the spatial coordinates x and y?
 
-Let's also check the association between patch size and population size:
+Do the three grazing systems, and the ungrazed patches, differ in allelic richness A? Also, let's check the association between patch size and population size. Here we create boxplots that show the individual values as dots. We add a horizontal jitter to avoid overlapping points.
 
-```{r}
-boxplot(log(Dianthus$Ha) ~ Dianthus$pop09, ylab="PatchSize (log(Ha))",
-        xlab="Population size category")
+```{r fig.height=3.5, fig.width=7}
+
+Boxplot1 <- ggplot(Dianthus.df, aes(x=System, y=A)) + 
+  geom_boxplot() + xlab("Grazing system") + ylab("Allelic richness (A)") +
+  geom_jitter(shape=1, position=position_jitter(0.1), col="blue")
+
+Boxplot2 <- ggplot(Dianthus@data, aes(x=factor(pop09), y=log(Ha))) + 
+  geom_boxplot() + xlab("Population size class") + ylab("PatchSize (log(Ha))") +
+  geom_jitter(shape=1, position=position_jitter(0.1), col="blue")
+
+gridExtra::grid.arrange(Boxplot1, Boxplot2, nrow=1)
 ```
 
 Even though the population size categories were very broad, there appears to be a strong relationship between populations size (category) and (the logarithm of) patch size. 
@@ -274,7 +291,7 @@ spdep::moran.test(Dianthus.df$IBR, listw.gab)
 ```{r}
 spdep::moran.test(Dianthus.df$PatchSize, listw.gab) 
 ```
-Questions:
+**Questions:**
 
 - Which variables showed statistically signficant spatial autocorrelation?
 - Which variables showed the strongest autocorrelation? Is this surprising?
@@ -305,8 +322,7 @@ The error structure in a GLS is defined in a geostatistical framework, based on 
 The expected value of the semivariance will be 1. Hence it would make sense to add a horizontal line at 1. However, this is cumbersome with the trellis graphics (using package 'lattice') used by 'nlme'. 
 
 ```{r}
-model.lm <- nlme::gls(A ~ IBR + PatchSize, data = Dianthus.df)
-summary(model.lm)
+model.lm <- nlme::gls(A ~ IBR + PatchSize, data = Dianthus.df, method="REML")
 semivario <- nlme::Variogram(model.lm, form = ~x  + y, resType = "normalized")
 ```
 
@@ -317,7 +333,7 @@ ggplot(data=semivario, aes(x=dist, y=variog)) + geom_point() + geom_smooth(se=FA
   geom_hline(yintercept=1) + ylim(c(0,1.3)) + xlab("Distance") + ylab("Semivariance")
 ```
 
-Question:
+**Question:**
 
 - What do you conclude from this empirical variogram? 
 - Estimate the range of the variogram from the intersection of the smooth line with the horizontal line.
@@ -327,21 +343,20 @@ Question:
 
 We can ask R to fit different types of variogram models to this empirical variogram. The model family (e.g., exponential, gaussian, spherical) determines the general shape of the curve that will be fitted. With 'nugget=T', we indicate that a nugget effect should be fitted. 
 
+Note: Here we want to compare mixed models with the same fixed effects but different random effect structures defined by `correlation`. For this, we use REML. If we wanted to compare models with the same random effects but different fixed effects (as in Week 6), we should use maximum likelihood. 
+
+- With function `lme4::lmer`, we can set `REML=TRUE` for REML and `REML=FALSE` for ML. 
+- Here with `nlme::gls`, we set `method="REML"` for REML and `method="ML"` for ML.
+- For update to work here, you'll need to load the library `nlme `(or use this, with three coons to access a function 'update', for 'lme' objects, that is not 'exported' from the package: `nlme:::update.lme`)
+
 ```{r}
-mod.corExp <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
-                            correlation = nlme::corExp(form = ~ x + y, nugget=T))
+model.lm <- nlme::gls(A ~ IBR + PatchSize, data = Dianthus.df, method="REML")
 
-mod.corGaus <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
-                            correlation = nlme::corGaus(form = ~ x + y, nugget=T))
-
-mod.corSpher <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
-                            correlation = nlme::corSpher(form = ~ x + y, nugget=T))
-
-#mod.corLin <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
-#                            correlation = nlme::corLin(form = ~ x + y, nugget=T))
-
-mod.corRatio <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, 
-                            correlation = nlme::corRatio(form = ~ x + y, nugget=T))
+mod.corExp <- update(model.lm, correlation = nlme::corExp(form = ~ x + y, nugget=T))
+mod.corGaus <- update(model.lm, correlation = nlme::corGaus(form = ~ x + y, nugget=T))
+mod.corSpher <- update(model.lm, correlation = nlme::corSpher(form = ~ x + y, nugget=T))
+mod.corRatio <- update(model.lm, correlation = nlme::corRatio(form = ~ x + y, nugget=T))
+#mod.corLin <- update(model.lm, correlation = nlme::corLin(form = ~ x + y, nugget=T))
 ```
 
 ### c) Select best-fitting model
@@ -349,39 +364,39 @@ mod.corRatio <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df,
 Now we compare all models for which we did not get an error message:
 
 ```{r}
-MuMIn::model.sel(model.lm, mod.corExp, mod.corGaus, 
-                 mod.corSpher, mod.corRatio)     
+MuMIn::model.sel(model.lm, mod.corExp, mod.corGaus, mod.corSpher, mod.corRatio)     
 ```
 
-The list sorts the models, with the best model on top. The last column 'weight' contains the model weight, which indicate how much support there is for each model, given all other models in the set (see Week 12). Here, the exponential model fitted best, though the ratio model and the model without a spatially correlated error structure fitted the data almost equally well.
+The list sorts the models, with the best model on top. The last column 'weight' contains the model weight, which indicate how much support there is for each model, given all other models in the set (see Week 12). Here, the exponential model fitted best, though the ratio model and the model without a spatially correlated error structure fitted the data almost equally well. The top three models have delta values within 2 (in fact, close to 0).
+
+We refit the best model with maximum likelihood to test the fixed effects.
 
 ```{r}
-summary(mod.corExp)  
+mod.corExp.ML <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, method="ML",
+                            correlation = nlme::corExp(form = ~ x + y, nugget=T))
+car::Anova(mod.corExp.ML) 
 ```
 
 The fitted model with the exponential error structure shows a significant effect for PatchSize but not for the IBR term.
 
-We don't get an R-squared value directly, but we can calculate a pseudo R-squared from a regression of the response 'A' on the fitted values.
+We don't get an R-squared value directly, but we can calculate a pseudo R-squared from a regression of the response 'A' on the fitted values (using the model fitted with REML). Let's compare it to the R-squared from the `lm` model.
 
 ```{r}
 summary(lm(A ~ fitted(mod.corExp), data = Dianthus.df))$r.squared
 summary(mod.lm.PatchSize)$r.squared
 ```
 
-The pseudo R-squared is almost identical to the R-squared of the non-spatial 'lm' model. 
+The pseudo R-squared is almost identical to the R-squared of the non-spatial `lm` model. 
 
-Let's check some residual plots - in this case, we have to construct them ourselves.
+Let's check the residual plots:
 
-```{r fig.height=3, fig.width=7}
-par(mfrow=c(1,2), mar=c(4,4,1,1))
-plot(fitted(mod.corExp), residuals(mod.corExp))
-abline(h=0,lty=3)
-
-qqnorm(residuals(mod.corExp), main="")
-qqline(residuals(mod.corExp))
+```{r}
+predictmeans::residplot(mod.corExp)
 ```
 
 The normal probability plot still looks about the same.
+
+Note that the function `residplot` recognized that we have a `gls` model and added a plot of the auto-correlation function, ACF. Here we have a value of 1 for the distance lag 0, which is the comparison of each value with itself. All other values are low. Recall that the autcorrelation is inversely related to the semivariogram (which does not report the value for lag = 0):
 
 ```{r}
 semivario <- nlme::Variogram(mod.corExp, form = ~ x + y, 
@@ -389,49 +404,92 @@ semivario <- nlme::Variogram(mod.corExp, form = ~ x + y,
 plot(semivario, smooth = TRUE)
 ```
 
-The variogam does look better!
+The variogram of the residuals (after accounting for spatial autocorrelation as modeled by the variogram model) does look better!
 
 ### d) Plot fitted variogram model
 
-How can we plot the fitted variogram? Let's first store it in an object 'Fitted.variog', then plot it.
+How can we plot the fitted variogram? Let's first store it in an object 'Fitted.variog', then plot it. Note that the fitted variogram itself has two classes, "Variogram" and "data.frame". The plot created by `plot(Fitted.variog)` is a "trellis" object. 
 
 ```{r}
 Fitted.variog <- nlme::Variogram(mod.corExp)
 class(Fitted.variog)
+class(plot(Fitted.variog))
 plot(Fitted.variog)
 ```
 
-That was easy. If we want to access the fitted values (i.e. the exponential model curve values), this is a bit more involved. 
+That was easy. However, `trellis` plots are difficult to tweak, and we may want to create our own plot with `ggplot2`. For this, we need to access the fitted variogram values (i.e. the exponential model curve values), which is a bit more involved. 
 
-The object 'Fitted.variog' has two classes: "Variogram" and "data.frame". Technically, it is a data frame (S3) with additional attributes. This raises a challenge, because we access attributes of S3 objects with '$', but we also use '$' to access columns in a data frame. 
+The object 'Fitted.variog' is a data frame (S3) with additional attributes. This raises a challenge, because we access attributes of S3 objects with `$`, but we also use `$` to access columns in a data frame. 
 
-If we just print 'Fitted.variog', we only see the data frame. 
+If we just print `Fitted.variog`, we only see the data frame. 
 
 ```{r}
 head(Fitted.variog)
 ```
 
-We can see the attributes listed by using 'str':
+We can see the attributes listed by using `str`:
 
 ```{r}
 str(Fitted.variog)
 ```
 
-The line we are looking for is:  '- attr(*, "modelVariog")'. The attributes 'modelVariog' has 50 rows (obs.) and 2 variables: '$variog' and '$dist'. These are the fitted values (i.e., values of the exponential variogram model for 50 distance values).
+The line we are looking for is:  `- attr(*, "modelVariog")`. The attribute `modelVariog` has 50 rows (obs.) and 2 variables: `$variog` and `$dist`. These are the fitted values (i.e., values of the exponential variogram model for 50 distance values).
 
-The notation attr(*, "modelVariog") is a cryptic way of telling us how to access the attribute: use the function 'attr' and provide two arguments: the object names 'Fitted.variog' (represented by the asterisk), and the name of the attribute, in quotes: 'attr(Fitted.variog, "modelVariog")'.
+The notation `attr(*, "modelVariog")` is a cryptic way of telling us how to access the attribute: use the function `attr` and provide two arguments: the object names `Fitted.variog` (represented by the asterisk), and the name of the attribute, in quotes: `attr(Fitted.variog, "modelVariog")`.
 
 ```{r}
 tibble::as_tibble(attr(Fitted.variog, "modelVariog"))
 ```
 
-This is useful to know if you want to create your own figures, e.g. with 'ggplot2'.
+This is useful to know if you want to create your own figures, e.g. with `ggplot2`.
 
 ```{r}
 ggplot(data=Fitted.variog, aes(x=dist, y=variog)) + geom_point() + 
   ylim(c(0,1.3)) + xlab("Distance") + ylab("Semivariance") + 
-  geom_line(data=attr(Fitted.variog, "modelVariog"), aes(x=dist, y=variog), color="blue")
+  geom_line(data=attr(Fitted.variog, "modelVariog"), aes(x=dist, y=variog), color="blue") +
+  geom_hline(yintercept=1,linetype="dashed")
 ```
+
+### e) Add random factor
+
+The package `nlme` allows us also to include random factors. Here we add `System` as a random factor and test whether this would improve the model fit.
+
+- Instead of function `nlme::gls`, we use the function `nlme::lme`.
+- In `nlme`, random effects are specified differently from `lmer::lme4` (Week6): `random = ~ 1 | System`.
+- The correlation structure is specified exactly as with `gls`.
+
+```{r}
+mod.lme.corExp <- nlme::lme( A ~ PatchSize + IBR, 
+                             random = ~ 1 | System, data = Dianthus.df, 
+                            correlation = nlme::corExp(form = ~ x + y, nugget=T),
+                            method="REML")
+summary(mod.lme.corExp)
+```
+The nature of the results did not change: PatchSize is still significant but IBR is not.
+
+As in Week 6, we can obtain marginal (fixed effects) and conditional R-squared values (fixed + random):
+
+```{r}
+MuMIn::r.squaredGLMM(mod.lme.corExp)
+```
+
+Now we can include this model in the model comparison from above. Notes:
+
+- As discussed in the Week 6 video, we should fit the mixed model with maximum likelihood (method = "ML") to test fixed effects and to compare its AIC to the other models.
+- The Week 6 video followed the philosphy that random effect should only be fitted for factors with >5 levels, whereas here, we are using a factor with 4 levels. 
+
+```{r}
+MuMIn::model.sel(model.lm, mod.corExp, mod.corRatio, mod.lme.corExp)  
+```
+
+**Questions:**
+
+- How may degrees of freedom (df) were used for the random effect?
+- How can you see from the table that System was fitted as a random effect, and what method was used (REML vs. ML)?
+- Was the model with the random effect ranked higher than the model without it?
+- Compare the estimates of the slope coefficients for IBR between the models. How did accounting for spatial autocorrelation affect the slope coefficient, compared to `model.lm`? How large was the difference due to using different variogram models? And how much of a difference was related to including the random effect? 
+- How about the slope estimate for PatchSize? 
+
 
 ## 5. Fit spatial simultaneous autoregressive error models (SAR)
 
@@ -439,9 +497,9 @@ An alternative way to account for spatial autocorrelation in the residuals is sp
 
 ### a) Fit and compare alternative SAR models
 
-The method 'errorsarlm' fits a simultaneous autoregressive model ('sar') to the error ('error') term of a 'lm' model. 
+The method `errorsarlm` fits a simultaneous autoregressive model ('sar') to the error ('error') term of a 'lm' model. 
 
-This approach is based on spatial neighbours and weights. We have already defined them in three versions of a 'listw' object. Let's see which one fits the data best.
+This approach is based on spatial neighbours and weights. We have already defined them in three versions of a `listw` object. Let's see which one fits the data best.
 
 ```{r}
 mod.sar.IBR.gab <- spatialreg::errorsarlm(A ~ PatchSize + IBR, data = Dianthus.df, 
@@ -458,7 +516,7 @@ The best model ('mod.sar.IBR.d1') is the one with (row-standardized) inverse-dis
 
 ### b) Interpret best-fitting SAR model
 
-Let's have a look at the best model. With the argument 'Nagelkerke = TRUE', we request a pseudo R-squared. 
+Let's have a look at the best model. With the argument `Nagelkerke = TRUE`, we request a pseudo R-squared. 
 
 ```{r}
 summary(mod.sar.IBR.d1, Nagelkerke = TRUE)
@@ -475,11 +533,11 @@ Both GLS and SAR fitted a spatially correlated error structure of a relatively s
 
 ### a) Default method
 
-The new package 'spmoran' makes this really easy. First, we create the MEM spatial eigenvectors. This implies defining neighbors and weights, but this is well hidden in the code below. The function 'meigen' here takes the coordinates, calculates a minimum spanning tree (so that each site has at least one neighbour), and finds the maximum distance 'h' from the spanning tree. It then calculates neighbor weights as exp(-dij / h). 
+The new package `spmoran` makes this really easy. First, we create the MEM spatial eigenvectors. This implies defining neighbors and weights, but this is well hidden in the code below. The function `meigen` here takes the coordinates, calculates a minimum spanning tree (so that each site has at least one neighbour), and finds the maximum distance 'h' from the spanning tree. It then calculates neighbor weights as `exp(-dij / h)`. 
 
-Note: if you have many sites (> 200), the function 'meigen_f' may be used instead of 'meigen', it should even work for >1000 sites.
+Note: if you have many sites (> 200), the function `meigen_f` may be used instead of `meigen`, it should even work for >1000 sites.
 
-The function 'esf' then performs the spatial filtering. Here it uses stepwise selection of MEM spatial eigenvectors using an R-squared criterion (fn = "r2").
+The function `esf` then performs the spatial filtering. Here it uses stepwise selection of MEM spatial eigenvectors using an R-squared criterion (`fn = "r2"`).
 
 ```{r}
 # lm model: using truncated distance matrix (max of min spanning tree distance)
@@ -490,11 +548,11 @@ sfd.res <- spmoran::esf( y=Dianthus.df$A, x=Dianthus.df[,c("PatchSize", "IBR")],
 
 The objects created by functions 'meigen' and 'esf' contain a lot of information:
 
-- **'meigW':** a list returned by function 'meigen', with the following attributes:
+- **meigW:** a list returned by function 'meigen', with the following attributes:
     + **sf:** Matrix of retained spatial eigenvectors.
     + **ev:** Eigenvalues of retained spatial eigenvectors.
     + **ev_full:** All (n - 1) eigenvalues.
-- **'sfd.res':** a list returned by function 'esf', with the following attributes:
+- **sfd.res:** a list returned by function 'esf', with the following attributes:
     + **b:** Table with regression results for predictors X.
     + **r:** Table with regression results the selected MEM spatial eigenvectors (based on step-wise eigenvector selection).
     + **e:** Summary statistics for the entire model.
@@ -518,7 +576,7 @@ sfd.res$r
 
 Five MEM spatial eigenvectors were important enough to be included in the model. Here they are ranked by their (absolute value of) slope coefficient, and thus by the strength of their association with the response variable. Eigenvector 'sf6' was by far the most important.
 
-Note: some eigenvectors are included despite having a p-value > 0.05. This may have two reasons. First, the eigenvectors were selected without taking into account predictors X. Second, a different test was used in the stepwise eigenvector selection. The type of test can be specified with an argument 'fn' (see '?esf' helpfile and 'spmoran' tutorial).
+Note: some eigenvectors are included despite having a p-value > 0.05. This may have two reasons. First, the eigenvectors were selected without taking into account predictors X. Second, a different test was used in the stepwise eigenvector selection. The type of test can be specified with an argument `fn` (see '?esf' helpfile and 'spmoran' tutorial).
 
 Finally, let's look at the summary results for the fitted model:
 
@@ -530,7 +588,7 @@ Here, 'adjR2' is rather high (0.437), but this includes the selected MEM spatial
 
 ### b) Using a custom connectivity matrix
 
-We know already that 'listw.d1' fit the data well, so let's re-run the model with our own definition of spatial weights. With the funciton 'listw2mat', we convert from 'listw' format to a full connnectivity matrix. 
+We know already that `listw.d1` fit the data well, so let's re-run the model with our own definition of spatial weights. With the funciton 'listw2mat', we convert from `listw` format to a full connnectivity matrix. 
 
 ```{r}
 cmat.d1    <- spdep::listw2mat( listw.d1) 
@@ -544,7 +602,7 @@ sfw.res$e
 
 Note: the messages tell us that 'cmat' has been made symmetric before analysis, that 27 out of 59 MEM spatial eigenvector (and their eigenvalues, hence 'pairs') were retained initially and subjected to stepwise selection, which then returned 15 statistically significant MEM eigenvectors that were included in the regression model with the predictor variables X (PatchSize and IBR).
 
-Questions: 
+**Questions:** 
 
 - Does this model fit the data better? Look for a lower AIC. In addition, you can compare the adjusted R-squared. 
 - What could cause a difference in model performance?
@@ -558,8 +616,8 @@ First, we plot all the selected (significant) eigenvectors. A convenient way to 
 
 Here we need tweak the column names of the eigenvectors, which are called "X1", "X2" etc., to match the row names of table 'sf.res$r', which uses "sf1", "sf2" etc. 
 
-- In the first line, we create a data frame 'SF' that combines the coordinates from 'xy' with the eigenvectors from 'meigw'. By specifying 'sf=meigw$sf', the column names will be prefaced by 'sf.', so that "X1" becomes "sf.1". 
-- With the function 'gsub', we substitute "." by an empty vector "", i.e., we remove the period from the name, so that "sf.1" becomes "sf1". This is a bit tricky because of the special meanings of '.': we need to escape (here we use "[.]") to indicate that '.' should be interpreted and matched literally as a period symbol, not as a wildcard that matches any character. Function 'sub' substitutes the first occurrence of the symbol, whereas 'gsub' substitutes all occurrences.
+- In the first line, we create a data frame 'SF' that combines the coordinates from 'xy' with the eigenvectors from 'meigw'. By specifying `sf=meigw$sf`, the column names will be prefaced by 'sf.', so that "X1" becomes "sf.1". 
+- With the function `gsub`, we substitute "." by an empty vector "", i.e., we remove the period from the name, so that "sf.1" becomes "sf1". This is a bit tricky because of the special meanings of '.': we need to escape (here we use "[.]") to indicate that '.' should be interpreted and matched literally as a period symbol, not as a wildcard that matches any character. Function `sub` substitutes the first occurrence of the symbol, whereas `gsub` substitutes all occurrences.
 
 ```{r fig.height=5, fig.width=7}
 SF <- data.frame(xy, sf=meigw$sf)
@@ -648,7 +706,7 @@ summary( rv_res$p_vc )
 
 For both variables, most sites do not show a significant effect (i.e., only few sites show a p-value < 0.05).
 
-We could print these results by site (type 'rv_res$b_vc' or 'rv_res$p_vc'). Even better, we can plot them in space. We start with combining the data ('Dianthus.df') and the results into one data frame 'Results'. By specifying 'b=rv_res$b_vc' and "p=rv_res$p_vc', R will create column names that start with 'b' or 'p', respectively.
+We could print these results by site (type `rv_res$b_vc` or `rv_res$p_vc`). Even better, we can plot them in space. We start with combining the data ('Dianthus.df') and the results into one data frame 'Results'. By specifying `b=rv_res$b_vc` and `p=rv_res$p_vc`, R will create column names that start with 'b' or 'p', respectively.
 
 ```{r}
 Result <- data.frame(Dianthus.df, b=rv_res$b_vc, p=rv_res$p_vc)
@@ -696,9 +754,9 @@ summary( rv_res$p_vc )
 
 Also, a larger proportion of sites nows has p-values < 0.05.
 
-Let's plot the results onto a gray-scale, stamen 'terrain map to facilitate interpretation. Note: here the zoom level 'zoom = 12' covers the entire study area, whereas the default value would actually cut off a large number of sites. We use the argument 'force=TRUE' to force the map to be downloaded again (otherwise the argument 'color="bw"' may not have an effect if we already downloaded the terrain map in color).
+Let's plot the results onto a gray-scale, stamen terrain map to facilitate interpretation. Note: here the zoom level `zoom = 12` covers the entire study area, whereas the default value would actually cut off a large number of sites. We use the argument `force=TRUE` to force the map to be downloaded again (otherwise the argument `color="bw"` may not have an effect if we already downloaded the terrain map in color).
 
-```{r fig.height=6, fig.width=7}
+```{r fig.height=6, fig.width=7, message=FALSE}
 Result <- data.frame(Dianthus.df, b=rv_res$b_vc, p=rv_res$p_vc, resid=rv_res$resid)
 names(Result)
 
@@ -723,7 +781,94 @@ This is a very different map of results!
 - In practical terms, this may suggest that the management strategy of maintaining plant functional connectivity through shepherding seems to be working for this species overall, though there are three parts of the study area where this may not be sufficient to maintain gene flow. 
 - The evidence is not conclusive, however, the observed patterns could also be explained by population size, which in this species seems to be associated with patch size. This makes sense if smaller patches contain smaller populations with higher rates of genetic drift.
 
+
+## 9. R Exercise Week 7
+
+The *Pulsatilla vulgaris* dataset that we've been analyzing in the R exercises has two variables that were observed or calculated for each sampled mother plant (i.e., those plants from which seeds were collected; see DiLeo et al. 2017, Journal of Ecology):
+
+- `flower.density`: he number of flowers within 2 m of the mother plant. A radius of 2 m around mother plants was chosen as it gave the strongest correlation with selfing rates and pollination distances compared to lower (1 m) and higher (3 m) tested values.
+- `mom.isolation`: the mean distance of the mother plant to all other plants within the population (mean neighbour distance).
+
+We would expect the following:
+
+- A negative relationship, where floral density within 2 m of isolated mother plants is low.
+- Likely (right-)skewed distributions for both variables.
+- Positive spatial autocorrelation of both variables within each patch.
+- Values within each patch likely more similar than between patches.
+
+Consider how the points listed above may violate different assumptions of a linear regression model fitted with least squares (`lm`). How can we test and account for these potential violations and fit a valid model?
+
+**Task:** Test the regression of flower density on the isolation of the sampled mother plants of *Pulsatilla vulgaris*. Account for the sampling of multiple mothers from each of seven patches, and for residual spatial autocorrelation (if statistically significant). 
+
+**Hints:**
+
+a) **Load packages**: You may want to load the packages `dplyr`, `ggplot2` and 'nlme'. Alternatively, you can use `::` to call functions from packages. 
+
+b) **Import data, add spatial coordinates**. Use the code below to import the data, extract moms, add spatial coordinates, and remove replicate flowers sampled from the same mother.
+
+```{r message=FALSE}
+library(dplyr)
+
+# Dataset with variables 'flower.density' and 'mom.isolation' for each mom:
+Moms <- read.csv(system.file("extdata",
+                            "pulsatilla_momVariables.csv", 
+                            package = "LandGenCourse"))
+
+# Dataset with spatial coordinates of individuals:
+Pulsatilla <- read.csv(system.file("extdata",
+                            "pulsatilla_genotypes.csv", 
+                            package = "LandGenCourse"))
+Adults <- Pulsatilla %>% filter(OffID == 0)
+
+# Combine data
+Moms <- left_join(Moms, Adults[,1:5])
+
+# Remove replicate flowers sampled from the same mother
+Moms <- Moms %>% filter(OffID == 0)
+```
+
+c) **Explore data**. How many mother plants are there in total, and per population? Are the distributions of `flower.density` and of `mom.isolation` skewed? 
+
+d) **Create scatterplots**: Use ggplot to create a scatterplot of `flower.density` (y) against `mom.isolation` (x). Modify the plot with `coord_trans` to apply a log-transformation to each axis. Will this make the relationship more linear? - Note: using `geom_smooth` together with `coord_trans` can create problems. You may adapt the following code to plot two ggplot-type plots side-by-side:
+`gridExtra::grid.arrange(myPlot1, myPlot2, nrow = 1)`
+
+e) **Scatterplot with line**: Instead of using coord_trans, create a scatterplot with log-transformed variable (log(y) vs. log(x)). Add a regression line.
+
+f) **Fit non-spatial models**: Adapt code from section 4 to fit two models with the response `log(flower.density)`and the fixed factor `log(mom.isolation)`, using funcions from package `nmle`:
+
+    - Basic model: you can fit a simple model by adapting this code:
+`nlme::gls(Response ~ FixedEffect, data=Data, method=REML)` 
+    - Random effect: add a random effect for Population, use nlme::lme instead of gls.
+`nlme::lme(Response ~ FixedEffect, random = ~ 1| RandomEffect, data=Data, method=REML)` 
+    - For now, omit the `correlation` term (no spatial correlation structure).
+
+g) **Plot residual variograms**: Plot variograms for the two models. Inspect the x-axes of the plots. What is the effect of including the random effect `Population` on the fitting of the variogram? Recall the sampling design. Was there spatial autocorrelation within populations? Hints:
+
+    - Check the variable names in `Moms` to adapt the names of the x and y coordinates as needed in the term `form= ~ xcoord + ycoord`.
+    - Print each variogram object to check the number of pairs per lag. Ideally, this should be around 100.
+    - These variogram plots are trellis plots. Fortunately, you can again use `gridExtra::grid.arrange` to plot them side by side. Write each plot into an object first.
+
+h) **Add correlation structure**: Add a term of the type `correlation = nlme::corExp(form = ~ x + y, nugget=T)` to the mixed model fitted with REML. Adapt code from section 4.b to evaluate different variogram functions (exponential, spherical, Gaussian, ratio) and use AIC (with REML) to choose the best-fitting variogram model. 
+
+i) **Check residual plots**: For the best model (fitted with REML) and check the residuals. Plot a variogram of the residuals, and the fitted variogram.
+
+k) **Test fixed effect**: Refit the best model with maximum likelihood to test the fixed effect with `car::Anova`. Give the model a new name to keep them apart and avoid overwriting.
+
+l) **Determine the marginal R-squared**. For the best model (fitted with REML), use `MuMIn::r.squaredGLMM` to determine the marginal and conditional R-squared. 
+
+**Questions:** Justify your answers to the following questions:
+
+- Did you find a statistically significant, negative relationship between local floral density and mom isolation? If so, how strong was it?
+- Was it necessary to account for skewness in both variables?
+- Was it necessary to account for spatial autocorrelation? 
+- Was it necessary to account for population? 
+
 ```{r message=FALSE, warning=TRUE, include=FALSE}
 LandGenCourse::detachAllPackages()
 ```
+
+
+
+
+
 
