@@ -567,6 +567,7 @@ if(!dir.exists(paste0(here::here(),"/output/simout")))
   dir.create(paste0(here::here(),"/output/simout"))
 ```
 
+
 ```{r}
 # create a timer (just to know how long it will take roughly)
 timer0 <- round(proc.time()[3],2)
@@ -688,6 +689,98 @@ Questions:
 - How about statistical power? 
 
 Have fun and please give us feed back what you think about this Worked Example. [Bernd Gruber](mailto:bernd.gruber@canberra.edu.au), [Erin Landguth](erin.landguth@gmail.com), [Helene Wagner](mailto:helene.wagner@utoronto.ca).
+
+
+## 6. R Exercise Week 8
+
+**Task:** Carry out a permutation test for the Mantel rank correlation to test for fine-scale spatial genetic structure in *Pulsatilla vulgaris* adults, using the pooled data from all seven patches. Use a one-sided alternative "greater", as we expect the Mantel rank correlation to be positive.
+
+**Hints:**
+
+  - Exclude all pairs that involve individuals from different patches.
+  - Permute individuals only within patches, not between patches. 
+  - Calculate the Mantel rank correlation for the observed data (M.rho.obs)
+  - For each of R = 499 permutations, calculate M.rho.sim
+  - Determine the approximate p-value of the one-sided test with alternative "greater" as the percentage of the 500 values (1 observed, 499 permuted) that are greater or equal to the observed one. 
+
+a) **Load packages**: You may want to load the packages `dplyr` and `gstudio`. Alternatively, you can use `::` to call functions from packages.
+
+
+b) **Import data, extract adults**. Use the code below to import the data into `gstudio` and extract adults (`OffID == 0`). 
+
+```{r message=FALSE}
+library(dplyr)
+Pulsatilla.gstudio <- gstudio::read_population(path=system.file("extdata",
+                            "pulsatilla_genotypes.csv", 
+                            package = "LandGenCourse"), 
+                    type="column", locus.columns=c(6:19), 
+                    phased=FALSE, sep=",", header=TRUE)
+Adults.gstudio <- Pulsatilla.gstudio %>% filter(OffID == 0)
+```
+
+c) **Sort individuals by patch**. Create a new ID variable `Names` that combines the existing variables `Population` and `ID` (starting with population). Then use the function  `dplyr::arrange` to sort `Adults.gstudio` by `Names` (check the help file for `arrange`). This is important here for two reasons:
+
+    - In order to efficiently permute individuals within patches, they need to be sorted by patch.
+    - In some cases, the function `gstudio::genetic_distance` will sort the distance matrix alphabetically. To avoid mismatches between the data and the resulting distance matrix, it is best to sort the data alphabetically already. 
+
+d) **Calculate Euclidean distances**: Use the metric coordinates in variables "X" and "Y" to calculate Euclidean distances (see Week 5, section 4). Here it is important to store the distances `Dgeo` in the full matrix format, with `as.matrix`. 
+
+e) **Calculate genetic distances (Dps)**: Use the following code (as needed (adapt if needed) to calculate individual-level genetic distances (proportion of shared alleles) and store them in the full matrix format. We subtract values from 1 to obtain a distance measure. Note: the calculation in `gstudio` is based on Bray distance and the resulting values are proportional to those calculated by `adegenet::propShared`. I.e., the two measures have a correlation of 1 but the actual values differ.
+
+    `Dgen <- 1 - as.matrix(gstudio::genetic_distance(Adults.gstudio, stratum="Names", mode="dps"))`
+
+
+f) **Plot distances, calculate M.rho**: Create a plot of Dgen vs Dgeo, and calculate the Mantel rank correlation. Note: the function 'cor' with default settings does not allow missing values (NA). This can be changed e.g. with the argument `use`.
+
+    - Use `as.dist` to access only the values from the lower triangle of each matrix. 
+    - The function `plot` will do. Inspect the plot. Where would you find the pairs of individuals within the same patch? 
+    - Use the function `cor` with `method = "spearman"` to calculate the Mantel rank correlation. Allow for missing values with the argument `use = "complete.obs"`.
+
+g) **Limit to within-patch pairs**: Restrict the analysis to pairs within the same patch.
+For this, we want to set all between-site comparisons in `Dgeo` to `NA`. Uncomment the code below to:
+
+    - Create a matrix that is TRUE if the two individuals are in the same patch, and FALSE if not (first line)
+    - Change FALSE to NA (second line)
+    - Multiply Dgeo by this matrix to set distances between patches to NA (third line).
+    - Adapt your code from above to plot the distances Dgen vs. Dgeo.within.
+    - Calculate the Mantel rank correlation between Dgen vs. Dgeo.within and store it as `Cor.obs`. 
+
+```{r}
+#SamePatch <- outer(Adults.gstudio$Population, Adults.gstudio$Population, FUN = "==")
+#SamePatch[SamePatch == "FALSE"] <- NA
+#Dgeo.within <- SamePatch * Dgeo
+```
+
+  Note: check the help file or run the following examples to figure out what `outer` does: 
+    `outer(c(1:5), c(1:5), FUN = "*")`
+    `outer(c(1:5), c(1:5), FUN = "-")`
+    `outer(LETTERS[1:5], c(1:5), FUN = "paste0")`
+    
+h) **Unrestricted permutation test**: Create a variable `Order` with row numbers (from 1 to the number of individuals in `Adults.gstudio`). Then, uncomment the code below (adapt as needed) to carry out a permutation test by permuting the order of individuals, R = 499 times. Notes to permute a distance matrix, we need to permute the rows and columns of the full distance matrix simultaneously with the same order: `Dgen[a,a]`. We only need to permute one of the two matrices (Dgen or Dgeo.within), but not both. The approximate p-value is calculated as the proportion of values (R simulated ones and 1 observed `Cor.obs`) that were as large, or larger, than `Cor.obs`. 
+
+```{r}
+#R = 499
+#Cor.perm.unrestricted <- rep(NA, R)
+#for(r in 1:R)
+#{
+#  a <- sample(Order)
+#  Cor.perm.unrestricted[r] <- cor(as.dist(Dgen[a,a]),as.dist(Dgeo.within), method="spearman", use="complete.obs")
+#}
+#approx.p.unrestricted <- mean(c(Cor.obs, Cor.perm.unrestricted) >= Cor.obs)
+#approx.p.unrestricted
+```
+
+i) **Restricted permutation test**: Adapt the code to permute individuals only within patches. For this, split 'Order' by population, randomize row numbers within groups (list elements = populations) with `sapply`, and use `unlist` to convert to a vector again. Make sure to change object names from 'unrestricted' to 'restricted'.
+
+    - Before the `for` loop, add this code: `b <- split(Order, Adults.gstudio$Population)`
+    - Inside the `for` loop, replace the calculation of a : `a <- unlist(sapply(b, sample))`
+
+k) **Compare results**: Create side-by-side boxplots of the simulated Mantel rank correlation values for the unrestricted and the restricted permutation tests. Note: if none of the simulated values was larger than Cor.obs, the approx. p-value will be 1/(R+1). This indicates the resolution of the permutation test, i.e., the smallest possible p-value given R.
+
+**Questions:** 
+
+- Did the direction, size or statistical significance of the observed Mantel rank correlation (as a measure of fine-scale spatial genetic structure in *P. vulgaris*) change between the unrestricted and the restricted permutation test? Why, or why not?
+- How did the distributions of the simulated values of the Mantel rank correlation differ between the unrestricted and the restricted test? Can you think of a reason for this?
 
 
 ```{r message=FALSE, warning=TRUE, include=FALSE}
