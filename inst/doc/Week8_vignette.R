@@ -360,6 +360,31 @@ head(res)
 ggplot2::ggplot(res, ggplot2::aes(x=time, y=fst)) + 
          ggplot2::geom_point(position = ggplot2::position_jitter(w = 0.5))
 
+## ----message=FALSE------------------------------------------------------------
+library(dplyr)
+Pulsatilla.gstudio <- gstudio::read_population(path=system.file("extdata",
+                            "pulsatilla_genotypes.csv", 
+                            package = "LandGenCourse"), 
+                    type="column", locus.columns=c(6:19), 
+                    phased=FALSE, sep=",", header=TRUE)
+Adults.gstudio <- Pulsatilla.gstudio %>% filter(OffID == 0)
+
+## -----------------------------------------------------------------------------
+#SamePatch <- outer(Adults.gstudio$Population, Adults.gstudio$Population, FUN = "==")
+#SamePatch[SamePatch == "FALSE"] <- NA
+#Dgeo.within <- SamePatch * Dgeo
+
+## -----------------------------------------------------------------------------
+#R = 499
+#Cor.perm.unrestricted <- rep(NA, R)
+#for(r in 1:R)
+#{
+#  a <- sample(Order)
+#  Cor.perm.unrestricted[r] <- cor(as.dist(Dgen[a,a]),as.dist(Dgeo.within), method="spearman", use="complete.obs")
+#}
+#approx.p.unrestricted <- mean(c(Cor.obs, Cor.perm.unrestricted) >= Cor.obs)
+#approx.p.unrestricted
+
 ## ----message=FALSE, warning=TRUE, include=FALSE-------------------------------
 LandGenCourse::detachAllPackages()
 

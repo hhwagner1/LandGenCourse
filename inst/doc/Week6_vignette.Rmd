@@ -479,7 +479,7 @@ b) **Import data and extract adults**.
 
 
     `Pulsatilla <- read.csv(system.file("extdata","pulsatilla_genotypes.csv", 
-                            package = "LandGenCourse")`
+                            package = "LandGenCourse"))`
 
 c) **Calculate multilocus heterozygosity**: Use package `inbreedR` to calculate multilocus heterozygosity for each adult. 
 

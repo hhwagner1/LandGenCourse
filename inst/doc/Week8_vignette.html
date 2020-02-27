@@ -12,7 +12,7 @@
 
 <meta name="author" content="Bernd Gruber, Erin Landguth &amp; Helene Wagner" />
 
-<meta name="date" content="2020-02-18" />
+<meta name="date" content="2020-02-27" />
 
 <title>Week 8: Simulation</title>
 
@@ -339,7 +339,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Week 8: Simulation</h1>
 <h4 class="author">Bernd Gruber, Erin Landguth &amp; Helene Wagner</h4>
-<h4 class="date">2020-02-18</h4>
+<h4 class="date">2020-02-27</h4>
 
 
 <div id="TOC">
@@ -369,6 +369,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <li><a href="#c-save-your-complete-simulation-run-input-and-output">c) Save your complete simulation run (input and output)</a></li>
 <li><a href="#d-analyze-and-synthesize-results">d) Analyze and synthesize results</a></li>
 </ul></li>
+<li><a href="#r-exercise-week-8">6. R Exercise Week 8</a></li>
 </ul>
 </div>
 
@@ -994,21 +995,21 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb61-32" data-line-number="32">            <span class="st">&quot;. So far, it took: &quot;</span>, <span class="kw">round</span>(<span class="kw">proc.time</span>()[<span class="dv">3</span>]<span class="op">-</span>timer0,<span class="dv">2</span>),<span class="st">&quot; sec.</span><span class="ch">\n</span><span class="st">&quot;</span>))</a>
 <a class="sourceLine" id="cb61-33" data-line-number="33">  <span class="kw">flush.console</span>()</a>
 <a class="sourceLine" id="cb61-34" data-line-number="34">}</a></code></pre></div>
-<pre><code>## Finished run: 1 out of 15. So far, it took: 1.05 sec.
-## Finished run: 2 out of 15. So far, it took: 2.15 sec.
-## Finished run: 3 out of 15. So far, it took: 3.19 sec.
-## Finished run: 4 out of 15. So far, it took: 4.26 sec.
-## Finished run: 5 out of 15. So far, it took: 5.31 sec.
-## Finished run: 6 out of 15. So far, it took: 15.77 sec.
-## Finished run: 7 out of 15. So far, it took: 22.6 sec.
-## Finished run: 8 out of 15. So far, it took: 27.96 sec.
-## Finished run: 9 out of 15. So far, it took: 32.87 sec.
-## Finished run: 10 out of 15. So far, it took: 37.87 sec.
-## Finished run: 11 out of 15. So far, it took: 46.44 sec.
-## Finished run: 12 out of 15. So far, it took: 56.47 sec.
-## Finished run: 13 out of 15. So far, it took: 67.6 sec.
-## Finished run: 14 out of 15. So far, it took: 87.42 sec.
-## Finished run: 15 out of 15. So far, it took: 100.53 sec.</code></pre>
+<pre><code>## Finished run: 1 out of 15. So far, it took: 1.1 sec.
+## Finished run: 2 out of 15. So far, it took: 2.09 sec.
+## Finished run: 3 out of 15. So far, it took: 3.1 sec.
+## Finished run: 4 out of 15. So far, it took: 4.06 sec.
+## Finished run: 5 out of 15. So far, it took: 5.1 sec.
+## Finished run: 6 out of 15. So far, it took: 9.47 sec.
+## Finished run: 7 out of 15. So far, it took: 13.67 sec.
+## Finished run: 8 out of 15. So far, it took: 18.17 sec.
+## Finished run: 9 out of 15. So far, it took: 22.44 sec.
+## Finished run: 10 out of 15. So far, it took: 26.84 sec.
+## Finished run: 11 out of 15. So far, it took: 35.1 sec.
+## Finished run: 12 out of 15. So far, it took: 44.64 sec.
+## Finished run: 13 out of 15. So far, it took: 52.14 sec.
+## Finished run: 14 out of 15. So far, it took: 59.54 sec.
+## Finished run: 15 out of 15. So far, it took: 68.5 sec.</code></pre>
 </div>
 <div id="d-analyze-and-synthesize-results" class="section level3">
 <h3>d) Analyze and synthesize results</h3>
@@ -1146,6 +1147,84 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </ul>
 <p>Have fun and please give us feed back what you think about this Worked Example. <a href="mailto:bernd.gruber@canberra.edu.au">Bernd Gruber</a>, <a href="erin.landguth@gmail.com">Erin Landguth</a>, <a href="mailto:helene.wagner@utoronto.ca">Helene Wagner</a>.</p>
 </div>
+</div>
+<div id="r-exercise-week-8" class="section level2">
+<h2>6. R Exercise Week 8</h2>
+<p><strong>Task:</strong> Carry out a permutation test for the Mantel rank correlation to test for fine-scale spatial genetic structure in <em>Pulsatilla vulgaris</em> adults, using the pooled data from all seven patches. Use a one-sided alternative “greater”, as we expect the Mantel rank correlation to be positive.</p>
+<p><strong>Hints:</strong></p>
+<ul>
+<li>Exclude all pairs that involve individuals from different patches.</li>
+<li>Permute individuals only within patches, not between patches.</li>
+<li>Calculate the Mantel rank correlation for the observed data (M.rho.obs)</li>
+<li>For each of R = 499 permutations, calculate M.rho.sim</li>
+<li>Determine the approximate p-value of the one-sided test with alternative “greater” as the percentage of the 500 values (1 observed, 499 permuted) that are greater or equal to the observed one.</li>
+</ul>
+<ol style="list-style-type: lower-alpha">
+<li><p><strong>Load packages</strong>: You may want to load the packages <code>dplyr</code> and <code>gstudio</code>. Alternatively, you can use <code>::</code> to call functions from packages.</p></li>
+<li><p><strong>Import data, extract adults</strong>. Use the code below to import the data into <code>gstudio</code> and extract adults (<code>OffID == 0</code>).</p></li>
+</ol>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb70-1" data-line-number="1"><span class="kw">library</span>(dplyr)</a>
+<a class="sourceLine" id="cb70-2" data-line-number="2">Pulsatilla.gstudio &lt;-<span class="st"> </span>gstudio<span class="op">::</span><span class="kw">read_population</span>(<span class="dt">path=</span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>,</a>
+<a class="sourceLine" id="cb70-3" data-line-number="3">                            <span class="st">&quot;pulsatilla_genotypes.csv&quot;</span>, </a>
+<a class="sourceLine" id="cb70-4" data-line-number="4">                            <span class="dt">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>), </a>
+<a class="sourceLine" id="cb70-5" data-line-number="5">                    <span class="dt">type=</span><span class="st">&quot;column&quot;</span>, <span class="dt">locus.columns=</span><span class="kw">c</span>(<span class="dv">6</span><span class="op">:</span><span class="dv">19</span>), </a>
+<a class="sourceLine" id="cb70-6" data-line-number="6">                    <span class="dt">phased=</span><span class="ot">FALSE</span>, <span class="dt">sep=</span><span class="st">&quot;,&quot;</span>, <span class="dt">header=</span><span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb70-7" data-line-number="7">Adults.gstudio &lt;-<span class="st"> </span>Pulsatilla.gstudio <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(OffID <span class="op">==</span><span class="st"> </span><span class="dv">0</span>)</a></code></pre></div>
+<ol start="3" style="list-style-type: lower-alpha">
+<li><p><strong>Sort individuals by patch</strong>. Create a new ID variable <code>Names</code> that combines the existing variables <code>Population</code> and <code>ID</code> (starting with population). Then use the function <code>dplyr::arrange</code> to sort <code>Adults.gstudio</code> by <code>Names</code> (check the help file for <code>arrange</code>). This is important here for two reasons:</p>
+<ul>
+<li>In order to efficiently permute individuals within patches, they need to be sorted by patch.</li>
+<li>In some cases, the function <code>gstudio::genetic_distance</code> will sort the distance matrix alphabetically. To avoid mismatches between the data and the resulting distance matrix, it is best to sort the data alphabetically already.</li>
+</ul></li>
+<li><p><strong>Calculate Euclidean distances</strong>: Use the metric coordinates in variables “X” and “Y” to calculate Euclidean distances (see Week 5, section 4). Here it is important to store the distances <code>Dgeo</code> in the full matrix format, with <code>as.matrix</code>.</p></li>
+<li><p><strong>Calculate genetic distances (Dps)</strong>: Use the following code (as needed (adapt if needed) to calculate individual-level genetic distances (proportion of shared alleles) and store them in the full matrix format. We subtract values from 1 to obtain a distance measure. Note: the calculation in <code>gstudio</code> is based on Bray distance and the resulting values are proportional to those calculated by <code>adegenet::propShared</code>. I.e., the two measures have a correlation of 1 but the actual values differ.</p>
+<p><code>Dgen &lt;- 1 - as.matrix(gstudio::genetic_distance(Adults.gstudio, stratum=&quot;Names&quot;, mode=&quot;dps&quot;))</code></p></li>
+<li><p><strong>Plot distances, calculate M.rho</strong>: Create a plot of Dgen vs Dgeo, and calculate the Mantel rank correlation. Note: the function ‘cor’ with default settings does not allow missing values (NA). This can be changed e.g. with the argument <code>use</code>.</p>
+<ul>
+<li>Use <code>as.dist</code> to access only the values from the lower triangle of each matrix.</li>
+<li>The function <code>plot</code> will do. Inspect the plot. Where would you find the pairs of individuals within the same patch?</li>
+<li>Use the function <code>cor</code> with <code>method = &quot;spearman&quot;</code> to calculate the Mantel rank correlation. Allow for missing values with the argument <code>use = &quot;complete.obs&quot;</code>.</li>
+</ul></li>
+<li><p><strong>Limit to within-patch pairs</strong>: Restrict the analysis to pairs within the same patch. For this, we want to set all between-site comparisons in <code>Dgeo</code> to <code>NA</code>. Uncomment the code below to:</p>
+<ul>
+<li>Create a matrix that is TRUE if the two individuals are in the same patch, and FALSE if not (first line)</li>
+<li>Change FALSE to NA (second line)</li>
+<li>Multiply Dgeo by this matrix to set distances between patches to NA (third line).</li>
+<li>Adapt your code from above to plot the distances Dgen vs. Dgeo.within.</li>
+<li>Calculate the Mantel rank correlation between Dgen vs. Dgeo.within and store it as <code>Cor.obs</code>.</li>
+</ul></li>
+</ol>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb71-1" data-line-number="1"><span class="co">#SamePatch &lt;- outer(Adults.gstudio$Population, Adults.gstudio$Population, FUN = &quot;==&quot;)</span></a>
+<a class="sourceLine" id="cb71-2" data-line-number="2"><span class="co">#SamePatch[SamePatch == &quot;FALSE&quot;] &lt;- NA</span></a>
+<a class="sourceLine" id="cb71-3" data-line-number="3"><span class="co">#Dgeo.within &lt;- SamePatch * Dgeo</span></a></code></pre></div>
+<p>Note: check the help file or run the following examples to figure out what <code>outer</code> does: <code>outer(c(1:5), c(1:5), FUN = &quot;*&quot;)</code> <code>outer(c(1:5), c(1:5), FUN = &quot;-&quot;)</code> <code>outer(LETTERS[1:5], c(1:5), FUN = &quot;paste0&quot;)</code></p>
+<ol start="8" style="list-style-type: lower-alpha">
+<li><strong>Unrestricted permutation test</strong>: Create a variable <code>Order</code> with row numbers (from 1 to the number of individuals in <code>Adults.gstudio</code>). Then, uncomment the code below (adapt as needed) to carry out a permutation test by permuting the order of individuals, R = 499 times. Notes to permute a distance matrix, we need to permute the rows and columns of the full distance matrix simultaneously with the same order: <code>Dgen[a,a]</code>. We only need to permute one of the two matrices (Dgen or Dgeo.within), but not both. The approximate p-value is calculated as the proportion of values (R simulated ones and 1 observed <code>Cor.obs</code>) that were as large, or larger, than <code>Cor.obs</code>.</li>
+</ol>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb72-1" data-line-number="1"><span class="co">#R = 499</span></a>
+<a class="sourceLine" id="cb72-2" data-line-number="2"><span class="co">#Cor.perm.unrestricted &lt;- rep(NA, R)</span></a>
+<a class="sourceLine" id="cb72-3" data-line-number="3"><span class="co">#for(r in 1:R)</span></a>
+<a class="sourceLine" id="cb72-4" data-line-number="4"><span class="co">#{</span></a>
+<a class="sourceLine" id="cb72-5" data-line-number="5"><span class="co">#  a &lt;- sample(Order)</span></a>
+<a class="sourceLine" id="cb72-6" data-line-number="6"><span class="co">#  Cor.perm.unrestricted[r] &lt;- cor(as.dist(Dgen[a,a]),as.dist(Dgeo.within), method=&quot;spearman&quot;, use=&quot;complete.obs&quot;)</span></a>
+<a class="sourceLine" id="cb72-7" data-line-number="7"><span class="co">#}</span></a>
+<a class="sourceLine" id="cb72-8" data-line-number="8"><span class="co">#approx.p.unrestricted &lt;- mean(c(Cor.obs, Cor.perm.unrestricted) &gt;= Cor.obs)</span></a>
+<a class="sourceLine" id="cb72-9" data-line-number="9"><span class="co">#approx.p.unrestricted</span></a></code></pre></div>
+<ol style="list-style-type: lower-roman">
+<li><p><strong>Restricted permutation test</strong>: Adapt the code to permute individuals only within patches. For this, split ‘Order’ by population, randomize row numbers within groups (list elements = populations) with <code>sapply</code>, and use <code>unlist</code> to convert to a vector again. Make sure to change object names from ‘unrestricted’ to ‘restricted’.</p>
+<ul>
+<li>Before the <code>for</code> loop, add this code: <code>b &lt;- split(Order, Adults.gstudio$Population)</code></li>
+<li>Inside the <code>for</code> loop, replace the calculation of a : <code>a &lt;- unlist(sapply(b, sample))</code></li>
+</ul></li>
+</ol>
+<ol start="11" style="list-style-type: lower-alpha">
+<li><strong>Compare results</strong>: Create side-by-side boxplots of the simulated Mantel rank correlation values for the unrestricted and the restricted permutation tests. Note: if none of the simulated values was larger than Cor.obs, the approx. p-value will be 1/(R+1). This indicates the resolution of the permutation test, i.e., the smallest possible p-value given R.</li>
+</ol>
+<p><strong>Questions:</strong></p>
+<ul>
+<li>Did the direction, size or statistical significance of the observed Mantel rank correlation (as a measure of fine-scale spatial genetic structure in <em>P. vulgaris</em>) change between the unrestricted and the restricted permutation test? Why, or why not?</li>
+<li>How did the distributions of the simulated values of the Mantel rank correlation differ between the unrestricted and the restricted test? Can you think of a reason for this?</li>
+</ul>
 </div>
 
 <script type="text/javascript">
