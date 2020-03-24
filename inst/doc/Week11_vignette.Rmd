@@ -32,35 +32,24 @@ In addition, we have eight environmental predictors that are ecologically releva
 
 ### c) Required R libraries
 
-Most required packages should have been installed already when you installed 'LandGenCourse'.
+You may need to install packages 'qvalue' from BioClim and 'lfmm' from GitHub:
 
-```{r packages global_options, include=TRUE, results="hide", message=FALSE, warning=FALSE}
-library(LandGenCourse)
-#library(vegan)    # Used to run PCA & RDA
-```
-
-The packages 'LEA' and 'qvalue' are available from the 'Bioconductor' repository. 
-```{r message=FALSE, warning=TRUE}
+```{r install global_options, include=TRUE, results="hide", message=FALSE, warning=FALSE}
 if(!requireNamespace("qvalue", quietly = TRUE)) {  
   if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
   BiocManager::install("qvalue")
 }
-
-if(!requireNamespace("LEA", quietly = TRUE)) {  
-  if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-  BiocManager::install("LEA")
+if(!requireNamespace("lfmm", quietly = TRUE)) {  
+  remotes::install_github("bcm-uga/lfmm")
 }
-#require(LEA)
-#require(qvalue)
 ```
 
-The following 'setup chunk' is used to set the root address of file paths to the folder 'output' in the project folder.
-
-```{r setup}
-if(!dir.exists(paste0(here::here(),"/output"))) dir.create(paste0(here::here(),"/output"))
-knitr::opts_knit$set(root.dir = normalizePath(paste0(here::here(),"/output"))) 
+```{r packages global_options, include=TRUE, results="hide", message=FALSE, warning=FALSE}
+library(LandGenCourse)
+library(vegan)    # Used to run PCA & RDA
+library(lfmm)     # Used to run LFMM
+library(qvalue)   # Used to post-process LFMM output
 ```
 
 ## 2. Import and prepare the data
@@ -68,11 +57,10 @@ knitr::opts_knit$set(root.dir = normalizePath(paste0(here::here(),"/output")))
 ### a) Import the genetic data
 I downloaded these data from the Schweizer et al. (2016) [Dryad repository](http://datadryad.org/resource/doi:10.5061/dryad.c9b25) and converted them from .tped to .raw format using plink (Purcell et al., 2007). Then, using the R package `adegenet` (Jombart 2008), I read in the .raw data and extracted the matrix of 94 individuals x 42,587 SNPs. Finally, I randomly sampled 10,000 columns (SNPs) from the full data set, which is what we will analyze in this worked example.
 
-Note: The full data in .raw format are available in the Supplemental Information for Forester et al. (2018). If you want to analyze the full data set, use the `read.PLINK` call from `adegenet` to read the data into R.
+The full data in .raw format are available in the Supplemental Information for Forester et al. (2018). If you want to analyze the full data set, use the `read.PLINK` call from `adegenet` to read the data into R.
 
 ```{r load}
-gen <- read.csv(system.file("extdata", "wolf_geno_samp_10000.csv", 
-                            package = "LandGenCourse"), row.names=1)
+gen <- read.csv(system.file("extdata", "wolf_geno_samp_10000.csv", package = "LandGenCourse"), row.names=1)
 dim(gen)
 ```
 
@@ -82,12 +70,11 @@ Both LFMM and RDA require complete data frames (i.e., no missing genetic data). 
 
 ```{r NA}
 sum(is.na(gen)) # 27,987 NAs in the matrix (~3% missing data)
-gen.imp <- apply(gen, 2, function(x) replace(x, is.na(x), 
-                 as.numeric(names(which.max(table(x))))))
+gen.imp <- apply(gen, 2, function(x) replace(x, is.na(x), as.numeric(names(which.max(table(x))))))
 sum(is.na(gen.imp)) # No NAs
 ```
 
-We could also use this imputation approach within ecotypes (rather than across all individuals). Other promising imputation methods for species lacking a reference genome include: using ancestry values from `snmf` in the `LEA` package (Frichot & Francois 2015), using Random Forest (implemented for genomic data in the R package `grur`, Gosselin 2017), and the program LinkImpute (Money et al., 2015).
+We could also use this imputation approach within ecotypes (rather than across all individuals). Other promising imputation methods for species lacking a reference genome include: using ancestry values from `snmf` in the `LEA` package (Frichot & Francois 2015), and the program LinkImpute (Money et al., 2015).
 
 
 ### b) Import the environmental data
@@ -96,15 +83,11 @@ The original data set comes with 12 predictors, but many of them are highly corr
 For more information on the rationale for variable reduction, see the full [RDA vignette](http://popgen.nescent.org/2018-03-27_RDA_GEA.html). 
 
 ```{r, load.env}
-env <- read.csv(system.file("extdata", "EnvironmentalData_8pred.csv", 
-                            package = "LandGenCourse"))
+env <- read.csv(system.file("extdata", "EnvironmentalData_8pred.csv", package = "LandGenCourse"))
+str(env) # Look at the structure of the data frame
+env$individual <- as.character(env$individual) # Make individual names characters (not factors)
 
-# Look at the structure of the data frame:
-str(env) 
-# Make individual names characters (not factors):
-env$individual <- as.character(env$individual) 
-
-# Confirm that genotypes and environmental data are in the same order:
+# Confirm that genotypes and environmental data are in the same order
 identical(rownames(gen.imp), env[,1]) 
 ```
 
@@ -119,13 +102,13 @@ For the univariate LFMM test, we could run a separate set of tests for each of t
 
 There are many ways to run PCA in R; we'll use the `rda` function in `vegan` (Oksanen et al., 2016). We'll center and scale the predictors (`scale=T`), since they're in different units. We'll then determine the proportion of the environmental variance explained by each PC axis & investigate how the original predictors correlate with the first PC axis.
 
-```{r, PCA}
-pred.pca <- vegan::rda(pred, scale=T)
+```{r, fig.height=4, fig.width=6}
+pred.pca <- rda(pred, scale=T)
 summary(pred.pca)$cont
-screeplot(pred.pca, main = "Screeplot - Eigenvalues")
+screeplot(pred.pca, main = "Screeplot: Eigenvalues of Wolf Predictor Variables")
 
 # correlations between the PC axis and predictors:
-round(vegan::scores(pred.pca, choices=1:8, display="species", scaling=0), digits=3)
+round(scores(pred.pca, choices=1:8, display="species", scaling=0), digits=3)
 ```
 
 40% of the variance in the predictors is explained by the first PC axis, and 23% by the second axis. We could follow up with an LFMM model using the second axis as a predictor, if we wanted. The strongest correlations with PC1 are annual mean temperature (AMT), tree cover (Tree), NDVI, and annual precipitation (AP).
@@ -133,108 +116,138 @@ round(vegan::scores(pred.pca, choices=1:8, display="species", scaling=0), digits
 We'll store our synthetic PC axis predictor as `pred.PC1` for use in LFMM.
 
 ```{r, PC1}
-pred.PC1 <- vegan::scores(pred.pca, choices=1, 
-                          display="sites", scaling=0)
+pred.PC1 <- scores(pred.pca, choices=1, display="sites", scaling=0)
 ```
 
 
 ## 3. Latent Factor Mixed Models (LFMM): a univariate GEA
 
-LFMM is a univariate test, which means that it builds a model for each SNP and each predictor variable. In this case, we will build 10,000 SNPs x 1 synthetic predictor = 10,000 separate LFMM tests. Note that LFMM uses an MCMC algorithm, so detections will vary across runs (i.e., you will likely get slightly different results from those presented here).
+LFMM is a univariate test, which means that it builds a model for each SNP and each predictor variable. In this case, we will run 10,000 SNPs x 1 synthetic predictor = 10,000 separate LFMM tests. 
 
 ### a) Determine K
-LFMM requires an estimate of the number of populations in the data (K). To determine the most likely value of K, we'll use the function `snmf` in the LEA package. Functions in the LEA package require that we write files to a directory, so when you run this on your own computer, you'll want to set a temporary working directory.
+LFMM requires an estimate of the number of populations in the data (K). To determine the most likely value of K, we'll use PCA, noting that there are many different approaches for determining "K" from genetic data (more below). It is also reasonable to run LFMM with different values of K, if there is uncertainty.
 
-For this assessment of K, we'll run only one replicate of `snmf` for each value of K. We'll test K values from 1 to 6 since there are 6 identified wolf ecotypes.
+We'll use a broken stick criterion to determine K. The broken stick stopping rule states that principal components should be retained as long as observed eigenvalues are higher than corresponding random broken stick components.
 
-If you wanted to extract ancestry coefficients for the individual wolves, you'd want to run more replicates. See the [LEA package tutorial](http://membres-timc.imag.fr/Olivier.Francois/LEA/tutorial.htm) for details on snmf and additional tips for running LFMM.
+For example, if we reran the environmental PCA screeplot from above with a broken stick criterion:
 
-```{r, snmf, results="hide"}
-outfile <- file.path(here::here(), "output", "genotypes.geno")
-LEA::write.geno(gen.imp, outfile)
-findK <- NULL
-findK <- LEA::snmf(outfile, K=1:6, ploidy=2, entropy=T, rep=1, project = "new")
-#plot(findK)
-
-#LEA::write.geno(gen.imp, "genotypes.geno")
-#findK <- NULL
-#findK <- LEA::snmf("genotypes.geno", 
-#                   K=1:6, ploidy=2, entropy=T, rep=1, project = "new")
-#plot(findK)
+```{r, fig.height=4, fig.width=6}
+screeplot(pred.pca, main = "Screeplot of Wolf Predictor Variables with Broken Stick", bstick=TRUE, type="barplot")
 ```
 
-The most likely value of K is where minimal cross-entropy is lowest -- in this case, at K=3.
+You can see that PC1 and PC2 explain more than the random broken stick components, while PC3 + do not. If this were genomic data, and we were determining a value of K using this approach, we'd set K = 3.
+
+Now let's run a PCA with the genommic data and plot the eigenvalues with the broken stick criterion:
+```{r, fig.height=4, fig.width=6}
+gen.pca <- rda(gen.imp, scale=T)
+screeplot(gen.pca, main = "Screeplot of Genetic Data with Broken Stick", bstick=TRUE, type="barplot")
+```
+
+For the genomic data, we can see that none of the PCs have eigenvalues greater than random (greater than the broken stick values in red). This effectively means that K=1 for the wolf data set, based on a PCA assessment. [Note that we see a similar result using the full genomic data set of 42K SNPs]. This does not mean there isn't genetic structure in the data; it just means the structure isn't particularly strong and/or easily partitioned into discrete groupings. 
+
+In the original paper, the authors determined K using Structure. They found support for multiple K values between 3 and 7. The wolf data show an isolation by distance signature, which can confound methods used to identify K and contribute to uncertainty. How do you suspect that differences in K (say K=1 vs. K=3) for LFMM might influence the GEA results? 
+
+For now, we'll use K=3 following the original manuscript. It would be interesting to compare K=1 to these results, if you have time. Note that with K=1, LFMM is essentially running a simple linear regression (i.e., no latent factors).
 
 ```{r, setK}
 K <- 3
 ```
 
+
 ### b) Run LFMM
 
-Again, we have to write out the inputs before running the model: 
+LFMM is a regression model that includes unobserved variables (latent factors, set with "K") that correct the model for confounding effects, such as population structure. The latent factors are estimated simultaneously with the environmental and response variables, which can help improve power when environment and demography are correlated.
 
-```{r, LFMM, results="hide"}
-write.table(gen.imp, file=file.path(here::here(), "output", "gen.lfmm"), 
-            row.names=F, col.names=F)
-write.table(pred.PC1, file=file.path(here::here(), "output","PC1.env"), 
-            row.names=F, col.names=F)
-
-```
-
-Now let's run the model. For this worked example, we'll use fewer than the recommended number of repetitions, iterations, and burnin in the interest of time (if your computer is slow, you may want to reduce these further).
-
-The following (commented out) line shows the recommended parameters:
-
-```{r, LFMM1, results="hide"}
-wolf.lfmm <- NULL
-
-wolf.lfmm <- LEA::lfmm(
-  input.file=file.path(here::here(), "output", "gen.lfmm"),
-  environment.file=file.path(here::here(), "output", "PC1.env"), 
-  K=K, project="new", repetitions=3, iterations=4000, burnin=2000)
-
-#wolf.lfmm <- LEA::lfmm(
-#  input.file=file.path(here::here(), "output", "gen.lfmm"), 
-#  environment.file=file.path(here::here(), "output", "PC1.env"), 
-#  K=K, project="new", repetitions=10, iterations=5000, burnin=2500)
-```
-
-### c) Identify LFMM candidates
-Next, we post-process the model output. First we extract the z-scores and take the median across the replicate runs. 
+The previous version of LFMM (v1.5, implemented in the LEA package) uses an MCMC (Markov chain Monte Carlo) algorithm to identify GEAs while correcting for confounding. MCMC made it (very!) time-intensive for large data sets. LFMM v.2 computes LFMMs for GEA using a least-squares estimation method that is substantially faster than v1.5 (Caye et al., 2019). There are two penalty approaches: ridge and lasso. We'll use ridge today (see `?lfmm_ridge`); see Jumentier et al. (2020) for more information on the ridge vs. lasso penalties.
 
 ```{r}
-zs <- LEA::z.scores(wolf.lfmm, K=K, d=1)
-zs.med <- apply(zs, MARGIN=1, median)
+wolf.lfmm <- lfmm_ridge(Y=gen.imp, X=pred.PC1, K=K) # change K as you see fit
 ```
 
-Then we calculate the genomic inflation factor (GIF), which gives us a sense for how well the model has accounted for population structure in the data.
+That was fast! As you'll see, post-processing these results is what takes up most of our time and effort...
+
+
+### c) Identify LFMM candidates using False Discovery Rate
+Next, we post-process the model output. We will move fast here; I strongly recommend reading "Controlling false discoveries in genome scans for selection" (Francois et al., 2016) if you will be running these post-processing steps on your own data! Decisions made here can dramatically impact the candidate markers you identify.
+
+The steps for post-processing are:
+
+1. Look at the genomic inflation factor (GIF), which gives us a sense for how well the model has accounted for confounding factors in the data.
+2. Plot the p-values to see how application of the GIF influences the p-value distribution.
+3. Modify the GIF (if needed) and re-plot the p-values to identify the best possible fit to the "ideal" p-value distribution.
+4. Apply a False Discovery Rate control method to the p-values by converting to q-values.
+5. Identify candidates as those below a given FDR threshold.
+
+The False Discovery Rate is the expected proportion of false positives among the list of positive tests (see Storey and Tibshirani, 2003). 
+
+*An essential point to understand here is that the FDR is predicated on the "ideal" p-value distribution* (flat with a peak at 0, see Francois et al. 2016). 
+
+For example, an FDR threshold of 0.10 applied to a dataset with an ideal p-value distribution would produce 10% false positives (aka false discoveries) among the set of positive tests. However, if the p-value distribution deviates from the ideal, this same FDR threshold of 0.10 would produce more or fewer false discoveries among the set of postive tests, depending on the skew in the p-value distribution. 
+
+So remember: *having an actual FDR that is in accordance with the nominal threshold you set is completely dependent on the p-values used.*
+
+The lfmm package has a nice built-in function to calculate test statistics for the predictor(s), see `?lfmm_test`:
 
 ```{r}
-GIF <- median(zs.med^2)/qchisq(0.5, df = 1)
-GIF
+wolf.pv <- lfmm_test(Y=gen.imp, X=pred.PC1, lfmm=wolf.lfmm, calibrate="gif")
+
+names(wolf.pv) # this object includes raw z-scores and p-values, as well as GIF-calibrated scores and p-values
 ```
 
-We are looking for a GIF of around 1. The slightly elevated GIF indicates that the test may be overly liberal in identifying candidate SNPs. If the GIF is less than one, the test may be too conservative. Changing the value of K influences the GIF, so additional tests using the "best" value of K +/- 1 may be needed in some cases. See Fran?ois et al. (2016) for more details. 
-
-For now, we'll proceed with this slightly elevated GIF. The next step is to adjust the p-values using the GIF and plot them:
+Let's look at the genomic inflation factor (GIF):
 
 ```{r}
-adj.pv <- pchisq(zs.med^2/GIF, df = 1, lower = FALSE)
-hist(adj.pv, main="Histogram of adjusted p-values")
+wolf.pv$gif
 ```
 
-We expect to see a relatively flat histogram (most loci not under selection) with a peak near zero, indicating candidate adaptive markers. For this data set, we also see a peak near one, which indicates that we have a large number of uninformative (for detecting selection) SNPs. One option in this case is to remove these SNPs (e.g., remove SNPs with p-values > 0.95) and rerun the analysis (O. Fran?ois, personal communication). In the interest of saving time, we won't do that here.
+An appropriately calibrated set of tests will have a GIF of around 1. The elevated GIF for our tests indicates that the results may be overly liberal in identifying candidate SNPs. If the GIF is less than one, the test may be too conservative. 
 
-Finally, we convert the adjusted p-values to q-values using a false discovery rate (FDR) cutoff of 0.05 (again see Fran?ois et al. (2016) for more information).
+NOTE: Changing the value of K influences the GIF, so additional tests using the "best" value of K +/- 1 may be needed in some cases. See Francois et al. (2016) for more details.
+
+Let's look at how application of the GIF to the p-values impacts the p-value distribution:
+
+```{r, fig.width=5, fig.height=3, fig.show='hold'}
+hist(wolf.pv$pvalue[,1], main="Unadjusted p-values")        
+hist(wolf.pv$calibrated.pvalue[,1], main="GIF-adjusted p-values")
+```
+
+We want to see a relatively flat histogram (most loci not under selection) with a peak near zero, indicating candidate adaptive markers. We see a very large peak with the unadjusted p-values, and a much smaller peak with the GIF-adjusted p-values (note differences in the scale of the y-axis).
+
+Note that you can choose a different GIF and readjust the p-values to get a "better" histogram distribution (that is, a distribution that conforms best with what is expected under a well-calibrated set of models, see Francois et al, 2016). This process is subjective and can be difficult with empirical data sets, especially those with an IBD signature, such as these wolf data. Remember, you can also change the value of K in your lfmm models and see how this impacts the GIF.
+
+Below I'll show you how to manually adjust the GIF correction factor:
 
 ```{r}
-qv <- which(qvalue::qvalue(adj.pv, fdr=0.05)$signif)
-# the names of the loci detected as candidates by lfmm:
-cand.lfmm <- colnames(gen.imp)[qv]   
-length(cand.lfmm)
+# Let's change the GIF and readjust the p-values:
+zscore <- wolf.pv$score[,1]   # zscores for first predictor, we only have one in our case...
+(gif <- wolf.pv$gif[1])       # default GIF for this predictor
+new.gif1 <- 2.0               # choose your new GIF
+
+# Manual adjustment of the p-values:
+adj.pv1 <- pchisq(zscore^2/new.gif1, df=1, lower = FALSE)
 ```
 
-LFMM identified a large number of candidate SNPs (around 800 out of 10,000), even after correcting for population structure. Remember that your detections (both number and SNPs detected) may differ, since LFMM uses an MCMC algorithm.
+Plot the p-value histograms:
+```{r, fig.width=5, fig.height=3, fig.show='hold'}
+hist(wolf.pv$pvalue[,1], main="Unadjusted p-values")        
+hist(wolf.pv$calibrated.pvalue[,1], main="GIF-adjusted p-values (GIF=2.8)")
+hist(adj.pv1, main="REadjusted p-values (GIF=2.0)")
+```
+
+For now, we'll stick with the default GIF calculated by the lfmm package, though it looks like the application of the GIF may be a bit conservative (e.g. it is compressing the peak at 0).
+
+Finally, we convert the adjusted p-values to q-values. q-values provide a measure of each SNP's significance, automatically taking into account the fact that thousands are simultaneously being tested. We can then use an FDR threshold to control the number of false positive detections (given that our p-value distribution is "well-behaved").
+
+```{r}
+wolf.qv <- qvalue(wolf.pv$calibrated.pvalue)$qvalues
+
+length(which(wolf.qv < 0.1)) # how many SNPs have an FDR < 10%?
+
+(wolf.FDR.1 <- colnames(gen.imp)[which(wolf.qv < 0.1)]) # identify which SNPs these are
+```
+
+Using K=3, the default GIF correction, and an FDR threshold of 0.10, we only detect 12 candidate SNPs under selection in response to our PC1 environmental predictor. What changes could we make to have a less conservative test?
+
 
 
 ## 4. Redundancy Analysis (RDA): a multivariate GEA
@@ -243,19 +256,19 @@ LFMM identified a large number of candidate SNPs (around 800 out of 10,000), eve
 
 RDA is a multivariate ordination technique that can analyze many loci and environmental predictors simultaneously. For this reason, we can input all of the SNPs and environmental predictors at once, with no need to correct for multiple tests. RDA determines how groups of loci covary in response to the multivariate environment, and can better detect processes that result in weak, multilocus molecular signatures relative to univariate tests (Rellstab et al., 2015; Forester et al., 2018).
 
-Note that RDA can also be used for population-based data, in which case you could input the genetic data as allele frequencies within demes.
+RDA can be used on both individual and population-based sampling designs. The distinction between the two may not be straightforward in all cases. A simple guideline would be to use an individual-based framework when you have individual coordinates for most of your samples, and the resolution of your environmental data would allow for a sampling of environmental conditions across the site/study area. For population-level data, you would input the genetic data as allele frequencies within demes.
 
-The code to run the RDA is simple. However, we highly recommend reading Borcard et al. (2011) for details on the implementation and interpretation of RDA models and the objects created by `vegan`. RDA runs relatively quickly on most data sets, however on a very large data set (such as the full wolf data set) it can take 15-20 minutes, depending on the computer.
+The code to run the RDA is simple. However, I highly recommend reading Borcard et al. (2011) for details on the implementation and interpretation of RDA models and the objects created by `vegan`. RDA runs relatively quickly on most data sets, though you may need a high memory node on a cluster for very large data sets (i.e., millions of SNPs).
 
 ```{r, rda}
-wolf.rda <- vegan::rda(gen.imp ~ ., data=pred, scale=T)
+wolf.rda <- rda(gen.imp ~ ., data=pred, scale=T)
 wolf.rda
 ```
 
 First, note that we will have as many constrained ("RDA") axes as we have predictors in the model. All residual variance is then modeled by PCA (the unconstrained "PC" axes). The proportion of the variance explained by the environmental predictors is given under the "Proportion" column for "Constrained"; this is equivalent to the R^2^ of a multiple regression. Just like in multiple regression, this R^2^ will be biased and should be adjusted based on the number of predictors. We can calculate the adjusted R^2^ using:
 
 ```{r, R2}
-vegan::RsquareAdj(wolf.rda)
+RsquareAdj(wolf.rda)
 ```
 
 Our constrained ordination explains about 5% of the variation; this low explanatory power is not surprising given that we expect that most of the SNPs in our dataset will not show a relationship with the environmental predictors (e.g., most SNPs will be neutral).
@@ -274,24 +287,22 @@ screeplot(wolf.rda)
 
 Here, we can see that the first three constrained axes explain most of the variance. The screeplot provides an informal (and quick) way to determine how many constrained axes to include when we search for candidate SNPs (below). We could start by investigating RDA axes that explain the most variance (excluding those after the "drop off" point in the screeplot.) 
 
-You can run a formal test of statistical significance of each constrained axis using:
-`anova.cca(wolf.rda, by="axis")`. We can assess both the full model and each constrained axis using F-statistics (Legendre et al, 2010). The null hypothesis is that no linear relationship exists between the SNP data and the environmental predictors. See `?anova.cca` for more details and options.
+You can run a formal test of statistical significance of each constrained axis using: `anova.cca(wolf.rda, by="axis")`. We can assess both the full model and each constrained axis using F-statistics (Legendre et al, 2010). The null hypothesis is that no linear relationship exists between the SNP data and the environmental predictors. See `?anova.cca` for more details and options. The screeplot and a formal test (by axis) are both reasonable approaches for determining which RDA axes to assess for candidate SNPs.
 
 The permutation process to test the signficiance of each axis takes a while (up to a few hours on large data sets), so we'll just use the screeplot for a first assessment. If we did run the formal test, we would find that the first three constrained axes are significant (p = 0.001); constrained axis 4 has a p-value of 0.080, while axes 5-8 have p-values > 0.850. This corresponds with our evaluation of the screeplot, above.
 
-Finally, `vegan` has a simple function for checking Variance Inflation Factors for the predictor variables used in the model:
+Finally, `vegan` has a simple function for checking Variance Inflation Factors for the predictor variables used in the model. This helps identify redundant predictors:
 
 ```{r, VIF}
-vegan::vif.cca(wolf.rda)
+vif.cca(wolf.rda)
 ```
 
-All values are below 10, and most are below 5, which indicates that multicollinearity among these predictors shouldn't be a problem for the model. We could remove one of the temperature variables (AMT or MDR) if we were concerned about these higher VIF values (Zuur et al., 2010).
+All values are below 10, and most are below 5, which indicates that multicollinearity among these predictors shouldn't be a problem (Zuur et al., 2010).
 
 Let's make a quick plot of the RDA output using the default plotting in `vegan`: 
 
-```{r, simple_plot, fig.width=4, fig.height=4, fig.show='hold'}
-plot(wolf.rda, scaling=3)          # default is axes 1 and 2
-plot(wolf.rda, choices = c(1,3), scaling=3)  # axes 1 and 3
+```{r, simple_plot, fig.width=5, fig.height=5}
+plot(wolf.rda, scaling=3)  # default is axes 1 and 2
 ```
 
 Here, the SNPs are in red (in the center of each plot), and the individuals are the black circles. The blue vectors are the environmental predictors. The relative arrangement of these items in the ordination space reflects their relationship with the ordination axes, which are linear combinations of the predictor variables.
@@ -301,7 +312,7 @@ See the full [RDA vignette](http://popgen.nescent.org/2018-03-27_RDA_GEA.html) f
 
 ### b) Identify RDA candidates
 
-We'll use the loadings of the SNPs (their location) in the ordination space to determine which SNPs are candidates for local adaptation. The SNP loadings are stored as `species` in the RDA object. We'll extract the SNP loadings from the first three constrained axes:
+We'll use the loadings of the SNPs (their location) in the ordination space to determine which SNPs are candidates for local adaptation. The SNP loadings are stored as `species` in the RDA object. We'll extract the SNP loadings from the first three constrained axes, based on our assessment of the screeplot above. 
 
 ```{r, loadings}
 load.rda <- summary(wolf.rda)$species[,1:3]
@@ -309,7 +320,7 @@ load.rda <- summary(wolf.rda)$species[,1:3]
 
 If we look at histograms of the loadings on each RDA axis, we can see their (relatively normal) distribution. SNPs loading at the center of the distribution are not showing a relationship with the environmental predictors; those loading in the tails are, and are more likely to be under selection as a function of those predictors (or some other predictor correlated with them).
 
-```{r, loadings_plot, fig.width=2.5, fig.height=2.5, fig.show='hold'}
+```{r, loadings_plot, fig.width=2.5, fig.height=3, fig.show='hold'}
 hist(load.rda[,1], main="Loadings on RDA1")
 hist(load.rda[,2], main="Loadings on RDA2")
 hist(load.rda[,3], main="Loadings on RDA3") 
@@ -321,53 +332,53 @@ I define the function here as `outliers`, where `x` is the vector of loadings an
 
 ```{r, outliers}
 outliers <- function(x,z){
-  # find loadings +/- z SD from mean loading:     
-  lims <- mean(x) + c(-1, 1) * z * sd(x) 
-  # locus names in these tails:
-  x[x < lims[1] | x > lims[2]]           
+  lims <- mean(x) + c(-1, 1) * z * sd(x) # find loadings +/- z SD from mean loading     
+  x[x < lims[1] | x > lims[2]]           # locus names in these tails
 }
 ```
 
 Now let's apply it to the first three constrained axes:
 
 ```{r, candidates}
-cand1 <- outliers(load.rda[,1],3) # 38
-cand2 <- outliers(load.rda[,2],3) # 69
-cand3 <- outliers(load.rda[,3],3) # 34
+cand1 <- outliers(load.rda[,1], 3) # 38
+cand2 <- outliers(load.rda[,2], 3) # 69
+cand3 <- outliers(load.rda[,3], 3) # 34
 
-length(cand1)+length(cand2)+length(cand3)
+wolf.rda.cand <- c(names(cand1), names(cand2), names(cand3)) # just the names of the candidates
+
+length(wolf.rda.cand[duplicated(wolf.rda.cand)]) # 7 duplicate detections (detected on multiple RDA axes)
+wolf.rda.cand <- wolf.rda.cand[!duplicated(wolf.rda.cand)] # 134 unique candidates 
 ```
 
-We have 38 candidates on axis 1, 69 on axis 2, and 34 on axis 3, for a total of 141 candidate SNPs out of the 10,000 SNPs included in this analysis.
+Let's see where these candidate SNPs are in the ordination space. We'll zoom the plot in to just the SNPs, and color code candidate SNPs in red:
 
-Let's make a single data frame with the axis, SNP name, & loading:
+```{r, fig.width=5, fig.height=5, fig.show='hold'}
+# Set up the color scheme for plotting:
+bgcol  <- ifelse(colnames(gen.imp) %in% wolf.rda.cand, 'gray32', '#00000000')
+snpcol <- ifelse(colnames(gen.imp) %in% wolf.rda.cand, 'red', '#00000000')
 
-```{r, outliers_df1}
-cand1 <- cbind.data.frame(rep(1,times=length(cand1)), names(cand1), unname(cand1))
-cand2 <- cbind.data.frame(rep(2,times=length(cand2)), names(cand2), unname(cand2))
-cand3 <- cbind.data.frame(rep(3,times=length(cand3)), names(cand3), unname(cand3))
+# axes 1 & 2 - zooming in to just the SNPs here...
+plot(wolf.rda, type="n", scaling=3, xlim=c(-1,1), ylim=c(-1,1), main="Wolf RDA, axes 1 and 2")
+points(wolf.rda, display="species", pch=21, cex=1, col="gray32", bg='#f1eef6', scaling=3)
+points(wolf.rda, display="species", pch=21, cex=1, col=bgcol, bg=snpcol, scaling=3)
+text(wolf.rda, scaling=3, display="bp", col="#0868ac", cex=1)
 
-colnames(cand1) <- colnames(cand2)<- colnames(cand3) <- c("axis","snp","loading")
-
-cand.rda <- rbind(cand1, cand2, cand3)
-cand.rda$snp <- as.character(cand.rda$snp)
+# axes 2 & 3
+plot(wolf.rda, type="n", scaling=3, xlim=c(-1,1), ylim=c(-1,1), choices=c(2,3), main="Wolf RDA, axes 2 and 3")
+points(wolf.rda, display="species", pch=21, cex=1, col="gray32", bg='#f1eef6', scaling=3, choices=c(2,3))
+points(wolf.rda, display="species", pch=21, cex=1, col=bgcol, bg=snpcol, scaling=3, choices=c(2,3))
+text(wolf.rda, scaling=3, display="bp", col="#0868ac", cex=1, choices=c(2,3))
 ```
 
-Some of these may be duplicate detections; let's check:
+Which environmental predictor(s) seem to be most strongly related to candidate SNPs in the RDA1/RDA2 plot? How about the RDA2/RDA3 plot?
 
-```{r, detections}
-# 7 duplicate detections:
-length(cand.rda$snp[duplicated(cand.rda$snp)])
-# 134 unique candidate SNPs:
-cand.rda <- cand.rda[!duplicated(cand.rda$snp),] 
-# duplicates were on axis 2:
-table(cand.rda$axis)                             
-```
+Why do we see candidate SNPs loading in the center of the ordination space in both plots?
 
-Let's see what environmental predictors are most strongly correlated with the first three RDA axes:
+
+Let's see which environmental predictors are most strongly correlated with the first three RDA axes:
 
 ```{r, env.axes}
-vegan::intersetcor(wolf.rda)[,1:3]
+intersetcor(wolf.rda)[,1:3]
 ```
 
 Generally, candidate SNPs on axis 1 represent multilocus sets of SNP genotypes associated most strongly with annual mean temperature and annual precipitation; SNPs on axis 2 represent genotypes associated with mean diurnal range; and SNPs on axis 3 represent genotypes associated with precipitation seasonality. See the full [RDA vignette](http://popgen.nescent.org/2018-03-27_RDA_GEA.html) for additional investigation of candidate SNPs. 
@@ -375,19 +386,43 @@ Generally, candidate SNPs on axis 1 represent multilocus sets of SNP genotypes a
 
 ## 5. Compare LFMM and RDA candidates
 
-Let's see what kind of overlap we have in our candidates from the two methods. Remember that we had ~800 candidates for LFMM and 134 candidates for RDA.
+Let's see what kind of overlap we have in our candidates from the two methods. Remember that we had only 12 candidates for LFMM and 134 candidates for RDA.
 
 ```{r, overlap}
-overlap <- cand.rda$snp[cand.rda$snp %in% cand.lfmm]
-length(overlap)
+intersect(wolf.FDR.1, wolf.rda.cand) # found by both LFMM and RDA
+setdiff(wolf.FDR.1, wolf.rda.cand)   # unique to LFMM
 ```
 
-We had relatively few detections in common across the two methods. What does this mean for those detections? And what does it mean for the LFMM and RDA detections that are not in common? Things to consider include the differences in the statistical approaches (univariate vs. multivariate) and corrections (or lack of) for population structure.
+We see a lot of overlap, even though the tests differ (e.g., correction for population structure, univariate vs. multivariate tests, differences in predictor variables, differences in post-processing). 
+
+An important note: A common approach in studies that use GEAs and populations differentiation methods is to use many tests and then look for the overlap across the detections. This can be helpful for some questions (e.g. where minimizing false positive detections is of greatest importance), but can be overly conservative in many cases and bias detections against weaker signatures of selection. See our paper for an investigation of different approaches for combining detections & how it impacts true and false positive rates: Forester et al. (2018); and see 
+the (excellent!) FDR paper for more options based on combining z-scores across different tests: Francois et al. (2016).
 
 
-## 6. References
+## 6. A quick note on controlling for population structure in RDA
+We are still testing approaches to controlling for population structure in RDA. We've generally found that using ancestry values (e.g. from `snmf` or Admixture) or MEMs (Moran's Eigenvector Maps, aka spatial eigenvectors) is overly conservative.
+
+So far, the best approach (e.g. balancing true positives and false negatives) is to compute a PCA of the genetic data and select relevant PCs (e.g. using the broken stick criteron as we did above), then use retained PCs in a partial RDA:
+
+```{r, eval=F}
+?rda  # help for running RDA
+
+# pseudo code for simple RDA:
+foo <- rda(genomic.data ~ predictor1 + predictor2, data=dat
+
+# pseudo code for partial RDA (correcting for population structure with PCs):
+bar <- rda(genomic.data ~ predictor1 + predictor2 + Condition(PC1), data=dat, scale=T)
+```
+
+You will want to check for correlations between retained PCs and your environmental predictors. If environment and population structure are not correlated, you can retain all predictors and PCs and proceed with your partial RDA. If environment and population structure *are* highly correlated, you'll have to decide whether to prune correlated environmental variables or PCs. Pruning environmental variables will likely reduce false positives but will also increase false negatives. Pruning PCs (instead of environmental predictors) will likely increase false positives, but will also reduce false negatives. These trade-offs exist with all approaches for controlling population structure and other confounding factors when environment is correlated with population structure.
+
+
+
+## 7. References
 
 Borcard D, Gillet F, Legendre P (2011) [*Numerical Ecology with R*](http://www.springer.com/us/book/9781441979759). Springer, New York.
+
+Caye K, Jumentier B, Lepeule J, Francois O (2019) [LFMM 2: Fast and Accurate Inference of Gene-Environment Associations in Genome-Wide Studies](https://academic.oup.com/mbe/article/36/4/852/5290100). *Molecular Biology and Evolution* 36: 852-860.
 
 Dormann CF, Elith J, Bacher S, et al. (2013) [Collinearity: a review of methods to deal with it and a simulation study evaluating their performance](http://onlinelibrary.wiley.com/doi/10.1111/j.1600-0587.2012.07348.x/abstract). *Ecography*, 36: 27-46.
 
@@ -395,13 +430,13 @@ Forester BR, Lasky JR, Wagner HH, Urban DL (2018) [Comparing methods for detecti
 
 Forester BR (2018) [Vignette: Detectingn multilocus adaptation using Redundancy Analysis (RDA)](http://popgen.nescent.org/2018-03-27_RDA_GEA.html). Population Genetics in R: [popgen.nescent.org](http://popgen.nescent.org/).
 
-Fran?ois O, Martins H, Caye, K, Schoville S (2016) [Controlling false discoveries in genome scans for selection](http://onlinelibrary.wiley.com/doi/10.1111/mec.13513/full). *Molecular Ecology*, 25: 454-469.
+Francois O, Martins H, Caye, K, Schoville S (2016) [Controlling false discoveries in genome scans for selection](http://onlinelibrary.wiley.com/doi/10.1111/mec.13513/full). *Molecular Ecology*, 25: 454-469.
 
-Frichot E, Fran?ois O (2015) [LEA: An R package for landscape and ecological association studies](http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12382/abstract). *Methods in Ecology and Evolution*, 6: 925-929.
-
-Gosselin T (2017) [grur: an R package tailored for RADseq data imputations](https://github.com/thierrygosselin/grur). R package version 0.0.1 doi:10.5281/zenodo.496176.
+Frichot E, Francois O (2015) [LEA: An R package for landscape and ecological association studies](http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12382/abstract). *Methods in Ecology and Evolution*, 6: 925-929.
 
 Jombart, T (2008) [adegenet: a R package for the multivariate analysis of genetic markers](https://academic.oup.com/bioinformatics/article/24/11/1403/191127). *Bioinformatics*, 24: 1403-1405.
+
+Jumentier B, Caye K, Heude B, Lepeule J, Francois O (2020) [Sparse latent factor regression models for genome-wide and epigenome-wide association studies](https://www.biorxiv.org/content/10.1101/2020.02.07.938381v1.abstract). *bioRxiv*, 2020.02.07.938381.
 
 Legendre P, Oksanen J, ter Braak CJ (2010) [Testing the significance of canonical axes in redundancy analysis](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.2041-210X.2010.00078.x). *Methods in Ecology and Evolution*, 2: 269-277.
 
@@ -412,6 +447,8 @@ Oksanen J, Blanchet FG, Kindt R, et al. (2016) [*vegan: Community Ecology Packag
 Rellstab C, Gugerli F, Eckert AJ, Hancock AM, Holderegger R (2015) [A practical guide to environmental association analysis in landscape genomics](http://onlinelibrary.wiley.com/doi/10.1111/mec.13322/abstract). *Molecular Ecology*, 24: 4348-4370.
 
 Schweizer RM, vonHoldt BM, Harrigan R, et al. (2016) [Genetic subdivision and candidate genes under selection in North American grey wolves](http://onlinelibrary.wiley.com/doi/10.1111/mec.13364/full). *Molecular Ecology*, 25: 380-402.
+
+Storey JD, Tibshirani R (2003) [Statistical significance for genome-wide experiments](http://www.pnas.org/content/100/16/9440.full). *Proceedings of the National Academy of Sciences*, 100: 9440-9445. 
 
 Zuur AF, Ieno EN, Elphick CS (2010) [A protocol for data exploration to avoid common statistical problems](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/j.2041-210X.2009.00001.x). *Methods in Ecology and Evolution*, 1: 3-14.
 

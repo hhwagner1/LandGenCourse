@@ -12,7 +12,7 @@
 
 <meta name="author" content="Helene Wagner" />
 
-<meta name="date" content="2020-02-27" />
+<meta name="date" content="2020-03-24" />
 
 <title>Week 5: Spatial Statistics</title>
 
@@ -339,7 +339,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Week 5: Spatial Statistics</h1>
 <h4 class="author">Helene Wagner</h4>
-<h4 class="date">2020-02-27</h4>
+<h4 class="date">2020-03-24</h4>
 
 
 <div id="TOC">
@@ -725,7 +725,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## Upper quantiles of permutations (null model):
 ##    90%    95%  97.5%    99% 
-## 0.0745 0.1011 0.1232 0.1527 
+## 0.0718 0.1003 0.1220 0.1538 
 ## Permutation: free
 ## Number of permutations: 999</code></pre>
 <p>What happens if we take the log of geographic distance, which we saw above helps linearize the relationship for these data?</p>
@@ -742,7 +742,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## Upper quantiles of permutations (null model):
 ##    90%    95%  97.5%    99% 
-## 0.0708 0.0979 0.1230 0.1571 
+## 0.0710 0.0933 0.1142 0.1480 
 ## Permutation: free
 ## Number of permutations: 999</code></pre>
 <p>The statistical significance (p-value) didn’t really change, but the strength of the Mantel correlation increased from r = 0.62 to r = 0.68.</p>
@@ -760,7 +760,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## Upper quantiles of permutations (null model):
 ##    90%    95%  97.5%    99% 
-## 0.0745 0.1040 0.1288 0.1566 
+## 0.0707 0.0925 0.1116 0.1592 
 ## Permutation: free
 ## Number of permutations: 999</code></pre>
 <p>For this measure of genetic diversity, the Mantel correlation was significant, quite strong, and the relationship not linear, hence the transformed data or the rank correlation performed better. What about the other measures?</p>
@@ -852,16 +852,16 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## 
 ## [[1]]
 ##                           d.mean     obs     exp p.val cardinal
-## d= 0 - 1055.243          697.776  0.4815  0.0023 0.005       45
-## d= 1055.243 - 2110.485  1583.490  0.2708 -0.0033 0.010       67
-## d= 2110.485 - 3165.728  2622.371  0.2043  0.0066 0.015       64
-## d= 3165.728 - 4220.97   3710.591 -0.1302 -0.0018 1.000       64
-## d= 4220.97 - 5276.213   4716.029 -0.1719  0.0011 1.000       54
-## d= 5276.213 - 6331.455  5824.450 -0.2021  0.0050 1.000       46
-## d= 6331.455 - 7386.698  6856.457 -0.1496 -0.0014 1.000       27
-## d= 7386.698 - 8441.941  7883.679 -0.2297 -0.0019 1.000       33
-## d= 8441.941 - 9497.183  8882.536 -0.1909  0.0000 1.000       25
-## d= 9497.183 - 10552.426 9847.000 -0.0807  0.0028 1.000        9
+## d= 0 - 1055.243          697.776  0.4815 -0.0003 0.005       45
+## d= 1055.243 - 2110.485  1583.490  0.2708 -0.0008 0.010       67
+## d= 2110.485 - 3165.728  2622.371  0.2043  0.0024 0.015       64
+## d= 3165.728 - 4220.97   3710.591 -0.1302  0.0001 0.995       64
+## d= 4220.97 - 5276.213   4716.029 -0.1719 -0.0008 1.000       54
+## d= 5276.213 - 6331.455  5824.450 -0.2021 -0.0004 1.000       46
+## d= 6331.455 - 7386.698  6856.457 -0.1496  0.0055 1.000       27
+## d= 7386.698 - 8441.941  7883.679 -0.2297 -0.0018 1.000       33
+## d= 8441.941 - 9497.183  8882.536 -0.1909 -0.0042 1.000       25
+## d= 9497.183 - 10552.426 9847.000 -0.0807  0.0022 1.000        9
 ## 
 ## 
 ##  Results table(s) in ecoslot.OUT(x) 
@@ -918,14 +918,14 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb63-1" data-line-number="1">EcoGenetics<span class="op">::</span><span class="kw">ecoslot.OUT</span>(corm<span class="fl">.50</span>)</a></code></pre></div>
 <pre><code>## [[1]]
 ##                          d.mean     obs     exp p.val cardinal
-## d= 0 - 1152.337         739.966  0.4872 -0.0085 0.005       50
-## d= 1152.337 - 1821.843 1536.052  0.2256  0.0053 0.010       50
-## d= 1821.843 - 2769.341 2286.134  0.2307  0.0020 0.015       50
-## d= 2769.341 - 3526.318 3169.188  0.0411  0.0004 0.190       50
-## d= 3526.318 - 4408.262 3992.072 -0.1714  0.0063 1.000       50
-## d= 4408.262 - 5339.102 4863.176 -0.1579  0.0009 1.000       50
-## d= 5339.102 - 6668.986 6011.873 -0.2404 -0.0023 1.000       50
-## d= 6668.986 - 8434.883 7615.126 -0.2429 -0.0087 1.000       50</code></pre>
+## d= 0 - 1152.337         739.966  0.4872 -0.0080 0.005       50
+## d= 1152.337 - 1821.843 1536.052  0.2256  0.0052 0.010       50
+## d= 1821.843 - 2769.341 2286.134  0.2307 -0.0090 0.015       50
+## d= 2769.341 - 3526.318 3169.188  0.0411  0.0039 0.205       50
+## d= 3526.318 - 4408.262 3992.072 -0.1714  0.0037 1.000       50
+## d= 4408.262 - 5339.102 4863.176 -0.1579  0.0097 1.000       50
+## d= 5339.102 - 6668.986 6011.873 -0.2404 -0.0005 1.000       50
+## d= 6668.986 - 8434.883 7615.126 -0.2429  0.0006 1.000       50</code></pre>
 <div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb65-1" data-line-number="1">corm<span class="fl">.100</span> &lt;-<span class="st"> </span>EcoGenetics<span class="op">::</span><span class="kw">eco.cormantel</span>(<span class="dt">M =</span> GD.pop<span class="op">$</span>propShared.PopGenReport, </a>
 <a class="sourceLine" id="cb65-2" data-line-number="2">           <span class="dt">XY =</span> <span class="kw">ecoslot.XY</span>(Frogs.ecopop)[,<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>],  <span class="dt">nsim =</span> <span class="dv">199</span>, <span class="dt">latlon=</span><span class="ot">FALSE</span>,</a>
 <a class="sourceLine" id="cb65-3" data-line-number="3">           <span class="dt">alternative=</span><span class="st">&quot;less&quot;</span>, <span class="dt">size=</span><span class="dv">100</span>)</a></code></pre></div>
@@ -938,10 +938,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb67-1" data-line-number="1">EcoGenetics<span class="op">::</span><span class="kw">ecoslot.OUT</span>(corm<span class="fl">.100</span>)</a></code></pre></div>
 <pre><code>## [[1]]
 ##                          d.mean     obs     exp p.val cardinal
-## d= 0 - 1821.843        1138.009  0.5403  0.0051 0.005      100
-## d= 1821.843 - 3526.318 2727.661  0.2060  0.0013 0.010      100
-## d= 3526.318 - 5339.102 4427.624 -0.2496 -0.0021 1.000      100
-## d= 5339.102 - 8434.883 6813.499 -0.3664 -0.0005 1.000      100</code></pre>
+## d= 0 - 1821.843        1138.009  0.5403 -0.0066 0.005      100
+## d= 1821.843 - 3526.318 2727.661  0.2060 -0.0006 0.010      100
+## d= 3526.318 - 5339.102 4427.624 -0.2496 -0.0008 1.000      100
+## d= 5339.102 - 8434.883 6813.499 -0.3664  0.0023 1.000      100</code></pre>
 <div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb69-1" data-line-number="1">EcoGenetics<span class="op">::</span><span class="kw">eco.plotCorrelog</span>(corm<span class="fl">.50</span>)</a>
 <a class="sourceLine" id="cb69-2" data-line-number="2">EcoGenetics<span class="op">::</span><span class="kw">eco.plotCorrelog</span>(corm<span class="fl">.100</span>)</a></code></pre></div>
 <p>Let’s compare the observed Mantel r statistic, p-value, number of pairs in the first distance class and their mean distance, as well as the definition of the first lag interval. We can get all of this by extracting the first line from each object.</p>
@@ -954,9 +954,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb70-6" data-line-number="6">              <span class="kw">row.names</span>(EcoGenetics<span class="op">::</span><span class="kw">ecoslot.OUT</span>(corm<span class="fl">.100</span>)[[<span class="dv">1</span>]])[<span class="dv">1</span>])</a>
 <a class="sourceLine" id="cb70-7" data-line-number="7">Lag1.def</a></code></pre></div>
 <pre><code>##            d.mean    obs     exp p.val cardinal             bin
-## Sturge    697.776 0.4815  0.0023 0.005       45 d= 0 - 1055.243
-## size.50   739.966 0.4872 -0.0085 0.005       50 d= 0 - 1152.337
-## size.100 1138.009 0.5403  0.0051 0.005      100 d= 0 - 1821.843</code></pre>
+## Sturge    697.776 0.4815 -0.0003 0.005       45 d= 0 - 1055.243
+## size.50   739.966 0.4872 -0.0080 0.005       50 d= 0 - 1152.337
+## size.100 1138.009 0.5403 -0.0066 0.005      100 d= 0 - 1821.843</code></pre>
 <ul>
 <li>All three distance class definitions (Sturge’s rule, size = 50, size = 100) resulted in statistically significant p-values.</li>
 <li>The Mantel correlation in the first distance lag was strongest for size.100.</li>
