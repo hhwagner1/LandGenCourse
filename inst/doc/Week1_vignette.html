@@ -12,7 +12,7 @@
 
 <meta name="author" content="Helene Wagner" />
 
-<meta name="date" content="2020-03-24" />
+<meta name="date" content="2020-04-08" />
 
 <title>Week 1: Importing Genetic Data</title>
 
@@ -339,7 +339,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Week 1: Importing Genetic Data</h1>
 <h4 class="author">Helene Wagner</h4>
-<h4 class="date">2020-03-24</h4>
+<h4 class="date">2020-04-08</h4>
 
 
 <div id="TOC">
@@ -594,8 +594,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h3>a) Slot <span class="citation">@tab</span></h3>
 <p>Table with allele counts, where each column is an allele. Allele name <code>A.1</code> means “locus A, allele 1”. For a codominant marker (e.g. microsatellite) and a diploid species, allele counts per individual can be 0, 1, 2, or NA=missing. Here are the first few lines:</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">as.tibble</span>(Frogs.genind<span class="op">@</span>tab)</a></code></pre></div>
-<pre><code>## Warning: `as.tibble()` is deprecated, use `as_tibble()` (but mind the new semantics).
-## This warning is displayed once per session.</code></pre>
+<pre><code>## Warning: `as.tibble()` is deprecated as of tibble 2.0.0.
+## Please use `as_tibble()` instead.
+## The signature and semantics have changed, see `?as_tibble`.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_warnings()` to see where this warning was generated.</code></pre>
 <pre><code>## # A tibble: 181 x 39
 ##      A.1   A.2   A.3   B.1   B.3   B.2   B.4   C.1   C.2   C.4   C.5   D.1   D.2
 ##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
