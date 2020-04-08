@@ -12,7 +12,7 @@
 
 <meta name="author" content="Rodney Dyer (worked example) and Helene Wagner (adaptation)" />
 
-<meta name="date" content="2020-03-24" />
+<meta name="date" content="2020-04-08" />
 
 <title>Week 0: R Graphics</title>
 
@@ -339,7 +339,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Week 0: R Graphics</h1>
 <h4 class="author">Rodney Dyer (worked example) and Helene Wagner (adaptation)</h4>
-<h4 class="date">2020-03-24</h4>
+<h4 class="date">2020-04-08</h4>
 
 
 <div id="TOC">
@@ -765,11 +765,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <pre><code>## [1] 657</code></pre>
 <p>different colors available for your use. Not all are distinct as some overlap. However the benefit of these colors is that they have specific names, making it easier for you to remember than RGB or hex representations. Here are a random set of 20 color names.</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" data-line-number="1"><span class="kw">colors</span>()[ <span class="kw">sample.int</span>( <span class="kw">length</span>(<span class="kw">colors</span>()), <span class="dt">size=</span><span class="dv">20</span>) ]</a></code></pre></div>
-<pre><code>##  [1] &quot;grey15&quot;          &quot;grey41&quot;          &quot;darkolivegreen3&quot; &quot;grey49&quot;         
-##  [5] &quot;lightslategray&quot;  &quot;snow4&quot;           &quot;salmon1&quot;         &quot;maroon2&quot;        
-##  [9] &quot;royalblue2&quot;      &quot;deepskyblue4&quot;    &quot;gray71&quot;          &quot;gray55&quot;         
-## [13] &quot;grey31&quot;          &quot;gray29&quot;          &quot;olivedrab&quot;       &quot;gray0&quot;          
-## [17] &quot;grey47&quot;          &quot;honeydew4&quot;       &quot;mediumpurple3&quot;   &quot;dodgerblue3&quot;</code></pre>
+<pre><code>##  [1] &quot;gray83&quot;          &quot;red2&quot;            &quot;azure&quot;           &quot;grey7&quot;          
+##  [5] &quot;snow2&quot;           &quot;hotpink3&quot;        &quot;sienna&quot;          &quot;gold4&quot;          
+##  [9] &quot;dodgerblue3&quot;     &quot;gray19&quot;          &quot;darkorange1&quot;     &quot;navajowhite3&quot;   
+## [13] &quot;darkorange3&quot;     &quot;grey71&quot;          &quot;grey33&quot;          &quot;orchid1&quot;        
+## [17] &quot;darkorchid2&quot;     &quot;mediumvioletred&quot; &quot;cyan4&quot;           &quot;seagreen3&quot;</code></pre>
 <p>To use these colors you can call them by name in the col= option to a plot. Here is an example where I define three named colors and then coerce the <code>iris$Species</code> variable into an integer to select the color by species and plot it in a scatter plot (another version of the <code>pch=</code> example previously).</p>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" data-line-number="1">colors &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;royalblue1&quot;</span>, <span class="st">&quot;orange1&quot;</span>, <span class="st">&quot;green3&quot;</span>)</a>
 <a class="sourceLine" id="cb50-2" data-line-number="2">cols &lt;-<span class="st"> </span>colors[ iris<span class="op">$</span>Species ]</a>
