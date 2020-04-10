@@ -287,11 +287,11 @@ Uncheck the following lines to write out a shapefile. This is commented out as r
 
 ### a) Import raster data as stack 
 
-This funciton will import all of the .img files from a directory
+This function will import a raster stack with nine raster maps of the study area.
 ```{r}
-xvars <- readRDS(system.file("extdata", "ralu.rasters.rds", 
-                            package = "LandGenCourse"))
-#xvars <- readRDS(paste0(here::here(), "/data/ralu.rasters.rds"))
+xvars <- rio::import("https://www.dropbox.com/s/xjl9zpgqplwg1us/ralu.rasters.rds?dl=1")
+xvars
+names(xvars)
 ```
 
 ### b) Calculate wetland area within buffer

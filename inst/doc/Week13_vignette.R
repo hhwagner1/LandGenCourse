@@ -131,9 +131,9 @@ write.csv(gdist, file= paste0(here::here(),"/output/gdist.csv"))
 #                driver="ESRI Shapefile", check_exists=TRUE, overwrite_layer=TRUE)
 
 ## -----------------------------------------------------------------------------
-xvars <- readRDS(system.file("extdata", "ralu.rasters.rds", 
-                            package = "LandGenCourse"))
-#xvars <- readRDS(paste0(here::here(), "/data/ralu.rasters.rds"))
+xvars <- rio::import("https://www.dropbox.com/s/xjl9zpgqplwg1us/ralu.rasters.rds?dl=1")
+xvars
+names(xvars)
 
 ## -----------------------------------------------------------------------------
 m <- c(0,10.8, 0,10.9,12.1,1,12.9,89.1,0, 89.5,95.1,1)
