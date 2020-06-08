@@ -159,7 +159,7 @@
       <a href="../tutorials/06-Quantitative_Genetics.html">Week 6 Quantitative Genetics (Part 1)</a>
     </li>
     <li>
-      <a href="../tutorials/06-Quantitative_Genetics_Part2.html">Week 6 Quantitative Genetics (Part 1)</a>
+      <a href="../tutorials/06-Quantitative_Genetics_Part2.html">Week 6 Quantitative Genetics (Part 2)</a>
     </li>
     <li>
       <a href="../tutorials/07-Spatial_Models.html">Week 7 Spatial Linear Models (Part 1)</a>
@@ -171,7 +171,7 @@
       <a href="../tutorials/08-Modeling.html">Week 8 Simulation Experiments in R (Part 1)</a>
     </li>
     <li>
-      <a href="../tutorials/08-Modeling_Part2.html">Week 8 Simulation Experiments in R (Part 1)</a>
+      <a href="../tutorials/08-Modeling_Part2.html">Week 8 Simulation Experiments in R (Part 2)</a>
     </li>
   </ul>
 </li>
@@ -249,7 +249,7 @@
 ## logical.return = TRUE, : there is no package called 'ggeffects'</code></pre>
 <pre><code>## 
 ## The downloaded binary packages are in
-##  /var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T//RtmpQAXtmu/downloaded_packages</code></pre>
+##  /var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T//RtmpCymydl/downloaded_packages</code></pre>
 <p>Source two files with additional functions:</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/source.html">source</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata"</span>, <span class="st">"supplemental_R_functions.R"</span>,
                             <span class="kw">package</span> <span class="kw">=</span> <span class="st">"LandGenCourse"</span>))
@@ -597,28 +597,28 @@
 <div class="sourceCode" id="cb48"><html><body><pre class="r"><span class="no">QstFst_out</span></pre></body></html></div>
 <pre><code>## [[1]]
 ##            Calculated Qst-Fst  Lower Bound crit. value.2.5% 
-##                    0.11917632                   -0.02695119 
+##                    0.11917632                   -0.02735188 
 ## Upper bound crit. value.97.5% 
-##                    0.06582074 
+##                    0.06420595 
 ## 
 ## [[2]]
-## [1] "Qst-Fst values output to file: /Users/helene/Desktop/R_Github_projects/LandGenCourse/vignettes/QminusFvalues_2020-06-08_20-55-23.txt"
+## [1] "Qst-Fst values output to file: /Users/helene/Desktop/R_Github_projects/LandGenCourse/vignettes/QminusFvalues_2020-06-08_22-23-14.txt"
 ## 
 ## [[3]]
 ## Lower one-tailed p value Upper one-tailed p value       Two-tailed p value 
-##                   0.9945                   0.0055                   0.0110 
+##                    0.995                    0.005                    0.010 
 ## 
 ## [[4]]
 ##        Estimated Fst  Lower Bound CI.2.5% Upper bound CI.97.5% 
-##           0.01419871           0.01104137           0.01739356 
+##           0.01419871           0.01110717           0.01741976 
 ## 
 ## [[5]]
 ##        Estimated Qst  Lower Bound CI.2.5% Upper bound CI.97.5% 
-##           0.13337503           0.02526999           0.37627570 
+##           0.13337503           0.02725072           0.36234904 
 ## 
 ## [[6]]
 ##                   Va  Lower bound CI.2.5% Upper bound CI.97.5% 
-##            0.3180848            0.1083082            0.5482767</code></pre>
+##            0.3180848            0.1065291            0.5436353</code></pre>
 <p>The output contains the following elements:</p>
 <ul>
 <li>‘[[1]]’: The calculated difference between Qst and Fst, with 95% critical values of the distribution of the distribution under the null hypothesis of no difference.</li>

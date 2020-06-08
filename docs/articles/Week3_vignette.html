@@ -159,7 +159,7 @@
       <a href="../tutorials/06-Quantitative_Genetics.html">Week 6 Quantitative Genetics (Part 1)</a>
     </li>
     <li>
-      <a href="../tutorials/06-Quantitative_Genetics_Part2.html">Week 6 Quantitative Genetics (Part 1)</a>
+      <a href="../tutorials/06-Quantitative_Genetics_Part2.html">Week 6 Quantitative Genetics (Part 2)</a>
     </li>
     <li>
       <a href="../tutorials/07-Spatial_Models.html">Week 7 Spatial Linear Models (Part 1)</a>
@@ -171,7 +171,7 @@
       <a href="../tutorials/08-Modeling.html">Week 8 Simulation Experiments in R (Part 1)</a>
     </li>
     <li>
-      <a href="../tutorials/08-Modeling_Part2.html">Week 8 Simulation Experiments in R (Part 1)</a>
+      <a href="../tutorials/08-Modeling_Part2.html">Week 8 Simulation Experiments in R (Part 2)</a>
     </li>
   </ul>
 </li>
@@ -314,12 +314,12 @@
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="kw pkg">pegas</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/pegas/man/hw.test.html">hw.test</a></span>(<span class="no">Frogs.genind</span>, <span class="kw">B</span> <span class="kw">=</span> <span class="fl">1000</span>), <span class="kw">digits</span> <span class="kw">=</span> <span class="fl">3</span>)</pre></body></html></div>
 <pre><code>##     chi^2 df Pr(chi^2 &gt;) Pr.exact
 ## A  40.462  3       0.000    0.000
-## B  17.135  6       0.009    0.034
+## B  17.135  6       0.009    0.031
 ## C 136.522  6       0.000    0.000
 ## D  83.338  6       0.000    0.000
-## E 226.803 36       0.000    0.000
+## E 226.803 36       0.000    0.001
 ## F   0.024  3       0.999    1.000
-## G  12.349  6       0.055    0.008
+## G  12.349  6       0.055    0.006
 ## H  76.813 28       0.000    0.000</code></pre>
 <p>Both tests suggest that all loci except for locus “F” are out of HWE globally (across all 181 individuals). Next, we check for HWE of each locus in each population.</p>
 <p>Notes on the code: The curly brackets ‘{ }’ below are used to keep the output from multiple lines together in the html file. Function ‘seppop’ splits the genind object by population. We use ‘sapply’ to apply the function ‘hw.test’ from package ‘pegas’ to each population (see this week’s video and tutorial). We set ‘B=0’ to specify that we don’t need any permutations right now. The function ‘t’ takes the transpose of the resulting matrix, which means it flips rows and columns. This works on a matrix, not a data frame, hence we use ‘data.matrix’ to temporarily interpret the data frame as a matrix.</p>
@@ -352,18 +352,18 @@
 <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="no">HWE.test.MC</span>,<span class="fl">3</span>)}</pre></body></html></div>
 <pre><code>## MC permuation test (p-values):</code></pre>
 <pre><code>##                A     B     C     D     E F     G     H
-## Airplane   0.016 1.000 1.000 0.392 0.607 1 0.258 0.016
-## Bachelor   1.000 0.435 1.000 1.000 0.876 1 0.492 0.603
-## BarkingFox 1.000 0.212 0.054 1.000 0.728 1 1.000 0.156
-## Bob        1.000 1.000 1.000 1.000 0.016 1 1.000 0.237
-## Cache      1.000 0.394 0.146 1.000 1.000 1 1.000 0.607
-## Egg        1.000 1.000 1.000 1.000 0.082 1 0.533 0.460
-## Frog       1.000 1.000 0.074 1.000 0.453 1 1.000 0.192
-## GentianL   1.000 0.066 1.000 0.060 0.673 1 0.637 0.134
-## ParagonL   1.000 0.182 1.000 1.000 1.000 1 0.308 0.080
-## Pothole    1.000 1.000 1.000 1.000 0.537 1 0.496 1.000
-## ShipIsland 1.000 0.649 1.000 0.710 0.139 1 0.559 0.481
-## Skyhigh    1.000 0.362 0.164 0.084 0.109 1 0.078 0.032</code></pre>
+## Airplane   0.012 1.000 1.000 0.405 0.630 1 0.262 0.019
+## Bachelor   1.000 0.451 1.000 1.000 0.850 1 0.481 0.613
+## BarkingFox 1.000 0.225 0.069 1.000 0.721 1 1.000 0.159
+## Bob        1.000 1.000 1.000 1.000 0.016 1 1.000 0.256
+## Cache      1.000 0.375 0.153 1.000 1.000 1 1.000 0.643
+## Egg        1.000 1.000 1.000 1.000 0.084 1 0.553 0.420
+## Frog       1.000 1.000 0.078 1.000 0.440 1 1.000 0.158
+## GentianL   1.000 0.064 1.000 0.056 0.663 1 0.631 0.122
+## ParagonL   1.000 0.178 1.000 1.000 1.000 1 0.336 0.076
+## Pothole    1.000 1.000 1.000 1.000 0.551 1 0.510 1.000
+## ShipIsland 1.000 0.649 1.000 0.697 0.131 1 0.558 0.472
+## Skyhigh    1.000 0.337 0.159 0.085 0.118 1 0.064 0.029</code></pre>
 <p>To summarize, let’s calculate, for each locus, the proportion of populations where it was out of HWE. Here we’ll use the conservative cut-off of alpha = 0.05 for each test. There are various ways of modifying this, including a simple Bonferroni correction, where we divide alpha by the number of tests, which you can activate here by removing the # in front of the line.</p>
 <p>We write the results into a data frame ‘Prop.loci.out.of.HWE’ and use ‘=’ to specify the name for each column.</p>
 <div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">alpha</span><span class="kw">=</span><span class="fl">0.05</span>
@@ -500,14 +500,14 @@
 ##   [.haplotype pegas</code></pre>
 <div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="no">Null.alleles</span>$<span class="no">homozygotes</span>$<span class="no">probability.obs</span></pre></body></html></div>
 <pre><code>##   Allele-1 Allele-2 Allele-3 Allele-4 Allele-5 Allele-6 Allele-7 Allele-8
-## A    0.107    0.000    0.030       NA       NA       NA       NA       NA
-## B    0.141    0.056    0.051    0.005       NA       NA       NA       NA
-## C    0.164    0.001    0.000    0.002       NA       NA       NA       NA
-## D    0.000    0.001    0.221    0.005       NA       NA       NA       NA
-## E    0.065    0.017    0.033    0.263    0.068    0.041    0.706    0.558
-## F    0.429    0.000    0.014       NA       NA       NA       NA       NA
-## G    0.069    0.090    0.017    0.000       NA       NA       NA       NA
-## H    0.461    0.085    0.012    0.028    0.259    0.322    0.004    0.001
+## A    0.101    0.000    0.030       NA       NA       NA       NA       NA
+## B    0.169    0.053    0.060    0.002       NA       NA       NA       NA
+## C    0.184    0.000    0.000    0.002       NA       NA       NA       NA
+## D    0.000    0.000    0.226    0.007       NA       NA       NA       NA
+## E    0.055    0.014    0.037    0.275    0.073    0.040    0.735    0.557
+## F    0.445    0.001    0.017       NA       NA       NA       NA       NA
+## G    0.073    0.073    0.019    0.004       NA       NA       NA       NA
+## H    0.430    0.095    0.010    0.023    0.248    0.303    0.008    0.001
 ##   Allele-9
 ## A       NA
 ## B       NA
@@ -531,9 +531,9 @@
 <pre><code>##  summary1 (Chakraborty et al. 1994):</code></pre>
 <pre><code>##                       A    B    C    D    E     F    G    H
 ## Observed frequency 0.24 0.08 0.23 0.25 0.06  0.00 0.11 0.04
-## Median frequency   0.24 0.08 0.22 0.24 0.06  0.00 0.11 0.04
-## 2.5th percentile   0.07 0.01 0.04 0.17 0.02 -0.01 0.02 0.00
-## 97.5th percentile  0.44 0.16 0.48 0.33 0.10  0.00 0.22 0.10</code></pre>
+## Median frequency   0.23 0.08 0.23 0.25 0.06  0.00 0.11 0.04
+## 2.5th percentile   0.08 0.01 0.03 0.16 0.02 -0.01 0.02 0.00
+## 97.5th percentile  0.44 0.16 0.51 0.34 0.11  0.00 0.22 0.09</code></pre>
 <div class="sourceCode" id="cb32"><html><body><pre class="r">{<span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="st">"summary2 (Brookfield et al. 1996):"</span>, <span class="st">"\n"</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span>(<span class="no">Null.alleles</span>$<span class="no">null.allele.freq</span>$<span class="no">summary2</span>,<span class="fl">2</span>)}</pre></body></html></div>
 <pre><code>## summary2 (Brookfield et al. 1996):</code></pre>
@@ -541,7 +541,7 @@
 ## Observed frequency 0.06 0.05 0.05 0.17 0.05 0 0.07 0.04
 ## Median frequency   0.06 0.05 0.05 0.17 0.05 0 0.07 0.03
 ## 2.5th percentile   0.02 0.01 0.01 0.12 0.02 0 0.01 0.00
-## 97.5th percentile  0.11 0.10 0.10 0.22 0.09 0 0.13 0.08</code></pre>
+## 97.5th percentile  0.11 0.10 0.11 0.23 0.09 0 0.13 0.08</code></pre>
 <p>For this example, both methods suggest that there may be null alleles in most loci. However, the estimates of the frequency of null alleles differ a lot between the two methods.</p>
 <p>A different approach for estimating null alleles at microsatellite loci, based on the Estimation-Maximization algorithm, is implemented in <code>FreeNA</code> (outside of the R environment). <code>FreeNA</code> will directly provide Fst values and some other measurements using the corrected allele frequencies: <a href="https://www1.montpellier.inra.fr/CBGP/software/FreeNA/" class="uri">https://www1.montpellier.inra.fr/CBGP/software/FreeNA/</a></p>
 <p>Relevant papers for the Estimation-Maximization algorithm:</p>

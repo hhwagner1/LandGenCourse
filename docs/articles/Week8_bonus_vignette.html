@@ -159,7 +159,7 @@
       <a href="../tutorials/06-Quantitative_Genetics.html">Week 6 Quantitative Genetics (Part 1)</a>
     </li>
     <li>
-      <a href="../tutorials/06-Quantitative_Genetics_Part2.html">Week 6 Quantitative Genetics (Part 1)</a>
+      <a href="../tutorials/06-Quantitative_Genetics_Part2.html">Week 6 Quantitative Genetics (Part 2)</a>
     </li>
     <li>
       <a href="../tutorials/07-Spatial_Models.html">Week 7 Spatial Linear Models (Part 1)</a>
@@ -171,7 +171,7 @@
       <a href="../tutorials/08-Modeling.html">Week 8 Simulation Experiments in R (Part 1)</a>
     </li>
     <li>
-      <a href="../tutorials/08-Modeling_Part2.html">Week 8 Simulation Experiments in R (Part 1)</a>
+      <a href="../tutorials/08-Modeling_Part2.html">Week 8 Simulation Experiments in R (Part 2)</a>
     </li>
   </ul>
 </li>
@@ -287,10 +287,10 @@
 <p>So, <code>system.file</code> goes to the R home and, without additional arguments, locates the folder ‘library’ with the subfolder ‘base’.</p>
 <p>What happens when we add the arguments?</p>
 <div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="kw">package</span> <span class="kw">=</span> <span class="st">"LandGenCourse"</span>)</pre></body></html></div>
-<pre><code>## [1] "/private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f4a676be2/LandGenCourse"</code></pre>
+<pre><code>## [1] "/private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f20c3e939/LandGenCourse"</code></pre>
 <div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata"</span>, <span class="st">"wolf_geno_samp_10000.csv"</span>,
                             <span class="kw">package</span> <span class="kw">=</span> <span class="st">"LandGenCourse"</span>)</pre></body></html></div>
-<pre><code>## [1] "/private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f4a676be2/LandGenCourse/extdata/wolf_geno_samp_10000.csv"</code></pre>
+<pre><code>## [1] "/private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f20c3e939/LandGenCourse/extdata/wolf_geno_samp_10000.csv"</code></pre>
 <p>Compare the paths to those from the previous chunk!</p>
 <ul>
 <li>When we specify the package argument, <code>system.file</code> modifies the path to the location where the package is stored.</li>
@@ -424,15 +424,15 @@
 <pre><code>## See spec(...) for full column specifications.</code></pre>
 <pre><code>## Unit: milliseconds
 ##                  expr        min         lq       mean     median         uq
-##           read.csv(x) 1799.82808 1799.82808 1799.82808 1799.82808 1799.82808
-##    readr::read_csv(x) 2645.89078 2645.89078 2645.89078 2645.89078 2645.89078
-##  data.table::fread(x)   92.64395   92.64395   92.64395   92.64395   92.64395
-##        rio::import(x)  180.07212  180.07212  180.07212  180.07212  180.07212
+##           read.csv(x) 2401.40460 2401.40460 2401.40460 2401.40460 2401.40460
+##    readr::read_csv(x) 2760.07799 2760.07799 2760.07799 2760.07799 2760.07799
+##  data.table::fread(x)   95.86431   95.86431   95.86431   95.86431   95.86431
+##        rio::import(x)  207.48735  207.48735  207.48735  207.48735  207.48735
 ##         max neval
-##  1799.82808     1
-##  2645.89078     1
-##    92.64395     1
-##   180.07212     1</code></pre>
+##  2401.40460     1
+##  2760.07799     1
+##    95.86431     1
+##   207.48735     1</code></pre>
 <p>Would it be faster if we first loaded the packages so that we could call the functions directly?</p>
 <p>Note: you can list several independent commands on the same line by separating the with a semi-colon ‘;’. Also, the chunk setting <code>message=FALSE</code> here suppresses the warning message from <code>read_csv</code>.</p>
 <div class="sourceCode" id="cb39"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">readr</span>); <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">data.table</span>); <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">rio</span>); <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">microbenchmark</span>)
@@ -442,10 +442,10 @@
 <pre><code>## Warning: Missing column names filled in: 'X1' [1]</code></pre>
 <pre><code>## Unit: milliseconds
 ##         expr        min         lq       mean     median         uq        max
-##  read.csv(x) 1775.93154 1775.93154 1775.93154 1775.93154 1775.93154 1775.93154
-##  read_csv(x) 2608.70019 2608.70019 2608.70019 2608.70019 2608.70019 2608.70019
-##     fread(x)   91.17606   91.17606   91.17606   91.17606   91.17606   91.17606
-##    import(x)  105.53270  105.53270  105.53270  105.53270  105.53270  105.53270
+##  read.csv(x) 2015.47265 2015.47265 2015.47265 2015.47265 2015.47265 2015.47265
+##  read_csv(x) 2720.57172 2720.57172 2720.57172 2720.57172 2720.57172 2720.57172
+##     fread(x)   96.28512   96.28512   96.28512   96.28512   96.28512   96.28512
+##    import(x)   95.86868   95.86868   95.86868   95.86868   95.86868   95.86868
 ##  neval
 ##      1
 ##      1
@@ -510,10 +510,10 @@
           <span class="kw">feather</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/pkg/rio/man/import.html">import</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="kw pkg">here</span><span class="kw ns">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span>(), <span class="st">"output"</span>, <span class="st">"gen.feather"</span>)))</pre></body></html></div>
 <pre><code>## Unit: milliseconds
 ##     expr      min       lq     mean   median       uq       max neval cld
-##      csv 88.44950 91.48346 91.78387 92.03943 92.78114  95.10779    10   c
-##    RData 22.13688 22.46577 23.82213 23.45856 23.88213  30.03600    10 a  
-##      rds 28.65098 29.18154 29.59253 29.67873 30.08410  30.32031    10 a  
-##  feather 68.50521 69.96044 79.93431 73.94838 87.00867 106.35126    10  b</code></pre>
+##      csv 89.62463 90.70002 91.54931 91.31458 91.92472  93.76042    10   c
+##    RData 36.88713 38.91492 39.59709 39.75030 40.35472  42.64913    10 a  
+##      rds 31.08776 32.67395 33.93146 33.84924 35.69292  36.73208    10 a  
+##  feather 67.71748 71.51372 81.51088 75.17224 96.73728 103.82907    10  b</code></pre>
 <p>Look at the column ‘mean’. Importing any of the binary files was at least twice as fast as importing the ‘csv’ file with the underlying function <code>fread</code> (which was already 50 times faster than <code>read.csv</code>).</p>
 <p>Here’s my recommendation for saving R objects/data efficiently:</p>
 <ul>
@@ -594,9 +594,9 @@
 
 <span class="kw pkg">microbenchmark</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html">microbenchmark</a></span>(<span class="fu">myFunction</span>(), <span class="fu">myFunction.cmp</span>())</pre></body></html></div>
 <pre><code>## Unit: microseconds
-##              expr    min      lq     mean  median      uq      max neval cld
-##      myFunction() 52.160 52.6415 67.07976 52.9435 53.5585 1248.472   100   a
-##  myFunction.cmp() 52.131 52.7855 53.59625 53.1220 53.4670   72.220   100   a</code></pre>
+##              expr    min      lq     mean  median     uq      max neval cld
+##      myFunction() 53.011 54.0390 67.37882 54.5165 54.970 1293.237   100   a
+##  myFunction.cmp() 53.080 53.9765 54.86295 54.3510 54.887   79.052   100   a</code></pre>
 <p><strong>Question</strong>: Which of the following times are most different between the uncompiled and the compiled versions of this simple function?</p>
 <ul>
 <li>
@@ -672,8 +672,8 @@
 <p>Now we can pass the file to <code>profvis</code>:</p>
 <div class="sourceCode" id="cb66"><html><body><pre class="r"><span class="kw pkg">profvis</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/profvis/man/profvis.html">profvis</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/source.html">source</a></span>(<span class="no">myPath</span>))</pre></body></html></div>
 <p><img src="Week8_bonus_vignette_files/figure-html/profvis2-1.png" width="700"><img src="Week8_bonus_vignette_files/figure-html/profvis2-2.png" width="700"></p>
-<div id="htmlwidget-331ed0ad2449b8e0d629" style="width:100%;height:600px;" class="profvis html-widget"></div>
-<script type="application/json" data-for="htmlwidget-331ed0ad2449b8e0d629">{"x":{"message":{"prof":{"time":[1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],"depth":[10,9,8,7,6,5,4,3,2,1,10,9,8,7,6,5,4,3,2,1,10,9,8,7,6,5,4,3,2,1],"label":[".External2","plot.new","plot.default","plot","qqnorm.default","qqnorm","eval","eval","withVisible","source",".External2","plot.new","plot.default","plot","qqnorm.default","qqnorm","eval","eval","withVisible","source","title","localTitle","plot.default","plot","qqnorm.default","qqnorm","eval","eval","withVisible","source"],"filenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"linenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"memalloc":[257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.40470123291,257.407234191895,257.407234191895,257.407234191895,257.407234191895,257.407234191895,257.407234191895,257.407234191895,257.407234191895,257.407234191895,257.407234191895],"meminc":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.002532958984375,0,0,0,0,0,0,0,0,0],"filename":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},"interval":10,"files":[],"prof_output":"/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T//RtmpPpggm7/file50374a197bff.prof","highlight":{"output":["^output\\$"],"gc":["^<GC>$"],"stacktrace":["^\\.\\.stacktraceo(n|ff)\\.\\.$"]},"split":"h"}},"evals":[],"jsHooks":[]}</script><ul>
+<div id="htmlwidget-3953e566e04b7d408242" style="width:100%;height:600px;" class="profvis html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3953e566e04b7d408242">{"x":{"message":{"prof":{"time":[1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],"depth":[10,9,8,7,6,5,4,3,2,1,10,9,8,7,6,5,4,3,2,1,10,9,8,7,6,5,4,3,2,1],"label":[".External2","plot.new","plot.default","plot","qqnorm.default","qqnorm","eval","eval","withVisible","source",".External2","plot.new","plot.default","plot","qqnorm.default","qqnorm","eval","eval","withVisible","source","title","localTitle","plot.default","plot","qqnorm.default","qqnorm","eval","eval","withVisible","source"],"filenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"linenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"memalloc":[257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.402809143066,257.405380249023,257.405380249023,257.405380249023,257.405380249023,257.405380249023,257.405380249023,257.405380249023,257.405380249023,257.405380249023,257.405380249023],"meminc":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.00257110595703125,0,0,0,0,0,0,0,0,0],"filename":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},"interval":10,"files":[],"prof_output":"/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T//RtmpiZM5FY/file59dc71d69b71.prof","highlight":{"output":["^output\\$"],"gc":["^<GC>$"],"stacktrace":["^\\.\\.stacktraceo(n|ff)\\.\\.$"]},"split":"h"}},"evals":[],"jsHooks":[]}</script><ul>
 <li>The ‘Flame Graph’ should look the same as before.</li>
 <li>The content of the ‘Data’ tab is different. Click on the triangle before ‘source’ to navigate to: ‘source’ &gt; ‘withVisible’ &gt; ‘eval’ &gt; ‘eval’.</li>
 <li>That’s where the actual lines of code are profiled.</li>
@@ -702,8 +702,8 @@
 <p>Now we can pass the file to `profvis’:</p>
 <div class="sourceCode" id="cb71"><html><body><pre class="r"><span class="kw pkg">profvis</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/profvis/man/profvis.html">profvis</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/source.html">source</a></span>(<span class="no">outFile</span>), <span class="kw">prof_output</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="kw pkg">here</span><span class="kw ns">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html">here</a></span>(), <span class="st">"output/output.prof"</span>))</pre></body></html></div>
 <p><img src="Week8_bonus_vignette_files/figure-html/profvis3-1.png" width="700"><img src="Week8_bonus_vignette_files/figure-html/profvis3-2.png" width="700"></p>
-<div id="htmlwidget-afbbb5d22cc72db0dffe" style="width:100%;height:600px;" class="profvis html-widget"></div>
-<script type="application/json" data-for="htmlwidget-afbbb5d22cc72db0dffe">{"x":{"message":{"prof":{"time":[1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2],"depth":[10,9,8,7,6,5,4,3,2,1,10,9,8,7,6,5,4,3,2,1],"label":[".External2","plot.new","plot.default","plot","qqnorm.default","qqnorm","eval","eval","withVisible","source",".External2","plot.new","plot.default","plot","qqnorm.default","qqnorm","eval","eval","withVisible","source"],"filenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"linenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"memalloc":[257.430252075195,257.430252075195,257.430252075195,257.430252075195,257.430252075195,257.430252075195,257.430252075195,257.430252075195,257.430252075195,257.430252075195,257.430252075195,257.430252075195,257.430252075195,257.430252075195,257.430252075195,257.430252075195,257.430252075195,257.430252075195,257.430252075195,257.430252075195],"meminc":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"filename":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},"interval":10,"files":[],"prof_output":"/Users/helene/Desktop/R_Github_projects/LandGenCourse/output/output.prof","highlight":{"output":["^output\\$"],"gc":["^<GC>$"],"stacktrace":["^\\.\\.stacktraceo(n|ff)\\.\\.$"]},"split":"h"}},"evals":[],"jsHooks":[]}</script><p><strong>Question</strong>: Which lines of code took the longest to run in this example?</p>
+<div id="htmlwidget-fa93ac47f8ea9d0c3caa" style="width:100%;height:600px;" class="profvis html-widget"></div>
+<script type="application/json" data-for="htmlwidget-fa93ac47f8ea9d0c3caa">{"x":{"message":{"prof":{"time":[1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3],"depth":[10,9,8,7,6,5,4,3,2,1,10,9,8,7,6,5,4,3,2,1,10,9,8,7,6,5,4,3,2,1],"label":[".External2","plot.new","plot.default","plot","qqnorm.default","qqnorm","eval","eval","withVisible","source",".External2","plot.new","plot.default","plot","qqnorm.default","qqnorm","eval","eval","withVisible","source","title","localTitle","plot.default","plot","qqnorm.default","qqnorm","eval","eval","withVisible","source"],"filenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"linenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"memalloc":[257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.430290222168,257.432823181152,257.432823181152,257.432823181152,257.432823181152,257.432823181152,257.432823181152,257.432823181152,257.432823181152,257.432823181152,257.432823181152],"meminc":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.002532958984375,0,0,0,0,0,0,0,0,0],"filename":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},"interval":10,"files":[],"prof_output":"/Users/helene/Desktop/R_Github_projects/LandGenCourse/output/output.prof","highlight":{"output":["^output\\$"],"gc":["^<GC>$"],"stacktrace":["^\\.\\.stacktraceo(n|ff)\\.\\.$"]},"split":"h"}},"evals":[],"jsHooks":[]}</script><p><strong>Question</strong>: Which lines of code took the longest to run in this example?</p>
 </div>
 </div>
 <div id="creating-and-executing-a-bash-r-script" class="section level2">
@@ -866,7 +866,7 @@
 ##  cli          2.0.2   2020-02-28 [2] CRAN (R 3.6.0)
 ##  codetools    0.2-16  2018-12-24 [2] CRAN (R 3.6.3)
 ## 
-## [1] /private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f4a676be2
+## [1] /private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f20c3e939
 ## [2] /Library/Frameworks/R.framework/Versions/3.6/Resources/library</code></pre>
 <p>Exporting the session information is a bit tricky because ‘Session’ is not in tabular format, and what we want to export is the formatted output, not the object itself.</p>
 <p>Also, we will add a time stamp to the file name. This achieves two goals: avoid overwriting earlier files, and keep a record of the date of the session information.</p>
@@ -964,15 +964,15 @@
                                <span class="fu">method1</span>(<span class="no">x</span>), <span class="fu">method2</span>(<span class="no">x</span>), <span class="fu">method3</span>(<span class="no">x</span>), <span class="fu">method4</span>(<span class="no">x</span>))</pre></body></html></div>
 <pre><code>## Unit: milliseconds
 ##        expr       min        lq      mean    median        uq       max neval
-##  method1(x)  33.99948  36.69315  46.75207  45.37926  48.61636  78.76981    10
-##  method2(x) 192.52533 217.84453 227.90549 226.73759 239.53538 263.71676    10
-##  method3(x)  44.07066  51.18517  62.49784  56.36606  61.01614 105.67342    10
-##  method4(x)  28.52269  30.07086  34.27054  33.87927  37.21852  41.91183    10
+##  method1(x)  34.09171  35.68114  46.21438  46.26055  56.62165  62.28200    10
+##  method2(x) 199.76018 219.87768 236.56668 225.82850 271.17325 278.41767    10
+##  method3(x)  44.88044  46.72582  53.61258  51.43837  60.07007  69.94866    10
+##  method4(x)  28.62422  32.96578  44.02098  34.86297  41.87827 124.92029    10
 ##  cld
-##  ab 
-##    c
-##   b 
-##  a</code></pre>
+##   a 
+##    b
+##   a 
+##   a</code></pre>
 <p><strong>Question</strong>: Compare the mean</p>
 <ul>
 <li>Which method was the fastest? Can you explain this?</li>

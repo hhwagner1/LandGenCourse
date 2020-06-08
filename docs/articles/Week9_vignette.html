@@ -159,7 +159,7 @@
       <a href="../tutorials/06-Quantitative_Genetics.html">Week 6 Quantitative Genetics (Part 1)</a>
     </li>
     <li>
-      <a href="../tutorials/06-Quantitative_Genetics_Part2.html">Week 6 Quantitative Genetics (Part 1)</a>
+      <a href="../tutorials/06-Quantitative_Genetics_Part2.html">Week 6 Quantitative Genetics (Part 2)</a>
     </li>
     <li>
       <a href="../tutorials/07-Spatial_Models.html">Week 7 Spatial Linear Models (Part 1)</a>
@@ -171,7 +171,7 @@
       <a href="../tutorials/08-Modeling.html">Week 8 Simulation Experiments in R (Part 1)</a>
     </li>
     <li>
-      <a href="../tutorials/08-Modeling_Part2.html">Week 8 Simulation Experiments in R (Part 1)</a>
+      <a href="../tutorials/08-Modeling_Part2.html">Week 8 Simulation Experiments in R (Part 2)</a>
     </li>
   </ul>
 </li>
@@ -245,7 +245,7 @@
 }</pre></body></html></div>
 <pre><code>## 
 ## The downloaded binary packages are in
-##  /var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T//RtmpuGb4PA/downloaded_packages</code></pre>
+##  /var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T//Rtmph26Y2p/downloaded_packages</code></pre>
 </div>
 </div>
 <div id="simulated-data-2-island-model" class="section level2">
@@ -418,19 +418,19 @@
 ## lm(formula = pcA$x[, 1] ~ p1)
 ## 
 ## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -3.1592 -0.7347 -0.0179  0.7083  3.2091 
+##      Min       1Q   Median       3Q      Max 
+## -2.44262 -0.67148 -0.00755  0.70914  2.66176 
 ## 
 ## Coefficients:
 ##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)   4.1367     0.1784   23.18   &lt;2e-16 ***
-## p1           -8.0920     0.3147  -25.71   &lt;2e-16 ***
+## (Intercept)   4.0025     0.1648   24.29   &lt;2e-16 ***
+## p1           -8.0584     0.2983  -27.02   &lt;2e-16 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 1.092 on 198 degrees of freedom
-## Multiple R-squared:  0.7695, Adjusted R-squared:  0.7684 
-## F-statistic: 661.2 on 1 and 198 DF,  p-value: &lt; 2.2e-16</code></pre>
+## Residual standard error: 1.02 on 198 degrees of freedom
+## Multiple R-squared:  0.7866, Adjusted R-squared:  0.7855 
+## F-statistic: 729.8 on 1 and 198 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 <div id="empirical-data-threespine-sticklebacks" class="section level2">
 <h2 class="hasAnchor">
@@ -508,13 +508,13 @@
 <span class="no">snmf</span> <span class="kw">=</span> <span class="kw pkg">LEA</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/LEA/man/main_sNMF.html">snmf</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata"</span>, <span class="st">"stickleback.geno"</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">"LandGenCourse"</span>),
                  <span class="kw">K</span> <span class="kw">=</span> <span class="no">K</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">100</span>, <span class="kw">project</span> <span class="kw">=</span> <span class="st">"new"</span>)</pre></body></html></div>
 <pre><code>## The project is saved into :
-##  DUn/temp_libpath2c3f4a676be2/LandGenCourse/extdata/stickleback.snmfProject 
+##  DUn/temp_libpath2c3f20c3e939/LandGenCourse/extdata/stickleback.snmfProject 
 ## 
 ## To load the project, use:
-##  project = load.snmfProject("DUn/temp_libpath2c3f4a676be2/LandGenCourse/extdata/stickleback.snmfProject")
+##  project = load.snmfProject("DUn/temp_libpath2c3f20c3e939/LandGenCourse/extdata/stickleback.snmfProject")
 ## 
 ## To remove the project, use:
-##  remove.snmfProject("DUn/temp_libpath2c3f4a676be2/LandGenCourse/extdata/stickleback.snmfProject")
+##  remove.snmfProject("DUn/temp_libpath2c3f20c3e939/LandGenCourse/extdata/stickleback.snmfProject")
 ## 
 ## [1] "*************************************"
 ## [1] "* sNMF K = 4  repetition 1      *"
@@ -524,36 +524,36 @@
 ##         -n (number of individuals)             571
 ##         -L (number of loci)                    10000
 ##         -K (number of ancestral pops)          4
-##         -x (input file)                        /private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f4a676be2/LandGenCourse/extdata/stickleback.geno
-##         -q (individual admixture file)         /private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f4a676be2/LandGenCourse/extdata/stickleback.snmf/K4/run1/stickleback_r1.4.Q
-##         -g (ancestral frequencies file)        /private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f4a676be2/LandGenCourse/extdata/stickleback.snmf/K4/run1/stickleback_r1.4.G
+##         -x (input file)                        /private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f20c3e939/LandGenCourse/extdata/stickleback.geno
+##         -q (individual admixture file)         /private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f20c3e939/LandGenCourse/extdata/stickleback.snmf/K4/run1/stickleback_r1.4.Q
+##         -g (ancestral frequencies file)        /private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f20c3e939/LandGenCourse/extdata/stickleback.snmf/K4/run1/stickleback_r1.4.G
 ##         -i (number max of iterations)          200
 ##         -a (regularization parameter)          100
-##         -s (seed random init)                  214538905
+##         -s (seed random init)                  140330571395194
 ##         -e (tolerance error)                   1E-05
 ##         -p (number of processes)               1
 ##         - diploid
 ## 
-## Read genotype file /private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f4a676be2/LandGenCourse/extdata/stickleback.geno:      OK.
+## Read genotype file /private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f20c3e939/LandGenCourse/extdata/stickleback.geno:      OK.
 ## 
 ## 
 ## Main algorithm:
 ##  [                                                                           ]
-##  [===========]
-## Number of iterations: 30
+##  [=============]
+## Number of iterations: 35
 ## 
-## Least-square error: 722698.084676
-## Write individual ancestry coefficient file /private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f4a676be2/LandGenCourse/extdata/stickleback.snmf/K4/run1/stickleback_r1.4.Q:       OK.
-## Write ancestral allele frequency coefficient file /private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f4a676be2/LandGenCourse/extdata/stickleback.snmf/K4/run1/stickleback_r1.4.G:    OK.
+## Least-square error: 722698.118431
+## Write individual ancestry coefficient file /private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f20c3e939/LandGenCourse/extdata/stickleback.snmf/K4/run1/stickleback_r1.4.Q:       OK.
+## Write ancestral allele frequency coefficient file /private/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T/RtmpwBqDUn/temp_libpath2c3f20c3e939/LandGenCourse/extdata/stickleback.snmf/K4/run1/stickleback_r1.4.G:    OK.
 ## 
 ## The project is saved into :
-##  DUn/temp_libpath2c3f4a676be2/LandGenCourse/extdata/stickleback.snmfProject 
+##  DUn/temp_libpath2c3f20c3e939/LandGenCourse/extdata/stickleback.snmfProject 
 ## 
 ## To load the project, use:
-##  project = load.snmfProject("DUn/temp_libpath2c3f4a676be2/LandGenCourse/extdata/stickleback.snmfProject")
+##  project = load.snmfProject("DUn/temp_libpath2c3f20c3e939/LandGenCourse/extdata/stickleback.snmfProject")
 ## 
 ## To remove the project, use:
-##  remove.snmfProject("DUn/temp_libpath2c3f4a676be2/LandGenCourse/extdata/stickleback.snmfProject")</code></pre>
+##  remove.snmfProject("DUn/temp_libpath2c3f20c3e939/LandGenCourse/extdata/stickleback.snmfProject")</code></pre>
 </div>
 <div id="d-plot-ancestry-proportions" class="section level3">
 <h3 class="hasAnchor">
