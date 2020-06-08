@@ -23,28 +23,7 @@ navbar:
     left:  [home, intro, reference, articles, tutorials, news]
     right: [github]
 
-articles:
-- title: Worked Examples
-  navbar: ~
-  contents:
-  - Week0_BasicR
-  - Week0_Graphics
-  - Week1_vignette
-  - Week2_vignette
-  - Week2_bonus_vignette
-  - Week3_vignette
-  - Week4_vignette
-  - Week5_vignette
-  - Week6_vignette
-  - Week7_vignette
-  - Week8_vignette
-  - Week8_bonus_vignette
-  - Week9_vignette
-  - Week10_vignette
-  - Week11_vignette
-  - Week12_vignette
-  - Week13_vignette
-  - Week14_vignette
+
 
 tutorials:
 - name: 00-Intro_RStudio
