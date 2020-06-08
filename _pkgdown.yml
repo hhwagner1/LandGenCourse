@@ -1,0 +1,86 @@
+url: https://pkgdown.r-lib.org
+
+home:
+  title: Build websites for R packages
+  links:
+  - text: Link to the public page of the distributed graduate course DGS Landscape Genetics:
+    href: https://sites.google.com/site/landscapegeneticscourse/
+
+authors:
+  Helene Wagner:
+    href: http://sites.utm.utoronto.ca/wagnerlab/
+
+template:
+  params:
+    bootswatch: cerulean
+    ganalytics: UA-168837293-1
+
+development:
+  mode: auto
+
+articles:
+- title: Worked Examples
+  navbar: ~
+  contents:
+  - pkgdown
+  - linking
+  - search
+  - metadata
+- title: Videos
+  desc: >
+    These articles are used to test various pkgdown features that can not
+    easily be tested automatically.
+  contents:
+  - starts_with("test")
+
+reference:
+- title: Functions & Data
+  desc:  List of R functions and datasets included in the package.
+- contents:
+  - build_site
+  - init_site
+  - starts_with("build_")
+  - starts_with("deploy_")
+  - preview_site
+- title: Templates
+- contents:
+  - template_navbar
+  - render_page
+- title: Helpers
+- contents:
+  - autolink_html
+  - clean_site
+  - rd2html
+  - as_pkgdown
+  - in_pkgdown
+- title: Regression tests
+- contents:
+  - starts_with("test", internal = TRUE)
+
+news:
+  releases:
+  - text: "Version 1.5.0"
+    href: https://www.tidyverse.org/blog/2020/03/pkgdown-1-5-0/
+  - text: "Version 1.4.0"
+    href: https://www.tidyverse.org/articles/2019/09/pkgdown-1-4-0/
+  - text: "Version 1.3.0"
+    href: https://www.tidyverse.org/articles/2018/12/pkgdown-1-3-0/
+  - text: "Version 1.1.0"
+    href: https://www.tidyverse.org/articles/2018/06/pkgdown-1-1-0/
+  - text: "Version 1.0.0"
+    href: https://www.tidyverse.org/articles/2018/05/pkgdown-1-0-0/
+
+    © 2020 GitHub, Inc.
+    Terms
+    Privacy
+    Security
+    Status
+    Help
+
+    Contact GitHub
+    Pricing
+    API
+    Training
+    Blog
+    About
+

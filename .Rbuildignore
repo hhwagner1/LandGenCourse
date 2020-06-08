@@ -7,10 +7,5 @@
 ^doc$
 ^Meta$
 
-^analysis$
-^docs$
-#^data$
-^dataPages$
-^code$
-^output$
-^_workflowr.yml$
+^_pkgdown\.yml$
+^pkgdown$
