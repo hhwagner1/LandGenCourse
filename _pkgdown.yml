@@ -40,28 +40,21 @@ videos:
   - starts_with("test")
 
 reference:
-- title: Functions & Data
-  desc:  List of R functions and datasets included in the package.
+- title: R Functions
+  desc:  List of R functions included in the package.
 - contents:
-  - build_site
-  - init_site
-  - starts_with("build_")
-  - starts_with("deploy_")
-  - preview_site
-- title: Templates
+  - watchVideoAddin
+  - startTutorialAddin
+  - chooseWEAddin
+  - openCheatsheetAddin
+  - detachAllPackages
+- title: R datasets
 - contents:
-  - template_navbar
-  - render_page
-- title: Helpers
-- contents:
-  - autolink_html
-  - clean_site
-  - rd2html
-  - as_pkgdown
-  - in_pkgdown
-- title: Regression tests
-- contents:
-  - starts_with("test", internal = TRUE)
+  - dd.ecogen
+  - dd.site
+  - Dianthus
+  - ralu.loci
+  - WWP.ecogen
 
 news:
   releases:
