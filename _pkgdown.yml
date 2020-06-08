@@ -3,7 +3,7 @@ url: http://LandGenCourse.r-lib.org
 home:
   title: R package LandGenCourse
   links:
-  - text: Link to the public page of the distributed graduate course DGS Landscape Genetics:
+  - text: Link to the public page of the distributed graduate course DGS Landscape Genetics
     href: https://sites.google.com/site/landscapegeneticscourse/
 
 authors:
@@ -20,24 +20,85 @@ development:
 
 navbar:
   structure:
-    left:  [home, intro, reference, articles, videos, news]
+    left:  [home, intro, reference, articles, tutorials, news]
     right: [github]
 
 articles:
 - title: Worked Examples
   navbar: ~
   contents:
-  - pkgdown
-  - linking
-  - search
-  - metadata
+  - Week0_BasicR
+  - Week0_Graphics
+  - Week1_vignette
+  - Week2_vignette
+  - Week2_bonus_vignette
+  - Week3_vignette
+  - Week4_vignette
+  - Week5_vignette
+  - Week6_vignette
+  - Week7_vignette
+  - Week8_vignette
+  - Week8_bonus_vignette
+  - Week9_vignette
+  - Week10_vignette
+  - Week11_vignette
+  - Week12_vignette
+  - Week13_vignette
+  - Week14_vignette
 
-videos:
-- title: Links to Videos
-  desc: >
-    Links to course videos.
-  contents:
-  - starts_with("test")
+tutorials:
+- name: 00-Intro_RStudio
+  title: Introduction to RStudio
+  url: https://www.dropbox.com/s/4jogqfu3xpeuged/Intro_RStudio_small.mp4?dl=0
+- name: 00-Intro_LandGenCourse
+  title: Introduction to the LandGenCourse package
+  url: https://www.dropbox.com/s/598kwim7x09m47t/Intro_LandGenCourse_small.mp4?dl=0
+- name: 00-Intro_RNotebooks
+  title: Introduction to R Notebooks
+  url: https://www.dropbox.com/s/cqhf88lla8byuwx/Intro_RNotebooks_15.mp4?dl=0
+- name: 00-Version_Control
+  title: Version Control 101
+  url: http://sho.co/19EFD
+- name: 01-Genetic_Data
+  title: Week 1 Getting Landscape Genetic Data into R
+  url: http://sho.co/19DCV
+- name: 02-Spatial_Data
+  title: Week 2 Land Cover Analysis in R
+  url: http://sho.co/19DA2
+- name: 03-Genetic_Diversity
+  title: Week 3 Genetic Diversity (Part 1)
+  url: http://sho.co/19UT5
+- name: 03-Genetic_Diversity_Part2
+  title: Week 3 Genetic Diversity (Part 2)
+  url: http://sho.co/19YDM
+- name: 04-Metapop_Genetics
+  title: Week 4 Metapopulation Genetics (Part 1)
+  url: http://sho.co/19Y08
+- name: 04-Metapop_Genetics_Part2
+  title: Week 4 Metapopulation Genetics (Part 2)
+  url: http://sho.co/19Y09
+- name: 05-Spatial_Stats
+  title: Week 5 Spatial Statistics
+  url: http://sho.co/19Y0B
+- name: 06-Quantitative_Genetics
+  title: Week 6 Quantitative Genetics (Part 1)
+  url: http://sho.co/19YGU
+- name: 06-Quantitative_Genetics_Part2
+  title: Week 6 Quantitative Genetics (Part 1)
+  url: http://sho.co/19YMJ
+- name: 07-Spatial_Models
+  title: Week 7 Spatial Linear Models (Part 1)
+  url: http://sho.co/1A1KH
+- name: 07-Spatial_Models_Part2
+  title: Week 7 Spatial Linear Models (Part 2)
+  url: http://sho.co/1A1KF
+- name: 08-Modeling
+  title: Week 8 Simulation Experiments in R (Part 1)
+  url: http://sho.co/1A44W
+- name: 08-Modeling_Part2
+  title: Week 8 Simulation Experiments in R (Part 1)
+  url: http://sho.co/1ADVK
+
 
 reference:
 - title: R Functions
@@ -55,31 +116,4 @@ reference:
   - Dianthus
   - ralu.loci
   - WWP.ecogen
-
-news:
-  releases:
-  - text: "Version 1.5.0"
-    href: https://www.tidyverse.org/blog/2020/03/pkgdown-1-5-0/
-  - text: "Version 1.4.0"
-    href: https://www.tidyverse.org/articles/2019/09/pkgdown-1-4-0/
-  - text: "Version 1.3.0"
-    href: https://www.tidyverse.org/articles/2018/12/pkgdown-1-3-0/
-  - text: "Version 1.1.0"
-    href: https://www.tidyverse.org/articles/2018/06/pkgdown-1-1-0/
-  - text: "Version 1.0.0"
-    href: https://www.tidyverse.org/articles/2018/05/pkgdown-1-0-0/
-
-    © 2020 GitHub, Inc.
-    Terms
-    Privacy
-    Security
-    Status
-    Help
-
-    Contact GitHub
-    Pricing
-    API
-    Training
-    Blog
-    About
 

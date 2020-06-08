@@ -1,7 +1,14 @@
 ## Description
-This package provides an interface for accessing materials for the course 'Landscape Genetic Data Analysis with R'. It installs all R packages needed for the course, and adds four RStudio Add-ins. The weekly labs are implemented as vignettes.
+This package provides an interface for accessing materials for the course 'Landscape Genetic Data Analysis with R'. It installs all R packages needed for the course, and adds four RStudio Add-ins. The weekly labs are implemented as vignettes. Some weeks have additional worked examples as bonus materials.
 
-**Note**: this package is currently under development and new vignettes are being added. Check for updates frequently.
+**Note**: this package currently runs under R 3.6, it has not yet been migrated to R 4.0.
+
+## Package website
+Check out the LandGenCourse website with the following features:
+
+- **Reference**: List of R functions and R datasets included in LandGenCourse. Note: additional data are includes as external files (e.g., .csv files), these are not listed here.
+- **Articles**: Links to the Worked Examples and Bonus Materials
+- **Tutorials**: Links to the Course Videos that introduce statistical concepts, R code and datasets used in the Worked Examples.
 
 ## How to install (or update)
 ```{r}
