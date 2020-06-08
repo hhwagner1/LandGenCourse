@@ -1,7 +1,7 @@
-url: https://pkgdown.r-lib.org
+url: http://LandGenCourse.r-lib.org
 
 home:
-  title: Build websites for R packages
+  title: R package LandGenCourse
   links:
   - text: Link to the public page of the distributed graduate course DGS Landscape Genetics:
     href: https://sites.google.com/site/landscapegeneticscourse/
@@ -18,6 +18,11 @@ template:
 development:
   mode: auto
 
+navbar:
+  structure:
+    left:  [home, intro, reference, articles, videos, news]
+    right: [github]
+
 articles:
 - title: Worked Examples
   navbar: ~
@@ -26,10 +31,11 @@ articles:
   - linking
   - search
   - metadata
-- title: Videos
+
+videos:
+- title: Links to Videos
   desc: >
-    These articles are used to test various pkgdown features that can not
-    easily be tested automatically.
+    Links to course videos.
   contents:
   - starts_with("test")
 
