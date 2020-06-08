@@ -4,7 +4,7 @@ This package provides an interface for accessing materials for the course 'Lands
 **Note**: this package currently runs under R 3.6, it has not yet been migrated to R 4.0.
 
 ## Package website
-Check out the LandGenCourse website with the following features:
+Check out the LandGenCourse website <http://www.rstudio.com> [link](www.rstudio.com) with the following features:
 
 - **Reference**: List of R functions and R datasets included in LandGenCourse. Note: additional data are includes as external files (e.g., .csv files), these are not listed here.
 - **Articles**: Links to the Worked Examples and Bonus Materials
@@ -27,3 +27,8 @@ The package installs four Add-ins in RStudio. Each will provide you with some dr
 ## Video instructions for beginners
 This video walks through the process of installing devtools, the course package, and using the RStudio Add-Ins.
 <a href="https://www.dropbox.com/s/598kwim7x09m47t/Intro_LandGenCourse_small.mp4?dl=0" target="_blank">Intro_LandGenCourse_small.mp4</a>
+
+
+<!-- badges: start -->
+[![Travis build status](https://travis-ci.com/hhwagner1/LandGenCourse.svg?branch=master)](https://travis-ci.com/hhwagner1/LandGenCourse)
+<!-- badges: end -->
