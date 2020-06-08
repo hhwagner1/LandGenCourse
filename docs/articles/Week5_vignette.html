@@ -583,7 +583,7 @@
 ## 
 ## Upper quantiles of permutations (null model):
 ##    90%    95%  97.5%    99% 
-## 0.0817 0.1069 0.1304 0.1530 
+## 0.0792 0.1052 0.1240 0.1505 
 ## Permutation: free
 ## Number of permutations: 999</code></pre>
 <p>What happens if we take the log of geographic distance, which we saw above helps linearize the relationship for these data?</p>
@@ -600,7 +600,7 @@
 ## 
 ## Upper quantiles of permutations (null model):
 ##    90%    95%  97.5%    99% 
-## 0.0700 0.0973 0.1196 0.1427 
+## 0.0701 0.0920 0.1094 0.1342 
 ## Permutation: free
 ## Number of permutations: 999</code></pre>
 <p>The statistical significance (p-value) didn’t really change, but the strength of the Mantel correlation increased from r = 0.62 to r = 0.68.</p>
@@ -618,7 +618,7 @@
 ## 
 ## Upper quantiles of permutations (null model):
 ##    90%    95%  97.5%    99% 
-## 0.0715 0.0970 0.1190 0.1527 
+## 0.0719 0.1053 0.1356 0.1988 
 ## Permutation: free
 ## Number of permutations: 999</code></pre>
 <p>For this measure of genetic diversity, the Mantel correlation was significant, quite strong, and the relationship not linear, hence the transformed data or the rank correlation performed better. What about the other measures?</p>
@@ -712,16 +712,16 @@
 ## 
 ## [[1]]
 ##                           d.mean     obs     exp p.val cardinal
-## d= 0 - 1055.243          697.776  0.4815  0.0013 0.005       45
-## d= 1055.243 - 2110.485  1583.490  0.2708  0.0026 0.010       67
-## d= 2110.485 - 3165.728  2622.371  0.2043  0.0111 0.015       64
-## d= 3165.728 - 4220.97   3710.591 -0.1302  0.0000 0.990       64
-## d= 4220.97 - 5276.213   4716.029 -0.1719  0.0063 1.000       54
-## d= 5276.213 - 6331.455  5824.450 -0.2021 -0.0037 1.000       46
-## d= 6331.455 - 7386.698  6856.457 -0.1496 -0.0017 1.000       27
-## d= 7386.698 - 8441.941  7883.679 -0.2297 -0.0040 1.000       33
-## d= 8441.941 - 9497.183  8882.536 -0.1909 -0.0064 1.000       25
-## d= 9497.183 - 10552.426 9847.000 -0.0807 -0.0041 1.000        9
+## d= 0 - 1055.243          697.776  0.4815 -0.0012 0.005       45
+## d= 1055.243 - 2110.485  1583.490  0.2708 -0.0027 0.010       67
+## d= 2110.485 - 3165.728  2622.371  0.2043 -0.0055 0.015       64
+## d= 3165.728 - 4220.97   3710.591 -0.1302  0.0002 0.995       64
+## d= 4220.97 - 5276.213   4716.029 -0.1719  0.0009 1.000       54
+## d= 5276.213 - 6331.455  5824.450 -0.2021 -0.0083 1.000       46
+## d= 6331.455 - 7386.698  6856.457 -0.1496 -0.0013 1.000       27
+## d= 7386.698 - 8441.941  7883.679 -0.2297  0.0027 1.000       33
+## d= 8441.941 - 9497.183  8882.536 -0.1909 -0.0029 1.000       25
+## d= 9497.183 - 10552.426 9847.000 -0.0807 -0.0012 1.000        9
 ## 
 ## 
 ##  Results table(s) in ecoslot.OUT(x) 
@@ -786,14 +786,14 @@
 <div class="sourceCode" id="cb69"><html><body><pre class="r"><span class="kw pkg">EcoGenetics</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/EcoGenetics/man/EcoGenetics-accessors.html">ecoslot.OUT</a></span>(<span class="no">corm.50</span>)</pre></body></html></div>
 <pre><code>## [[1]]
 ##                          d.mean     obs     exp p.val cardinal
-## d= 0 - 1152.337         739.966  0.4872 -0.0045 0.005       50
-## d= 1152.337 - 1821.843 1536.052  0.2256 -0.0015 0.010       50
-## d= 1821.843 - 2769.341 2286.134  0.2307  0.0079 0.015       50
-## d= 2769.341 - 3526.318 3169.188  0.0411  0.0001 0.235       50
-## d= 3526.318 - 4408.262 3992.072 -0.1714 -0.0034 1.000       50
-## d= 4408.262 - 5339.102 4863.176 -0.1579 -0.0015 1.000       50
-## d= 5339.102 - 6668.986 6011.873 -0.2404  0.0025 1.000       50
-## d= 6668.986 - 8434.883 7615.126 -0.2429  0.0005 1.000       50</code></pre>
+## d= 0 - 1152.337         739.966  0.4872 -0.0020 0.005       50
+## d= 1152.337 - 1821.843 1536.052  0.2256 -0.0063 0.010       50
+## d= 1821.843 - 2769.341 2286.134  0.2307  0.0028 0.015       50
+## d= 2769.341 - 3526.318 3169.188  0.0411 -0.0020 0.205       50
+## d= 3526.318 - 4408.262 3992.072 -0.1714  0.0047 1.000       50
+## d= 4408.262 - 5339.102 4863.176 -0.1579 -0.0024 1.000       50
+## d= 5339.102 - 6668.986 6011.873 -0.2404  0.0089 1.000       50
+## d= 6668.986 - 8434.883 7615.126 -0.2429 -0.0063 1.000       50</code></pre>
 <div class="sourceCode" id="cb71"><html><body><pre class="r"><span class="no">corm.100</span> <span class="kw">&lt;-</span> <span class="kw pkg">EcoGenetics</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/EcoGenetics/man/eco.cormantel.html">eco.cormantel</a></span>(<span class="kw">M</span> <span class="kw">=</span> <span class="no">GD.pop</span>$<span class="no">propShared.PopGenReport</span>,
            <span class="kw">XY</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/EcoGenetics/man/EcoGenetics-accessors.html">ecoslot.XY</a></span>(<span class="no">Frogs.ecopop</span>)[,<span class="fl">1</span>:<span class="fl">2</span>],  <span class="kw">nsim</span> <span class="kw">=</span> <span class="fl">199</span>, <span class="kw">latlon</span><span class="kw">=</span><span class="fl">FALSE</span>,
            <span class="kw">alternative</span><span class="kw">=</span><span class="st">"less"</span>, <span class="kw">size</span><span class="kw">=</span><span class="fl">100</span>)</pre></body></html></div>
@@ -806,10 +806,10 @@
 <div class="sourceCode" id="cb73"><html><body><pre class="r"><span class="kw pkg">EcoGenetics</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/EcoGenetics/man/EcoGenetics-accessors.html">ecoslot.OUT</a></span>(<span class="no">corm.100</span>)</pre></body></html></div>
 <pre><code>## [[1]]
 ##                          d.mean     obs     exp p.val cardinal
-## d= 0 - 1821.843        1138.009  0.5403  0.0006 0.005      100
-## d= 1821.843 - 3526.318 2727.661  0.2060 -0.0009 0.010      100
-## d= 3526.318 - 5339.102 4427.624 -0.2496  0.0114 1.000      100
-## d= 5339.102 - 8434.883 6813.499 -0.3664  0.0090 1.000      100</code></pre>
+## d= 0 - 1821.843        1138.009  0.5403 -0.0005 0.005      100
+## d= 1821.843 - 3526.318 2727.661  0.2060  0.0020 0.010      100
+## d= 3526.318 - 5339.102 4427.624 -0.2496 -0.0016 1.000      100
+## d= 5339.102 - 8434.883 6813.499 -0.3664 -0.0037 1.000      100</code></pre>
 <div class="sourceCode" id="cb75"><html><body><pre class="r"><span class="kw pkg">EcoGenetics</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/EcoGenetics/man/eco.plotCorrelog.html">eco.plotCorrelog</a></span>(<span class="no">corm.50</span>)
 <span class="kw pkg">EcoGenetics</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/EcoGenetics/man/eco.plotCorrelog.html">eco.plotCorrelog</a></span>(<span class="no">corm.100</span>)</pre></body></html></div>
 <p>Let’s compare the observed Mantel r statistic, p-value, number of pairs in the first distance class and their mean distance, as well as the definition of the first lag interval. We can get all of this by extracting the first line from each object.</p>
@@ -822,9 +822,9 @@
               <span class="fu"><a href="https://rdrr.io/r/base/row.names.html">row.names</a></span>(<span class="kw pkg">EcoGenetics</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/EcoGenetics/man/EcoGenetics-accessors.html">ecoslot.OUT</a></span>(<span class="no">corm.100</span>)<span class="kw">[[</span><span class="fl">1</span>]])[<span class="fl">1</span>])
 <span class="no">Lag1.def</span></pre></body></html></div>
 <pre><code>##            d.mean    obs     exp p.val cardinal             bin
-## Sturge    697.776 0.4815  0.0013 0.005       45 d= 0 - 1055.243
-## size.50   739.966 0.4872 -0.0045 0.005       50 d= 0 - 1152.337
-## size.100 1138.009 0.5403  0.0006 0.005      100 d= 0 - 1821.843</code></pre>
+## Sturge    697.776 0.4815 -0.0012 0.005       45 d= 0 - 1055.243
+## size.50   739.966 0.4872 -0.0020 0.005       50 d= 0 - 1152.337
+## size.100 1138.009 0.5403 -0.0005 0.005      100 d= 0 - 1821.843</code></pre>
 <ul>
 <li>All three distance class definitions (Sturge’s rule, size = 50, size = 100) resulted in statistically significant p-values.</li>
 <li>The Mantel correlation in the first distance lag was strongest for size.100.</li>
