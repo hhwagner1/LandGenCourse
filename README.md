@@ -1,14 +1,17 @@
+## Package website: LandGenCourse 
+<https://hhwagner1.github.io/LandGenCourse/>
+
+Use the navigation at the top to access key materials without installing the R package:
+
+- **Articles**: Links to the weekly Worked Examples and Bonus Materials.
+- **Tutorials**: Links to the Course Videos that introduce statistical concepts, R code and datasets used in the Worked Examples.
+- **Reference**: List of R functions and R datasets included in LandGenCourse. The functions can be accessed via RStudio Add-is (see below). 
+
 ## Description
 This package provides an interface for accessing materials for the course 'Landscape Genetic Data Analysis with R'. It installs all R packages needed for the course, and adds four RStudio Add-ins. The weekly labs are implemented as vignettes. Some weeks have additional worked examples as bonus materials.
 
 **Note**: this package currently runs under R 3.6, it has not yet been migrated to R 4.0.
 
-## Package website
-Check out the LandGenCourse website <http://www.rstudio.com> [link](www.rstudio.com) with the following features:
-
-- **Reference**: List of R functions and R datasets included in LandGenCourse. Note: additional data are includes as external files (e.g., .csv files), these are not listed here.
-- **Articles**: Links to the Worked Examples and Bonus Materials
-- **Tutorials**: Links to the Course Videos that introduce statistical concepts, R code and datasets used in the Worked Examples.
 
 ## How to install (or update)
 ```{r}
@@ -28,7 +31,3 @@ The package installs four Add-ins in RStudio. Each will provide you with some dr
 This video walks through the process of installing devtools, the course package, and using the RStudio Add-Ins.
 <a href="https://www.dropbox.com/s/598kwim7x09m47t/Intro_LandGenCourse_small.mp4?dl=0" target="_blank">Intro_LandGenCourse_small.mp4</a>
 
-
-<!-- badges: start -->
-[![Travis build status](https://travis-ci.com/hhwagner1/LandGenCourse.svg?branch=master)](https://travis-ci.com/hhwagner1/LandGenCourse)
-<!-- badges: end -->
