@@ -8,3 +8,10 @@ output
 
 doc
 Meta
+
+^analysis$
+^docs$
+#^data$
+^code$
+^output$
+^_workflowr.yml$
