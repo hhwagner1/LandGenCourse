@@ -25,7 +25,6 @@ navbar:
     left:  [home, intro, reference, articles, tutorials, news]
     right: [github]
 
-
 articles:
 - title: Worked Examples
   navbar: ~
