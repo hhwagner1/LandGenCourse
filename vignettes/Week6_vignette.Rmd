@@ -80,7 +80,7 @@ source(system.file("extdata", "panel.cor.r",
 ```{r}
 phen <- read.delim(system.file("extdata", "WWP_phenotype_data.txt", 
                             package = "LandGenCourse"), sep = "\t", header = T)
-tibble::as.tibble(phen)
+tibble::as_tibble(phen)
 ```
 
 Check the variable types: 'family' and 'block' have been imported as type 'integer', and we need to convert them to 'factor' first.

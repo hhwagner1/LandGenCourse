@@ -170,7 +170,7 @@ Let's benchmark the function `read.csv` used in Week 11. We use the function `mi
 
 Note: Here we execute each function only once to save time, typically you would set `times = 10` or so. Also, `read_csv` will print a warning about a missing column name. This is because the first column here contains the row names and does not have a column name. We'll ignore this here, as we can use the first column as an example to compare how character data are being imported.
 
-```{r microbenchmark1}
+```{r microbenchmark1, message=FALSE}
 x = myFile
 microbenchmark::microbenchmark(times = 1, unit = "ms", 
           read.csv(x), readr::read_csv(x), data.table::fread(x),
@@ -667,10 +667,13 @@ nCores
 - Code your analysis with `lapply` (and related functions).
 - Replace `lapply` by `mclapply` (and related functions). Use the argument `mc.cores=detectCores()` to automatically detect the number of cores in your machine. 
 
+NOTE: April 2021: package build does not work with multiple cores, changing nCores to 1.
+
 ```{r mclapply}
 x <- gen[,-1]
 m1 <- lapply(x, mean, na.rm=TRUE)
-m2 <- mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)
+#m2 <- mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)  # Use this line when running the code yourself
+m2 <- mclapply(x, mean, na.rm=TRUE, mc.cores=1)        # Replace this line with the previous line
 ```
 
 Let's benchmark four ways of calculating the mean of each column in our example data set 'gen' with 94 rows and 10,000 columns (SNPs):
@@ -684,7 +687,8 @@ Let's benchmark four ways of calculating the mean of each column in our example 
 method1 <- function(x) {colMeans(x, na.rm=TRUE)}
 method2 <- function(x) {for(i in 1:ncol(x)) mean(x[,i], na.rm=TRUE)}
 method3 <- function(x) {lapply(x, mean, na.rm=TRUE)}
-method4 <- function(x) {mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)}
+#method4 <- function(x) {mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)} # Use this line when running the code yourself
+method4 <- function(x) {mclapply(x, mean, na.rm=TRUE, mc.cores=1)}  # Replace this line with the previous line
 
 microbenchmark::microbenchmark(times = 10, unit = "ms",
                                method1(x), method2(x), method3(x), method4(x))

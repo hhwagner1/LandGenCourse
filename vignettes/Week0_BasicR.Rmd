@@ -8,7 +8,6 @@ output:
     toc: yes
     fig_width: 4 
     fig_height: 3.5
-  rmarkdown:::md_document  
 vignette: >
   %\VignetteIndexEntry{Week 0: Intro to R Programming}
   %\VignetteEngine{knitr::rmarkdown}
