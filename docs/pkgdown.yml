@@ -1,0 +1,27 @@
+pandoc: 2.3.1
+pkgdown: 1.5.1
+pkgdown_sha: ~
+articles:
+  Week0_BasicR: Week0_BasicR.html
+  Week0_Graphics: Week0_Graphics.html
+  Week10_vignette: Week10_vignette.html
+  Week11_vignette: Week11_vignette.html
+  Week12_vignette: Week12_vignette.html
+  Week13_vignette: Week13_vignette.html
+  Week14_vignette: Week14_vignette.html
+  Week1_vignette: Week1_vignette.html
+  Week2_bonus_vignette: Week2_bonus_vignette.html
+  Week2_vignette: Week2_vignette.html
+  Week3_vignette: Week3_vignette.html
+  Week4_vignette: Week4_vignette.html
+  Week5_vignette: Week5_vignette.html
+  Week6_vignette: Week6_vignette.html
+  Week7_vignette: Week7_vignette.html
+  Week8_bonus_vignette: Week8_bonus_vignette.html
+  Week8_vignette: Week8_vignette.html
+  Week9_vignette: Week9_vignette.html
+last_built: 2020-06-08T20:12Z
+urls:
+  reference: http://LandGenCourse.r-lib.org/reference
+  article: http://LandGenCourse.r-lib.org/articles
+
