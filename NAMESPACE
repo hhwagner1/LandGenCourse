@@ -1,3 +1,2 @@
 exportPattern("^[[:alpha:]]+")
 importFrom("EcoGenetics", "show")
-importFrom("methods", "show")
