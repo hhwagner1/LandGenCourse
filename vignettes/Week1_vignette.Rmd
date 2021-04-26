@@ -224,7 +224,7 @@ The summary lists each attribute or `slot` of the `genind` object and summarizes
 Table with allele counts, where each column is an allele. Allele name `A.1` means "locus A, allele 1". For a codominant marker (e.g. microsatellite) and a diploid species, allele counts per individual can be 0, 1, 2, or NA=missing. Here are the first few lines:
 
 ```{r}
-as.tibble(Frogs.genind@tab)
+as_tibble(Frogs.genind@tab)
 ```
 
 ### b) Slot @loc.n.all

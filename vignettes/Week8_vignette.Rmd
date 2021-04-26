@@ -35,7 +35,7 @@ All required packages should have been installed already when you installed 'Lan
 ```{r message=FALSE, warning=TRUE}
 library(LandGenCourse)
 library(PopGenReport )   #load the package
-#library(secr)            #to create a random habitat
+library(secr)            #to create a random habitat
 #library(gdistance)
 #library(mmod)
 library(raster)
@@ -83,15 +83,24 @@ The function 'raster' of the 'secr' package (NOT from the 'raster' package) conv
 Note: there may be a warning about non-missing arguments, you can ignore it.
 
 ```{r }
-r <- secr::raster(secr::randomHabitat(secr::as.mask(tempgrid), 
-                                      p = 0.5, A = 0.5))
-table(values(r), exclude="")
+#r <- raster(secr::randomHabitat(secr::as.mask(tempgrid), p = 0.5, A = 0.5))
+#table(values(r), exclude="")
+```
+
+NOTE: April 2021: This does not seem to work anymore. Workaround:
+
+```{r}
+tmp <- secr::randomHabitat(secr::as.mask(tempgrid), p = 0.5, A = 0.5)
+r <- as.data.frame(tempgrid) 
+r$resistance <- 10
+r$resistance[as.numeric(row.names(tmp))] <- 1
+r <- rasterFromXYZ(r)
 ```
 
 Now we set all missing values (i.e., non-habitat) to 10 and verify this again with 'table'.  
 
 ```{r }
-values(r)[is.na(values(r))==T]<-10
+#values(r)[is.na(values(r))==T]<-10
 table(values(r), exclude="")
 par(mar=c(1,1,1,1))
 plot(r)
@@ -471,7 +480,7 @@ Now we would like to have a data frame that stores all possible combinations for
 
 ```{r}
 para.space <- expand.grid(rep=repeats, time=timesteps)
-tibble::as.tibble(para.space)
+tibble::as_tibble(para.space)
 ```
 
 As you can see this results in 15 combinations (3 time steps x 5 repeats). The beauty of this approach is that it is very flexible and adaptable to runs over other parameter combinations, as you can provide more than two parameter variables to 'expand.grid'.

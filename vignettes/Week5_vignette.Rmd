@@ -190,8 +190,7 @@ Note: Some functions provide an option `linearized = TRUE` to linearize distance
 Pairwise Fst with package `hierfstat`:
 
 ```{r}
-GD.pop.PairwiseFst.hierfstat <- hierfstat::pairwise.fst(Frogs.genind, 
-                                pop = NULL, res.type = c("dist"))
+GD.pop.PairwiseFst.hierfstat <- hierfstat::pairwise.neifst(hierfstat::genind2hierfstat(Frogs.genind))
 ```
  
 Proportion of shared alleles with package 'PopGenReport':

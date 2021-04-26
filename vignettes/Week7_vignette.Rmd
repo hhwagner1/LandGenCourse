@@ -687,7 +687,7 @@ We fit the model with 'resf_vc'.
 ```{r}
 rv_res <- spmoran::resf_vc( y=Dianthus.df$A, 
                             x = Dianthus.df[,c("PatchSize", "IBR")], 
-                            xconst = NULL, meig = meigw, method = "reml", allsvc=TRUE)
+                            xconst = NULL, meig = meigw, method = "reml")
 ```
 
 Instead of one slope estimate for each predictor, we now get a different estimate for each combination of parameter and site (sounds like overfitting?). Here's a summary of the distbiution of these estimates.
@@ -743,7 +743,7 @@ Keep in mind that 'IBR' and 'PatchSize' showed a strong correlation. The paramet
 ```{r}
 rv_res <- spmoran::resf_vc( y=Dianthus.df$A, 
                             x = Dianthus.df[,c("IBR")], 
-                            xconst = NULL, meig = meigw, method = "reml", allsvc=TRUE)
+                            xconst = NULL, meig = meigw, method = "reml")
 summary( rv_res$b_vc ) 
 ```
 Now the range of slope estimates is smaller, most sites have a positive estimate, and the mean is approx. 0.21.
