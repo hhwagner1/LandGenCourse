@@ -144,7 +144,7 @@ Frogs.ecopop
 
 'EcoGenetics' provides convenient functions for converting genetic data to and from other packages.
 
-Import into 'genind' object (package 'adegenet'): there is a dedicated function, but we need to separately declare the variable that represents the populations and write it into the @pop slot of the 'genind' object. 
+Import into 'genind' object (package 'adegenet'): there is a dedicated function, but we need to separately declare the variable that represents the populations and write it into the `@pop` slot of the 'genind' object. 
 
 ```{r}
 Frogs.genind <- EcoGenetics::ecogen2genind(Frogs.ecogen)
@@ -190,11 +190,7 @@ Note: Some functions provide an option `linearized = TRUE` to linearize distance
 Pairwise Fst with package `hierfstat`:
 
 ```{r}
-<<<<<<< HEAD
 GD.pop.PairwiseFst.hierfstat <- as.dist(hierfstat::pairwise.neifst(hierfstat::genind2hierfstat(Frogs.genind)))
-=======
-GD.pop.PairwiseFst.hierfstat <- hierfstat::pairwise.neifst(hierfstat::genind2hierfstat(Frogs.genind))
->>>>>>> parent of d766241... Delete Week5_vignette.Rmd
 ```
  
 Proportion of shared alleles with package 'PopGenReport':
@@ -287,11 +283,7 @@ The code is commented out with `#`. To run it, remove the `#`. The first part cr
 First, we calculate geographic (Euclidean) distances `Dgeo` with the `dist` function, using the spatial coordinates that we imported from ralu.site. These are UTM coordinates and thus metric. 
 
 ```{r}
-<<<<<<< HEAD
 Dgeo <- as.vector(dist(ecoslot.XY(Frogs.ecopop)[,1:2]))
-=======
-Dgeo <- dist(ecoslot.XY(Frogs.ecopop)[,1:2])
->>>>>>> parent of d766241... Delete Week5_vignette.Rmd
 ```
 
 ### a) Visually check linearity
@@ -300,11 +292,8 @@ Before we quantify the linear relationship between genetic and geographic distan
 
 ```{r}
 par(mar=c(4,4,0,0))
-<<<<<<< HEAD
+
 Dgen <- as.vector(GD.pop$propShared.PopGenReport)
-=======
-Dgen <- GD.pop$propShared.PopGenReport
->>>>>>> parent of d766241... Delete Week5_vignette.Rmd
 dens <- MASS::kde2d(Dgeo, Dgen, n=300)
 myPal <- colorRampPalette(c("white","blue","gold","orange","red"))
 plot(Dgeo, Dgen, pch=20, cex=0.5,  
@@ -338,13 +327,12 @@ lines(loess.smooth(log(Dgeo), Dgen), col="red")
 
 Next, we perform a Mantel test with the function `mantel` from the `vegan` package.
 
+We define Dgen and Dgeo anew, as we need them in 'dist' format this time, not as vectors.
+
 ```{r}
-<<<<<<< HEAD
 Dgen <- GD.pop$propShared.PopGenReport
 Dgeo <- dist(ecoslot.XY(Frogs.ecopop)[,1:2])
 
-=======
->>>>>>> parent of d766241... Delete Week5_vignette.Rmd
 IBD <- vegan::mantel(Dgen,Dgeo, method="pearson")
 IBD
 ```
