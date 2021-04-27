@@ -2,10 +2,11 @@
 ^\.Rproj\.user$
 ^downloads$
 ^output$
-^vignettes\TempVignettes
 
 ^doc$
 ^Meta$
+
+^inst/doc/.html$
 
 ^_pkgdown\.yml$
 ^pkgdown$
