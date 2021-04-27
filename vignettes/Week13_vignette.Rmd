@@ -28,7 +28,12 @@ In this exercise, you will use the gravity model framework to build an empirical
 
 ### c) Required R libraries
 
-All required packages have already been installed with LandGenCourse.
+Install some packages needed for this worked example.
+
+```{r}
+if(!requireNamespace("GeNetIt", quietly = TRUE)) remotes::install_github("jeffreyevans/GeNetIt")
+if(!requireNamespace("spatialEco", quietly = TRUE)) remotes::install_github("jeffreyevans/spatialEco")
+```
 
 ```{r packages global_options, include=TRUE, results="hide", message=FALSE, warning=FALSE}
 library(LandGenCourse)

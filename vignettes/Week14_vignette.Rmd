@@ -38,7 +38,12 @@ There are three data files associated with this lab:
 
 ### c) Required packages
 
-All packages should have been installed already with the package `LandGenCourse`.
+Install some packages needed for this worked example.
+
+```{r}
+if(!requireNamespace("popgraph", quietly = TRUE)) remotes::install_github("dyerlab/popgraph")
+if(!requireNamespace("gstudio", quietly = TRUE)) remotes::install_github("dyerlab/gstudio")
+```
 
 ```{r, packages}
 library(LandGenCourse)

@@ -39,7 +39,11 @@ This code builds on the data from the 'GeNetIt' package by Jeff Evans and Melani
 
 ### c) Required R libraries 
 
-All required packages should have been installed already when you installed 'LandGenCourse'.
+Install some packages needed for this worked example.
+
+```{r}
+if(!requireNamespace("GeNetIt", quietly = TRUE)) remotes::install_github("jeffreyevans/GeNetIt")
+```
 
 ```{r message=FALSE, warning=TRUE}
 require(LandGenCourse)

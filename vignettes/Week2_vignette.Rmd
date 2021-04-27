@@ -47,6 +47,12 @@ We will extract values at sampling point locations and within a local neighborho
 
 ### c) Required R libraries
 
+Install some packages needed for this worked example.
+
+```{r}
+if(!requireNamespace("GeNetIt", quietly = TRUE)) remotes::install_github("jeffreyevans/GeNetIt")
+```
+
 ```{r message=FALSE, warning=TRUE}
 library(LandGenCourse)
 library(landscapemetrics)

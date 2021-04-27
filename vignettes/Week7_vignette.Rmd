@@ -32,9 +32,7 @@ Here we analyze population-level data of the wildflower *Dianthus carthusianorum
 
 - **Dianthus**: Spatial point data frame with population-level data (patch characteristics, grazing regime, genetic diversity, 15 alternative connectivity indices Si), included in package 'LandGenCourse'. To load the data, type (without quotes): 'data(Dianthus)'. For a definition of the variables, type: '?Dianthus'.
 
-### c) Required R libraries
-
-All required packages should have been installed already when you installed 'LandGenCourse'.
+### c) Required R packages
 
 Note: the function 'library' will always load the package, even if it is already loaded, whereas 'require' will only load it if it is not yet loaded. Either will work.
 

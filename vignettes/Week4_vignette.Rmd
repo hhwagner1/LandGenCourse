@@ -43,7 +43,12 @@ Lamy, T., Pointier, J. P., Jarne, P. and David, P. (2012), Testing metapopulatio
 
 ### c) Required R libraries
 
-All required packages should have been installed already when you installed 'LandGenCourse'.
+Install some packages needed for this worked example.
+
+```{r}
+if(!requireNamespace("EcoGenetics", quietly = TRUE)) 
+  remotes::install_github("leandroroser/EcoGenetics-devel")
+```
 
 ```{r message=FALSE, warning=TRUE}
 library(LandGenCourse)

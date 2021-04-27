@@ -38,7 +38,13 @@ We will thus have the following data:
 
 ### c) Required R packages
 
-Most required packages should have been installed already when you installed 'LandGenCourse'.
+Install some packages needed for this worked example.
+
+```{r}
+if(!requireNamespace("EcoGenetics", quietly = TRUE)) 
+  remotes::install_github("leandroroser/EcoGenetics-devel")
+if(!requireNamespace("QstFstComp", quietly = TRUE)) remotes::install_github("kjgilbert/QstFstComp")
+```
 
 ```{r message=FALSE, warning=TRUE}
 library(LandGenCourse)

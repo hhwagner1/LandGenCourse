@@ -33,8 +33,6 @@ All files are distributed as system files with the 'LandGenCourse' package (fold
 
 ### c) Required R libraries
 
-All required packages should have been installed already when you installed 'LandGenCourse'.
-
 Note: the function 'library' will always load the package, even if it is already loaded, whereas 'require' will only load it if it is not yet loaded. Either will work.
 
 ```{r message=FALSE, warning=TRUE}

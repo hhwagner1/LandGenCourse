@@ -35,9 +35,18 @@ Here, we will analyze microsatellite data from Funk et al. (2005) and Murphy et 
 - **Frogs_diversity_allpops.csv**: Table with genetic diversity variables similar to Week 3. 
 - **ralu_coords_allpops.csv**: Spatial coordinates (both in UTM and LongLat format), and basin.
 
-### c) Required R libraries
+### c) Required R packages
 
-All required packages should have been installed already when you installed 'LandGenCourse'.
+Install some packages (not on CRAN) that are needed for this worked example.
+
+```{r}
+if(!requireNamespace("EcoGenetics", quietly = TRUE)) 
+  remotes::install_github("leandroroser/EcoGenetics-devel")
+if(!requireNamespace("GeNetIt", quietly = TRUE)) remotes::install_github("jeffreyevans/GeNetIt")
+if(!requireNamespace("popgraph", quietly = TRUE)) remotes::install_github("dyerlab/popgraph")
+if(!requireNamespace("gstudio", quietly = TRUE)) remotes::install_github("dyerlab/gstudio")
+```
+
 
 ```{r message=FALSE, warning=TRUE}
 

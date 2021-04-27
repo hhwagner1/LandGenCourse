@@ -31,8 +31,6 @@ We will use the wolf SNP data (Schweizer et al., 2016) from the Week 11 worked e
 
 ### c) Required R libraries
 
-All required packages should have been installed already when you installed 'LandGenCourse'.
-
 ```{r library, message=FALSE, warning=TRUE}
 library(LandGenCourse)
 #library(microbenchmark)

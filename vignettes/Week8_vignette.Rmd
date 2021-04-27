@@ -30,8 +30,6 @@ We will simulate data using the 'landgenreport' function of the package 'PopGenR
 
 ### c) Required R libraries
 
-All required packages should have been installed already when you installed 'LandGenCourse'.
-
 ```{r message=FALSE, warning=TRUE}
 library(LandGenCourse)
 library(PopGenReport )   #load the package

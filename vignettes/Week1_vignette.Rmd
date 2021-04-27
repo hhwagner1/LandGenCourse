@@ -35,7 +35,13 @@ This code imports genetic data from 181 individuals of Colombia spotted frogs (R
 
 ### c) Required R libraries
 
-All required packages should have been installed already when you installed 'LandGenCourse'.
+Install some packages needed for this worked example. Note: `popgraph` needs to be installed before installing `gstudio`.
+
+```{r}
+if(!require("adegenet")) install.packages("adegenet")
+if(!requireNamespace("popgraph", quietly = TRUE)) remotes::install_github("dyerlab/popgraph")
+if(!requireNamespace("gstudio", quietly = TRUE)) remotes::install_github("dyerlab/gstudio")
+```
 
 Note: the function `library` will always load the package, even if it is already loaded, whereas `require` will only load it if it is not yet loaded. Either will work.
 

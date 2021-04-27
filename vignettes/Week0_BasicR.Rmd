@@ -26,6 +26,14 @@ R is a statistical programming language, and it thus requires users to work with
 
 See also video "Week 0: Intro to R Notebooks" for options how to work this this document as .html or .Rmd.
 
+Install packages needed for this worked example. Note: `popgraph` needs to be installed before installing `gstudio`.
+
+```{r}
+if(!requireNamespace("popgraph", quietly = TRUE)) remotes::install_github("dyerlab/popgraph")
+if(!requireNamespace("gstudio", quietly = TRUE)) remotes::install_github("dyerlab/gstudio")
+```
+
+
 ## 2. Data Types 
 
 The data we work with comes in many forms—integers, stratum, categories, genotypes, etc.—all of which we need to be able to work with in our analyses. In this chapter, the basic data types we will commonly use in population genetic analyses.  This section covers some of the basic types of data we will use in R.  These include numbers, character, factors, and logical data types.  We will also introduce the locus object from the gstudio library and see how it is just another data type that we can manipulate in R.  

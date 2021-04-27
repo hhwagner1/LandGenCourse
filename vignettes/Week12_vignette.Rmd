@@ -48,9 +48,7 @@ Each row in the file 'CSF_network.csv' represents a link between two pairs of sa
 - **pop1**: 'From' population.
 - **pop2**: 'To' population.
 
-### c) Required R libraries
-
-All required packages should have been installed already when you installed 'LandGenCourse'.
+### c) Required packages
 
 ```{r packages global_options, include=TRUE, results="hide", message=FALSE, warning=FALSE}
 library(LandGenCourse)
