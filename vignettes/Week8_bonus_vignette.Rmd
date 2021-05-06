@@ -464,7 +464,7 @@ file.show(outFile)
 Now we can pass the file to `profvis':
 
 ```{r profvis3}
-profvis::profvis(source(outFile), prof_output=file.path(here::here(), "output/output.prof"))
+profvis::profvis(source(outFile), prof_output=file.path(here::here(), "/output/output.prof"))
 ```
 
 **Question**: Which lines of code took the longest to run in this example?
