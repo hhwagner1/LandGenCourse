@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Bernd Gruber, Erin Landguth &amp; Helene Wagner" />
+
+<meta name="date" content="2022-01-05" />
+
+<title>Week 8: Simulation</title>
+
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20800px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%2020px%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%200%3B%0Apadding%3A%204px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%3Anot%28%5Bclass%5D%29%20%7B%0Amargin%3A%20auto%3B%0Amin%2Dwidth%3A%2040%25%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%5Bsummary%3D%22R%20argblock%22%5D%20%7B%0Awidth%3A%20100%25%3B%0Aborder%3A%20none%3B%0A%7D%0Atable%3Anot%28%5Bclass%5D%29%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%3Anot%28%5Bclass%5D%29%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%3Anot%28%5Bclass%5D%29%2C%20table%3Anot%28%5Bclass%5D%29%20th%2C%20table%3Anot%28%5Bclass%5D%29%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%3Anot%28%5Bclass%5D%29%20tr%2Eodd%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%2013px%3B%0Apadding%2Dbottom%3A%201px%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f5f5f5%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0A%7D%0Apre%20%7B%0Aoverflow%2Dx%3A%20auto%3B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200%2010px%200%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20white%3B%0Aborder%3A%20%23f5f5f5%201px%20solid%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20code%20%7B%0Acolor%3A%20%23444%3B%0Abackground%2Dcolor%3A%20white%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20monospace%3B%0Afont%2Dsize%3A%2090%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%204px%3B%0Acolor%3A%20%23d14%3B%0Aborder%3A%201px%20solid%20%23e1e1e8%3B%0Awhite%2Dspace%3A%20inherit%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Atable%20%3E%20caption%2C%20div%2Efigure%20p%2Ecaption%20%7B%0Afont%2Dstyle%3A%20italic%3B%0A%7D%0Atable%20%3E%20caption%20span%2C%20div%2Efigure%20p%2Ecaption%20span%20%7B%0Afont%2Dstyle%3A%20normal%3B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%200%2010px%3B%0A%7D%0Atable%3Anot%28%5Bclass%5D%29%20%7B%0Amargin%3A%20auto%20auto%2010px%20auto%3B%0A%7D%0Aimg%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0Amax%2Dwidth%3A%20100%25%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f5f5f5%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f5f5f5%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f5f5f5%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Adiv%2Er%2Dhelp%2Dpage%20%7B%0Abackground%2Dcolor%3A%20%23f9f9f9%3B%0Aborder%2Dbottom%3A%20%23ddd%201px%20solid%3B%0Amargin%2Dbottom%3A%2010px%3B%0Apadding%3A%2010px%3B%0A%7D%0Adiv%2Er%2Dhelp%2Dpage%3Ahover%20%7B%0Abackground%2Dcolor%3A%20%23f4f4f4%3B%0A%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Week 8: Simulation</h1>
+<h4 class="author">Bernd Gruber, Erin Landguth &amp; Helene Wagner</h4>
+<h4 class="date">2022-01-05</h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#overview-of-worked-example">1. Overview of Worked Example</a>
+<ul>
+<li><a href="#a-goals">a) Goals</a></li>
+<li><a href="#b-data-set">b) Data set</a></li>
+<li><a href="#c-required-r-libraries">c) Required R libraries</a></li>
+</ul></li>
+<li><a href="#initialize-a-landscape">2. Initialize a landscape</a>
+<ul>
+<li><a href="#a-create-a-random-landscape">a) Create a random landscape</a></li>
+<li><a href="#b-add-populations-to-the-landscape-using-minimal-distance">b) Add populations to the landscape (using minimal distance)</a></li>
+<li><a href="#c-initialise-a-metapopulation">c) Initialise a metapopulation</a></li>
+</ul></li>
+<li><a href="#define-simulation-parameters">3. Define simulation parameters</a>
+<ul>
+<li><a href="#a-define-your-metapopulation">a) Define your metapopulation</a></li>
+<li><a href="#b-initialise-your-population-on-the-landscape">b) Initialise your population on the landscape</a></li>
+</ul></li>
+<li><a href="#run-simulations-and-analyze-results">4. Run simulations and analyze results</a>
+<ul>
+<li><a href="#a-run-your-simulation-over-multiple-time-steps-years">a) Run your simulation over multiple time steps (years)</a></li>
+<li><a href="#b-analyse-your-simulated-population-with-a-partial-mantel-test">b) Analyse your simulated population with a partial Mantel test</a></li>
+<li><a href="#c-optional-analyze-your-simulated-populations-using-sunder">c) Optional: Analyze your simulated populations using ‘Sunder’</a></li>
+</ul></li>
+<li><a href="#run-simulator-using-a-previously-defined-parameter-set">5. Run simulator using a previously defined parameter set</a>
+<ul>
+<li><a href="#a-specify-and-record-the-parameter-combinations">a) Specify and record the parameter combinations</a></li>
+<li><a href="#b-run-the-simulator-over-every-parameter-combination.">b) Run the simulator over every parameter combination.</a></li>
+<li><a href="#c-save-your-complete-simulation-run-input-and-output">c) Save your complete simulation run (input and output)</a></li>
+<li><a href="#d-analyze-and-synthesize-results">d) Analyze and synthesize results</a></li>
+</ul></li>
+<li><a href="#r-exercise-week-8">6. R Exercise Week 8</a></li>
+</ul>
+</div>
+
+<div id="overview-of-worked-example" class="section level2">
+<h2>1. Overview of Worked Example</h2>
+<div id="a-goals" class="section level3">
+<h3>a) Goals</h3>
+<p>This worked example shows:</p>
+<ul>
+<li>Simulate a metapopulation on a resistance landscape</li>
+<li>Evaluate the power of a partial Mantel test</li>
+<li>Compare partial Mantel test to ‘Sunder’</li>
+<li>Run many simulations and synthesize results</li>
+</ul>
+</div>
+<div id="b-data-set" class="section level3">
+<h3>b) Data set</h3>
+<p>We will simulate data using the ‘landgenreport’ function of the package ‘PopGenReport’. See: www.popgenreport.org</p>
+</div>
+<div id="c-required-r-libraries" class="section level3">
+<h3>c) Required R libraries</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(LandGenCourse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(PopGenReport )   <span class="co">#load the package</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(secr)            <span class="co">#to create a random habitat</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#library(gdistance)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#library(mmod)</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(raster)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#library(tibble)</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#library(here)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#library(ggplot2)</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#library(Sunder)   # requires mnormt</span></span></code></pre></div>
+<p>Package <code>secr</code> not automatically installed with ‘LandGenCourse’:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(secr)) <span class="fu">install.packages</span>(<span class="st">&quot;secr&quot;</span>, <span class="at">repos=</span><span class="st">&#39;http://cran.us.r-project.org&#39;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#library(secr)</span></span></code></pre></div>
+<p>Install <code>gstudio</code> if missing:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">&quot;popgraph&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&quot;RgoogleMaps&quot;</span>, <span class="st">&quot;geosphere&quot;</span>, <span class="st">&quot;proto&quot;</span>, <span class="st">&quot;sampling&quot;</span>, </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                      <span class="st">&quot;seqinr&quot;</span>, <span class="st">&quot;spacetime&quot;</span>, <span class="st">&quot;spdep&quot;</span>), <span class="at">dependencies=</span><span class="cn">TRUE</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;dyerlab/popgraph&quot;</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">&quot;gstudio&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;dyerlab/gstudio&quot;</span>)</span></code></pre></div>
+<p>The following ‘setup chunk’ is used to set the root address of file paths to the root of the project folder.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_knit<span class="sc">$</span><span class="fu">set</span>(<span class="at">root.dir =</span> <span class="fu">normalizePath</span>(<span class="st">&quot;..&quot;</span>)) </span></code></pre></div>
+</div>
+</div>
+<div id="initialize-a-landscape" class="section level2">
+<h2>2. Initialize a landscape</h2>
+<div id="a-create-a-random-landscape" class="section level3">
+<h3>a) Create a random landscape</h3>
+<p>We will use the ‘randomHabitat’ function from the ‘secr’ package to create a random habitat map and assign resistance values to habitat and non-habitat. There are many alternative ways to define your map, e.g. simply load a png file or any other file format using the ‘raster’ function from package ‘raster’ (?raster::raster, see the examples in there). If your map is categorical, assign resistance values to the different values in the raster as shown below for the missing values. If your map is already a resistance surface, skip this step.</p>
+<p>Here we use the function ‘set.seed’ at the beginning of the simulation to make sure we get the same sequence of random numbers everytime we run this code. This makes the exact results reproducible even though we use a random process.</p>
+<p>The function ‘make.grid’ here creates a landscape of nx=50 times xy=50 gridpoints spaced 1 unit (meter) apart. This is returned as a data frame ‘tempgrid’ with two columns that represent ‘x’ and ‘y’ grid coordinates.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nx<span class="ot">=</span><span class="dv">50</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ny<span class="ot">=</span><span class="dv">50</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">555</span>) <span class="co">#(to make sure we have the same example running)</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#tempmask&lt;-secr::make.mask(nx=nx,ny=ny,spacing=1)</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>tempgrid<span class="ot">&lt;-</span>secr<span class="sc">::</span><span class="fu">make.grid</span>(<span class="at">nx=</span>nx,<span class="at">ny=</span>ny,<span class="at">spacing=</span><span class="dv">1</span>)</span></code></pre></div>
+<p>In the function ‘randomHabitat’, the argument ‘A’ specifies the expected proportion of habitat, and ‘p’ controls the level of fragmentation, i.e., degree of spatial aggregation (sorry this is naming may be a bit confusing, but that’s what it says in the help file: ?randomHabitat). The function simulates a map with these parameters and returns a data frame with only those points from ‘tempgrid’ that are habitat. It expects an input object of class ‘mask’ (an object type specific to the ‘secr’ package), hence we pass ‘as.mask(tempgrid)’.</p>
+<p>The function ‘raster’ of the ‘secr’ package (NOT from the ‘raster’ package) converts the data frame into a raster object. This object has one numeric variable that is 1 for habitat cells and missing for all other cells, we verify this with ‘table’.</p>
+<p>Note: there may be a warning about non-missing arguments, you can ignore it.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#r &lt;- raster(secr::randomHabitat(secr::as.mask(tempgrid), p = 0.5, A = 0.5))</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#table(values(r), exclude=&quot;&quot;)</span></span></code></pre></div>
+<p>NOTE: April 2021: This does not seem to work anymore. Workaround:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> secr<span class="sc">::</span><span class="fu">randomHabitat</span>(secr<span class="sc">::</span><span class="fu">as.mask</span>(tempgrid), <span class="at">p =</span> <span class="fl">0.5</span>, <span class="at">A =</span> <span class="fl">0.5</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(tempgrid) </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>r<span class="sc">$</span>resistance <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>r<span class="sc">$</span>resistance[<span class="fu">as.numeric</span>(<span class="fu">row.names</span>(tmp))] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">rasterFromXYZ</span>(r)</span></code></pre></div>
+<p>Now we set all missing values (i.e., non-habitat) to 10 and verify this again with ‘table’.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#values(r)[is.na(values(r))==T]&lt;-10</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(<span class="fu">values</span>(r), <span class="at">exclude=</span><span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<pre><code>## 
+##    1   10 
+## 1309 1191</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(r)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="384" /></p>
+<p>We have thus created a numeric raster with a resistance surface where habitat cells (grey) have a resistance value of 1 and non-habitat cells (green) have a resistance value of 10.</p>
+</div>
+<div id="b-add-populations-to-the-landscape-using-minimal-distance" class="section level3">
+<h3>b) Add populations to the landscape (using minimal distance)</h3>
+<p>We create a function that allows us to set up ‘n’ subpopulations in the habitat only (grid cells with value = 1). The subpopulations should be at least ‘minDist’ units apart, given any resistance surface ‘landscape’. We also include an option to plot a raster map with the sampled locations of the populations.</p>
+<p>We define a few variables within the function that help keep track. Note that we keep track of the cells by their raster cell number (which goes from 1:ncells). Here’s what the code does:</p>
+<ul>
+<li>Extract all cells that are habitat and store cell number in <strong>HabitatCells</strong>.</li>
+<li>Randomly sample one habitat cell and store its cell number in <strong>Selected</strong>.</li>
+<li>Store cell numbers of all remaining habitat cells in <strong>Remaining</strong>.</li>
+<li>Create a ‘while’ loop that continues until one of two things happens:
+<ul>
+<li>Sample size ‘n’ is reached.</li>
+<li>There are no cells left in Remaining.</li>
+</ul></li>
+<li>Inside the loop:
+<ul>
+<li>Randomly sample one habitat cell and store its number in <strong>Candidate</strong>.</li>
+<li>Remove the Candidate from Remaining (we don’t want to consider it twice).</li>
+<li>Calculate the <strong>Distance</strong> between Candidate and all populations in Selected. The function ‘xyFromCell’ gets the cell coordinates for each cell number, and the function ‘pointDistance’ calculates the distance between two sets of coordinates, here the coordinates for Candidate and for all cells in Selected. The argument ‘lonlat=FALSE’ tells ‘pointDistance’ that the coordinates are Euclidean.</li>
+<li>If the minimum of Distance is larger than ‘minDist’, add a population. This is done by appending the value in Candidate to the vector Selected.</li>
+<li>Repeat.</li>
+</ul></li>
+<li>If requested, the raster map is plotted, cell coordinates for all populations (Selected) are extracted and added to the map as points with point symbol pch=16 (filled circle).</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>createpops <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n=</span><span class="dv">10</span>, <span class="at">minDist=</span><span class="dv">5</span>, <span class="at">landscape=</span>r, <span class="at">habitat=</span><span class="dv">1</span>, <span class="at">plot=</span><span class="cn">TRUE</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>{ </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  HabitatCells <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(landscape))[<span class="fu">values</span>(landscape)<span class="sc">==</span>habitat]</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  Selected <span class="ot">&lt;-</span> <span class="fu">sample</span>(HabitatCells, <span class="dv">1</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  Remaining <span class="ot">&lt;-</span> HabitatCells[<span class="sc">!</span><span class="fu">is.element</span>(HabitatCells, Selected)]</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> (<span class="fu">length</span>(Selected) <span class="sc">&lt;</span> n <span class="sc">&amp;</span> <span class="fu">length</span>(Remaining) <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    Candidate <span class="ot">&lt;-</span> <span class="fu">sample</span>(Remaining, <span class="dv">1</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    Remaining <span class="ot">&lt;-</span> Remaining[<span class="sc">!</span><span class="fu">is.element</span>(Remaining, Candidate)]</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    Distances <span class="ot">&lt;-</span> raster<span class="sc">::</span><span class="fu">pointDistance</span>(raster<span class="sc">::</span><span class="fu">xyFromCell</span>(landscape, Candidate), </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                               raster<span class="sc">::</span><span class="fu">xyFromCell</span>(landscape, Selected), </span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                               <span class="at">lonlat=</span><span class="cn">FALSE</span>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">min</span>(Distances) <span class="sc">&gt;</span> minDist)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>      Selected <span class="ot">&lt;-</span> <span class="fu">append</span>(Selected, Candidate)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(plot<span class="sc">==</span><span class="cn">TRUE</span>) </span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plot</span>(landscape)  </span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">points</span>(<span class="fu">xyFromCell</span>(landscape, Selected), <span class="at">pch=</span><span class="dv">16</span>)</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(Selected)</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Test the function above:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">createpops</span>(<span class="at">n=</span><span class="dv">8</span>, <span class="at">minDist =</span> <span class="dv">3</span>, <span class="at">landscape =</span> r, <span class="at">plot =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="384" /></p>
+<pre><code>## [1] 1328  476  395 2497  440  683  601 1189</code></pre>
+</div>
+<div id="c-initialise-a-metapopulation" class="section level3">
+<h3>c) Initialise a metapopulation</h3>
+<p>We use the function ‘init.popgensim’ from package ‘PopGenReport’ to initialise a metapopulation based on the grid cells that we just selected. To do this we need to initialise a number of parameters (the locations of the subpopulations, the number of individuals per subpopulation, the number of loci and alleles per loci. For a full list check ‘?init.popgensim’).</p>
+<p>To store all the parameters we create a list called para where we store all of them</p>
+</div>
+</div>
+<div id="define-simulation-parameters" class="section level2">
+<h2>3. Define simulation parameters</h2>
+<div id="a-define-your-metapopulation" class="section level3">
+<h3>a) Define your metapopulation</h3>
+<p>Define metapopulation:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>para<span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Define populations (dynamics)</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>para<span class="sc">$</span>n.pops<span class="ot">=</span><span class="dv">8</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>para<span class="sc">$</span>n.ind<span class="ot">=</span><span class="dv">100</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>para<span class="sc">$</span>sex.ratio <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#age distribution....</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>para<span class="sc">$</span>n.cov <span class="ot">&lt;-</span> <span class="dv">3</span> </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#number of covariates (before the loci in the data.frame, do not change this!!)</span></span></code></pre></div>
+<p>Define population dynamics:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#reproduction</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>para<span class="sc">$</span>n.offspring <span class="ot">=</span> <span class="dv">2</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#migration</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>para<span class="sc">$</span>mig.rate <span class="ot">&lt;-</span> <span class="fl">0.1</span> </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#dispersal: exponential dispersal with maximal distance in map units</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>para<span class="sc">$</span>disp.max<span class="ot">=</span><span class="dv">50</span>   <span class="co">#average  dispersal of an individual in meters</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>para<span class="sc">$</span>disp.rate <span class="ot">=</span> <span class="fl">0.05</span> <span class="co">#proportion of dispersing individuals</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co">#Define genetics</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>para<span class="sc">$</span>n.allels <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>para<span class="sc">$</span>n.loci <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>para<span class="sc">$</span>mut.rate <span class="ot">&lt;-</span> <span class="fl">0.001</span></span></code></pre></div>
+<p>Define cost distance method:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>para<span class="sc">$</span>method <span class="ot">&lt;-</span> <span class="st">&quot;leastcost&quot;</span> <span class="co">#rSPDdistance, commute</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>para<span class="sc">$</span>NN <span class="ot">&lt;-</span> <span class="dv">8</span>  <span class="co">#number of neighbours for the cost distance method</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize simulation of populations from scratch</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a> landscape<span class="ot">&lt;-</span> r  <span class="co">#&lt;-raster(system.file(&quot;external/rlogo.grd&quot;, package=&quot;raster&quot;))</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Define x and y locations</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a> para<span class="sc">$</span>cells <span class="ot">&lt;-</span> <span class="fu">createpops</span>(<span class="at">n=</span>para<span class="sc">$</span>n.pops, <span class="at">minDist =</span> <span class="dv">3</span>, </span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>                         <span class="at">landscape =</span> landscape, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a> para<span class="sc">$</span>locs <span class="ot">&lt;-</span> raster<span class="sc">::</span><span class="fu">xyFromCell</span>(landscape, para<span class="sc">$</span>cells)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a> <span class="co">#give the population some names </span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a> <span class="fu">rownames</span>(para<span class="sc">$</span>locs) <span class="ot">&lt;-</span> LETTERS[<span class="dv">1</span><span class="sc">:</span>para<span class="sc">$</span>n.pops]</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a matrix of pairwise cost distances...  </span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>  cost.mat <span class="ot">&lt;-</span> PopGenReport<span class="sc">::</span><span class="fu">costdistances</span>(landscape, para<span class="sc">$</span>locs, </span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>                                          para<span class="sc">$</span>method, para<span class="sc">$</span>NN)</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="co"># ... and a matrix of pairwise Euclidean distances</span></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>  eucl.mat <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">dist</span>(para<span class="sc">$</span>locs))  <span class="co">#needed for the analysis later</span></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot your landscape with the populations....</span></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(landscape)</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">points</span>(para<span class="sc">$</span>locs[,<span class="dv">1</span>], para<span class="sc">$</span>locs[,<span class="dv">2</span>], <span class="at">pch=</span><span class="dv">16</span>, <span class="at">cex=</span><span class="dv">2</span>, <span class="at">col=</span><span class="st">&quot;orange&quot;</span>)</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">text</span>(para<span class="sc">$</span>locs[,<span class="dv">1</span>],para<span class="sc">$</span>locs[,<span class="dv">2</span>], <span class="fu">row.names</span>(para<span class="sc">$</span>locs), <span class="at">cex=</span><span class="fl">1.5</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="384" /></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the parameter list</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  para</span></code></pre></div>
+<pre><code>## $n.pops
+## [1] 8
+## 
+## $n.ind
+## [1] 100
+## 
+## $sex.ratio
+## [1] 0.5
+## 
+## $n.cov
+## [1] 3
+## 
+## $n.offspring
+## [1] 2
+## 
+## $mig.rate
+## [1] 0.1
+## 
+## $disp.max
+## [1] 50
+## 
+## $disp.rate
+## [1] 0.05
+## 
+## $n.allels
+## [1] 10
+## 
+## $n.loci
+## [1] 20
+## 
+## $mut.rate
+## [1] 0.001
+## 
+## $method
+## [1] &quot;leastcost&quot;
+## 
+## $NN
+## [1] 8
+## 
+## $cells
+## [1]  450  893 2358  388 2425  294 1393  679
+## 
+## $locs
+##    x  y
+## A 49 41
+## B 42 32
+## C  7  2
+## D 37 42
+## E 24  1
+## F 43 44
+## G 42 22
+## H 28 36</code></pre>
+</div>
+<div id="b-initialise-your-population-on-the-landscape" class="section level3">
+<h3>b) Initialise your population on the landscape</h3>
+<p>Now finally we can initialise our population using the init function. We’ll call it ‘simpops.0’ to indicate that this is the initial generation.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>simpops<span class="fl">.0</span> <span class="ot">&lt;-</span> PopGenReport<span class="sc">::</span><span class="fu">init.popgensim</span>(para<span class="sc">$</span>n.pops, para<span class="sc">$</span>n.ind, </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                           para<span class="sc">$</span>sex.ratio, para<span class="sc">$</span>n.loci, </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                           para<span class="sc">$</span>n.allels, para<span class="sc">$</span>locs, para<span class="sc">$</span>n.cov )  </span></code></pre></div>
+<p>You may want to check the simpops object, which is simply a list of our subpopulation and each individual is coded in a single run in one of the subpopulations.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(simpops<span class="fl">.0</span>)  <span class="co">#the names of the subpopulations</span></span></code></pre></div>
+<pre><code>## [1] &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;D&quot; &quot;E&quot; &quot;F&quot; &quot;G&quot; &quot;H&quot;</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(simpops<span class="fl">.0</span><span class="sc">$</span>A[,<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]) <span class="co"># a list of the first 6 individuals and columns of population A</span></span></code></pre></div>
+<pre><code>##   pop    sex age locus1A locus1B locus2A
+## 1   1 female  NA       6      10       2
+## 2   1 female  NA       4       3       6
+## 3   1 female  NA       2      10       9
+## 4   1 female  NA       7       9       5
+## 5   1 female  NA       3       1       9
+## 6   1 female  NA       6       7       3</code></pre>
+<p>We can also analyse our simpop object. (e.g. calculate the pairwise Fst value between all the populations).</p>
+<p>To be able to do that we first need to convert it into a genind object (because many functions need this type of object as input).</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>gsp <span class="ot">&lt;-</span> PopGenReport<span class="sc">::</span><span class="fu">pops2genind</span>(simpops<span class="fl">.0</span>, <span class="at">locs =</span>para<span class="sc">$</span>locs)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>gsp <span class="co">#check the genind object</span></span></code></pre></div>
+<pre><code>## /// GENIND OBJECT /////////
+## 
+##  // 800 individuals; 20 loci; 200 alleles; size: 738.5 Kb
+## 
+##  // Basic content
+##    @tab:  800 x 200 matrix of allele counts
+##    @loc.n.all: number of alleles per locus (range: 10-10)
+##    @loc.fac: locus factor for the 200 columns of @tab
+##    @all.names: list of allele names for each locus
+##    @ploidy: ploidy of each individual  (range: 2-2)
+##    @type:  codom
+##    @call: df2genind(X = res, sep = &quot;/&quot;, ind.names = rownames(res), pop = combine$pop)
+## 
+##  // Optional content
+##    @pop: population of each individual (group size range: 100-100)
+##    @other: a list containing: xy</code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gsp)  <span class="co">#some summary statistics</span></span></code></pre></div>
+<pre><code>## 
+## // Number of individuals: 800
+## // Group sizes: 100 100 100 100 100 100 100 100
+## // Number of alleles per locus: 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10
+## // Number of alleles per group: 200 200 200 200 200 200 200 200
+## // Percentage of missing data: 0 %
+## // Observed heterozygosity: 0.9 0.89 0.89 0.89 0.9 0.89 0.9 0.92 0.9 0.9 0.91 0.9 0.9 0.88 0.9 0.9 0.91 0.9 0.89 0.88
+## // Expected heterozygosity: 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9</code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(mmod<span class="sc">::</span><span class="fu">pairwise_Gst_Nei</span>(gsp),<span class="dv">5</span>)</span></code></pre></div>
+<pre><code>##          A        B        C        D        E        F        G
+## B -0.00012                                                      
+## C  0.00006  0.00001                                             
+## D -0.00019 -0.00060  0.00022                                    
+## E  0.00010 -0.00030 -0.00014 -0.00058                           
+## F  0.00016 -0.00031  0.00002 -0.00019 -0.00009                  
+## G -0.00020 -0.00046  0.00022 -0.00023 -0.00027 -0.00013         
+## H -0.00045 -0.00013 -0.00009 -0.00008 -0.00007 -0.00033 -0.00020</code></pre>
+<p>Is there an effect of the landscape on the population structure (there should not be after initialisation)?</p>
+<p>The function ‘pairwise.fstb’ is around 150 times faster than mmod::pairwise_Gst_Nei, but slightly different.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>gen.mat <span class="ot">&lt;-</span> PopGenReport<span class="sc">::</span><span class="fu">pairwise.fstb</span>(gsp)  </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(gen.mat ,<span class="dv">5</span>)</span></code></pre></div>
+<pre><code>##         A       B       C       D       E       F       G       H
+## A 0.00000 0.00239 0.00256 0.00231 0.00260 0.00266 0.00231 0.00205
+## B 0.00239 0.00000 0.00252 0.00191 0.00220 0.00220 0.00205 0.00238
+## C 0.00256 0.00252 0.00000 0.00273 0.00237 0.00253 0.00273 0.00241
+## D 0.00231 0.00191 0.00273 0.00000 0.00193 0.00232 0.00228 0.00243
+## E 0.00260 0.00220 0.00237 0.00193 0.00000 0.00241 0.00224 0.00244
+## F 0.00266 0.00220 0.00253 0.00232 0.00241 0.00000 0.00237 0.00218
+## G 0.00231 0.00205 0.00273 0.00228 0.00224 0.00237 0.00000 0.00230
+## H 0.00205 0.00238 0.00241 0.00243 0.00244 0.00218 0.00230 0.00000</code></pre>
+<p>Now we perform a two partial Mantel tests, one for the effect of the cost distance partialling out the effect of Euclidean distance (Gen ~cost | Euclidean), and one the other way round. The method ‘wassermann’ from the ‘PopGenReport’ package returns a data frame with two rows (one for each test) and three columns (model, r = Mantel r statistic, p = p-value), following this method:</p>
+<ul>
+<li>Wassermann, T.N., Cushman, S. A., Schwartz, M. K. and Wallin, D. O. (2010). Spatial scaling and multi-model inference in landscape genetics: Martes americana in northern Idaho. Landscape Ecology, 25(10), 1601-1612.</li>
+</ul>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>PopGenReport<span class="sc">::</span><span class="fu">wassermann</span>(<span class="at">eucl.mat =</span> eucl.mat, <span class="at">cost.mats =</span> <span class="fu">list</span>(<span class="at">cost=</span>cost.mat), </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">gen.mat =</span> gen.mat, <span class="at">plot=</span>F)<span class="sc">$</span>mantel.tab</span></code></pre></div>
+<pre><code>##                   model       r     p
+## 1 Gen ~cost | Euclidean  0.2056 0.157
+## 2 Gen ~Euclidean | cost -0.0571 0.603</code></pre>
+<p>Check the pairwise Fst values, why are they so low? Hints:</p>
+<ul>
+<li>How were genotypes assigned to the initial generation</li>
+<li>How many generations have we simulated thus far?</li>
+<li>At this point in the simulation, do you expect to see an effet of IBD, IBR, or neither?</li>
+</ul>
+</div>
+</div>
+<div id="run-simulations-and-analyze-results" class="section level2">
+<h2>4. Run simulations and analyze results</h2>
+<div id="a-run-your-simulation-over-multiple-time-steps-years" class="section level3">
+<h3>a) Run your simulation over multiple time steps (years)</h3>
+<p>Now we can run our simulation by simply passing our object ‘simpops’ to the function ‘run.popgensim’, with some additional parameters that are needed for the simulation. We specify the number of generations the simulation should run with the steps parameter. (Check ?run.popgensim for a description of all parameters).</p>
+<p>Important to understand is the idea of the cost.mat (which is the cost matrix that is used for the distance between subpopulation). The n.alleles, n.ind cannot be different from the initialisation.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>simpops <span class="ot">&lt;-</span> PopGenReport<span class="sc">::</span><span class="fu">run.popgensim</span>(simpops<span class="fl">.0</span>, <span class="at">steps=</span><span class="dv">3</span>, cost.mat, </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">n.offspring=</span>para<span class="sc">$</span>n.offspring, <span class="at">n.ind=</span>para<span class="sc">$</span>n.ind,</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>                         para<span class="sc">$</span>mig.rate, para<span class="sc">$</span>disp.max, para<span class="sc">$</span>disp.rate, </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                         para<span class="sc">$</span>n.allels, para<span class="sc">$</span>mut.rate,</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">n.cov=</span>para<span class="sc">$</span>n.cov, <span class="at">rec=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p>In essence we were running a metapopulation with 100 individuals per subpopulation on our resistance landscape for 3 generations. The question is now was that enough time to create an effect on population structure?</p>
+</div>
+<div id="b-analyse-your-simulated-population-with-a-partial-mantel-test" class="section level3">
+<h3>b) Analyse your simulated population with a partial Mantel test</h3>
+<p>Let’s check the pairwise Fst values and then do a landscape genetic analysis using partial Mantel tests.</p>
+<p>Convert to genind to calculate pairwise Fst.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>gsp <span class="ot">&lt;-</span> PopGenReport<span class="sc">::</span><span class="fu">pops2genind</span>(simpops, para<span class="sc">$</span>locs, para<span class="sc">$</span>n.cov)</span></code></pre></div>
+<p>Calculate your genetic distance matrix e.g. fst or D.</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>gen.mat <span class="ot">&lt;-</span> PopGenReport<span class="sc">::</span><span class="fu">pairwise.fstb</span>(gsp)   </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(gen.mat ,<span class="dv">3</span>)</span></code></pre></div>
+<pre><code>##       A     B     C     D     E     F     G     H
+## A 0.000 0.006 0.007 0.006 0.007 0.008 0.008 0.007
+## B 0.006 0.000 0.008 0.007 0.006 0.008 0.008 0.008
+## C 0.007 0.008 0.000 0.007 0.007 0.008 0.007 0.008
+## D 0.006 0.007 0.007 0.000 0.007 0.007 0.007 0.007
+## E 0.007 0.006 0.007 0.007 0.000 0.008 0.007 0.008
+## F 0.008 0.008 0.008 0.007 0.008 0.000 0.008 0.007
+## G 0.008 0.008 0.007 0.007 0.007 0.008 0.000 0.008
+## H 0.007 0.008 0.008 0.007 0.008 0.007 0.008 0.000</code></pre>
+<p>Partial Mantel test:</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>PopGenReport<span class="sc">::</span><span class="fu">wassermann</span>(<span class="at">eucl.mat =</span> eucl.mat, <span class="at">cost.mats =</span> <span class="fu">list</span>(<span class="at">cost=</span>cost.mat), </span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">gen.mat =</span> gen.mat, <span class="at">plot=</span>F)<span class="sc">$</span>mantel.tab</span></code></pre></div>
+<pre><code>##                   model       r     p
+## 2 Gen ~Euclidean | cost  0.1857 0.161
+## 1 Gen ~cost | Euclidean -0.1086  0.74</code></pre>
+<p>We can extract a specific value from this result, e.g., the p-value of the test “Gen ~cost | Euclidean”. (Note that every time we call the function ‘wassermann’, a permutation test is performed (default: ‘nperm = 999’), and the p-value may thus vary somewhat).</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> PopGenReport<span class="sc">::</span><span class="fu">wassermann</span>(<span class="at">eucl.mat =</span> eucl.mat, </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>                                <span class="at">cost.mats =</span> <span class="fu">list</span>(<span class="at">cost=</span>cost.mat), </span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>                                <span class="at">gen.mat =</span> gen.mat, <span class="at">plot=</span>F)<span class="sc">$</span>mantel.tab</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>res[res<span class="sc">$</span>model <span class="sc">==</span> <span class="st">&quot;Gen ~cost | Euclidean&quot;</span>, <span class="st">&quot;p&quot;</span>]</span></code></pre></div>
+<pre><code>## [1] &quot;0.717&quot;</code></pre>
+</div>
+<div id="c-optional-analyze-your-simulated-populations-using-sunder" class="section level3">
+<h3>c) Optional: Analyze your simulated populations using ‘Sunder’</h3>
+<p>See: <a href="http://www.nbi.dk/~botta/Sunder.html#overview" class="uri">http://www.nbi.dk/~botta/Sunder.html#overview</a></p>
+<p>Sunder is an alternative (faster) implementation of BEDASSLE, which uses molecular covariance analysis as an alternative to partial Mantel test. All we want from this method for now is the best-model (note that there is no alternative ‘none’):</p>
+<ul>
+<li><strong>G</strong>: Geographic distance model (IBD)</li>
+<li><strong>G</strong>: Ecological distance model (IBR)</li>
+<li><strong>G+E</strong>: Both</li>
+</ul>
+<p>To perform the Sunder analysis, we need to reformat the allele frequencies into a three-dimensional array (site x locus x allele). Here we define a function that takes as argument a ‘genind’ object and reformats it as needed.</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>getArray <span class="ot">&lt;-</span> <span class="cf">function</span>(gen)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  tmp <span class="ot">&lt;-</span> <span class="fu">Reduce</span>(rbind,<span class="fu">lapply</span>(<span class="fu">split</span>(<span class="fu">data.frame</span>(gen<span class="sc">@</span>tab), gen<span class="sc">@</span>pop), </span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>                               colSums, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row.names</span>(tmp) <span class="ot">&lt;-</span> <span class="fu">levels</span>(gen<span class="sc">@</span>pop)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  tmp <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="fu">data.frame</span>(<span class="fu">t</span>(tmp)), gen<span class="sc">@</span>loc.fac)</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>  Array <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim=</span><span class="fu">c</span>(<span class="fu">ncol</span>(tmp[[<span class="dv">1</span>]]), <span class="fu">length</span>(tmp), <span class="fu">nrow</span>(tmp[[<span class="dv">1</span>]])))</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(tmp))</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>    Array[,i,] <span class="ot">&lt;-</span> <span class="fu">t</span>(tmp[[i]])</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(Array)</span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Apply the function to the genind object ‘gsp’ with the simulated genotypes:</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>Array <span class="ot">&lt;-</span> <span class="fu">getArray</span>(gsp)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(Array)</span></code></pre></div>
+<pre><code>## [1]  8 20 10</code></pre>
+<p>Run the analysis (parameter settings: <a href="http://www.nbi.dk/~botta/Sunder.html#overview" class="uri">http://www.nbi.dk/~botta/Sunder.html#overview</a>)</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>D.G <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">dist</span>(para<span class="sc">$</span>locs))</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>D.E <span class="ot">&lt;-</span> cost.mat</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>nit <span class="ot">&lt;-</span> <span class="dv">10</span><span class="sc">^</span><span class="dv">2</span>   <span class="do">## just for the example, should be much larger, e.g. 50000</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>output <span class="ot">&lt;-</span> Sunder<span class="sc">::</span><span class="fu">MCMCCV</span>(Array,D.G,D.E,</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">nit=</span>nit,<span class="at">thinning=</span><span class="fu">max</span>(nit<span class="sc">/</span><span class="dv">10</span><span class="sc">^</span><span class="dv">3</span>,<span class="dv">1</span>),</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">theta.max=</span><span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">10</span><span class="sc">*</span><span class="fu">max</span>(D.G),<span class="dv">10</span><span class="sc">*</span><span class="fu">max</span>(D.E),<span class="dv">1</span>,<span class="fl">0.9</span>),</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">theta.init=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="fl">0.01</span>),</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">run=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="at">ud=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>),</span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n.validation.set=</span><span class="fu">dim</span>(Array)[<span class="dv">1</span>]<span class="sc">*</span><span class="fu">dim</span>(Array)[<span class="dv">2</span>]<span class="sc">/</span><span class="dv">10</span>,</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">print.pct=</span><span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;</code></pre>
+<p>Quick answer: the winner (best supporte model) is …</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(<span class="fu">which.max</span>(output<span class="sc">$</span>mod.lik))</span></code></pre></div>
+<pre><code>## [1] &quot;G&quot;</code></pre>
+<p>What did we just do? We extracted the log-likelihood values for the three models ‘G’, ‘E’ and ‘G+E’, determined which value was the highest, and extracted the name of the winning model. Let’s verify this by printing the log-likelihood values. The best model has the highest (= least negative) log-likelihood.</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(output<span class="sc">$</span>mod.lik)</span></code></pre></div>
+<pre><code>##       G+E         G         E 
+## -9431.361 -9395.884 -9406.981</code></pre>
+<p>Let’s combine all of this into our own function to convert the genind object, calculate Sunder and extract the name of the best fitting model</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>getSunder <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">gen=</span>gsp, <span class="at">locs=</span>para<span class="sc">$</span>locs, <span class="at">cost=</span>cost.mat, <span class="at">nit=</span><span class="dv">10</span><span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  Array <span class="ot">&lt;-</span> <span class="fu">getArray</span>(gen)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  D.G <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">dist</span>(locs))</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>  D.E <span class="ot">&lt;-</span> cost</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>  output <span class="ot">&lt;-</span> Sunder<span class="sc">::</span><span class="fu">MCMCCV</span>(Array,D.G,D.E,</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>                     nit,<span class="at">thinning=</span><span class="fu">max</span>(nit<span class="sc">/</span><span class="dv">10</span><span class="sc">^</span><span class="dv">3</span>,<span class="dv">1</span>),</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">theta.max=</span><span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">10</span><span class="sc">*</span><span class="fu">max</span>(D.G),<span class="dv">10</span><span class="sc">*</span><span class="fu">max</span>(D.E),<span class="dv">1</span>,<span class="fl">0.9</span>),</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">theta.init=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="fl">0.01</span>),</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">run=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="at">ud=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>),</span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n.validation.set=</span><span class="fu">dim</span>(Array)[<span class="dv">1</span>]<span class="sc">*</span><span class="fu">dim</span>(Array)[<span class="dv">2</span>]<span class="sc">/</span><span class="dv">10</span>,</span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>                     <span class="at">print.pct=</span><span class="cn">FALSE</span>)</span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">names</span>(<span class="fu">which.max</span>(output<span class="sc">$</span>mod.lik)))</span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Let’s test it:</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">getSunder</span>()</span></code></pre></div>
+<pre><code>## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;</code></pre>
+<pre><code>## [1] &quot;G+E&quot;</code></pre>
+</div>
+</div>
+<div id="run-simulator-using-a-previously-defined-parameter-set" class="section level2">
+<h2>5. Run simulator using a previously defined parameter set</h2>
+<p>Once the simulator works and you are certain that you understand how the simulator needs to be set up for a single run, in almost all studies on simulations you want to be able to re-run the simulator in an automatized way. There are several reasons why you want to do that.</p>
+<ol style="list-style-type: decimal">
+<li>You want to perform a sensitivity analysis on a single parameter, which means, try to find how much does the output (e.g. pairwise Fst between subpopulations) change when you vary an input parameter (e.g. number of loci).</li>
+<li>You want to explore the “complete” parameter space, which means, instead of changing values of a single input parameter you want to change all parameters (within certain levels) and run their combinations.</li>
+<li>Another reason is that you want to create a simulated test data set that forms the backbone of your future studies.</li>
+</ol>
+<p>So we would like to do the following.</p>
+<ul>
+<li><ol style="list-style-type: lower-alpha">
+<li>Specify and record all the parameter combinations that you would like to run.<br />
+</li>
+</ol></li>
+<li><ol start="2" style="list-style-type: lower-alpha">
+<li>Run the simulator with every combination</li>
+</ol></li>
+<li><ol start="3" style="list-style-type: lower-alpha">
+<li>[Optional] save your complete simulation run (recommended, but sometimes prohibitive due to needed resources) or only a calculated summary.</li>
+</ol></li>
+<li><ol start="4" style="list-style-type: lower-alpha">
+<li>Read in your simulations, analyse them and synthesize your results via additional statistics, tests, plots.</li>
+</ol></li>
+<li><ol start="5" style="list-style-type: lower-alpha">
+<li>Publish an enormously important paper….</li>
+</ol></li>
+</ul>
+<p>Admittedly there are several different approaches and as it seems every modeller has a slightly different way to achieve these steps. One approach is to create a parameter file that records all the parameter setting for each run. Another approach is to create so called scripts for every single run. The advantage here is that scripts can be easily distributed across different cores and machines and therefore this approach is easy to parallelise your runs, which sometimes is necessary. Finally the approach I will present here (also because of practical reasons) is to create an R data.frame that stores all the parameter settings and we run all combinations in serial mode instead of in parallel.</p>
+<p>Okay before we start we need to think about what kind of parameters we want to explore. I would like to do the following runs:</p>
+<ul>
+<li>Run our simulations as above (same parameter settings) for varying time steps (say between 5 to 45 years in steps of 20). We’ll keep the number of levels and the maximum number of steps low in this example to limit computation time. Feel free to expand!</li>
+<li>As output I would still like to record the Fst value, but also the full genetic data set and the parameters used to run the simulation.</li>
+<li>In addition I want to repeat each run 5 times (most often you would do more repetitions) to check how much general variation there is between runs with exactly the same parameter combination.</li>
+</ul>
+<div id="a-specify-and-record-the-parameter-combinations" class="section level3">
+<h3>a) Specify and record the parameter combinations</h3>
+<p>Let’s define the varying numbers of time steps we would like to run the simulations. Here we define a sequence from 5 to 45 in steps of 20, which results in a series c(5, 25, 45). We will interpret these values as numeric, therefore we don’t convert to ‘factor’.</p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>timesteps <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from=</span><span class="dv">5</span> , <span class="at">to=</span><span class="dv">45</span>, <span class="at">by=</span><span class="dv">20</span>)</span></code></pre></div>
+<p>We also specify the number of repeats (replicate simulation runs). We want to do five replicate simulation runs per for each level of ‘time’, and we will label replicates from 1 through 5. These are essentially labels and we’ll save them as a factor:</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>repeats <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span></code></pre></div>
+<p>Now we would like to have a data frame that stores all possible combinations for those two parameters. As simple way to do that in R, is to use the ‘expand.grid’ function.</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>para.space <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">rep=</span>repeats, <span class="at">time=</span>timesteps)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">as_tibble</span>(para.space)</span></code></pre></div>
+<pre><code>## # A tibble: 15 x 2
+##    rep    time
+##    &lt;fct&gt; &lt;dbl&gt;
+##  1 1         5
+##  2 2         5
+##  3 3         5
+##  4 4         5
+##  5 5         5
+##  6 1        25
+##  7 2        25
+##  8 3        25
+##  9 4        25
+## 10 5        25
+## 11 1        45
+## 12 2        45
+## 13 3        45
+## 14 4        45
+## 15 5        45</code></pre>
+<p>As you can see this results in 15 combinations (3 time steps x 5 repeats). The beauty of this approach is that it is very flexible and adaptable to runs over other parameter combinations, as you can provide more than two parameter variables to ‘expand.grid’.</p>
+</div>
+<div id="b-run-the-simulator-over-every-parameter-combination." class="section level3">
+<h3>b) Run the simulator over every parameter combination.</h3>
+<p>Remember our parameters are all defined in the ‘para’ object (a list) and we want to keep them constant, except for running the simulation for different number of years. This means that we only need to modify the argument ‘steps’.</p>
+<p>Summarizing the code from above, a single run of our simulator runs via:</p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co">#initialize</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>simpops<span class="fl">.0</span> <span class="ot">&lt;-</span> PopGenReport<span class="sc">::</span><span class="fu">init.popgensim</span>(para<span class="sc">$</span>n.pops, para<span class="sc">$</span>n.ind,</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>                           para<span class="sc">$</span>sex.ratio, para<span class="sc">$</span>n.loci, </span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>                           para<span class="sc">$</span>n.allels, para<span class="sc">$</span>locs, para<span class="sc">$</span>n.cov )  </span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="co">#run for 20 generations</span></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>simpops <span class="ot">&lt;-</span> PopGenReport<span class="sc">::</span><span class="fu">run.popgensim</span>(simpops<span class="fl">.0</span>, <span class="at">steps=</span><span class="dv">20</span>, cost.mat, </span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">n.offspring=</span>para<span class="sc">$</span>n.offspring, <span class="at">n.ind=</span>para<span class="sc">$</span>n.ind,</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>                         para<span class="sc">$</span>mig.rate, para<span class="sc">$</span>disp.max, para<span class="sc">$</span>disp.rate, </span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>                         para<span class="sc">$</span>n.allels, para<span class="sc">$</span>mut.rate,</span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>                         <span class="at">n.cov=</span>para<span class="sc">$</span>n.cov, <span class="at">rec=</span><span class="st">&quot;none&quot;</span>)</span></code></pre></div>
+<p>We adapt this code as follows:</p>
+<ul>
+<li>Create a ‘for’ loop that cycles through every row ‘i’ in ‘para.space’</li>
+<li>For each value of ‘i’:
+<ul>
+<li>Initialize population ‘simpops.0.’</li>
+<li>Run the simulation with argument ‘steps = para.space$time[i]’.</li>
+</ul></li>
+</ul>
+<p>We are not running the code just yet, hence it is commented-out with ‘#’.</p>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co">#for (i in 1:nrow(para.space))</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="co">#{</span></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="co">#  #initialize</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a><span class="co">#  simpops.0 &lt;- PopGenReport::init.popgensim(para$n.pops, para$n.ind, </span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                           para$sex.ratio, para$n.loci, para$n.allels, </span></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="co">#                           para$locs, para$n.cov )</span></span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a><span class="co">#  </span></span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a><span class="co">#  #run for para.space$time[i] generations</span></span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a><span class="co">#  simpops &lt;- PopGenReport::run.popgensim(simpops.0, </span></span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a><span class="co">#                           steps=para.space$time[i], cost.mat,</span></span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a><span class="co">#                           n.offspring=para$n.offspring, n.ind=para$n.ind,</span></span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a><span class="co">#                           para$mig.rate, para$disp.max, para$disp.rate, </span></span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a><span class="co">#                           para$n.allels, para$mut.rate,</span></span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a><span class="co">#                           n.cov=para$n.cov, rec=&quot;none&quot;)</span></span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a><span class="co">#}</span></span></code></pre></div>
+<p>Have a close look at the change.</p>
+<p>Question: what changes between replicate runs, and what not? Consider the following aspects:</p>
+<ul>
+<li>Landscape</li>
+<li>Population locations</li>
+<li>Pairwise distances (cost, Euclidean)</li>
+<li>Initial populations with initial genotypes</li>
+<li>Migration and gene flow</li>
+</ul>
+</div>
+<div id="c-save-your-complete-simulation-run-input-and-output" class="section level3">
+<h3>c) Save your complete simulation run (input and output)</h3>
+<p>Simply running the simulation 15 times (number of rows in ‘para.space’) by itself is not useful yet. We need to store the simulation runs somehow, so we can collect them afterwards to calculate summary statistics and analyse the runs.</p>
+<p>How do we store the repeats seperately in a file? One approach would be to have a different file name for every repeat, but in my view, a cleaner approach is to store all simulation outputs and also store the complete parameter and input information in a file, so everything that is need is in one place. A nice way to do that in R is to create a ‘list’ object that stores all in a single object, which can be saved (and is automatically packed) and re-loaded as an R object. This is convenient as long as I only want to analyze the results in R, not export to other software.</p>
+<p>Here we do the following:</p>
+<ul>
+<li>Create a timer with the function ‘proc.time’ so that we know roughly how long the computations take.</li>
+<li>For each line ‘i’ in ‘para.space’:
+<ul>
+<li>Initialize simpops.0.</li>
+<li>Run the simulation with ‘steps=para.space$time[i]’.</li>
+<li>Convert the resulting ‘simpop’ to a genind object ‘gi’ (smaller to store)</li>
+<li>Create a list ‘sim’ of all simulation parameters we want to store.</li>
+<li>Save the object ‘sim’ as an ‘RData’ file with a unique file name in the folder ‘output/simout’ in the project directory.</li>
+<li>Print a message after each run to report progress and computation time.</li>
+<li>Flush the output console to make sure it is current (only relevant for console-based versions of R).</li>
+</ul></li>
+</ul>
+<p>The list ‘sim’ will contain the following elements. Note: the name is repeated (e.g., ‘gi = gi’) to create a named list, i.e., to specify the names of the list elements.</p>
+<ul>
+<li><strong>para.space</strong>: the row ‘para.space[i]’ with settings of the simulation run.</li>
+<li><strong>para</strong>: a copy of the list ‘para’ that contains the other parameters that are the same for all simulation runs.</li>
+<li><strong>landscape</strong>: the landscape.</li>
+<li><strong>cost.mat</strong>: the matrix of pairwise cost distances</li>
+<li><strong>gi</strong>: the genind object that contains the genotypes at the end of the simulation.</li>
+</ul>
+<p>First we make sure the folder <code>simout</code> exists within the <code>output</code> folder in the R project:</p>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">dir.exists</span>(<span class="fu">paste0</span>(here<span class="sc">::</span><span class="fu">here</span>(),<span class="st">&quot;/output&quot;</span>))) </span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(<span class="fu">paste0</span>(here<span class="sc">::</span><span class="fu">here</span>(),<span class="st">&quot;/output&quot;</span>))</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">dir.exists</span>(<span class="fu">paste0</span>(here<span class="sc">::</span><span class="fu">here</span>(),<span class="st">&quot;/output/simout&quot;</span>)))</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(<span class="fu">paste0</span>(here<span class="sc">::</span><span class="fu">here</span>(),<span class="st">&quot;/output/simout&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a timer (just to know how long it will take roughly)</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>timer0 <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">proc.time</span>()[<span class="dv">3</span>],<span class="dv">2</span>)</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(para.space))</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># initialize</span></span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a>  simpops<span class="fl">.0</span> <span class="ot">&lt;-</span> PopGenReport<span class="sc">::</span><span class="fu">init.popgensim</span>(para<span class="sc">$</span>n.pops, para<span class="sc">$</span>n.ind, </span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>                           para<span class="sc">$</span>sex.ratio, para<span class="sc">$</span>n.loci, para<span class="sc">$</span>n.allels, </span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>                           para<span class="sc">$</span>locs, para<span class="sc">$</span>n.cov )  </span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># run for para.space$time[i] generations</span></span>
+<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a>  simpops <span class="ot">&lt;-</span> PopGenReport<span class="sc">::</span><span class="fu">run.popgensim</span>(simpops<span class="fl">.0</span>, </span>
+<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a>                           <span class="at">steps=</span>para.space<span class="sc">$</span>time[i], cost.mat, </span>
+<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a>                           <span class="at">n.offspring=</span>para<span class="sc">$</span>n.offspring, <span class="at">n.ind=</span>para<span class="sc">$</span>n.ind,</span>
+<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a>                           para<span class="sc">$</span>mig.rate, para<span class="sc">$</span>disp.max, para<span class="sc">$</span>disp.rate, </span>
+<span id="cb62-16"><a href="#cb62-16" aria-hidden="true" tabindex="-1"></a>                           para<span class="sc">$</span>n.allels, para<span class="sc">$</span>mut.rate,</span>
+<span id="cb62-17"><a href="#cb62-17" aria-hidden="true" tabindex="-1"></a>                           <span class="at">n.cov=</span>para<span class="sc">$</span>n.cov, <span class="at">rec=</span><span class="st">&quot;none&quot;</span>)</span>
+<span id="cb62-18"><a href="#cb62-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb62-19"><a href="#cb62-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># convert to genind object (smaller)</span></span>
+<span id="cb62-20"><a href="#cb62-20" aria-hidden="true" tabindex="-1"></a>  gi <span class="ot">&lt;-</span> PopGenReport<span class="sc">::</span><span class="fu">pops2genind</span>(simpops)</span>
+<span id="cb62-21"><a href="#cb62-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb62-22"><a href="#cb62-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create a list of all I want to collect</span></span>
+<span id="cb62-23"><a href="#cb62-23" aria-hidden="true" tabindex="-1"></a>  sim <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">para.space=</span>para.space[i,], <span class="at">para=</span>para, </span>
+<span id="cb62-24"><a href="#cb62-24" aria-hidden="true" tabindex="-1"></a>              <span class="at">landscape=</span>landscape, <span class="at">cost.mat=</span>cost.mat, <span class="at">gi=</span>gi)</span>
+<span id="cb62-25"><a href="#cb62-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb62-26"><a href="#cb62-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># save everything in an output folder (with a consecutive number, with three leading zeros, so the file sorting is nicer)</span></span>
+<span id="cb62-27"><a href="#cb62-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-28"><a href="#cb62-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">save</span>(sim, <span class="at">file =</span> <span class="fu">paste0</span>(here<span class="sc">::</span><span class="fu">here</span>(),<span class="st">&quot;/output/simout/sim_time5-45_rep5_&quot;</span>,</span>
+<span id="cb62-29"><a href="#cb62-29" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">sprintf</span>(<span class="st">&quot;%03i&quot;</span>,i) ,<span class="st">&quot;.RData&quot;</span>))</span>
+<span id="cb62-30"><a href="#cb62-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb62-31"><a href="#cb62-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">paste0</span>(<span class="st">&quot;Finished run: &quot;</span>, i,<span class="st">&quot; out of &quot;</span>,<span class="fu">nrow</span>(para.space),</span>
+<span id="cb62-32"><a href="#cb62-32" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;. So far, it took: &quot;</span>, <span class="fu">round</span>(<span class="fu">proc.time</span>()[<span class="dv">3</span>]<span class="sc">-</span>timer0,<span class="dv">2</span>),<span class="st">&quot; sec.</span><span class="sc">\n</span><span class="st">&quot;</span>))</span>
+<span id="cb62-33"><a href="#cb62-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">flush.console</span>()</span>
+<span id="cb62-34"><a href="#cb62-34" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre><code>## Finished run: 1 out of 15. So far, it took: 0.44 sec.
+## Finished run: 2 out of 15. So far, it took: 0.87 sec.
+## Finished run: 3 out of 15. So far, it took: 1.33 sec.
+## Finished run: 4 out of 15. So far, it took: 1.75 sec.
+## Finished run: 5 out of 15. So far, it took: 2.14 sec.
+## Finished run: 6 out of 15. So far, it took: 4.05 sec.
+## Finished run: 7 out of 15. So far, it took: 5.78 sec.
+## Finished run: 8 out of 15. So far, it took: 7.58 sec.
+## Finished run: 9 out of 15. So far, it took: 9.37 sec.
+## Finished run: 10 out of 15. So far, it took: 11.2 sec.
+## Finished run: 11 out of 15. So far, it took: 14.36 sec.
+## Finished run: 12 out of 15. So far, it took: 17.69 sec.
+## Finished run: 13 out of 15. So far, it took: 20.86 sec.
+## Finished run: 14 out of 15. So far, it took: 24.05 sec.
+## Finished run: 15 out of 15. So far, it took: 27.34 sec.</code></pre>
+</div>
+<div id="d-analyze-and-synthesize-results" class="section level3">
+<h3>d) Analyze and synthesize results</h3>
+<p>If you check your output folder (simout) you should see 15 files.</p>
+<p>Note: File paths can be different when you execute a chunk in an R notebook compared to when you copy-paste the same line into the console! We avoid this problem by using the function ‘here’ from package ‘here’.</p>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">dir</span>(<span class="fu">paste0</span>(here<span class="sc">::</span><span class="fu">here</span>(), <span class="st">&quot;/output/simout&quot;</span>)))</span></code></pre></div>
+<pre><code>## [1] &quot;sim_time5-45_rep5_001.RData&quot; &quot;sim_time5-45_rep5_002.RData&quot;
+## [3] &quot;sim_time5-45_rep5_003.RData&quot; &quot;sim_time5-45_rep5_004.RData&quot;
+## [5] &quot;sim_time5-45_rep5_005.RData&quot; &quot;sim_time5-45_rep5_006.RData&quot;</code></pre>
+<p>Now we are at step D where we need to read in all our files one by one, calculate some summary statistics and plot our results.</p>
+<p>Again, this could be easy, but be aware if you have thousands of files it could take quite some time and memory. The most convenient way is to load everyting and store it in a list, so we can access all of our simulations from memory. I will show how to do this in the example below, but be aware in larger simulations (think millions of runs, or large sample sizes) this is not possible and we would load a single simulation, calculate a statistic, store only the result in a table and free the memory for the next simulation run.</p>
+<p>Let’s load our simulation runs. There is one caveat: when we load the object ‘sim’ from the ‘.RData file’, we can’t assign it a new object name. I.e., we can’t use ‘newName &lt;- load(“sim.Rdata”). Instead, we can only type ’load(“sim.Rdata”)’ and it will create or overwrite the object ‘sim’. Also, R takes the name from the object that was saved, not from the file name. Hence, once we load the object, any existing object of the same name will be overwritten. So if we want to keep, it we need to rename it before using ‘load’.</p>
+<p>Here we do the following:</p>
+<ul>
+<li>Create an empty table with three columns ‘rep’, ‘time’, ‘fst’ and other columns to collect summary results for the 15 simulation runs.</li>
+<li>Create a vector that contains all filenames. The function ‘list.files’ does just that. We specify with path=“./simout”’ that the files in folder ‘simout’ should be listed, and with ’pattern=“sim” we specify that we want all file names that contain the expression “sim” (we could also have used “time”, for example - any component of the file name that is shared by all the files we are interested in but no other files that might be in the same folder).</li>
+<li>Loop through the files. For each filename ‘i’:
+<ul>
+<li>Load the file, which will create or overwrite the object ‘sim’. We need to supply not only the file name but the path, hence ‘paste0(“./simout/”,filenames[i])’ (see Week 8 video for more on file paths).</li>
+<li>Extract simulation parameters: Copy the ith row from ‘para.space’ (repeat number, timesteps) into the first two columns of the ith row of ‘res’.</li>
+<li>Extract the genind object ‘gi’ with the final genotypes.</li>
+<li>Calculate the mean of pairwise fst values and store in the third column of the ith row of ‘res’.</li>
+<li>Perform partial Mantel tests with function ‘wasserman’ and store the Mantel r statistics and the p-values in the corresponding columns. Note that this is somewhat tricky because the function ‘wasserman’ ranks the models and the better fitting model is listed in the first row, so that the order of the models can vary between runs. Therefore we extract the values based on model name.</li>
+<li>Perform ‘Sunder’ covariance analysis and extract which model is best supported (‘G’, ‘E’ or ‘GE’).</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">rep=</span><span class="cn">NA</span>, <span class="at">time=</span><span class="cn">NA</span>, <span class="at">fst=</span><span class="cn">NA</span>, <span class="at">r.Eucl=</span><span class="cn">NA</span>, <span class="at">p.Eucl=</span><span class="cn">NA</span>, </span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">r.cost=</span><span class="cn">NA</span>, <span class="at">p.cost=</span><span class="cn">NA</span>, <span class="at">Sunder=</span><span class="cn">NA</span>)</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a><span class="co">#load all files in the folder</span></span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>filenames <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="at">path=</span> <span class="fu">paste0</span>(here<span class="sc">::</span><span class="fu">here</span>(), <span class="st">&quot;/output/simout&quot;</span>), <span class="at">pattern=</span><span class="st">&quot;sim&quot;</span>)</span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(filenames))</span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#creates a sim object</span></span>
+<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">load</span>(<span class="fu">paste0</span>(here<span class="sc">::</span><span class="fu">here</span>(), <span class="st">&quot;/output/simout/&quot;</span>,filenames[i]))</span>
+<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">#now let us take what we need from the simulation</span></span>
+<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a>  res[i,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] <span class="ot">&lt;-</span> sim<span class="sc">$</span>para.space</span>
+<span id="cb66-14"><a href="#cb66-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb66-15"><a href="#cb66-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">#calculate a summary statistic: mean of pairwise fst values</span></span>
+<span id="cb66-16"><a href="#cb66-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># here we only take the lower triangle of the matrix to avoid the diagonal values,</span></span>
+<span id="cb66-17"><a href="#cb66-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># which are zero by definition (comparing each population to itself)</span></span>
+<span id="cb66-18"><a href="#cb66-18" aria-hidden="true" tabindex="-1"></a>  gen.mat <span class="ot">&lt;-</span> PopGenReport<span class="sc">::</span><span class="fu">pairwise.fstb</span>(sim<span class="sc">$</span>gi)  </span>
+<span id="cb66-19"><a href="#cb66-19" aria-hidden="true" tabindex="-1"></a>  res [i,<span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fu">mean</span>(gen.mat[<span class="fu">lower.tri</span>(gen.mat)])</span>
+<span id="cb66-20"><a href="#cb66-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb66-21"><a href="#cb66-21" aria-hidden="true" tabindex="-1"></a>  <span class="co">#partial Mantel tests</span></span>
+<span id="cb66-22"><a href="#cb66-22" aria-hidden="true" tabindex="-1"></a>  wass <span class="ot">&lt;-</span> PopGenReport<span class="sc">::</span><span class="fu">wassermann</span>(<span class="at">eucl.mat =</span> <span class="fu">dist</span>(sim<span class="sc">$</span>para<span class="sc">$</span>locs), </span>
+<span id="cb66-23"><a href="#cb66-23" aria-hidden="true" tabindex="-1"></a>                                <span class="at">cost.mats =</span> <span class="fu">list</span>(<span class="at">cost=</span>sim<span class="sc">$</span>cost.mat), </span>
+<span id="cb66-24"><a href="#cb66-24" aria-hidden="true" tabindex="-1"></a>                                <span class="at">gen.mat =</span> gen.mat, <span class="at">plot=</span>F)<span class="sc">$</span>mantel.tab</span>
+<span id="cb66-25"><a href="#cb66-25" aria-hidden="true" tabindex="-1"></a>  res[i,<span class="dv">4</span><span class="sc">:</span><span class="dv">5</span>] <span class="ot">&lt;-</span> wass[wass<span class="sc">$</span>model <span class="sc">==</span> <span class="st">&quot;Gen ~Euclidean | cost&quot;</span>, <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>]</span>
+<span id="cb66-26"><a href="#cb66-26" aria-hidden="true" tabindex="-1"></a>  res[i,<span class="dv">6</span><span class="sc">:</span><span class="dv">7</span>] <span class="ot">&lt;-</span> wass[wass<span class="sc">$</span>model <span class="sc">==</span> <span class="st">&quot;Gen ~cost | Euclidean&quot;</span>, <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>]</span>
+<span id="cb66-27"><a href="#cb66-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb66-28"><a href="#cb66-28" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Sunder</span></span>
+<span id="cb66-29"><a href="#cb66-29" aria-hidden="true" tabindex="-1"></a>  res[i,<span class="dv">8</span>] <span class="ot">&lt;-</span> <span class="fu">getSunder</span>(<span class="at">gen=</span>sim<span class="sc">$</span>gi, <span class="at">locs=</span>sim<span class="sc">$</span>para<span class="sc">$</span>locs, </span>
+<span id="cb66-30"><a href="#cb66-30" aria-hidden="true" tabindex="-1"></a>                           <span class="at">cost=</span>sim<span class="sc">$</span>cost.mat, <span class="at">nit=</span><span class="dv">10</span><span class="sc">^</span><span class="dv">2</span>) <span class="co">#if you have time, set nit=10^3</span></span>
+<span id="cb66-31"><a href="#cb66-31" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre><code>## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;
+## 
+## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;
+## 
+## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;
+## 
+## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;
+## 
+## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;
+## 
+## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;
+## 
+## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;
+## 
+## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;
+## 
+## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;
+## 
+## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;
+## 
+## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;
+## 
+## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;
+## 
+## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;
+## 
+## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;
+## 
+## Computations for model &#39;geog+envi&#39;
+## Computations for model &#39;geog&#39;
+## Computations for model &#39;envi&#39;</code></pre>
+<p>Look at the ‘res’ data frame and check the results.</p>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(res)</span></code></pre></div>
+<pre><code>##   rep time         fst  r.Eucl p.Eucl r.cost p.cost Sunder
+## 1   1    5 0.009291826 -0.1677  0.818 0.3232   0.09      E
+## 2   2    5 0.009304023 -0.2004  0.862 0.3199  0.067      G
+## 3   3    5 0.010189370  0.1331  0.242 0.0603  0.387    G+E
+## 4   4    5 0.009573448 -0.0648   0.59 0.3461  0.077      G
+## 5   5    5 0.009378724   0.111  0.307   0.03  0.457    G+E
+## 6   1   25 0.021535598 -0.2469   0.92 0.6393  0.028      E</code></pre>
+<p>The next step would be to visualise the results (e.g. plot runs over times and color by rep). A quick way to do that is to use the function ‘ggplot’ from the ‘ggplot2’ package. Here we add a jitter to keep points from overlapping too much.</p>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(res, ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x=</span>time, <span class="at">y=</span>fst)) <span class="sc">+</span> </span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>         ggplot2<span class="sc">::</span><span class="fu">geom_point</span>(<span class="at">position =</span> ggplot2<span class="sc">::</span><span class="fu">position_jitter</span>(<span class="at">w =</span> <span class="fl">0.5</span>))</span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="384" /></p>
+<p>Now it is again time for you to experiment. For example, why not set up a simulation that varies the number of loci. Or as you may have seen even after 100 generation there was no sign that the mean pairwise Fst value is levelling off. So how long do you have to run a simulation in terms of time to see this (be aware that simulation runs take longer if you increase the number of timesteps)?</p>
+<p>Questions:</p>
+<ul>
+<li>How would you set up a simulation experiment to compare type I error rates between partial Mantel test and Sunder?</li>
+<li>How about statistical power?</li>
+</ul>
+<p>Have fun and please give us feed back what you think about this Worked Example. <a href="mailto:bernd.gruber@canberra.edu.au">Bernd Gruber</a>, <a href="erin.landguth@gmail.com">Erin Landguth</a>, <a href="mailto:helene.wagner@utoronto.ca">Helene Wagner</a>.</p>
+</div>
+</div>
+<div id="r-exercise-week-8" class="section level2">
+<h2>6. R Exercise Week 8</h2>
+<p><strong>Task:</strong> Carry out a permutation test for the Mantel rank correlation to test for fine-scale spatial genetic structure in <em>Pulsatilla vulgaris</em> adults, using the pooled data from all seven patches. Use a one-sided alternative “greater”, as we expect the Mantel rank correlation to be positive.</p>
+<p><strong>Hints:</strong></p>
+<ul>
+<li>Exclude all pairs that involve individuals from different patches.</li>
+<li>Permute individuals only within patches, not between patches.</li>
+<li>Calculate the Mantel rank correlation for the observed data (M.rho.obs)</li>
+<li>For each of R = 499 permutations, calculate M.rho.sim</li>
+<li>Determine the approximate p-value of the one-sided test with alternative “greater” as the percentage of the 500 values (1 observed, 499 permuted) that are greater or equal to the observed one.</li>
+</ul>
+<ol style="list-style-type: lower-alpha">
+<li><p><strong>Load packages</strong>: You may want to load the packages <code>dplyr</code> and <code>gstudio</code>. Alternatively, you can use <code>::</code> to call functions from packages.</p></li>
+<li><p><strong>Import data, extract adults</strong>. Use the code below to import the data into <code>gstudio</code> and extract adults (<code>OffID == 0</code>).</p></li>
+</ol>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>Pulsatilla.gstudio <span class="ot">&lt;-</span> gstudio<span class="sc">::</span><span class="fu">read_population</span>(<span class="at">path=</span><span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>,</span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>                            <span class="st">&quot;pulsatilla_genotypes.csv&quot;</span>, </span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>), </span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">type=</span><span class="st">&quot;column&quot;</span>, <span class="at">locus.columns=</span><span class="fu">c</span>(<span class="dv">6</span><span class="sc">:</span><span class="dv">19</span>), </span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">phased=</span><span class="cn">FALSE</span>, <span class="at">sep=</span><span class="st">&quot;,&quot;</span>, <span class="at">header=</span><span class="cn">TRUE</span>)</span>
+<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a>Adults.gstudio <span class="ot">&lt;-</span> Pulsatilla.gstudio <span class="sc">%&gt;%</span> <span class="fu">filter</span>(OffID <span class="sc">==</span> <span class="dv">0</span>)</span></code></pre></div>
+<ol start="3" style="list-style-type: lower-alpha">
+<li><p><strong>Sort individuals by patch</strong>. Create a new ID variable <code>Names</code> that combines the existing variables <code>Population</code> and <code>ID</code> (starting with population). Then use the function <code>dplyr::arrange</code> to sort <code>Adults.gstudio</code> by <code>Names</code> (check the help file for <code>arrange</code>). This is important here for two reasons:</p>
+<ul>
+<li>In order to efficiently permute individuals within patches, they need to be sorted by patch.</li>
+<li>In some cases, the function <code>gstudio::genetic_distance</code> will sort the distance matrix alphabetically. To avoid mismatches between the data and the resulting distance matrix, it is best to sort the data alphabetically already.</li>
+</ul></li>
+<li><p><strong>Calculate Euclidean distances</strong>: Use the metric coordinates in variables “X” and “Y” to calculate Euclidean distances (see Week 5, section 4). Here it is important to store the distances <code>Dgeo</code> in the full matrix format, with <code>as.matrix</code>.</p></li>
+<li><p><strong>Calculate genetic distances (Dps)</strong>: Use the following code (as needed (adapt if needed) to calculate individual-level genetic distances (proportion of shared alleles) and store them in the full matrix format. We subtract values from 1 to obtain a distance measure. Note: the calculation in <code>gstudio</code> is based on Bray distance and the resulting values are proportional to those calculated by <code>adegenet::propShared</code>. I.e., the two measures have a correlation of 1 but the actual values differ.</p>
+<p><code>Dgen &lt;- 1 - as.matrix(gstudio::genetic_distance(Adults.gstudio, stratum=&quot;Names&quot;, mode=&quot;dps&quot;))</code></p></li>
+<li><p><strong>Plot distances, calculate M.rho</strong>: Create a plot of Dgen vs Dgeo, and calculate the Mantel rank correlation. Note: the function ‘cor’ with default settings does not allow missing values (NA). This can be changed e.g. with the argument <code>use</code>.</p>
+<ul>
+<li>Use <code>as.dist</code> to access only the values from the lower triangle of each matrix.</li>
+<li>The function <code>plot</code> will do. Inspect the plot. Where would you find the pairs of individuals within the same patch?</li>
+<li>Use the function <code>cor</code> with <code>method = &quot;spearman&quot;</code> to calculate the Mantel rank correlation. Allow for missing values with the argument <code>use = &quot;complete.obs&quot;</code>.</li>
+</ul></li>
+<li><p><strong>Limit to within-patch pairs</strong>: Restrict the analysis to pairs within the same patch. For this, we want to set all between-site comparisons in <code>Dgeo</code> to <code>NA</code>. Uncomment the code below to:</p>
+<ul>
+<li>Create a matrix that is TRUE if the two individuals are in the same patch, and FALSE if not (first line)</li>
+<li>Change FALSE to NA (second line)</li>
+<li>Multiply Dgeo by this matrix to set distances between patches to NA (third line).</li>
+<li>Adapt your code from above to plot the distances Dgen vs. Dgeo.within.</li>
+<li>Calculate the Mantel rank correlation between Dgen vs. Dgeo.within and store it as <code>Cor.obs</code>.</li>
+</ul></li>
+</ol>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co">#SamePatch &lt;- outer(Adults.gstudio$Population, Adults.gstudio$Population, FUN = &quot;==&quot;)</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SamePatch[SamePatch == &quot;FALSE&quot;] &lt;- NA</span></span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Dgeo.within &lt;- SamePatch * Dgeo</span></span></code></pre></div>
+<p>Note: check the help file or run the following examples to figure out what <code>outer</code> does: <code>outer(c(1:5), c(1:5), FUN = &quot;*&quot;)</code> <code>outer(c(1:5), c(1:5), FUN = &quot;-&quot;)</code> <code>outer(LETTERS[1:5], c(1:5), FUN = &quot;paste0&quot;)</code></p>
+<ol start="8" style="list-style-type: lower-alpha">
+<li><strong>Unrestricted permutation test</strong>: Create a variable <code>Order</code> with row numbers (from 1 to the number of individuals in <code>Adults.gstudio</code>). Then, uncomment the code below (adapt as needed) to carry out a permutation test by permuting the order of individuals, R = 499 times. Notes to permute a distance matrix, we need to permute the rows and columns of the full distance matrix simultaneously with the same order: <code>Dgen[a,a]</code>. We only need to permute one of the two matrices (Dgen or Dgeo.within), but not both. The approximate p-value is calculated as the proportion of values (R simulated ones and 1 observed <code>Cor.obs</code>) that were as large, or larger, than <code>Cor.obs</code>.</li>
+</ol>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co">#R = 499</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Cor.perm.unrestricted &lt;- rep(NA, R)</span></span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a><span class="co">#for(r in 1:R)</span></span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a><span class="co">#{</span></span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a><span class="co">#  a &lt;- sample(Order)</span></span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a><span class="co">#  Cor.perm.unrestricted[r] &lt;- cor(as.dist(Dgen[a,a]),as.dist(Dgeo.within), method=&quot;spearman&quot;, use=&quot;complete.obs&quot;)</span></span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a><span class="co">#}</span></span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a><span class="co">#approx.p.unrestricted &lt;- mean(c(Cor.obs, Cor.perm.unrestricted) &gt;= Cor.obs)</span></span>
+<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a><span class="co">#approx.p.unrestricted</span></span></code></pre></div>
+<ol style="list-style-type: lower-roman">
+<li><p><strong>Restricted permutation test</strong>: Adapt the code to permute individuals only within patches. For this, split ‘Order’ by population, randomize row numbers within groups (list elements = populations) with <code>sapply</code>, and use <code>unlist</code> to convert to a vector again. Make sure to change object names from ‘unrestricted’ to ‘restricted’.</p>
+<ul>
+<li>Before the <code>for</code> loop, add this code: <code>b &lt;- split(Order, Adults.gstudio$Population)</code></li>
+<li>Inside the <code>for</code> loop, replace the calculation of a : <code>a &lt;- unlist(sapply(b, sample))</code></li>
+</ul></li>
+</ol>
+<ol start="11" style="list-style-type: lower-alpha">
+<li><strong>Compare results</strong>: Create side-by-side boxplots of the simulated Mantel rank correlation values for the unrestricted and the restricted permutation tests. Note: if none of the simulated values was larger than Cor.obs, the approx. p-value will be 1/(R+1). This indicates the resolution of the permutation test, i.e., the smallest possible p-value given R.</li>
+</ol>
+<p><strong>Questions:</strong></p>
+<ul>
+<li>Did the direction, size or statistical significance of the observed Mantel rank correlation (as a measure of fine-scale spatial genetic structure in <em>P. vulgaris</em>) change between the unrestricted and the restricted permutation test? Why, or why not?</li>
+<li>How did the distributions of the simulated values of the Mantel rank correlation differ between the unrestricted and the restricted test? Can you think of a reason for this?</li>
+</ul>
+</div>
+
+<script type="text/javascript">
+window.onload = function() {
+  var i, fig = 1, caps = document.getElementsByClassName('caption');
+  for (i = 0; i < caps.length; i++) {
+    var cap = caps[i];
+    if (cap.parentElement.className !== 'figure' || cap.nodeName !== 'P')
+      continue;
+    cap.innerHTML = '<span>Figure ' + fig + ':</span> ' + cap.innerHTML;
+    fig++;
+  }
+  fig = 1;
+  caps = document.getElementsByTagName('caption');
+  for (i = 0; i < caps.length; i++) {
+    var cap = caps[i];
+    if (cap.parentElement.nodeName !== 'TABLE') continue;
+    cap.innerHTML = '<span>Table ' + fig + ':</span> ' + cap.innerHTML;
+    fig++;
+  }
+}
+</script>
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,179 @@
+---
+title: "Week 2: Bonus Material"
+author: "Helene Wagner"
+date: "`r Sys.Date()`"
+show_toc: true
+output:
+  knitr:::html_vignette:
+    toc: yes
+    fig_width: 4 
+    fig_height: 3.5
+vignette: >
+  %\VignetteIndexEntry{Week 2: Bonus Material}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+## 1. Overview
+
+### a) Goals 
+
+This bonus material expands the Worked Exakmple to show:
+
+- How to use a new standard for spatial vector data (`sf` package).
+- How to plot site attributes in space (`sf` package)
+- How to export the site data to a shapefile for import into a GIS (`sf` package).
+- How to plot a categorical raster map with a predefined color scheme, using `tmap` and a new standard for raster data (`terra` package).
+
+Try modifying the code to import your own data!
+
+### b) Required R libraries
+
+```{r message=FALSE, warning=TRUE}
+require(LandGenCourse)
+require(sp)
+require(sf)
+require(raster)
+require(GeNetIt)
+require(terra)
+library(tmap)
+library(dplyr)
+```
+
+## 2. Convert 'SpatialPointsDataFrame' to 'sf' object 
+
+While 'sp' was a major achievement, it is being replaced now by 'sf', which is short for "simple feature". The conversion is easy. The resulting S3 object is a data frame and also an 'sf' object.
+
+```{r}
+data(ralu.site)
+Sites.sf <- st_as_sf(ralu.site)
+class(Sites.sf)
+```
+
+## 3. Plot variables (first 10 in data set)
+
+If we use 'plot' on this 'sf' object, it will plot site attribute data in space! Here we set the point character 'pch' to a filled circle, which is symbol #16. 
+
+For an overview of 'pch' symbol numbers, and colors, check: http://vis.supstat.com/2013/04/plotting-symbols-and-color-palettes/
+
+```{r, fig.width=7, fig.height=6}
+par(mar=c(2,2,2,2))
+plot(Sites.sf, pch=16)
+```
+
+This is pretty cool! Let's have a closer look at some of the variables. 
+
+- Variabes 'Drainage' and 'Basin' (left): these are factors, and each factor level is assigned a different color.
+- Variables 'AREA_m2' and 'Depth_m' (right): these are quantitative variables, and R automatically uses a color ramp (from blue to pink to orange) to indicate variation in the values.
+
+Note: To learn about options for the 'plot' function for 'sf' objects, access the help file by typing '?plot' and select 'Plot sf object'.
+
+```{r fig.show='hold'}
+plot(Sites.sf[,c("Drainage", "Basin")], pch=16)
+plot(Sites.sf[,c("AREA_m2", "Depth_m")], pch=16)
+```
+
+## 4. Export site data as ESRI shapefile
+
+Just in case you want to know how you could get your results into a GIS. This is really easy with the 'sf' package. The following code may produce a warning that column names were abbreviated, and writes the component files for the ESRI shapefile into the pre-existing folder 'output' (the first line will create it if does not exist yet). Remember to remove the hashtags '#' to uncomment the code before running it.
+
+The argument 'delete_dsn' specifies whether any existing file with the same name should be deleted first (i.e., overwritten). 
+
+```{r}
+#require(here)
+#if(!dir.exists(paste0(here(),"/output"))) dir.create(paste0(here(),"/output"))
+#st_write(Sites.sf, paste0(here(),"/output/Sites.shp"), delete_dsn = TRUE)
+```
+
+## 5. Us'terra'  and 'tmap' to display categorical map with color scheme
+
+Now to a more tricky topic. Recall that the last raster layer in the Worked Example, 'nlcd', contains categorial land cover data that are coded numerically. The 'raster' package actually misinterpreted them as numeric data. 
+
+Similarly to `sp` being replaced by `sf`, `raster` is being replaced by `terra`. The conversion is easy, using the function `rast`. 
+
+Let's again extract the categorical raster layer into a new object 'NLCD'. We use as.factor to tell R that this is this is a categorical map. This is necessary because the values are coded numerically with values between 11 - 95. 
+
+```{r}
+data(rasters)
+NLCD <- as.factor(raster(rasters[6]))
+NLCD.terra <- rast(NLCD)
+NLCD.terra
+```
+`NLCD.terra` is an object of type `SpatRaster`.
+
+Here is a description of the cover types: https://www.mrlc.gov/data/legends/national-land-cover-database-2019-nlcd2019-legend
+
+So far, we only have the codes in the raster attribute table (RAT). We can display that table with the function `cats` (for categories).
+
+```{r}
+cats(NLCD.terra)
+```
+
+Let's add some columns with labels and predefined colors (using hex color code). A color table ("Colortable_LULC.csv") is already in the data folder. 
+
+It has more rows than we need, because not all US land cover classes occur in the study area. We need to make sure the colors and cover types are stored as 'character', because the missing factor levels would later create problems.
+
+```{r}
+ColTab <- read.csv(system.file("extdata", "Colortable_LULC.csv", 
+                            package = "LandGenCourse"), header=TRUE)
+ColTab$color <- as.character(ColTab$color)
+ColTab$attribute <- as.character(ColTab$attribute)
+ColTab
+```
+
+Now we need to match the codes in `NLCD.terra` and `ColTab` and extract the additional variables for the land use categories that occur in `NLCD.terra`. We can use the function `merge` to do this.Then we reorder the rows by ID.
+
+Note: a SpatRaster object could have more than one layer. Hence we specify the layer with `layer=1`.
+
+```{r}
+RAT <- merge(terra::cats(NLCD.terra, layer=1), ColTab, 
+             by.x="ID.1", by.y="value", all.x=TRUE, sort=TRUE)
+RAT <- RAT[order(RAT$ID),]
+RAT
+```
+
+Finally, we add the RAT to NLCD.terra using the function `setCats`. attribute column from RAT to define the levels of `NLCD.terra`. 
+
+```{r}
+terra::setCats(NLCD.terra, layer=1, value=RAT[,c(2,1,3,4)], index=2) 
+terra::cats(NLCD.terra, layer=1)
+```
+
+Note that color has a special meaning as it is not a true attribute but defines the color scheme used for plotting. A `SpatRaster` object in `terra` has a dedicated slot `coltab` for this. Again, we need to specify the layer, here we use `layer=1`.
+
+```{r}
+terra::coltab(NLCD.terra, layer=1) <- RAT$color
+```
+
+FIX THIS: does not plot! Workaround: use 95 levels.
+
+```{r}
+NLCD.terra <- terra::as.factor(terra::rast(raster(rasters[6])))
+RAT <- left_join(terra::cats(NLCD.terra)[[1]], ColTab, 
+                 by=c("ID"="value"))
+levels(NLCD.terra) <- RAT
+terra::coltab(NLCD.terra, layer=1)<-RAT$color
+```
+
+```{r fig.width=7}
+Map <- tm_shape(NLCD.terra) + 
+  tm_raster(labels=cats(NLCD.terra)[[1]]$attribute,
+            title="Land cover") +
+  tm_layout(legend.outside=TRUE, legend.outside.position="right") +
+  tm_grid(lines=FALSE)
+Map
+```
+
+To add an additional layer to the map, we first need to define the data for the layer with `tm_shape` and then define how they points should be symbolized with `tm_symbols`. 
+
+```{r fig.width=7, warning=FALSE}
+Map + tm_shape(ralu.site) +
+  tm_symbols(size=0.4, col="yellow", border.col="red")
+
+```
+
+
+
+```{r message=FALSE, warning=TRUE, include=FALSE}
+# Detach all packages except for some basic ones:
+LandGenCourse::detachAllPackages()
+```
