@@ -43,12 +43,25 @@ library(raster)
 #library(Sunder)   # requires mnormt
 ```
 
-Package 'secr' not automatically installed with 'LandGenCourse':
+Package `secr` not automatically installed with 'LandGenCourse':
 
 ```{r message=FALSE, warning=TRUE}
 if(!require(secr)) install.packages("secr", repos='http://cran.us.r-project.org')
 #library(secr)
 ```
+
+Install `gstudio` if missing:
+
+```{r}
+if(!requireNamespace("popgraph", quietly = TRUE))
+{
+  install.packages(c("RgoogleMaps", "geosphere", "proto", "sampling", 
+                      "seqinr", "spacetime", "spdep"), dependencies=TRUE)
+  remotes::install_github("dyerlab/popgraph")
+}
+if(!requireNamespace("gstudio", quietly = TRUE)) remotes::install_github("dyerlab/gstudio")
+```
+
 
 The following 'setup chunk' is used to set the root address of file paths to the root of the project folder.
 
