@@ -6,7 +6,7 @@ Date: 2018
 Author: Helene Wagner
 Maintainer: Helene Wagner <hhwagner1@gmail.com>
 Description: Installs four RStudio Addins (Watch Course Video, Start Tutorial, Choose Worked Examples, Open Cheat Sheet), several vignettes, and course data sets.
-License: GPL (>= 2)
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.5.0)
