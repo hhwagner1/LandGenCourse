@@ -43,7 +43,7 @@ library(nlme)
 #library(lattice)
 #library(MuMIn)
 #library(gridExtra)
-#library(dplyr)
+library(dplyr)
 library(spatialreg)
 library(ggplot2)
 library(ggmap)
@@ -78,12 +78,11 @@ Allelic richness 'A' was not calculate for populations with < 5 individuals. Her
 
 ### b) Create a map
 
-The functions in package 'ggmap' expect the projection to be Longitude/Latitude. We could start by transforming the projection of the Dianthus dataset:
+The functions in package 'ggmap' expect the projection to be Longitude/Latitude. We could start by transforming the projection of the Dianthus dataset (ignore the warning about CRS object having no comment):
 
 ```{r}
 Dianthus.longlat <- sp::spTransform(Dianthus, 
-                       CRSobj = tmaptools::get_proj4("longlat")$proj4string)
-
+             CRSobj = sp::CRS(SRS_string = "EPSG:4326"))
 
 make_bbox(lon = Longitude, lat = Latitude, data = Dianthus@data, f = 0.2)
 
@@ -496,7 +495,7 @@ An alternative way to account for spatial autocorrelation in the residuals is sp
 
 The method `errorsarlm` fits a simultaneous autoregressive model ('sar') to the error ('error') term of a 'lm' model. 
 
-This approach is based on spatial neighbours and weights. We have already defined them in three versions of a `listw` object. Let's see which one fits the data best.
+This approach is based on spatial neighbours and weights. We have already defined them in three versions of a `listw` object. Let's see which one fits the data best. First, we fit the three models:
 
 ```{r}
 mod.sar.IBR.gab <- spatialreg::errorsarlm(A ~ PatchSize + IBR, data = Dianthus.df, 
@@ -505,8 +504,17 @@ mod.sar.IBR.d1 <- spatialreg::errorsarlm(A ~ PatchSize + IBR, data = Dianthus.df
                                  listw = listw.d1)
 mod.sar.IBR.d2 <- spatialreg::errorsarlm(A ~ PatchSize + IBR, data = Dianthus.df, 
                                  listw = listw.d2)
+```
+Due to some issues when using `model.sel` with these objects, here we manually compile AICc and delta values and sort the models by delta: 
 
-MuMIn::model.sel(mod.lm.IBR, mod.sar.IBR.gab, mod.sar.IBR.d1, mod.sar.IBR.d2) 
+```{r}
+#MuMIn::model.sel(mod.lm.IBR, mod.sar.IBR.gab, mod.sar.IBR.d1, mod.sar.IBR.d2) 
+
+Models <- list(mod.lm.IBR=mod.lm.IBR, mod.sar.IBR.gab=mod.sar.IBR.gab, 
+               mod.sar.IBR.d1=mod.sar.IBR.d1, mod.sar.IBR.d2=mod.sar.IBR.d2)
+data.frame(AICc = sapply(Models, MuMIn::AICc)) %>% 
+  mutate(delta = AICc - min(AICc)) %>%
+  arrange(delta)
 ```
 
 The best model ('mod.sar.IBR.d1') is the one with (row-standardized) inverse-distance weights ('listw.d1'). It is only slightly better than the model with the (row-standardized) binary weights ('listw.gab'), whereas the nonspatial model and the one with (row-standardized) inverse squared distance weights have much less support. 
