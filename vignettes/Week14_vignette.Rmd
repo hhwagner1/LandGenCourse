@@ -41,7 +41,12 @@ There are three data files associated with this lab:
 Install some packages needed for this worked example.
 
 ```{r}
-if(!requireNamespace("popgraph", quietly = TRUE)) remotes::install_github("dyerlab/popgraph")
+if(!requireNamespace("popgraph", quietly = TRUE))
+{
+  install.packages(c("RgoogleMaps", "geosphere", "proto", "sampling", 
+                      "seqinr", "spacetime", "spdep"), dependencies=TRUE)
+  remotes::install_github("dyerlab/popgraph")
+}
 if(!requireNamespace("gstudio", quietly = TRUE)) remotes::install_github("dyerlab/gstudio")
 ```
 

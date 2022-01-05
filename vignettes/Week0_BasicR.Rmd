@@ -29,7 +29,13 @@ See also video "Week 0: Intro to R Notebooks" for options how to work this this 
 Install packages needed for this worked example. Note: `popgraph` needs to be installed before installing `gstudio`.
 
 ```{r}
-if(!requireNamespace("popgraph", quietly = TRUE)) remotes::install_github("dyerlab/popgraph")
+if(!requireNamespace("popgraph", quietly = TRUE))
+{
+  install.packages(c("RgoogleMaps", "geosphere", "proto", "sampling", 
+                      "seqinr", "spacetime", "spdep"), dependencies=TRUE)
+  remotes::install_github("dyerlab/popgraph")
+}
+  
 if(!requireNamespace("gstudio", quietly = TRUE)) remotes::install_github("dyerlab/gstudio")
 ```
 

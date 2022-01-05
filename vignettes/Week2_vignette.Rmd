@@ -63,12 +63,6 @@ library(GeNetIt)
 library(tibble)
 ```
 
-Package `tmaptools` not automatically installed with `LandGenCourse`:
-
-```{r message=FALSE, warning=TRUE}
-if(!require(tmaptools)) install.packages("tmaptools")
-```
-
 ## 2. Import site data from .csv file
 
 ### a) Import data into SpatialPointsDataFrame
@@ -120,24 +114,23 @@ Before we can combine the sampling locations with other spatial datasets, such a
 
 For more information on CRS, see: https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf
 
-We know that these coordinates are UTM zone 11 (Northern hemisphere) coordinates, hence we can use a helper function to find the correct `proj4string`, using function `get_proj4` from the `tmaptools` package. (For the Southern hemisphere, you would add `s` after the zone: `utm11s`). Here we call the function and the package simultaneously (this is good practice, as it helps keep track of where the functions in your code come from).
+We know that these coordinates are UTM zone 11 (Northern hemisphere) coordinates. We define it here by its EPSG code (32611). You can search for EPSG codes here: https://epsg.io/32611.
+
+Here we call the function and the package simultaneously (this is good practice, as it helps keep track of where the functions in your code come from).
 
 ```{r}
-proj4string(Sites.sp) <- tmaptools::get_proj4("utm11")$proj4string
+sp::proj4string(Sites.sp) <- sp::CRS(SRS_string = "EPSG:32611")
 ```
 
 Note: this function only **declares** the existing projection, it does not change the coordinates to that projection. 
 
-If we had longitude and latitude coordinates, we would modify the command like this: 
-proj4string(Sites.sp) <- tmaptools::get_proj4(“longlat”)$proj4string.
-
 ### c) Change projection
 
-In case we needed to **transform** the projection from UTM zone 11 to longitude/latitude, we could create a new sp object `Sites.sp.longlat`. We use the function `spTransform` to change the projection from the projection of the old object `Sites.sp` to the "longlat" coordinate system, which we define by the argument `CRSobj`.
+In case we needed to **transform** the projection from UTM zone 11 to longitude/latitude (EPSG code: 4326), we could create a new `sp` object `Sites.sp.longlat`. We use the function `spTransform` to change the projection from the projection of the old object `Sites.sp` to the "longlat" coordinate system, which we define by the argument `CRSobj`.
 
 ```{r}
 Sites.sp.longlat <- sp::spTransform(Sites.sp, 
-                      CRSobj = tmaptools::get_proj4("longlat")$proj4string)
+                      CRSobj = sp::CRS(SRS_string = "EPSG:4326"))
 head(Sites.sp.longlat@coords)
 ```
 

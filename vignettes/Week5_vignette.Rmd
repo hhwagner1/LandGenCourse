@@ -43,7 +43,12 @@ Install some packages (not on CRAN) that are needed for this worked example.
 if(!requireNamespace("EcoGenetics", quietly = TRUE)) 
   remotes::install_github("leandroroser/EcoGenetics-devel")
 if(!requireNamespace("GeNetIt", quietly = TRUE)) remotes::install_github("jeffreyevans/GeNetIt")
-if(!requireNamespace("popgraph", quietly = TRUE)) remotes::install_github("dyerlab/popgraph")
+if(!requireNamespace("popgraph", quietly = TRUE))
+{
+  install.packages(c("RgoogleMaps", "geosphere", "proto", "sampling", 
+                      "seqinr", "spacetime", "spdep"), dependencies=TRUE)
+  remotes::install_github("dyerlab/popgraph")
+}
 if(!requireNamespace("gstudio", quietly = TRUE)) remotes::install_github("dyerlab/gstudio")
 ```
 

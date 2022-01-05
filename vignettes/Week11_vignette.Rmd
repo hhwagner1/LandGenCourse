@@ -38,7 +38,7 @@ You may need to install packages 'qvalue' from BioClim and 'lfmm' from GitHub:
 if(!requireNamespace("qvalue", quietly = TRUE)) {  
   if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-  BiocManager::install(version = "3.12")
+  BiocManager::install(version = "3.14")
   BiocManager::install("qvalue")
 }
 if(!requireNamespace("lfmm", quietly = TRUE)) {  
