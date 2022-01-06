@@ -2,19 +2,6 @@ installDGS <- function()
 {
 
 
-
-#####################################
-# Check RStudio version
-#####################################
-
-info <- rstudioapi::versionInfo()
-
-# check what version of RStudio is in use
-if (info$version < "1.4") {
-  cat("Please update RStudio. Your version is: ",
-      as.character(info$version), "\n")
-}
-
 #####################################
 # Check R version: FALSE = up to date, TRUE = dated
 #####################################
@@ -96,6 +83,7 @@ if(!"pwr" %in% pkg) {
   utils::install.packages("http://cran.r-project.org/src/contrib/pwr_1.2-2.tar.gz",
                    repos=NULL, type="source")}
 if(!"Sunder" %in% pkg) {
+  utils::install.packages("mnormt")
   utils::install.packages("http://cran.r-project.org/src/contrib/Sunder_0.0.4.tar.gz",
                    repos=NULL, type="source")}
 if(!"usdm" %in% pkg) {
@@ -184,6 +172,11 @@ if(!"gstudio" %in% pkg) {
 
 if(!"LandGenCourseData" %in% pkg) {
   remotes::install_github("hhwagner1/LandGenCourseData", force=FALSE, upgrade = "never")}
+if(!"LandGenCourseData" %in% pkg) {
+  remotes::install_github("hhwagner1/LandGenCourseData", force=FALSE, upgrade = "never")}
+
+
+
 
 #### Install Bioclim packages
 if(!"qvalue" %in% pkg) {
@@ -208,11 +201,25 @@ pkg <- as.character(as.data.frame(utils::installed.packages())$Package)
   } else {
     #remotes::install_github("hhwagner1/LandGenCourse", force=TRUE, upgrade = "never")
     cat("All suggested packages installed", "\n\n")
-    }
+  }
+
+  #####################################
+  # Check RStudio version
+  #####################################
+
+  info <- rstudioapi::versionInfo()
+
+  # check what version of RStudio is in use
+  if (info$version < "1.4") {
+    cat("Please update RStudio. Your version is: ",
+        as.character(info$version), "\n\n")
+  }
+
+  #####################################
+  # Print session information
+  #####################################
+
+  utils::sessionInfo()
 }
 
-#####################################
-# Print session information
-#####################################
 
-utils::sessionInfo()
