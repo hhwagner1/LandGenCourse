@@ -199,10 +199,10 @@ cran.pkg <- unique(c(cran.pkg, "EcoGenetics", "QstFstComp", "popgraph", "gstudio
 pkg <- as.character(as.data.frame(utils::installed.packages())$Package)
   pkg.idx <- pkg[which(pkg %in% cran.pkg)]
   if(length(pkg.idx) != length(cran.pkg)) {
-    cat("The following packages are missing: ", cran.pkg[which(!cran.pkg %in% pkg.idx)], "\n\n")
+    cat("\n\n", "The following packages are missing: ", cran.pkg[which(!cran.pkg %in% pkg.idx)], "\n\n")
   } else {
     #remotes::install_github("hhwagner1/LandGenCourse", force=TRUE, upgrade = "never")
-    cat("All suggested packages installed", "\n\n")
+    cat("\n\n", "All suggested packages installed", "\n\n")
   }
 
   #####################################
