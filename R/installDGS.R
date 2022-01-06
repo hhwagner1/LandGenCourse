@@ -55,40 +55,40 @@ if( Sys.info()['sysname'] == "macOS") {
 #if(!"gstudio" %in% pkg) {
 #  utils::install.packages("http://cran.r-project.org/src/contrib/Archivess/gstudio/gstudio_1.3.tar.gz",
 #                   repos=NULL, type="source") }
-if(!"base64enc" %in% pkg) {
-  utils::install.packages("http://cran.r-project.org/src/contrib/base64enc_0.1-3.tar.gz",
-                   repos=NULL, type="source")}
-if(!"cowplot" %in% pkg) {
-  utils::install.packages("http://cran.r-project.org/src/contrib/cowplot_1.0.0.tar.gz",
-                   repos=NULL, type="source")}
-if(!"effsize" %in% pkg) {
-  utils::install.packages("http://cran.r-project.org/src/contrib/effsize_0.7.6.tar.gz",
-                   repos=NULL, type="source")}
-if(!"hierfstat" %in% pkg) {
-  utils::install.packages("http://cran.r-project.org/src/contrib/hierfstat_0.04-22.tar.gz",
-                   repos=NULL, type="source")}
-if(!"mapplots" %in% pkg) {
-  utils::install.packages("http://cran.r-project.org/src/contrib/mapplots_1.5.1.tar.gz",
-                   repos=NULL, type="source")}
-if(!"microbenchmark" %in% pkg) {
-  utils::install.packages("http://cran.r-project.org/src/contrib/microbenchmark_1.4-7.tar.gz",
-                   repos=NULL, type="source")}
-if(!"predictmeans" %in% pkg) {
-  utils::install.packages("http://cran.r-project.org/src/contrib/predictmeans_1.0.1.tar.gz",
-                   repos=NULL, type="source")}
-if(!"profvis" %in% pkg) {
-  utils::install.packages("http://cran.r-project.org/src/contrib/profvis_0.3.6.tar.gz",
-                   repos=NULL, type="source")}
-if(!"pwr" %in% pkg) {
-  utils::install.packages("http://cran.r-project.org/src/contrib/pwr_1.2-2.tar.gz",
-                   repos=NULL, type="source")}
-if(!"Sunder" %in% pkg) {
-  utils::install.packages("mnormt")
-  utils::install.packages("http://cran.r-project.org/src/contrib/Sunder_0.0.4.tar.gz",
-                   repos=NULL, type="source")}
-if(!"usdm" %in% pkg) {
-  utils::install.packages("http://cran.r-project.org/src/contrib/usdm_1.1-18.tar.gz",
-                   repos=NULL, type="source")}
+#if(!"base64enc" %in% pkg) {
+#  utils::install.packages("http://cran.r-project.org/src/contrib/base64enc_0.1-3.tar.gz",
+#                   repos=NULL, type="source")}
+#if(!"cowplot" %in% pkg) {
+#  utils::install.packages("http://cran.r-project.org/src/contrib/cowplot_1.0.0.tar.gz",
+#                   repos=NULL, type="source")}
+#if(!"effsize" %in% pkg) {
+#  utils::install.packages("http://cran.r-project.org/src/contrib/effsize_0.7.6.tar.gz",
+#                   repos=NULL, type="source")}
+#if(!"hierfstat" %in% pkg) {
+#  utils::install.packages("http://cran.r-project.org/src/contrib/hierfstat_0.04-22.tar.gz",
+#                   repos=NULL, type="source")}
+#if(!"mapplots" %in% pkg) {
+#  utils::install.packages("http://cran.r-project.org/src/contrib/mapplots_1.5.1.tar.gz",
+#                   repos=NULL, type="source")}
+#if(!"microbenchmark" %in% pkg) {
+#  utils::install.packages("http://cran.r-project.org/src/contrib/microbenchmark_1.4-7.tar.gz",
+#                   repos=NULL, type="source")}
+#if(!"predictmeans" %in% pkg) {
+#  utils::install.packages("http://cran.r-project.org/src/contrib/predictmeans_1.0.1.tar.gz",
+#                   repos=NULL, type="source")}
+#if(!"profvis" %in% pkg) {
+#  utils::install.packages("http://cran.r-project.org/src/contrib/profvis_0.3.6.tar.gz",
+#                   repos=NULL, type="source")}
+#if(!"pwr" %in% pkg) {
+#  utils::install.packages("http://cran.r-project.org/src/contrib/pwr_1.2-2.tar.gz",
+#                   repos=NULL, type="source")}
+#if(!"Sunder" %in% pkg) {
+#  utils::install.packages("mnormt")
+#  utils::install.packages("http://cran.r-project.org/src/contrib/Sunder_0.0.4.tar.gz",
+#                   repos=NULL, type="source")}
+#if(!"usdm" %in% pkg) {
+#  utils::install.packages("http://cran.r-project.org/src/contrib/usdm_1.1-18.tar.gz",
+#                   repos=NULL, type="source")}
 
 
 # Install poppr from binary
@@ -124,15 +124,16 @@ libs <- function(x, add = FALSE, install = TRUE) {
     }
   }
 }
-cran.pkg <- c("ade4", "adegenet", "BiocManager", "car", "compiler", "data.table", "deldir",
-              "doParallel", "dplyr", "feather", "fields", "formatR", "gdistance",
+cran.pkg <- c("ade4", "adegenet", "base64enc", "BiocManager", "car", "compiler", "cowplot", "data.table", "deldir",
+              "doParallel", "dplyr", "effsize", "feather", "fields", "formatR", "gdistance",
               "GeNetIt", "geosphere", "ggeffects", "ggmap", "ggplot2", "gridExtra", "here",
-              "httpuv", "igraph", "knitr", "landscapemetrics", "lattice", "lfmm", "lme4", "maps",
-              "Matrix", "mmod", "MuMIn", "mvtnorm", "nlme", "parallel",
-              "pegas", "PopGenReport", "poppr", "proto", "purrr", "RANN", "raster", "rasterVis", "readr", "RColorBrewer",
+              "httpuv", "hierfstat", "igraph", "knitr", "landscapemetrics", "lattice", "lfmm", "lme4", "maps",
+              "mapplots", "Matrix", "microbenchmark", "mmod", "MuMIn", "mvtnorm", "nlme", "parallel",
+              "pegas", "PopGenReport", "poppr", "predictmeans", "profvis", "proto", "purrr", "pwr",
+              "RANN", "raster", "rasterVis", "readr", "RColorBrewer",
               "RgoogleMaps", "rio", "rlang", "rmarkdown", "sampling", "seqinr",
-              "sf", "spacetime", "sp", "spatialEco", "spatialreg", "spdep", "spmoran", "SoDA", "stringi",
-              "testthat", "terra", "tibble", "tmap", "vegan", "vctrs")
+              "sf", "spacetime", "sp", "spatialEco", "spatialreg", "spdep", "spmoran", "SoDA", "stringi", "Sunder",
+              "testthat", "terra", "tibble", "tmap", "usdm", "vegan", "vctrs")
 libs(cran.pkg)
 
 #### Install specific CRAN versions
@@ -179,12 +180,13 @@ if(!"LandGenCourseData" %in% pkg) {
 
 
 #### Install Bioclim packages
+
 if(!"qvalue" %in% pkg) {
-  BiocManager::install(version = "3.14")
-  BiocManager::install("qvalue")
+  #BiocManager::install(version = "3.14", ask=FALSE, type="binary")
+  BiocManager::install("qvalue", ask=FALSE, type="binary")
 }
 if(!"LEA" %in% pkg) {
-  BiocManager::install("LEA")
+  BiocManager::install("LEA", ask=FALSE, type="binary")
 }
 
 # update package list to include GitHub, alternate version(s) and source installs
