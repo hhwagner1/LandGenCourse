@@ -211,9 +211,11 @@ pkg <- as.character(as.data.frame(utils::installed.packages())$Package)
 
   # check what version of RStudio is in use
   if (info$version < "1.4") {
+
     cat("Please update RStudio.")
   }
   cat("Your RStudio version is: ", as.character(info$version), "\n\n")
+
 
   #####################################
   # Print session information
