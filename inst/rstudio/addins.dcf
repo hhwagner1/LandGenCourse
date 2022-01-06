@@ -1,3 +1,8 @@
+Name: 0. Install Packages
+Description: installs all packages needed for "Landscape Genetic Data Analysis with R"
+Binding: installDGS
+Interactive: false
+
 Name: 1. Watch Course Video
 Description: opens a video resource from course "Landscape Genetic Data Analysis with R"
 Binding: watchVideoAddin
