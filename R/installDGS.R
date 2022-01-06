@@ -207,6 +207,12 @@ pkg <- as.character(as.data.frame(utils::installed.packages())$Package)
     cat("The following packages are missing: ", cran.pkg[which(!cran.pkg %in% pkg.idx)], "\n\n")
   } else {
     #remotes::install_github("hhwagner1/LandGenCourse", force=TRUE, upgrade = "never")
-    cat("All suggested packages installed")
+    cat("All suggested packages installed", "\n\n")
     }
 }
+
+#####################################
+# Print session information
+#####################################
+
+utils::sessionInfo()

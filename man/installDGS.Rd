@@ -5,6 +5,6 @@
 installDGS()
 }
 \description{
-This function checks the RStudio and R versions and installs all suggested packages for 'LandGenCourse'. These packages are used by the vignettes in 'LandGenCourse'. Modified from code provided by Jeffrey Evans.
+This function checks the RStudio and R versions, installs all suggested packages for 'LandGenCourse', and prints session information. Modified from code provided by Jeffrey Evans.
 }
 
