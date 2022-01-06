@@ -5,8 +5,7 @@ downloads
 vignettes/TempVignettes
 output
 .DS_Store
-
 Meta
-
 /Meta/
 /doc/
+.RData
