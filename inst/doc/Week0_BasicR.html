@@ -12,7 +12,7 @@
 
 <meta name="author" content="Rodney Dyer (worked example) and Helene Wagner (adaptation)" />
 
-<meta name="date" content="2022-01-05" />
+<meta name="date" content="2022-01-06" />
 
 <title>Week 0: Intro to R Programming</title>
 
@@ -141,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Week 0: Intro to R Programming</h1>
 <h4 class="author">Rodney Dyer (worked example) and Helene Wagner (adaptation)</h4>
-<h4 class="date">2022-01-05</h4>
+<h4 class="date">2022-01-06</h4>
 
 
 <div id="TOC">
@@ -230,19 +230,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>## [1] 0.099999999999999992</code></pre>
 <p>Not quite 0.1 is it? Not that far away from it but not exact. That is a general problem, not one that R has any more claim to than any other language and/or implementation. Does this matter much, probably not in the realm of the kinds of things we do in population genetics, it is just something that you should be aware of. You can make random sets of numeric data by using using functions describing various distributions. For example, some random numbers from the normal distribution are:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="dv">10</span>)</span></code></pre></div>
-<pre><code>##  [1]  0.7818756 -0.3159874  0.2018718 -0.8558693  0.4522911 -0.1716313
-##  [7] -0.1918662 -1.4849230  0.8692916 -1.0868386</code></pre>
+<pre><code>##  [1]  1.476403660 -0.002027678 -1.017156969 -0.752436001  0.166198569
+##  [6] -1.427345379 -0.557372336  0.639331172 -0.737383885  0.092300348</code></pre>
 <p>from the normal distribution with designated mean and standard deviation:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="dv">10</span>,<span class="at">mean=</span><span class="dv">42</span>,<span class="at">sd=</span><span class="dv">12</span>)</span></code></pre></div>
-<pre><code>##  [1] 26.40284 62.19042 36.39833 60.80184 40.10555 31.54802 48.68570 34.58407
-##  [9] 53.83178 31.22906</code></pre>
+<pre><code>##  [1] 31.60782 37.71620 42.50046 46.44232 44.41737 28.92291 46.97311 44.67212
+##  [9] 42.83025 36.22711</code></pre>
 <p>A poisson distribution with mean 2:</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rpois</span>(<span class="dv">10</span>,<span class="at">lambda =</span> <span class="dv">2</span>)</span></code></pre></div>
-<pre><code>##  [1] 1 2 3 0 1 2 1 5 2 4</code></pre>
+<pre><code>##  [1] 3 3 0 2 1 0 1 2 2 2</code></pre>
 <p>and the <span class="math inline">\(\chi^2\)</span> distribution with 1 degree of freedom:</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rchisq</span>(<span class="dv">10</span>, <span class="at">df=</span><span class="dv">1</span>)</span></code></pre></div>
-<pre><code>##  [1] 0.143159449 0.004907682 0.285745830 1.582992423 0.048971561 0.774508455
-##  [7] 4.106535421 1.957969142 2.275244849 3.031808576</code></pre>
+<pre><code>##  [1] 5.824425990 2.817916742 0.005715745 0.338431650 0.316290672 0.352374408
+##  [7] 0.286556478 0.123252593 1.021023382 1.411507447</code></pre>
 <p>There are several more distributions that if you need to access random numbers, quantiles, probability densities, and cumulative density values are available.</p>
 </div>
 <div id="b-coercion-to-numeric" class="section level4">
@@ -373,25 +373,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>It is common to use logical types to serve as indices for vectors. Say for example, you have a vector of data that you want to select some subset from.</p>
 <div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">20</span>)</span>
 <span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>data</span></code></pre></div>
-<pre><code>##  [1]  0.652192501 -0.762090865 -0.132205211  1.855084023 -0.867592595
-##  [6]  0.918787726 -0.449405260 -0.900284703  0.187827627  0.502427074
-## [11] -2.175324497 -0.005125727  1.869983539 -0.736189079 -1.058605396
-## [16]  0.242247677 -1.992366002 -1.337932963 -0.662554396 -1.860845639</code></pre>
+<pre><code>##  [1] -0.388112030 -0.001815674 -1.223566250  1.488212591  0.623354788
+##  [6] -1.044234082 -0.191580061  0.050189259  0.261541395 -0.618150399
+## [11] -0.044723517 -1.319363270  0.781375550  0.103830458  0.831136552
+## [16]  0.071819770 -0.372373166  0.720035084 -0.176154548 -0.874178908</code></pre>
 <p>Perhaps you are on interested in the non-negative values</p>
 <div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>data[ data <span class="sc">&gt;</span> <span class="dv">0</span> ]</span></code></pre></div>
-<pre><code>## [1] 0.6521925 1.8550840 0.9187877 0.1878276 0.5024271 1.8699835 0.2422477</code></pre>
+<pre><code>## [1] 1.48821259 0.62335479 0.05018926 0.26154140 0.78137555 0.10383046 0.83113655
+## [8] 0.07181977 0.72003508</code></pre>
 <p>If you look at the condition being passed to as the index</p>
 <div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">&gt;</span> <span class="dv">0</span></span></code></pre></div>
-<pre><code>##  [1]  TRUE FALSE FALSE  TRUE FALSE  TRUE FALSE FALSE  TRUE  TRUE FALSE FALSE
-## [13]  TRUE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE</code></pre>
+<pre><code>##  [1] FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE  TRUE  TRUE FALSE FALSE FALSE
+## [13]  TRUE  TRUE  TRUE  TRUE FALSE  TRUE FALSE FALSE</code></pre>
 <p>you see that individually, each value in the data vector is being evaluated as a logical value, satisfying the condition that it is strictly greater than zero. When you pass that as indices to a vector it only shows the indices that are <code>TRUE</code>.</p>
 <p>You can coerce a value into a logical if you understand the rules. Numeric types that equal 0 (zero) are <code>FALSE</code>, always. Any non-zero value is considered <code>TRUE</code>. Here I use the modulus operator, <code>%%</code>, which provides the remainder of a division.</p>
 <div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span><span class="dv">20</span> <span class="sc">%%</span> <span class="dv">2</span></span></code></pre></div>
 <pre><code>##  [1] 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0</code></pre>
 <p>which used as indices give us</p>
 <div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>data[ (<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span> <span class="sc">%%</span> <span class="dv">2</span>) <span class="sc">&gt;</span> <span class="dv">0</span> ]</span></code></pre></div>
-<pre><code>##  [1]  0.6521925 -0.1322052 -0.8675926 -0.4494053  0.1878276 -2.1753245
-##  [7]  1.8699835 -1.0586054 -1.9923660 -0.6625544</code></pre>
+<pre><code>##  [1] -0.38811203 -1.22356625  0.62335479 -0.19158006  0.26154140 -0.04472352
+##  [7]  0.78137555  0.83113655 -0.37237317 -0.17615455</code></pre>
 <p>You can get as complicated in the creation of indices as you like, even using logical operators such as OR and AND. I leave that as an example for you to play with.</p>
 </div>
 </div>
@@ -608,48 +609,48 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="#cb166-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>( <span class="at">ID=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">Names=</span><span class="fu">c</span>(<span class="st">&quot;Bob&quot;</span>,<span class="st">&quot;Alice&quot;</span>,<span class="st">&quot;Vicki&quot;</span>,<span class="st">&quot;John&quot;</span>,<span class="st">&quot;Sarah&quot;</span>), <span class="at">Score=</span><span class="dv">100</span> <span class="sc">-</span> <span class="fu">rpois</span>(<span class="dv">5</span>,<span class="at">lambda=</span><span class="dv">10</span>))</span>
 <span id="cb166-2"><a href="#cb166-2" aria-hidden="true" tabindex="-1"></a>df</span></code></pre></div>
 <pre><code>##   ID Names Score
-## 1  1   Bob    92
-## 2  2 Alice    87
-## 3  3 Vicki    92
-## 4  4  John    89
-## 5  5 Sarah    93</code></pre>
+## 1  1   Bob    91
+## 2  2 Alice    93
+## 3  3 Vicki    91
+## 4  4  John    95
+## 5  5 Sarah    92</code></pre>
 <p>You can see that each column is a unified type of data and each row is equivalent to a record. Additional data columns may be added to an existing data.frame as:</p>
 <div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="#cb168-1" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>Passed_Class <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">TRUE</span>,<span class="cn">TRUE</span>,<span class="cn">TRUE</span>,<span class="cn">FALSE</span>,<span class="cn">TRUE</span>)</span></code></pre></div>
 <p>Since we may have many (thousands?) of rows of observations, a <code>summary()</code> of the data.frame can provide a more compact description.</p>
 <div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="#cb169-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(df)</span></code></pre></div>
 <pre><code>##        ID       Names               Score      Passed_Class   
-##  Min.   :1   Length:5           Min.   :87.0   Mode :logical  
-##  1st Qu.:2   Class :character   1st Qu.:89.0   FALSE:1        
+##  Min.   :1   Length:5           Min.   :91.0   Mode :logical  
+##  1st Qu.:2   Class :character   1st Qu.:91.0   FALSE:1        
 ##  Median :3   Mode  :character   Median :92.0   TRUE :4        
-##  Mean   :3                      Mean   :90.6                  
-##  3rd Qu.:4                      3rd Qu.:92.0                  
-##  Max.   :5                      Max.   :93.0</code></pre>
+##  Mean   :3                      Mean   :92.4                  
+##  3rd Qu.:4                      3rd Qu.:93.0                  
+##  Max.   :5                      Max.   :95.0</code></pre>
 <p>We can add columns of data to the data.frame after the fact using the <code>$</code>-operator to indicate the column name. Depending upon the data type, the summary will provide an overview of what is there.</p>
 </div>
 <div id="b-indexing-data-frames" class="section level4">
 <h4>b) Indexing Data Frames</h4>
 <p>You can access individual items within a <code>data.frame</code> by numeric index such as:</p>
 <div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb171-1"><a href="#cb171-1" aria-hidden="true" tabindex="-1"></a>df[<span class="dv">1</span>,<span class="dv">3</span>]</span></code></pre></div>
-<pre><code>## [1] 92</code></pre>
+<pre><code>## [1] 91</code></pre>
 <p>You can slide indices along rows (which return a new <code>data.frame</code> for you)</p>
 <div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb173-1"><a href="#cb173-1" aria-hidden="true" tabindex="-1"></a>df[<span class="dv">1</span>,]</span></code></pre></div>
 <pre><code>##   ID Names Score Passed_Class
-## 1  1   Bob    92         TRUE</code></pre>
+## 1  1   Bob    91         TRUE</code></pre>
 <p>or along columns (which give you a vector of data)</p>
 <div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb175-1"><a href="#cb175-1" aria-hidden="true" tabindex="-1"></a>df[,<span class="dv">3</span>]</span></code></pre></div>
-<pre><code>## [1] 92 87 92 89 93</code></pre>
+<pre><code>## [1] 91 93 91 95 92</code></pre>
 <p>or use the <code>$</code>-operator as you did for the list data type to get direct access to a either all the data or a specific subset therein.</p>
 <div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb177-1"><a href="#cb177-1" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>Names[<span class="dv">3</span>]</span></code></pre></div>
 <pre><code>## [1] &quot;Vicki&quot;</code></pre>
 <p>Indices are ordered just like for matrices, rows first then columns. You can also pass a set of indices such as:</p>
 <div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb179-1"><a href="#cb179-1" aria-hidden="true" tabindex="-1"></a>df[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,]</span></code></pre></div>
 <pre><code>##   ID Names Score Passed_Class
-## 1  1   Bob    92         TRUE
-## 2  2 Alice    87         TRUE
-## 3  3 Vicki    92         TRUE</code></pre>
+## 1  1   Bob    91         TRUE
+## 2  2 Alice    93         TRUE
+## 3  3 Vicki    91         TRUE</code></pre>
 <p>It is also possible to use logical operators as indices. Here I select only those names in the data.frame whose score was &gt;90 and they passed popgen.</p>
 <div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="#cb181-1" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>Names[df<span class="sc">$</span>Score <span class="sc">&gt;</span> <span class="dv">90</span> <span class="sc">&amp;</span> df<span class="sc">$</span>Passed_Class<span class="sc">==</span><span class="cn">TRUE</span>]</span></code></pre></div>
-<pre><code>## [1] &quot;Bob&quot;   &quot;Vicki&quot; &quot;Sarah&quot;</code></pre>
+<pre><code>## [1] &quot;Bob&quot;   &quot;Alice&quot; &quot;Vicki&quot; &quot;Sarah&quot;</code></pre>
 <p>This is why <code>data.frame</code> objects are very database like. They can contain lots of data and you can extract from them subsets that you need to work on. This is a VERY important feature, one that is vital for reproducible research. Keep you data in one and only one place.</p>
 </div>
 </div>
