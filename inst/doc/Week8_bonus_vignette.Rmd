@@ -461,10 +461,10 @@ file.show(outFile)
 - What happened to the titles and text?
 - What about the header information?
 
-Now we can pass the file to `profvis':
+Now we can pass the file to `profvis` (uncomment by removing hashtag `#` to run code):
 
 ```{r profvis3}
-profvis::profvis(source(outFile), prof_output=file.path(here::here(), "output/output.prof"))
+#profvis::profvis(source(outFile), prof_output=file.path(here::here(), "output/output.prof"))
 ```
 
 **Question**: Which lines of code took the longest to run in this example?

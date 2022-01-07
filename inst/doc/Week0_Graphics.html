@@ -570,11 +570,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>## [1] 657</code></pre>
 <p>different colors available for your use. Not all are distinct as some overlap. However the benefit of these colors is that they have specific names, making it easier for you to remember than RGB or hex representations. Here are a random set of 20 color names.</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colors</span>()[ <span class="fu">sample.int</span>( <span class="fu">length</span>(<span class="fu">colors</span>()), <span class="at">size=</span><span class="dv">20</span>) ]</span></code></pre></div>
-<pre><code>##  [1] &quot;peachpuff&quot;        &quot;mediumaquamarine&quot; &quot;maroon&quot;           &quot;gray32&quot;          
-##  [5] &quot;grey59&quot;           &quot;gray91&quot;           &quot;gray90&quot;           &quot;sienna&quot;          
-##  [9] &quot;lightpink&quot;        &quot;grey15&quot;           &quot;steelblue3&quot;       &quot;yellow1&quot;         
-## [13] &quot;lightslategrey&quot;   &quot;bisque4&quot;          &quot;mediumpurple4&quot;    &quot;darksalmon&quot;      
-## [17] &quot;darkolivegreen2&quot;  &quot;darkorchid4&quot;      &quot;palegreen4&quot;       &quot;gray97&quot;</code></pre>
+<pre><code>##  [1] &quot;maroon4&quot;        &quot;darkred&quot;        &quot;lavenderblush2&quot; &quot;blue&quot;          
+##  [5] &quot;grey56&quot;         &quot;burlywood1&quot;     &quot;lightslategrey&quot; &quot;grey60&quot;        
+##  [9] &quot;gray0&quot;          &quot;violetred3&quot;     &quot;dimgray&quot;        &quot;darkslategrey&quot; 
+## [13] &quot;mediumpurple&quot;   &quot;wheat4&quot;         &quot;grey65&quot;         &quot;paleturquoise1&quot;
+## [17] &quot;pink1&quot;          &quot;cyan4&quot;          &quot;goldenrod4&quot;     &quot;bisque1&quot;</code></pre>
 <p>To use these colors you can call them by name in the col= option to a plot. Here is an example where I define three named colors and then coerce the <code>iris$Species</code> variable into an integer to select the color by species and plot it in a scatter plot (another version of the <code>pch=</code> example previously).</p>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;royalblue1&quot;</span>, <span class="st">&quot;orange1&quot;</span>, <span class="st">&quot;green3&quot;</span>)</span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> colors[ iris<span class="sc">$</span>Species ]</span>

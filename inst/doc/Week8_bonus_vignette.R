@@ -155,7 +155,7 @@ knitr::purl(inFile, output=outFile, quiet=TRUE)
 file.show(outFile)
 
 ## ----profvis3-----------------------------------------------------------------
-profvis::profvis(source(outFile), prof_output=file.path(here::here(), "output/output.prof"))
+#profvis::profvis(source(outFile), prof_output=file.path(here::here(), "output/output.prof"))
 
 ## ----BashScript---------------------------------------------------------------
 myPath <- file.path(here::here(), "output/myBashScript.sh")
