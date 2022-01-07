@@ -49,58 +49,10 @@ if( Sys.info()['sysname'] == "macOS") {
 #####################################
 # Install CRAN packages from source
 #####################################
-#if(!"popgraph" %in% pkg) {
-#  utils::install.packages("http://cran.r-project.org/src/contrib/Archive/popgraph/popgraph_1.4.tar.gz",
-#                   repos=NULL, type="source") }
-#if(!"gstudio" %in% pkg) {
-#  utils::install.packages("http://cran.r-project.org/src/contrib/Archivess/gstudio/gstudio_1.3.tar.gz",
-#                   repos=NULL, type="source") }
 #if(!"base64enc" %in% pkg) {
 #  utils::install.packages("http://cran.r-project.org/src/contrib/base64enc_0.1-3.tar.gz",
 #                   repos=NULL, type="source")}
-#if(!"cowplot" %in% pkg) {
-#  utils::install.packages("http://cran.r-project.org/src/contrib/cowplot_1.0.0.tar.gz",
-#                   repos=NULL, type="source")}
-#if(!"effsize" %in% pkg) {
-#  utils::install.packages("http://cran.r-project.org/src/contrib/effsize_0.7.6.tar.gz",
-#                   repos=NULL, type="source")}
-#if(!"hierfstat" %in% pkg) {
-#  utils::install.packages("http://cran.r-project.org/src/contrib/hierfstat_0.04-22.tar.gz",
-#                   repos=NULL, type="source")}
-#if(!"mapplots" %in% pkg) {
-#  utils::install.packages("http://cran.r-project.org/src/contrib/mapplots_1.5.1.tar.gz",
-#                   repos=NULL, type="source")}
-#if(!"microbenchmark" %in% pkg) {
-#  utils::install.packages("http://cran.r-project.org/src/contrib/microbenchmark_1.4-7.tar.gz",
-#                   repos=NULL, type="source")}
-#if(!"predictmeans" %in% pkg) {
-#  utils::install.packages("http://cran.r-project.org/src/contrib/predictmeans_1.0.1.tar.gz",
-#                   repos=NULL, type="source")}
-#if(!"profvis" %in% pkg) {
-#  utils::install.packages("http://cran.r-project.org/src/contrib/profvis_0.3.6.tar.gz",
-#                   repos=NULL, type="source")}
-#if(!"pwr" %in% pkg) {
-#  utils::install.packages("http://cran.r-project.org/src/contrib/pwr_1.2-2.tar.gz",
-#                   repos=NULL, type="source")}
-#if(!"Sunder" %in% pkg) {
-#  utils::install.packages("mnormt")
-#  utils::install.packages("http://cran.r-project.org/src/contrib/Sunder_0.0.4.tar.gz",
-#                   repos=NULL, type="source")}
-#if(!"usdm" %in% pkg) {
-#  utils::install.packages("http://cran.r-project.org/src/contrib/usdm_1.1-18.tar.gz",
-#                   repos=NULL, type="source")}
 
-
-# Install poppr from binary
-#if( Sys.info()['sysname'] == "Windows") {
-#  if(!"poppr" %in% pkg) {
-#    utils::install.packages("http://cran.r-project.org/bin/windows/contrib/4.0/poppr_2.8.3.zip",
-#                     repos=NULL, type="win.binary")}
-#} else {
-#  if(!"poppr" %in% pkg) {
-#    utils::install.packages("http://cran.r-project.org/macosx/el-capitan/contrib/3.6/poppr_2.8.3.tgz",
-#                     repos=NULL, type="mac.binary.el-capitan")}
-#}
 
 
 #####################################
@@ -129,11 +81,11 @@ cran.pkg <- c("ade4", "adegenet", "base64enc", "BiocManager", "car", "compiler",
               "GeNetIt", "geosphere", "ggeffects", "ggmap", "ggplot2", "gridExtra", "here",
               "httpuv", "hierfstat", "igraph", "knitr", "landscapemetrics", "lattice", "lfmm", "lme4", "maps",
               "mapplots", "Matrix", "microbenchmark", "mmod", "MuMIn", "mvtnorm", "nlme", "parallel",
-              "pegas", "PopGenReport", "poppr", "predictmeans", "profvis", "proto", "purrr", "pwr",
+              "pegas", "pinfsc50", "PopGenReport", "poppr", "predictmeans", "profvis", "proto", "purrr", "pwr",
               "RANN", "raster", "rasterVis", "readr", "RColorBrewer",
               "RgoogleMaps", "rio", "rlang", "rmarkdown", "sampling", "seqinr",
               "sf", "spacetime", "sp", "spatialEco", "spatialreg", "spdep", "spmoran", "SoDA", "stringi", "Sunder",
-              "testthat", "terra", "tibble", "tmap", "usdm", "vegan", "vctrs")
+              "testthat", "terra", "tibble", "tmap", "usdm", "vegan", "vcfR", "vctrs")
 libs(cran.pkg)
 
 #### Install specific CRAN versions
