@@ -12,7 +12,7 @@
 
 <meta name="author" content="Helene Wagner" />
 
-<meta name="date" content="2022-01-06" />
+<meta name="date" content="2022-01-07" />
 
 <title>Week 1: Importing Genetic Data</title>
 
@@ -141,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Week 1: Importing Genetic Data</h1>
 <h4 class="author">Helene Wagner</h4>
-<h4 class="date">2022-01-06</h4>
+<h4 class="date">2022-01-07</h4>
 
 
 <div id="TOC">
@@ -183,7 +183,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="#d-add-frogid">d) Add FrogID</a></li>
 <li><a href="#e-convert-to-genind-object">e) Convert to ‘genind’ object</a></li>
 </ul></li>
-<li><a href="#r-exercise-week-1">6. R exercise Week 1</a></li>
+<li><a href="#importing-snp-data">6. Importing SNP data</a>
+<ul>
+<li><a href="#a-import-from-text-file">a) Import from text file</a></li>
+<li><a href="#b-import-from-vcf-file-to-genind-object">b) Import from vcf file to genind object</a></li>
+<li><a href="#c-import-from-vcf-file-to-genlight-object">c) Import from vcf file to genlight object</a></li>
+</ul></li>
+<li><a href="#r-exercise-week-1">7. R exercise Week 1</a></li>
 </ul>
 </div>
 
@@ -198,6 +204,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>How the data are imported into a ‘genind’ object using package ‘adegenet’.</li>
 <li>How to view information stored in a ‘genind’ object.</li>
 <li>How to import the data with the ‘gstudio’ package.</li>
+<li>How to import SNP data</li>
 </ul>
 <p>Try modifying the code to import your own data!</p>
 </div>
@@ -232,7 +239,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gstudio)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(LandGenCourse)</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code></pre></div>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vcfR)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pinfsc50)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(utils)</span></code></pre></div>
 </div>
 </div>
 <div id="import-data-from-.csv-file" class="section level2">
@@ -281,10 +291,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="c-import-with-function-read.csv" class="section level3">
 <h3>c) Import with function ‘read.csv’</h3>
-<p>As the file is saved in csv format, we use the function ‘read.csv’ to import it into an R object called ‘Frogs’. Display the first few rows and columns to check whether the data have been imported correctly:</p>
+<p>As the file is saved in csv format, we use the function ‘read.csv’ to import it into an R object called <code>Frogs</code>. Display the first few rows and columns to check whether the data have been imported correctly:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>Frogs <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">paste0</span>(<span class="fu">here</span>(), <span class="st">&quot;/downloads/ralu.loci.csv&quot;</span>), <span class="at">header=</span><span class="cn">TRUE</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(Frogs)</span></code></pre></div>
-<pre><code>## # A tibble: 181 x 10
+<pre><code>## # A tibble: 181 × 10
 ##    SiteName     Pop      A     B     C     D     E     F     G     H    
 ##    &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
 ##  1 AirplaneLake Airplane 1:1   1:1   1:1   1:1   1:2   1:1   1:1   4:5  
@@ -297,9 +307,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8 AirplaneLake Airplane 2:2   1:3   1:1   1:1   3:3   1:1   1:1   2:3  
 ##  9 AirplaneLake Airplane 3:1   1:1   1:1   1:1   1:7   1:1   1:1   3:5  
 ## 10 AirplaneLake Airplane 2:2   1:3   1:1   1:1   3:7   1:1   1:1   3:3  
-## # ... with 171 more rows</code></pre>
+## # … with 171 more rows</code></pre>
 <ul>
-<li>The data frame ‘Frogs’ contains 181 rows and 11 columns. Only the first few are shown.</li>
+<li>The data frame <code>Frogs</code> contains 181 rows and 11 columns. Only the first few are shown.</li>
 <li>The file has a header row with column names.</li>
 <li>Notice the abbreviations for the R data type under each variable name: <code>&lt;fctr&gt;</code> means that the variable has been coded as a factor.</li>
 <li>Each row is one individual. Note that for this data set, there is no column with ID or names of individuals.</li>
@@ -311,10 +321,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="d-create-id-variable" class="section level3">
 <h3>d) Create ID variable</h3>
-<p>We’ll add unique ID’s for the frogs (to show how these would be imported). Here we take, for each frog, a substring of <code>Pop</code> containing the first three letters, add the row number, and separate them by a period.</p>
+<p>We’ll add unique ID’s for the frogs (to show how these would be imported). Here we take, for each frog, a sub-string of <code>Pop</code> containing the first three letters, add the row number, and separate them by a period.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>Frogs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">FrogID =</span> <span class="fu">paste</span>(<span class="fu">substr</span>(Frogs<span class="sc">$</span>Pop, <span class="dv">1</span>, <span class="dv">3</span>), <span class="fu">row.names</span>(Frogs), <span class="at">sep=</span><span class="st">&quot;.&quot;</span>), Frogs)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(Frogs)</span></code></pre></div>
-<pre><code>## # A tibble: 181 x 11
+<pre><code>## # A tibble: 181 × 11
 ##    FrogID SiteName     Pop      A     B     C     D     E     F     G     H    
 ##    &lt;chr&gt;  &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
 ##  1 Air.1  AirplaneLake Airplane 1:1   1:1   1:1   1:1   1:2   1:1   1:1   4:5  
@@ -327,12 +337,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8 Air.8  AirplaneLake Airplane 2:2   1:3   1:1   1:1   3:3   1:1   1:1   2:3  
 ##  9 Air.9  AirplaneLake Airplane 3:1   1:1   1:1   1:1   1:7   1:1   1:1   3:5  
 ## 10 Air.10 AirplaneLake Airplane 2:2   1:3   1:1   1:1   3:7   1:1   1:1   3:3  
-## # ... with 171 more rows</code></pre>
+## # … with 171 more rows</code></pre>
 </div>
 <div id="e-export-with-function-write.csv" class="section level3">
 <h3>e) Export with function ‘write.csv’</h3>
 <p>If you want to export (and import) your own files, adapt this code.</p>
-<p>Note: when using R Notebooks, problems can arise if R looks for files in a different place (more on this in Week 8 Bonus material). This is a safe work-around that will help make your work reproducible and transferable to other computers. For this to work properly, you must work within an R project, and you must have writing permission for the project folder.</p>
+<p>Note: when using R Notebooks, problems can arise if R looks for files in a different place (more on this in Week 8 Bonus material). Here, we use a safe work-around, with the function <code>here</code>, that will help make your work reproducible and transferable to other computers. For this to work properly, you must work within an R project, and you must have writing permission for the project folder.</p>
 <p>The function <code>here</code> from the package <code>here</code> finds the path to your project folder. Remove the hashtags and run the two lines to see the path to your project folder, and the path to the (to be created) output folder. The function <code>paste0</code> simply pastes strings of text together, without any separator (hence the ‘0’ in the function name).</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#here() </span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#paste0(here(),&quot;/output&quot;)</span></span></code></pre></div>
@@ -372,7 +382,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="c-check-imported-data" class="section level3">
 <h3>c) Check imported data</h3>
-<p>Printing the genind object’s name lists the number of individuals, loci and alleles, and lists all slots (prefaced by @).</p>
+<p>Printing the genind object’s name lists the number of individuals, loci and alleles, and lists all slots (prefaced by <code>@</code>).</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>Frogs.genind</span></code></pre></div>
 <pre><code>## /// GENIND OBJECT /////////
 ## 
@@ -417,7 +427,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3>a) Slot <span class="citation">@tab</span></h3>
 <p>Table with allele counts, where each column is an allele. Allele name <code>A.1</code> means “locus A, allele 1”. For a codominant marker (e.g. microsatellite) and a diploid species, allele counts per individual can be 0, 1, 2, or NA=missing. Here are the first few lines:</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as_tibble</span>(Frogs.genind<span class="sc">@</span>tab)</span></code></pre></div>
-<pre><code>## # A tibble: 181 x 39
+<pre><code>## # A tibble: 181 × 39
 ##      A.1   A.2   A.3   B.1   B.3   B.2   B.4   C.1   C.2   C.4   C.5   D.1   D.2
 ##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
 ##  1     2     0     0     2     0     0     0     2     0     0     0     2     0
@@ -430,11 +440,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8     0     2     0     1     1     0     0     2     0     0     0     2     0
 ##  9     1     0     1     2     0     0     0     2     0     0     0     2     0
 ## 10     0     2     0     1     1     0     0     2     0     0     0     2     0
-## # ... with 171 more rows, and 26 more variables: D.3 &lt;int&gt;, D.4 &lt;int&gt;,
-## #   E.1 &lt;int&gt;, E.2 &lt;int&gt;, E.3 &lt;int&gt;, E.7 &lt;int&gt;, E.6 &lt;int&gt;, E.8 &lt;int&gt;,
-## #   E.5 &lt;int&gt;, E.4 &lt;int&gt;, E.10 &lt;int&gt;, F.1 &lt;int&gt;, F.2 &lt;int&gt;, F.3 &lt;int&gt;,
-## #   G.1 &lt;int&gt;, G.2 &lt;int&gt;, G.3 &lt;int&gt;, G.5 &lt;int&gt;, H.4 &lt;int&gt;, H.5 &lt;int&gt;,
-## #   H.3 &lt;int&gt;, H.2 &lt;int&gt;, H.1 &lt;int&gt;, H.6 &lt;int&gt;, H.8 &lt;int&gt;, H.7 &lt;int&gt;</code></pre>
+## # … with 171 more rows, and 26 more variables: D.3 &lt;int&gt;, D.4 &lt;int&gt;, E.1 &lt;int&gt;,
+## #   E.2 &lt;int&gt;, E.3 &lt;int&gt;, E.7 &lt;int&gt;, E.6 &lt;int&gt;, E.8 &lt;int&gt;, E.5 &lt;int&gt;,
+## #   E.4 &lt;int&gt;, E.10 &lt;int&gt;, F.1 &lt;int&gt;, F.2 &lt;int&gt;, F.3 &lt;int&gt;, G.1 &lt;int&gt;,
+## #   G.2 &lt;int&gt;, G.3 &lt;int&gt;, G.5 &lt;int&gt;, H.4 &lt;int&gt;, H.5 &lt;int&gt;, H.3 &lt;int&gt;,
+## #   H.2 &lt;int&gt;, H.1 &lt;int&gt;, H.6 &lt;int&gt;, H.8 &lt;int&gt;, H.7 &lt;int&gt;</code></pre>
 </div>
 <div id="b-slot-loc.n.all" class="section level3">
 <h3>b) Slot <span class="citation">@loc.n.all</span></h3>
@@ -499,7 +509,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2>5. Import data with ‘gstudio’ package</h2>
 <div id="a-function-read_population" class="section level3">
 <h3>a) Function ‘read_population’</h3>
-<p>While ‘genind’ objects are used by many functions for analyzing genetic data, the <code>gstudio</code> package provides an interface for additional analysis. We use the function <code>read_population</code> to import the data.</p>
+<p>While <code>genind</code> objects are used by many functions for analyzing genetic data, the <code>gstudio</code> package provides an interface for additional analysis. We use the function <code>read_population</code> to import the data.</p>
 <div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>?read_population</span></code></pre></div>
 </div>
 <div id="b-set-arguments" class="section level3">
@@ -551,7 +561,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="e-convert-to-genind-object" class="section level3">
 <h3>e) Convert to ‘genind’ object</h3>
-<p>We can use the dataframe with the locus objects from gstudio to import the data into a genind object. In this case, we set <code>sep=&quot;:&quot;</code>, because the <code>locus</code> object in <code>gstudio</code> stores the alleles at each locus separated by a colon, and <code>NA.char=&quot;&quot;</code>, because <code>gstudio</code> stores missing values as empty cells.</p>
+<p>We can use the dataframe with the locus objects from gstudio to import the data into a <code>genind</code> object. In this case, we set <code>sep=&quot;:&quot;</code>, because the <code>locus</code> object in <code>gstudio</code> stores the alleles at each locus separated by a colon, and <code>NA.char=&quot;&quot;</code>, because <code>gstudio</code> stores missing values as empty cells.</p>
 <div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>Frogs.genind2 <span class="ot">&lt;-</span> adegenet<span class="sc">::</span><span class="fu">df2genind</span>(<span class="at">X=</span>Frogs.gstudio[,<span class="fu">c</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">11</span>)], <span class="at">sep=</span><span class="st">&quot;:&quot;</span>, <span class="at">ncode=</span><span class="cn">NULL</span>,   </span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">ind.names=</span>Frogs.gstudio<span class="sc">$</span>FrogID, <span class="at">loc.names=</span><span class="cn">NULL</span>, </span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">pop=</span>Frogs.gstudio<span class="sc">$</span>Pop, <span class="at">NA.char=</span><span class="st">&quot;&quot;</span>, <span class="at">ploidy=</span><span class="dv">2</span>, </span>
@@ -577,15 +587,133 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##    @pop: population of each individual (group size range: 7-23)</code></pre>
 </div>
 </div>
+<div id="importing-snp-data" class="section level2">
+<h2>6. Importing SNP data</h2>
+<div id="a-import-from-text-file" class="section level3">
+<h3>a) Import from text file</h3>
+<p>First, we’ll import a relatively small SNP dataset from a text file. This dataset will be analyzed in the Week 6 Worked Example. The data are stored in a tab-delimited text file.</p>
+<p>Let’s have a look at the first few rows and columns:</p>
+<ul>
+<li><code>family</code>: these are ID’s of the genotyped tree individuals (from which seeds were grown in a common-garden experiment, hence they are called “family” in the dataset).</li>
+<li><code>population</code>: the trees were sampled from a set of populations.</li>
+<li><code>snpXXX.Plmn</code>: each column is a diploid SNP.</li>
+</ul>
+<p>To import your own data, replace <code>infile</code> by the path to the text file with your SNP data. Change settings as necessary (check whether data are separated by tabs or commas!).</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>infile <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;WWP_SNP_genotypes.txt&quot;</span>, <span class="at">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>Trees <span class="ot">&lt;-</span> <span class="fu">read.table</span>(infile, <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\t</span><span class="st">&quot;</span>)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>Trees[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>]</span></code></pre></div>
+<pre><code>##   family population snp102.Plmn snp106.Plmn snp108.Plmn snp110.Plmn
+## 1     59    blk cyn          CC          AC          GG          GG
+## 2     60    blk cyn          AC          AA          AG          GG
+## 3     61    blk cyn          CC          AA          AG          GG
+## 4     63    blk cyn          CC          AA          GG          GG
+## 5     64    blk cyn          AC          AA          AG          GG
+## 6     65    blk cyn          AC          AA        &lt;NA&gt;          GG</code></pre>
+<p>We should replace the SNP column names: if they contain a period ., then the function df2genind thinks that the first part indicates the locus and the second part the allele. The following line of code splits each column name by the period and only retains the first part.</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(Trees) <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(<span class="fu">names</span>(Trees), <span class="cf">function</span>(x) <span class="fu">strsplit</span>(x, <span class="st">&quot;[.]&quot;</span>)[[<span class="dv">1</span>]][<span class="dv">1</span>]))</span></code></pre></div>
+<p>To import these data frame into a <code>genind</code> object, we need to tell R how the SNP data are coded (check the <code>df2genind</code> help file!)</p>
+<ul>
+<li><code>ncode = 1</code>: each allele (A, C, G, T) is coded with a single character.</li>
+<li><code>sep = &quot;&quot;</code>: the two alleles per individual and locus are not separated by any symbol.</li>
+<li><code>NA.char= &quot;NA&quot;</code>: missing values are coded as NA.</li>
+</ul>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>Trees.genind <span class="ot">&lt;-</span> adegenet<span class="sc">::</span><span class="fu">df2genind</span>(<span class="at">X=</span>Trees[,<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)], <span class="at">sep=</span><span class="st">&quot;&quot;</span>, <span class="at">ncode=</span><span class="dv">1</span>,   </span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">ind.names=</span>Trees<span class="sc">$</span>family, <span class="at">loc.names=</span><span class="cn">NULL</span>, </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">pop=</span>Trees<span class="sc">$</span>population, <span class="at">NA.char=</span><span class="st">&quot;NA&quot;</span>, <span class="at">ploidy=</span><span class="dv">2</span>, </span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">type=</span><span class="st">&quot;codom&quot;</span>, <span class="at">strata=</span><span class="cn">NULL</span>, <span class="at">hierarchy=</span><span class="cn">NULL</span>)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>Trees.genind</span></code></pre></div>
+<pre><code>## /// GENIND OBJECT /////////
+## 
+##  // 157 individuals; 164 loci; 324 alleles; size: 302 Kb
+## 
+##  // Basic content
+##    @tab:  157 x 324 matrix of allele counts
+##    @loc.n.all: number of alleles per locus (range: 1-2)
+##    @loc.fac: locus factor for the 324 columns of @tab
+##    @all.names: list of allele names for each locus
+##    @ploidy: ploidy of each individual  (range: 2-2)
+##    @type:  codom
+##    @call: adegenet::df2genind(X = Trees[, -c(1:2)], sep = &quot;&quot;, ncode = 1, 
+##     ind.names = Trees$family, loc.names = NULL, pop = Trees$population, 
+##     NA.char = &quot;NA&quot;, ploidy = 2, type = &quot;codom&quot;, strata = NULL, 
+##     hierarchy = NULL)
+## 
+##  // Optional content
+##    @pop: population of each individual (group size range: 9-22)</code></pre>
+</div>
+<div id="b-import-from-vcf-file-to-genind-object" class="section level3">
+<h3>b) Import from vcf file to genind object</h3>
+<p>A common data format for genomic data is vcf. Here’s some background information (all but the first are vignettes from the <code>vcfR</code> package):</p>
+<ul>
+<li>PDF defining the data format: <a href="https://samtools.github.io/hts-specs/VCFv4.3.pdf" class="uri">https://samtools.github.io/hts-specs/VCFv4.3.pdf</a></li>
+<li>Tutorial on data format: <a href="https://cran.r-project.org/web/packages/vcfR/vignettes/vcf_data.html" class="uri">https://cran.r-project.org/web/packages/vcfR/vignettes/vcf_data.html</a></li>
+<li>Tutorial on quality testing: <a href="https://cran.r-project.org/web/packages/vcfR/vignettes/intro_to_vcfR.html" class="uri">https://cran.r-project.org/web/packages/vcfR/vignettes/intro_to_vcfR.html</a></li>
+<li>Tutorial on converting vcf data: <a href="https://cran.r-project.org/web/packages/vcfR/vignettes/converting_data.html" class="uri">https://cran.r-project.org/web/packages/vcfR/vignettes/converting_data.html</a></li>
+</ul>
+<p>The R package <code>vcfR</code> makes it easy to import vcf files and convert to other formats. Here we use it to convert the data into a <code>genind</code> object. The following code is adapted from the above listed <code>vcfR</code> vignettes.</p>
+<p>We’ll import a file that is distributed with the <code>pinfsc50</code> package. Note that <code>vcf</code> files are commonly compressed in <code>gz</code> archives. To import your own data, replace <code>vcf_file</code> by the path to your own <code>gz</code> archive.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>vcf_file <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;pinf_sc50.vcf.gz&quot;</span>, <span class="at">package =</span> <span class="st">&quot;pinfsc50&quot;</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>vcf <span class="ot">&lt;-</span> <span class="fu">read.vcfR</span>( vcf_file, <span class="at">verbose =</span> <span class="cn">FALSE</span> )</span></code></pre></div>
+<p>Note that the package <code>vcfR</code> can import three types of genomic data files listed below. We will only use the <code>.vcf</code> file here.</p>
+<ul>
+<li>.<code>vcf</code>: SNPs</li>
+<li><code>.fasta</code>: genomic reference sequence data</li>
+<li><code>.gff</code>: annotation</li>
+</ul>
+<p>Convert to <code>genind</code> object:</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>SNP_genind <span class="ot">&lt;-</span> <span class="fu">vcfR2genind</span>(vcf)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>SNP_genind</span></code></pre></div>
+<pre><code>## /// GENIND OBJECT /////////
+## 
+##  // 18 individuals; 22,031 loci; 44,137 alleles; size: 16.4 Mb
+## 
+##  // Basic content
+##    @tab:  18 x 44137 matrix of allele counts
+##    @loc.n.all: number of alleles per locus (range: 1-5)
+##    @loc.fac: locus factor for the 44137 columns of @tab
+##    @all.names: list of allele names for each locus
+##    @ploidy: ploidy of each individual  (range: 2-2)
+##    @type:  codom
+##    @call: adegenet::df2genind(X = t(x), sep = sep)
+## 
+##  // Optional content
+##    - empty -</code></pre>
+</div>
+<div id="c-import-from-vcf-file-to-genlight-object" class="section level3">
+<h3>c) Import from vcf file to genlight object</h3>
+<p>This dataset has 18 individuals genotyped at 44,137. It may be better to use a <code>genlight</code> object instead of <code>genind</code>. This is an alternative object type from the package <code>adegenet</code> that can store large genomic data much more efficiently.</p>
+<p>Note: the current implementation can only store two alleles per locus, loci with more alleles will be dropped and a warning is printed.</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>SNP_genlight <span class="ot">&lt;-</span> <span class="fu">vcfR2genlight</span>(vcf)</span></code></pre></div>
+<pre><code>## Warning in vcfR2genlight(vcf): Found 312 loci with more than two alleles.
+## Objects of class genlight only support loci with two alleles.
+## 312 loci will be omitted from the genlight object.</code></pre>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>SNP_genlight</span></code></pre></div>
+<pre><code>##  /// GENLIGHT OBJECT /////////
+## 
+##  // 18 genotypes,  21,719 binary SNPs, size: 2.2 Mb
+##  31239 (7.99 %) missing data
+## 
+##  // Basic content
+##    @gen: list of 18 SNPbin
+## 
+##  // Optional content
+##    @ind.names:  18 individual labels
+##    @loc.names:  21719 locus labels
+##    @chromosome: factor storing chromosomes of the SNPs
+##    @position: integer storing positions of the SNPs
+##    @other: a list containing: elements without names</code></pre>
+<p>Note that instead of 44,137 alleles, we now have 21,719 binary SNPs. This is one of the ways by which the <code>genlight</code> object is more efficient than <code>genind</code>. Overall, the size has been reduced from 16.4 Mb to 2.2 Mb!</p>
+</div>
+</div>
 <div id="r-exercise-week-1" class="section level2">
-<h2>6. R exercise Week 1</h2>
+<h2>7. R exercise Week 1</h2>
 <p><strong>R Notebook:</strong> Create a new R Notebook for each weekly exercise. Watch the course video “Week 0: Intro to R Notebooks” as needed. At the end, “knit” it to an html file and view it in your browser.</p>
 <p>Good news: if you can knit the file, the code can stand by itself (it does not depend on what dyou did in your R session before) and runs without errors. This is a good check. If there are error messages, check the ‘R Markdown’ tab for the code line number and try to fix it.</p>
 <p><strong>Task:</strong> Import the data set <code>pulsatilla_genotypes</code>, which we’ll use in a later lab (Week 14), into <code>gstudio</code> and convert it to a <code>genind</code> object.</p>
 <p><strong>Data:</strong> This file contains microsatellite data for adults and seeds of the herb <em>Pulsatilla vulgaris</em> sampled at seven sites. Reference: DiLeo et al. (2018), Journal of Ecology 106:2242-2255. <a href="https://besjournals.onlinelibrary.wiley.com/doi/10.1111/1365-2745.12992" class="uri">https://besjournals.onlinelibrary.wiley.com/doi/10.1111/1365-2745.12992</a></p>
-<p>The following code copies the file into the ‘dowloads’ folder in your R project folder:</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">file.copy</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;pulsatilla_genotypes.csv&quot;</span>, <span class="at">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>),</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>          <span class="fu">paste0</span>(<span class="fu">here</span>(), <span class="st">&quot;/downloads/pulsatilla_genotypes.csv&quot;</span>), <span class="at">overwrite=</span><span class="cn">FALSE</span>)</span></code></pre></div>
+<p>The following code copies the file into the ‘downloads’ folder in your R project folder:</p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">file.copy</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;pulsatilla_genotypes.csv&quot;</span>, <span class="at">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>),</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>          <span class="fu">paste0</span>(<span class="fu">here</span>(), <span class="st">&quot;/downloads/pulsatilla_genotypes.csv&quot;</span>), <span class="at">overwrite=</span><span class="cn">FALSE</span>)</span></code></pre></div>
 <pre><code>## [1] FALSE</code></pre>
 <p>Variables:</p>
 <ul>

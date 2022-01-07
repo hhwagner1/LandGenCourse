@@ -24,6 +24,7 @@ This worked example shows:
 - How the data are imported into a 'genind' object using package 'adegenet'.
 - How to view information stored in a 'genind' object.
 - How to import the data with the 'gstudio' package.
+- How to import SNP data
 
 Try modifying the code to import your own data!
 
@@ -56,6 +57,9 @@ library(gstudio)
 library(LandGenCourse)
 library(tibble)
 library(here)
+library(vcfR)
+library(pinfsc50)
+library(utils)
 ```
 
 ## 2. Import data from .csv file
@@ -118,14 +122,14 @@ knitr::include_graphics(system.file("extdata", "ExcelTable.png",
 
 ### c) Import with function 'read.csv'
 
-As the file is saved in csv format, we use the function 'read.csv' to import it into an R object called 'Frogs'. Display the first few rows and columns to check whether the data have been imported correctly:
+As the file is saved in csv format, we use the function 'read.csv' to import it into an R object called `Frogs`. Display the first few rows and columns to check whether the data have been imported correctly:
 
 ```{r}
 Frogs <- read.csv(paste0(here(), "/downloads/ralu.loci.csv"), header=TRUE)
 as_tibble(Frogs)
 ```
 
-- The data frame 'Frogs' contains 181 rows and 11 columns. Only the first few are shown.
+- The data frame `Frogs` contains 181 rows and 11 columns. Only the first few are shown.
 - The file has a header row with column names.
 - Notice the abbreviations for the R data type under each variable name: `<fctr>` means that the variable has been coded as a factor.
 - Each row is one individual. Note that for this data set, there is no column with ID or names of individuals.
@@ -137,7 +141,7 @@ as_tibble(Frogs)
 
 ### d) Create ID variable
 
-We'll add unique ID's for the frogs (to show how these would be imported). Here we take, for each frog, a substring of `Pop` containing the first three letters, add the row number, and separate them by a period. 
+We'll add unique ID's for the frogs (to show how these would be imported). Here we take, for each frog, a sub-string of `Pop` containing the first three letters, add the row number, and separate them by a period. 
 
 ```{r}
 Frogs <- data.frame(FrogID = paste(substr(Frogs$Pop, 1, 3), row.names(Frogs), sep="."), Frogs)
@@ -148,7 +152,7 @@ as_tibble(Frogs)
 
 If you want to export (and import) your own files, adapt this code. 
 
-Note: when using R Notebooks, problems can arise if R looks for files in a different place (more on this in Week 8 Bonus material). This is a safe work-around that will help make your work reproducible and transferable to other computers. For this to work properly, you must work within an R project, and you must have writing permission for the project folder. 
+Note: when using R Notebooks, problems can arise if R looks for files in a different place (more on this in Week 8 Bonus material). Here, we use a safe work-around, with the function `here`, that will help make your work reproducible and transferable to other computers. For this to work properly, you must work within an R project, and you must have writing permission for the project folder. 
 
 The function `here` from the package `here` finds the path to your project folder. Remove the hashtags and run the two lines to see the path to your project folder, and the path to the (to be created) output folder. The function `paste0` simply pastes strings of text together, without any separator (hence the '0' in the function name).
 
@@ -209,7 +213,7 @@ Frogs.genind <- df2genind(X=Frogs[,c(4:11)], sep=":", ncode=NULL, ind.names= Fro
 
 ### c) Check imported data
 
-Printing the genind object's name lists the number of individuals, loci and alleles, and lists all slots (prefaced by @).
+Printing the genind object's name lists the number of individuals, loci and alleles, and lists all slots (prefaced by `@`).
 
 ```{r}
 Frogs.genind
@@ -279,7 +283,8 @@ The following slots may be empty unless specified during or after import into 'g
 ## 5. Import data with 'gstudio' package
 
 ### a) Function 'read_population'
-While 'genind' objects are used by many functions for analyzing genetic data, the `gstudio` package provides an interface for additional analysis. We use the function `read_population` to import the data.
+
+While `genind` objects are used by many functions for analyzing genetic data, the `gstudio` package provides an interface for additional analysis. We use the function `read_population` to import the data.
 
 ```{r}
 ?read_population
@@ -324,7 +329,7 @@ head(Frogs.gstudio)
 
 ### e) Convert to 'genind' object
 
-We can use the dataframe with the locus objects from gstudio to import the data into a genind object. In this case, we set `sep=":"`, because the `locus` object in `gstudio` stores the alleles at each locus separated by a colon, and `NA.char=""`, because `gstudio` stores missing values as empty cells. 
+We can use the dataframe with the locus objects from gstudio to import the data into a `genind` object. In this case, we set `sep=":"`, because the `locus` object in `gstudio` stores the alleles at each locus separated by a colon, and `NA.char=""`, because `gstudio` stores missing values as empty cells. 
 
 ```{r}
 Frogs.genind2 <- adegenet::df2genind(X=Frogs.gstudio[,c(4:11)], sep=":", ncode=NULL,   
@@ -334,9 +339,91 @@ Frogs.genind2 <- adegenet::df2genind(X=Frogs.gstudio[,c(4:11)], sep=":", ncode=N
 Frogs.genind2
 ```
 
+## 6. Importing SNP data
+
+### a) Import from text file
+
+First, we'll import a relatively small SNP dataset from a text file. This dataset will be analyzed in the Week 6 Worked Example. The data are stored in a tab-delimited text file.
+
+Let's have a look at the first few rows and columns:
+
+- `family`: these are ID's of the genotyped tree individuals (from which seeds were grown in a common-garden experiment, hence they are called "family" in the dataset).
+- `population`: the trees were sampled from a set of populations.
+- `snpXXX.Plmn`: each column is a diploid SNP.
+
+To import your own data, replace `infile` by the path to the text file with your SNP data. Change settings as necessary (check whether data are separated by tabs or commas!).
+
+```{r}
+infile <- system.file("extdata", "WWP_SNP_genotypes.txt", package = "LandGenCourse")
+Trees <- read.table(infile, header = TRUE, sep = "\t")
+Trees[1:6, 1:6]
+```
+We should replace the SNP column names: if they contain a period ., then the function df2genind thinks that the first part indicates the locus and the second part the allele. The following line of code splits each column name by the period and only retains the first part.
+
+```{r}
+names(Trees) <- unlist(lapply(names(Trees), function(x) strsplit(x, "[.]")[[1]][1]))
+```
+
+To import these data frame into a `genind` object, we need to tell R how the SNP data are coded (check the `df2genind` help file!)
+
+- `ncode = 1`: each allele (A, C, G, T) is coded with a single character.
+- `sep = ""`: the two alleles per individual and locus are not separated by any symbol.
+- `NA.char= "NA"`: missing values are coded as NA.
+
+```{r}
+Trees.genind <- adegenet::df2genind(X=Trees[,-c(1:2)], sep="", ncode=1,   
+                          ind.names=Trees$family, loc.names=NULL, 
+                          pop=Trees$population, NA.char="NA", ploidy=2, 
+                          type="codom", strata=NULL, hierarchy=NULL)
+Trees.genind
+```
 
 
-## 6. R exercise Week 1
+### b) Import from vcf file to genind object
+
+A common data format for genomic data is vcf. Here's some background information (all but the first are vignettes from the `vcfR` package): 
+
+- PDF defining the data format: https://samtools.github.io/hts-specs/VCFv4.3.pdf
+- Tutorial on data format: https://cran.r-project.org/web/packages/vcfR/vignettes/vcf_data.html
+- Tutorial on quality testing: https://cran.r-project.org/web/packages/vcfR/vignettes/intro_to_vcfR.html
+- Tutorial on converting vcf data: https://cran.r-project.org/web/packages/vcfR/vignettes/converting_data.html
+
+The R package `vcfR` makes it easy to import vcf files and convert to other formats. Here we use it to convert the data into a `genind` object. The following code is adapted from the above listed `vcfR` vignettes.
+
+We'll import a file that is distributed with the `pinfsc50` package. Note that `vcf` files are commonly compressed in `gz` archives. To import your own data, replace `vcf_file` by the path to your own `gz` archive. 
+
+```{r}
+vcf_file <- system.file("extdata", "pinf_sc50.vcf.gz", package = "pinfsc50")
+vcf <- read.vcfR( vcf_file, verbose = FALSE )
+```
+
+Note that the package `vcfR` can import three types of genomic data files listed below. We will only use the `.vcf` file here.
+
+- .`vcf`: SNPs
+- `.fasta`: genomic reference sequence data
+- `.gff`: annotation
+
+Convert to `genind` object:
+
+```{r}
+SNP_genind <- vcfR2genind(vcf)
+SNP_genind
+```
+
+### c) Import from vcf file to genlight object
+
+This dataset has 18 individuals genotyped at 44,137. It may be better to use a `genlight` object instead of `genind`. This is an alternative object type from the package `adegenet` that can store large genomic data much more efficiently. 
+
+Note: the current implementation can only store two alleles per locus, loci with more alleles will be dropped and a warning is printed.
+
+```{r}
+SNP_genlight <- vcfR2genlight(vcf)
+SNP_genlight
+```
+
+Note that instead of 44,137 alleles, we now have 21,719 binary SNPs. This is one of the ways by which the `genlight` object is more efficient than `genind`. Overall, the size has been reduced from 16.4 Mb to 2.2 Mb!
+
+## 7. R exercise Week 1
 
 **R Notebook:** Create a new R Notebook for each weekly exercise. Watch the course video "Week 0: Intro to R Notebooks" as needed. At the end, "knit" it to an html file and view it in your browser. 
 
@@ -346,7 +433,7 @@ Good news: if you can knit the file, the code can stand by itself (it does not d
 
 **Data:** This file contains microsatellite data for adults and seeds of the herb *Pulsatilla vulgaris* sampled at seven sites. Reference: DiLeo et al. (2018), Journal of Ecology 106:2242-2255. https://besjournals.onlinelibrary.wiley.com/doi/10.1111/1365-2745.12992
 
-The following code copies the file into the 'dowloads' folder in your R project folder:
+The following code copies the file into the 'downloads' folder in your R project folder:
 
 ```{r}
 file.copy(system.file("extdata", "pulsatilla_genotypes.csv", package = "LandGenCourse"),

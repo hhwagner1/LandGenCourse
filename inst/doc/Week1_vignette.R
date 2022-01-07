@@ -14,6 +14,9 @@ library(gstudio)
 library(LandGenCourse)
 library(tibble)
 library(here)
+library(vcfR)
+library(pinfsc50)
+library(utils)
 
 ## -----------------------------------------------------------------------------
 data(ralu.loci)
@@ -95,6 +98,33 @@ Frogs.genind2 <- adegenet::df2genind(X=Frogs.gstudio[,c(4:11)], sep=":", ncode=N
                           pop=Frogs.gstudio$Pop, NA.char="", ploidy=2, 
                           type="codom", strata=NULL, hierarchy=NULL)
 Frogs.genind2
+
+## -----------------------------------------------------------------------------
+infile <- system.file("extdata", "WWP_SNP_genotypes.txt", package = "LandGenCourse")
+Trees <- read.table(infile, header = TRUE, sep = "\t")
+Trees[1:6, 1:6]
+
+## -----------------------------------------------------------------------------
+names(Trees) <- unlist(lapply(names(Trees), function(x) strsplit(x, "[.]")[[1]][1]))
+
+## -----------------------------------------------------------------------------
+Trees.genind <- adegenet::df2genind(X=Trees[,-c(1:2)], sep="", ncode=1,   
+                          ind.names=Trees$family, loc.names=NULL, 
+                          pop=Trees$population, NA.char="NA", ploidy=2, 
+                          type="codom", strata=NULL, hierarchy=NULL)
+Trees.genind
+
+## -----------------------------------------------------------------------------
+vcf_file <- system.file("extdata", "pinf_sc50.vcf.gz", package = "pinfsc50")
+vcf <- read.vcfR( vcf_file, verbose = FALSE )
+
+## -----------------------------------------------------------------------------
+SNP_genind <- vcfR2genind(vcf)
+SNP_genind
+
+## -----------------------------------------------------------------------------
+SNP_genlight <- vcfR2genlight(vcf)
+SNP_genlight
 
 ## -----------------------------------------------------------------------------
 file.copy(system.file("extdata", "pulsatilla_genotypes.csv", package = "LandGenCourse"),
