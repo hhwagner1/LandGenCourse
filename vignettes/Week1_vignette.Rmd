@@ -113,13 +113,16 @@ Saving Excel file for import in R:
 
 - File Format: 'Comma Separated Values (.csv)'
 
+```{r message=FALSE, include=FALSE, out.width=5}
+fig.source <- system.file("extdata", "ExcelTable.png", package = "LandGenCourse")
+fig.path <- paste0(here::here(), "/downloads/ExcelTable.png")
+invisible(file.copy(from=fig.source, to=fig.path)) 
+```
+
 Here is a screenshot of the first few lines of the Excel file with the genetic data:
 
-```{r message=FALSE, out.width=5}
-invisible(file.copy(from=system.file("extdata", "ExcelTable.png", 
-                            package = "LandGenCourse"),
-          to=paste0(here::here(), "/downloads/ExcelTable.png"))) 
-knitr::include_graphics(paste0(here::here(), "/downloads/ExcelTable.png"))
+```{r echo=FALSE, results='asis'}
+cat(paste0("![](", fig.path, "){width=80%}"))
 ```
 
 ### c) Import with function 'read.csv'
