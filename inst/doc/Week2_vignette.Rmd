@@ -15,6 +15,13 @@ vignette: >
 editor_options: 
   chunk_output_type: console
 ---
+
+There has been a lot of development recently in R regarding data types for geospatial data. We are currently in a transition period, where some packages still expect the "old" data types (based e.g. on packages `raster` and `sp`), others expect the "new" data types (based e.g. on packages `terra` and `sf`), and many accept both.
+
+This vignette uses the older packages `raster` and `sp`, as these are still widely used and compatible with other functions used in landscape genetics. The bonus vignette uses the new packages `sf`, `terra`, and `tmap`, yet it can only scratch the surface. 
+
+For a thorough introduction to geocomputation with R, see this excellent Gitbook: https://geocompr.robinlovelace.net/index.html. Note: 2nd edition expected for spring 2022.
+
 ## 1. Overview of Worked Example
 
 This code builds on data and code from the `GeNetIt` package by Jeff Evans and Melanie Murphy. Landscape metrics will be calculated with the `landscapemetrics` package described in: Hesselbarth et al. (2019), Ecography 42: 1648-1657.
@@ -593,7 +600,12 @@ forest_500_df
 
 Done!
 
-Note: check this week's bonus material if you want to see how to use the new 'sf' library for spatial data, and how to export the site data to a shapefile that you can import into a GIS.
+Check out this week's bonus material to see:
+
+- How to convert the site data from an `sp` object to an `sf` object, a new standard for geospatial vector data.
+- How to create static and interactive maps of an `sf` object with `tmap`. 
+- How to export an `sf` object to a, ESRI shapefile.
+- How to plot a categorical raster map with a predefined color scheme, using `tmap` and a new standard for raster data (`terra` package).
 
 ## 6. R Exercise Week 2
 

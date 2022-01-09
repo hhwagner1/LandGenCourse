@@ -1,4 +1,4 @@
-## -----------------------------------------------------------------------------
+## ----message=FALSE, warning=TRUE----------------------------------------------
 if(!require("adegenet")) install.packages("adegenet")
 if(!requireNamespace("popgraph", quietly = TRUE))
 {
@@ -26,9 +26,13 @@ if(!dir.exists(paste0(here(),"/downloads"))) dir.create(paste0(here(),"/download
 file.copy(system.file("extdata", "ralu.loci.csv", package = "LandGenCourse"),
           paste0(here(), "/downloads/ralu.loci.csv"), overwrite=FALSE)
 
-## ----out.width = "50%"--------------------------------------------------------
-knitr::include_graphics(system.file("extdata", "ExcelTable.png", 
-                            package = "LandGenCourse"))
+## ----message=FALSE, include=FALSE, out.width=5--------------------------------
+fig.source <- system.file("extdata", "ExcelTable.png", package = "LandGenCourse")
+fig.path <- paste0(here::here(), "/downloads/ExcelTable.png")
+invisible(file.copy(from=fig.source, to=fig.path)) 
+
+## ----echo=FALSE, results='asis'-----------------------------------------------
+cat(paste0("![](", fig.path, "){width=80%}"))
 
 ## -----------------------------------------------------------------------------
 Frogs <- read.csv(paste0(here(), "/downloads/ralu.loci.csv"), header=TRUE)
@@ -39,8 +43,8 @@ Frogs <- data.frame(FrogID = paste(substr(Frogs$Pop, 1, 3), row.names(Frogs), se
 as_tibble(Frogs)
 
 ## -----------------------------------------------------------------------------
-#here() 
-#paste0(here(),"/output")
+here() 
+paste0(here(),"/output")
 
 ## -----------------------------------------------------------------------------
 if(!dir.exists(paste0(here(),"/output"))) dir.create(paste0(here(),"/output"))

@@ -38,7 +38,7 @@ This code imports genetic data from 181 individuals of Colombia spotted frogs (R
 
 Install some packages needed for this worked example. Note: `popgraph` needs to be installed before installing `gstudio`.
 
-```{r}
+```{r message=FALSE, warning=TRUE}
 if(!require("adegenet")) install.packages("adegenet")
 if(!requireNamespace("popgraph", quietly = TRUE))
 {
@@ -113,11 +113,16 @@ Saving Excel file for import in R:
 
 - File Format: 'Comma Separated Values (.csv)'
 
+```{r message=FALSE, include=FALSE, out.width=5}
+fig.source <- system.file("extdata", "ExcelTable.png", package = "LandGenCourse")
+fig.path <- paste0(here::here(), "/downloads/ExcelTable.png")
+invisible(file.copy(from=fig.source, to=fig.path)) 
+```
+
 Here is a screenshot of the first few lines of the Excel file with the genetic data:
 
-```{r  out.width = "50%"}
-knitr::include_graphics(system.file("extdata", "ExcelTable.png", 
-                            package = "LandGenCourse"))
+```{r echo=FALSE, results='asis'}
+cat(paste0("![](", fig.path, "){width=80%}"))
 ```
 
 ### c) Import with function 'read.csv'
@@ -157,8 +162,8 @@ Note: when using R Notebooks, problems can arise if R looks for files in a diffe
 The function `here` from the package `here` finds the path to your project folder. Remove the hashtags and run the two lines to see the path to your project folder, and the path to the (to be created) output folder. The function `paste0` simply pastes strings of text together, without any separator (hence the '0' in the function name).
 
 ```{r}
-#here() 
-#paste0(here(),"/output")
+here() 
+paste0(here(),"/output")
 ```
 
 The following line checks whether an `output` folder exists in the project folder, and if not, creates one. 

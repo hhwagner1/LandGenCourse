@@ -1,4 +1,4 @@
-## -----------------------------------------------------------------------------
+## ----install global_options, include=TRUE, results="hide", message=FALSE, warning=FALSE----
 if(!requireNamespace("popgraph", quietly = TRUE))
 {
   install.packages(c("RgoogleMaps", "geosphere", "proto", "sampling", 
@@ -7,7 +7,7 @@ if(!requireNamespace("popgraph", quietly = TRUE))
 }
 if(!requireNamespace("gstudio", quietly = TRUE)) remotes::install_github("dyerlab/gstudio")
 
-## ---- packages----------------------------------------------------------------
+## ----packages global_options, include=TRUE, results="hide", message=FALSE, warning=FALSE----
 library(LandGenCourse)
 library(dplyr)
 library(ggplot2)
