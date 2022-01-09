@@ -40,6 +40,7 @@ library(GeNetIt)
 library(terra)
 library(tmap)
 library(dplyr)
+library(tibble)
 ```
 
 ## 2. Convert 'SpatialPointsDataFrame' to 'sf' object 
@@ -239,7 +240,7 @@ Here is a description of the cover types: https://www.mrlc.gov/data/legends/nati
 So far, we only have the codes in the raster attribute table (RAT). We can display that table with the function `cats` (for categories). 
 
 ```{r}
-head(cats(NLCD.terra))
+tibble::as_tibble(cats(NLCD.terra, layer=1))
 ```
 
 - R created a column ID. With categorical rasters, terra always numbers levels starting with 0. The ID zero here refers to missing values
