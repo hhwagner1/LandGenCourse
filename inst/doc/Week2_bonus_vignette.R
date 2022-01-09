@@ -7,6 +7,7 @@ library(GeNetIt)
 library(terra)
 library(tmap)
 library(dplyr)
+library(tibble)
 
 ## -----------------------------------------------------------------------------
 data(ralu.site)
@@ -47,28 +48,29 @@ Bbox2
 
 ## ----message=FALSE------------------------------------------------------------
 tmap_mode("plot")
-tm_shape(Sites.sf, bbox=Bbox2) + tm_sf(size = "Depth_m") 
-
-## ----message=FALSE------------------------------------------------------------
-tmap_mode("view")
-tm_shape(Sites.sf) + tm_sf(size="Depth_m", col="Depth_m", palette = "Blues") 
-
-## ----message=FALSE------------------------------------------------------------
-tmap_mode("view")
-
-Map1 <- tm_shape(Sites.sf, bbox=Bbox2) +  tm_sf("Basin", size=2, border.col="black") +
-  tm_shape(Sites.sf) + tm_sf(size=0.8, col="Depth_m", 
-                             palette = "Blues", border.col="black") +
-  tm_basemap(server = c("Esri.WorldTopoMap", "Esri.WorldGrayCanvas", 
-                        "OpenStreetMap", "OpenTopoMap", 
-                        leaflet::providers$Stamen.Terrain, 
-                        leaflet::providers$Stamen.Watercolor,
-                        leaflet::providers$Stamen.TonerLite))
+Map1 <- tm_shape(Sites.sf, bbox=Bbox2) + tm_sf(size = "Depth_m") 
 Map1
 
+## ----message=FALSE------------------------------------------------------------
+#tmap_mode("view")
+#tm_shape(Sites.sf) + tm_sf(size="Depth_m", col="Depth_m", palette = "Blues") 
+
+## ----message=FALSE------------------------------------------------------------
+#tmap_mode("view")
+
+#Map2 <- tm_shape(Sites.sf, bbox=Bbox2) +  tm_sf("Basin", size=2, border.col="black") +
+#  tm_shape(Sites.sf) + tm_sf(size=0.8, col="Depth_m", 
+#                             palette = "Blues", border.col="black") +
+#  tm_basemap(server = c("Esri.WorldTopoMap", "Esri.WorldGrayCanvas", 
+#                        "OpenStreetMap", "OpenTopoMap", 
+#                        leaflet::providers$Stamen.Terrain, 
+#                        leaflet::providers$Stamen.Watercolor,
+#                        leaflet::providers$Stamen.TonerLite))
+#Map2
+
 ## -----------------------------------------------------------------------------
-tmap_save(Map1, paste0(here::here(), "/output/InteractiveMap.html"))
 tmap_save(Map1, paste0(here::here(), "/output/StaticMap.png"), height=7)
+#tmap_save(Map2, paste0(here::here(), "/output/InteractiveMap.html"))
 
 ## -----------------------------------------------------------------------------
 #require(here)
@@ -80,7 +82,7 @@ NLCD <- raster(rasters[6])
 NLCD.terra <- terra::as.factor(terra::rast(NLCD))
 
 ## -----------------------------------------------------------------------------
-head(cats(NLCD.terra))
+tibble::as_tibble(cats(NLCD.terra, layer=1))
 
 ## -----------------------------------------------------------------------------
 ColTab <- read.csv(system.file("extdata", "Colortable_LULC.csv", 
@@ -101,21 +103,21 @@ terra::setCats(NLCD.terra, layer=1, value=RAT)
 terra::coltab(NLCD.terra, layer=1) <- RAT$color
 
 ## ----fig.width=7--------------------------------------------------------------
-Map2 <- tm_shape(NLCD.terra) + 
+Map3 <- tm_shape(NLCD.terra) + 
   tm_raster(labels=cats(NLCD.terra, layer=1)$attribute,
             title="Land cover") +
   tm_layout(legend.outside=TRUE, legend.outside.position="right") +
   tm_grid(lines=FALSE)
-Map2
-
-## ----fig.width=7, warning=FALSE-----------------------------------------------
-Map3 <- Map2 + tm_shape(Sites.sf) +
-  tm_symbols(size=0.4, col="yellow", border.col="red") +
-  tm_compass() + tm_scale_bar(bg.color="lightgray", bg.alpha=0.5)
 Map3
 
+## ----fig.width=7, warning=FALSE-----------------------------------------------
+Map4 <- Map3 + tm_shape(Sites.sf) +
+  tm_symbols(size=0.4, col="yellow", border.col="red") +
+  tm_compass() + tm_scale_bar(bg.color="lightgray", bg.alpha=0.5)
+Map4
+
 ## -----------------------------------------------------------------------------
-tmap_save(Map3, paste0(here::here(), "/output/RasterMap.pdf"), height=6, width=8)
+tmap_save(Map4, paste0(here::here(), "/output/RasterMap.pdf"), height=6, width=8)
 
 ## ----message=FALSE, warning=TRUE, include=FALSE-------------------------------
 # Detach all packages except for some basic ones:

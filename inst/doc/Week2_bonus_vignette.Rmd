@@ -40,6 +40,7 @@ library(GeNetIt)
 library(terra)
 library(tmap)
 library(dplyr)
+library(tibble)
 ```
 
 ## 2. Convert 'SpatialPointsDataFrame' to 'sf' object 
@@ -139,9 +140,12 @@ Now we add the boundary box information as an argument `bbox` in function `tm_sh
 
 To create a bubble plot, we indicate that the attribute `Depth_m` should be used to define the symbol size. 
 
+Note that we write the figure into an object, `Map1`, then plot the `Map1`. This will help e.g. with exporting the map, or we can later add more layers to this map object with `+`.
+
 ```{r message=FALSE}
 tmap_mode("plot")
-tm_shape(Sites.sf, bbox=Bbox2) + tm_sf(size = "Depth_m") 
+Map1 <- tm_shape(Sites.sf, bbox=Bbox2) + tm_sf(size = "Depth_m") 
+Map1
 ```
 
 ### d) Create an interactive bubble plot with 'tmap'
@@ -157,34 +161,33 @@ This is not a great plot yet. Let's tweak it a bit:
 
 If you omit `tm_basemap(server = "OpenTopoMap")`, R will show "Esri.WorldGrayCanvas" and include an interactive menu to toggle between "Esri.WorldGrayCanvas", "OpenStreetMap", and "Esri.WorldTopoMap". 
 
-Go ahead and play with the interactive map!
+Uncomment the code below by removing the hashtag (#) and run it. Go ahead and play with the interactive map!
 
 ```{r message=FALSE}
-tmap_mode("view")
-tm_shape(Sites.sf) + tm_sf(size="Depth_m", col="Depth_m", palette = "Blues") 
+#tmap_mode("view")
+#tm_shape(Sites.sf) + tm_sf(size="Depth_m", col="Depth_m", palette = "Blues") 
 ```
 
 Let's make a few more changes:
 
-- We write the figure into an object, `Map1`, then plot the `Map1`. This will help e.g. with exporting the map.
 - We change the symbolization to fixed-size, filled circles with a black border, and plot them on top of filled circles that indicate the basin. Note that although both attributes are in the same dataset `Sites.sf`, we need to include a data statement for each attribute we add to the map (i.e., map layer), using `tm_shape(Sites.sf)`.
 - We include the argument `bbox=Bbox2` for at least one of the map layers. This is not needed for the interactive map but will look better when exporting it as a static map.
 - We add a call to function `tm_basemap`, so that we can modify the list of the available basemap options. The first one listed in the argument `server` will be shown by default.
 
-Go ahead and toggle between the base maps in the map below! Different base maps are suitable for different situations (data type, symbol type, size of study area) and purposes.
+Uncomment the code below by removing the hashtag (#) and run it. Go ahead and toggle between the base maps in the map below! Different base maps are suitable for different situations (data type, symbol type, size of study area) and purposes.
 
 ```{r message=FALSE}
-tmap_mode("view")
+#tmap_mode("view")
 
-Map1 <- tm_shape(Sites.sf, bbox=Bbox2) +  tm_sf("Basin", size=2, border.col="black") +
-  tm_shape(Sites.sf) + tm_sf(size=0.8, col="Depth_m", 
-                             palette = "Blues", border.col="black") +
-  tm_basemap(server = c("Esri.WorldTopoMap", "Esri.WorldGrayCanvas", 
-                        "OpenStreetMap", "OpenTopoMap", 
-                        leaflet::providers$Stamen.Terrain, 
-                        leaflet::providers$Stamen.Watercolor,
-                        leaflet::providers$Stamen.TonerLite))
-Map1
+#Map2 <- tm_shape(Sites.sf, bbox=Bbox2) +  tm_sf("Basin", size=2, border.col="black") +
+#  tm_shape(Sites.sf) + tm_sf(size=0.8, col="Depth_m", 
+#                             palette = "Blues", border.col="black") +
+#  tm_basemap(server = c("Esri.WorldTopoMap", "Esri.WorldGrayCanvas", 
+#                        "OpenStreetMap", "OpenTopoMap", 
+#                        leaflet::providers$Stamen.Terrain, 
+#                        leaflet::providers$Stamen.Watercolor,
+#                        leaflet::providers$Stamen.TonerLite))
+#Map2
 ```
 
 ### e) Export maps
@@ -197,8 +200,8 @@ Save the map to folder `output`:
 Go ahead and check out the two files!
 
 ```{r}
-tmap_save(Map1, paste0(here::here(), "/output/InteractiveMap.html"))
 tmap_save(Map1, paste0(here::here(), "/output/StaticMap.png"), height=7)
+#tmap_save(Map2, paste0(here::here(), "/output/InteractiveMap.html"))
 ```
 
 
@@ -237,7 +240,7 @@ Here is a description of the cover types: https://www.mrlc.gov/data/legends/nati
 So far, we only have the codes in the raster attribute table (RAT). We can display that table with the function `cats` (for categories). 
 
 ```{r}
-head(cats(NLCD.terra))
+tibble::as_tibble(cats(NLCD.terra, layer=1))
 ```
 
 - R created a column ID. With categorical rasters, terra always numbers levels starting with 0. The ID zero here refers to missing values
@@ -275,15 +278,15 @@ terra::coltab(NLCD.terra, layer=1) <- RAT$color
 ```
 
 ```{r fig.width=7}
-Map2 <- tm_shape(NLCD.terra) + 
+Map3 <- tm_shape(NLCD.terra) + 
   tm_raster(labels=cats(NLCD.terra, layer=1)$attribute,
             title="Land cover") +
   tm_layout(legend.outside=TRUE, legend.outside.position="right") +
   tm_grid(lines=FALSE)
-Map2
+Map3
 ```
 
-Let's beef it up a bit. We can do so by adding layers to `Map2`:
+Let's beef it up a bit. We can do so by adding layers to `Map3`:
 
 - To add an additional layer with the sampling sites to the map, we define the data for the layer with `tm_shape`.
 - We define how the points should be symbolized with `tm_symbols`. 
@@ -292,16 +295,16 @@ Let's beef it up a bit. We can do so by adding layers to `Map2`:
 
 
 ```{r fig.width=7, warning=FALSE}
-Map3 <- Map2 + tm_shape(Sites.sf) +
+Map4 <- Map3 + tm_shape(Sites.sf) +
   tm_symbols(size=0.4, col="yellow", border.col="red") +
   tm_compass() + tm_scale_bar(bg.color="lightgray", bg.alpha=0.5)
-Map3
+Map4
 ```
 
 This time, we'll export the map to a PDF file.
 
 ```{r}
-tmap_save(Map3, paste0(here::here(), "/output/RasterMap.pdf"), height=6, width=8)
+tmap_save(Map4, paste0(here::here(), "/output/RasterMap.pdf"), height=6, width=8)
 ```
 
 

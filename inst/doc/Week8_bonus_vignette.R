@@ -49,18 +49,18 @@ dir(myFile)
 ## ----microbenchmark1, message=FALSE-------------------------------------------
 x = myFile
 microbenchmark::microbenchmark(times = 1, unit = "ms", 
-          read.csv(x), readr::read_csv(x), data.table::fread(x),
+          read.csv(x), readr::read_csv(x, show_col_types = FALSE), data.table::fread(x),
           rio::import(x))
 
 ## ----microbenchmark2, message=FALSE-------------------------------------------
 library(readr); library(data.table); library(rio); library(microbenchmark)
 
 microbenchmark(times = 1, unit = "ms", 
-          read.csv(x), read_csv(x), fread(x), import(x))
+          read.csv(x), read_csv(x, show_col_types = FALSE), fread(x), import(x))
 
 ## ----class, message=FALSE-----------------------------------------------------
 gen <- read.csv(x); c(class(gen[[1]]), class(gen))
-gen <- read_csv(x); c(class(gen[[1]]), class(gen))
+gen <- read_csv(x, show_col_types = FALSE); c(class(gen[[1]]), class(gen))
 gen <- fread(x); c(class(gen[[1]]), class(gen))
 gen <- import(x); c(class(gen[[1]]), class(gen))
 
