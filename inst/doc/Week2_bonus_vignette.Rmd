@@ -240,7 +240,7 @@ Here is a description of the cover types: https://www.mrlc.gov/data/legends/nati
 So far, we only have the codes in the raster attribute table (RAT). We can display that table with the function `cats` (for categories). 
 
 ```{r}
-tibble::as_tibble(cats(NLCD.terra, layer=1))
+tibble::as_tibble(terra::cats(NLCD.terra, layer=1)[[1]])
 ```
 
 - R created a column ID. With categorical rasters, terra always numbers levels starting with 0. The ID zero here refers to missing values
