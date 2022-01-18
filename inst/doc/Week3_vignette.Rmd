@@ -203,7 +203,9 @@ List 'homozygotes':
 - **homozygotes$bootstrap**: distribution of the expected number of homozygotes
 - **homozygotes$probability.obs**: probability of observing the number of homozygotes
 
-```{r}
+Note: we are turning off warnings here (currently the code throws a warning for each sample, though results don't seem to be affected).
+
+```{r warning=FALSE}
 # Null alleles: depends on method! See help file.
 Null.alleles <- PopGenReport::null.all(Frogs.genind)
 Null.alleles$homozygotes$probability.obs
