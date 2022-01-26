@@ -33,7 +33,7 @@ tm_shape(Sites.sf) + tm_sf()
 
 ## ----message=FALSE------------------------------------------------------------
 tmap_mode("plot")
-tm_shape(Sites.sf) + tm_sf("Depth_m")
+tm_shape(Sites.sf) + tm_sf("Depth_m") 
 
 ## -----------------------------------------------------------------------------
 Bbox = st_bbox(Sites.sf)
@@ -48,22 +48,22 @@ Bbox2
 
 ## ----message=FALSE------------------------------------------------------------
 tmap_mode("plot")
-Map1 <- tm_shape(Sites.sf, bbox=Bbox2) + tm_sf(size = "Depth_m")
+Map1 <- tm_shape(Sites.sf, bbox=Bbox2) + tm_sf(size = "Depth_m") 
 Map1
 
 ## ----message=FALSE------------------------------------------------------------
 #tmap_mode("view")
-#tm_shape(Sites.sf) + tm_sf(size="Depth_m", col="Depth_m", palette = "Blues")
+#tm_shape(Sites.sf) + tm_sf(size="Depth_m", col="Depth_m", palette = "Blues") 
 
 ## ----message=FALSE------------------------------------------------------------
 #tmap_mode("view")
 
 #Map2 <- tm_shape(Sites.sf, bbox=Bbox2) +  tm_sf("Basin", size=2, border.col="black") +
-#  tm_shape(Sites.sf) + tm_sf(size=0.8, col="Depth_m",
+#  tm_shape(Sites.sf) + tm_sf(size=0.8, col="Depth_m", 
 #                             palette = "Blues", border.col="black") +
-#  tm_basemap(server = c("Esri.WorldTopoMap", "Esri.WorldGrayCanvas",
-#                        "OpenStreetMap", "OpenTopoMap",
-#                        leaflet::providers$Stamen.Terrain,
+#  tm_basemap(server = c("Esri.WorldTopoMap", "Esri.WorldGrayCanvas", 
+#                        "OpenStreetMap", "OpenTopoMap", 
+#                        leaflet::providers$Stamen.Terrain, 
 #                        leaflet::providers$Stamen.Watercolor,
 #                        leaflet::providers$Stamen.TonerLite))
 #Map2
@@ -85,25 +85,25 @@ NLCD.terra <- terra::as.factor(terra::rast(NLCD))
 tibble::as_tibble(terra::cats(NLCD.terra, layer=1)[[1]])
 
 ## -----------------------------------------------------------------------------
-ColTab <- read.csv(system.file("extdata", "Colortable_LULC.csv",
+ColTab <- read.csv(system.file("extdata", "Colortable_LULC.csv", 
                             package = "LandGenCourse"), header=TRUE)
 ColTab$color <- as.character(ColTab$color)
 ColTab$attribute <- as.character(ColTab$attribute)
 ColTab
 
 ## -----------------------------------------------------------------------------
-RAT <- merge(terra::cats(NLCD.terra, layer=1), ColTab,
+RAT <- merge(terra::cats(NLCD.terra, layer=1), ColTab, 
              by.x="ID", by.y="value", all.x=TRUE, sort=TRUE)
 RAT %>% filter(!is.na(nlcd))
 
 ## -----------------------------------------------------------------------------
-terra::setCats(NLCD.terra, layer=1, value=RAT)
+terra::setCats(NLCD.terra, layer=1, value=RAT) 
 
 ## -----------------------------------------------------------------------------
 terra::coltab(NLCD.terra, layer=1) <- RAT$color
 
 ## ----fig.width=7--------------------------------------------------------------
-Map3 <- tm_shape(NLCD.terra) +
+Map3 <- tm_shape(NLCD.terra) + 
   tm_raster(labels=cats(NLCD.terra, layer=1)$attribute,
             title="Land cover") +
   tm_layout(legend.outside=TRUE, legend.outside.position="right") +

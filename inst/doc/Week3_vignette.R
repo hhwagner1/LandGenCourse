@@ -68,7 +68,7 @@ poppr::ia(Frogs.genind, sample=199)
 LD.pair <- poppr::pair.ia(Frogs.genind)
 LD.pair
 
-## -----------------------------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 # Null alleles: depends on method! See help file.
 Null.alleles <- PopGenReport::null.all(Frogs.genind)
 Null.alleles$homozygotes$probability.obs

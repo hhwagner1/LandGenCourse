@@ -117,7 +117,10 @@ Now R knows these are spatial data and knows how to handle them. It does not tre
 
 ### b) Add spatial reference data
 
-Before we can combine the sampling locations with other spatial datasets, such as raster data, we need to tell R where on earth these locations are (georeferencing). This is done by specifying the "Coordinate Reference System" (CRS) or a `proj4` string. 
+Before we can combine the sampling locations with other spatial datasets, such as raster data, we need to tell R where on earth these locations are (georeferencing). This is done by specifying the "Coordinate Reference System" (CRS) or a `proj4` string.
+
+For a visual explanation of projections and coordinate systems, see:
+https://www.nwcg.gov/publications/pms437/mapping/using-gis
 
 For more information on CRS, see: https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf
 

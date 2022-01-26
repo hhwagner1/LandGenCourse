@@ -12,7 +12,7 @@
 
 <meta name="author" content="Helene Wagner" />
 
-<meta name="date" content="2022-01-09" />
+<meta name="date" content="2022-01-26" />
 
 <title>Week 1: Importing Genetic Data</title>
 
@@ -141,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Week 1: Importing Genetic Data</h1>
 <h4 class="author">Helene Wagner</h4>
-<h4 class="date">2022-01-09</h4>
+<h4 class="date">2022-01-26</h4>
 
 
 <div id="TOC">
@@ -335,9 +335,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Note: when using R Notebooks, problems can arise if R looks for files in a different place (more on this in Week 8 Bonus material). Here, we use a safe work-around, with the function <code>here</code>, that will help make your work reproducible and transferable to other computers. For this to work properly, you must work within an R project, and you must have writing permission for the project folder.</p>
 <p>The function <code>here</code> from the package <code>here</code> finds the path to your project folder. Remove the hashtags and run the two lines to see the path to your project folder, and the path to the (to be created) output folder. The function <code>paste0</code> simply pastes strings of text together, without any separator (hence the ‘0’ in the function name).</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">here</span>() </span></code></pre></div>
-<pre><code>## [1] &quot;/Users/helene/Desktop/R_Github_projects/LandGenCourse&quot;</code></pre>
+<pre><code>## [1] &quot;/Users/hhwagner1/Desktop/R_GitHub_Projects/LandGenCourse&quot;</code></pre>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste0</span>(<span class="fu">here</span>(),<span class="st">&quot;/output&quot;</span>)</span></code></pre></div>
-<pre><code>## [1] &quot;/Users/helene/Desktop/R_Github_projects/LandGenCourse/output&quot;</code></pre>
+<pre><code>## [1] &quot;/Users/hhwagner1/Desktop/R_GitHub_Projects/LandGenCourse/output&quot;</code></pre>
 <p>The following line checks whether an <code>output</code> folder exists in the project folder, and if not, creates one.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">dir.exists</span>(<span class="fu">paste0</span>(<span class="fu">here</span>(),<span class="st">&quot;/output&quot;</span>))) <span class="fu">dir.create</span>(<span class="fu">paste0</span>(<span class="fu">here</span>(),<span class="st">&quot;/output&quot;</span>))</span></code></pre></div>
 <p>Now we can write our data into a csv file in the output folder:</p>
@@ -366,7 +366,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><strong>pop</strong>: here we should indicate either the column <code>Pop</code> or <code>SiteName</code>.</li>
 <li><strong>NA.char</strong>: how were missing values coded? Here: <code>NA</code>.</li>
 <li><strong>ploidy</strong>: this species is diploid, hence <code>2</code>.</li>
-<li><strong>type</strong>: marker type, either <code>&quot;codom&quot;</code> for codominant markers like microsatellites, or <code>&quot;PA&quot;</code> for presence-absence, such as SNP or AFLP markers. Note: you can use either &quot;&quot; or ’’.</li>
+<li><strong>type</strong>: marker type, either <code>&quot;codom&quot;</code> for codominant markers like microsatellites, or <code>&quot;PA&quot;</code> for presence-absence, such as SNP or AFLP markers. Note: you can use either “” or ’’.</li>
 <li><strong>strata</strong>: one way of defining hierarchical sampling levels. We will add this in Week 3.</li>
 <li><strong>hierarchy</strong>: another way of defining hierarchical sampling levels. We’ll skip it for now.</li>
 </ul>
