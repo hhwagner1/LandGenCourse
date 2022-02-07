@@ -12,7 +12,7 @@
 
 <meta name="author" content="Helene Wagner and Max Hesselbarth" />
 
-<meta name="date" content="2022-01-26" />
+<meta name="date" content="2022-02-07" />
 
 <title>Week 2: Spatial Data</title>
 
@@ -141,7 +141,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Week 2: Spatial Data</h1>
 <h4 class="author">Helene Wagner and Max Hesselbarth</h4>
-<h4 class="date">2022-01-26</h4>
+<h4 class="date">2022-02-07</h4>
 
 
 <div id="TOC">
@@ -640,18 +640,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>                                                      <span class="at">full_name =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>nlcd_subset_full_a</span></code></pre></div>
 <pre><code>## # A tibble: 10 × 9
-##    layer level     class    id metric value name          type     function_name
-##    &lt;int&gt; &lt;chr&gt;     &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;         &lt;chr&gt;    &lt;chr&gt;        
-##  1     1 class        11    NA pladj  77.9  percentage o… aggrega… lsm_c_pladj  
-##  2     1 class        12    NA pladj  52.5  percentage o… aggrega… lsm_c_pladj  
-##  3     1 class        31    NA pladj  48.8  percentage o… aggrega… lsm_c_pladj  
-##  4     1 class        42    NA pladj  89.9  percentage o… aggrega… lsm_c_pladj  
-##  5     1 class        52    NA pladj  58.6  percentage o… aggrega… lsm_c_pladj  
-##  6     1 class        71    NA pladj  81.6  percentage o… aggrega… lsm_c_pladj  
-##  7     1 class        90    NA pladj  41.8  percentage o… aggrega… lsm_c_pladj  
-##  8     1 class        95    NA pladj  32.8  percentage o… aggrega… lsm_c_pladj  
-##  9     1 landscape    NA    NA pr      8    patch richne… diversi… lsm_l_pr     
-## 10     1 landscape    NA    NA shdi    1.01 shannon&#39;s di… diversi… lsm_l_shdi</code></pre>
+##    layer level     class    id metric value name             type  function_name
+##    &lt;int&gt; &lt;chr&gt;     &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;        
+##  1     1 class        11    NA pladj  77.9  percentage of l… aggr… lsm_c_pladj  
+##  2     1 class        12    NA pladj  52.5  percentage of l… aggr… lsm_c_pladj  
+##  3     1 class        31    NA pladj  48.8  percentage of l… aggr… lsm_c_pladj  
+##  4     1 class        42    NA pladj  89.9  percentage of l… aggr… lsm_c_pladj  
+##  5     1 class        52    NA pladj  58.6  percentage of l… aggr… lsm_c_pladj  
+##  6     1 class        71    NA pladj  81.6  percentage of l… aggr… lsm_c_pladj  
+##  7     1 class        90    NA pladj  41.8  percentage of l… aggr… lsm_c_pladj  
+##  8     1 class        95    NA pladj  32.8  percentage of l… aggr… lsm_c_pladj  
+##  9     1 landscape    NA    NA pr      8    patch richness   dive… lsm_l_pr     
+## 10     1 landscape    NA    NA shdi    1.01 shannon&#39;s diver… dive… lsm_l_shdi</code></pre>
 <p>Add full metrics name to results calculated previously using <code>left_join()</code>:</p>
 <div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>nlcd_subset_full_b <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">left_join</span>(<span class="at">x =</span> nlcd_subset,</span>
 <span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">y =</span> lsm_abbreviations_names,</span>
@@ -659,18 +659,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>nlcd_subset_full_b</span></code></pre></div>
 <pre><code>## # A tibble: 10 × 9
-##    layer level     class    id metric value name          type     function_name
-##    &lt;int&gt; &lt;chr&gt;     &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;         &lt;chr&gt;    &lt;chr&gt;        
-##  1     1 class        11    NA pladj  77.9  percentage o… aggrega… lsm_c_pladj  
-##  2     1 class        12    NA pladj  52.5  percentage o… aggrega… lsm_c_pladj  
-##  3     1 class        31    NA pladj  48.8  percentage o… aggrega… lsm_c_pladj  
-##  4     1 class        42    NA pladj  89.9  percentage o… aggrega… lsm_c_pladj  
-##  5     1 class        52    NA pladj  58.6  percentage o… aggrega… lsm_c_pladj  
-##  6     1 class        71    NA pladj  81.6  percentage o… aggrega… lsm_c_pladj  
-##  7     1 class        90    NA pladj  41.8  percentage o… aggrega… lsm_c_pladj  
-##  8     1 class        95    NA pladj  32.8  percentage o… aggrega… lsm_c_pladj  
-##  9     1 landscape    NA    NA pr      8    patch richne… diversi… lsm_l_pr     
-## 10     1 landscape    NA    NA shdi    1.01 shannon&#39;s di… diversi… lsm_l_shdi</code></pre>
+##    layer level     class    id metric value name             type  function_name
+##    &lt;int&gt; &lt;chr&gt;     &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;        
+##  1     1 class        11    NA pladj  77.9  percentage of l… aggr… lsm_c_pladj  
+##  2     1 class        12    NA pladj  52.5  percentage of l… aggr… lsm_c_pladj  
+##  3     1 class        31    NA pladj  48.8  percentage of l… aggr… lsm_c_pladj  
+##  4     1 class        42    NA pladj  89.9  percentage of l… aggr… lsm_c_pladj  
+##  5     1 class        52    NA pladj  58.6  percentage of l… aggr… lsm_c_pladj  
+##  6     1 class        71    NA pladj  81.6  percentage of l… aggr… lsm_c_pladj  
+##  7     1 class        90    NA pladj  41.8  percentage of l… aggr… lsm_c_pladj  
+##  8     1 class        95    NA pladj  32.8  percentage of l… aggr… lsm_c_pladj  
+##  9     1 landscape    NA    NA pr      8    patch richness   dive… lsm_l_pr     
+## 10     1 landscape    NA    NA shdi    1.01 shannon&#39;s diver… dive… lsm_l_shdi</code></pre>
 </div>
 <div id="b-calculate-patch-level-landscape-metrics-for-evergreen-forest" class="section level3">
 <h3>b) Calculate patch-level landscape metrics for ‘Evergreen Forest’</h3>

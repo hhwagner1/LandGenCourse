@@ -49,9 +49,8 @@ aic_vals <- c(AIC(mod1), extractAIC(mod2)[2], extractAIC(mod3)[2],
 names(aic_vals) <- c("mod1","mod2","mod3", "mod4")
 aic_vals
 
-## -----------------------------------------------------------------------------
-predictmeans::residplot(mod4, group="population", level=1)
-
+## ----fig.height=5, fig.width=8------------------------------------------------
+predictmeans::residplot(mod4, group="population", level=1, newwd=FALSE)
 
 ## -----------------------------------------------------------------------------
 marginal.residuals <- mod4@frame$d13c - predict(mod4, re.form=NA)
@@ -67,10 +66,10 @@ summary(mod4)
 
 ## -----------------------------------------------------------------------------
 fam.var <- nlme::VarCorr(mod4)$"family"[1]
-prov.var <- nlme::VarCorr(mod4)$"population"[1]
+pop.var <- nlme::VarCorr(mod4)$"population"[1]
 res.var <- summary(mod4)$sigma^2
 
-Components <- data.frame(fam.var, prov.var, res.var)
+Components <- data.frame(fam.var, pop.var, res.var)
 Components / sum(Components)
 
 ## -----------------------------------------------------------------------------
@@ -137,8 +136,6 @@ QstFst_out
 lme4::fixef(mod4)
 
 ## -----------------------------------------------------------------------------
-# install.packages("ggeffects")
-
 ggeffects::ggeffect(mod4, terms=c("block"))
 
 ## -----------------------------------------------------------------------------
