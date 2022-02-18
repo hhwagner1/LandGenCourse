@@ -1,0 +1,204 @@
+---
+title: "Week 7: Bonus Materials"
+author: "Yessica Rico and Helene Wagner"
+date: "`r Sys.Date()`"
+show_toc: true
+output:
+  knitr:::html_vignette:
+    toc: yes
+    fig_width: 4 
+    fig_height: 3.5
+vignette: >
+  %\VignetteIndexEntry{Week 7: Bonus Materials}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+## 1. Overview of Bonus Materials
+
+The Week 7 Worked Example used patch-level values of an Si index as predictors. Here we show how these were calculated from distance matrices. The main steps are:
+
+- Import ecological distance matrices
+- Optimize the scaling parameter alpha
+- Calculate Hanski's index Si with source patch parameters
+
+The following data will be imported:
+
+- **dModels.rds**: a list of 5 distance matrices (stored as `dist` objects) among all 106 calcareous grassland patches in the study area. Each distance matrix represents a biological hypothesis about functional connectivity of *D. carthusianorum* (see below).
+- **PATCH_XY_Dianthus.csv**: data frame with patch attributes for all 106 calcareous grassland patches in the study area. We will use the following attributes:
+  - **Dc.89, Dc.09**: binary variables indicating whether or not *D. carthusianorum* was recorded in the patch in the first survey in 1989, or the second survey in 2009, respectively.
+  - **Ha**: patch area in ha.
+  - **pop09**: population size in 2009 (categorical, 4 levels, see below).
+
+```{r}
+library(tibble)
+library(dplyr)
+library(LandGenCourse)
+
+```
+
+
+## 2. Import ecological distance matrices
+
+Each distance matrix represents one hypothesis about gene flow in this system (see Week 7 video). 
+
+- **Eu**: Euclidean (geographic) distance, representing IBD
+- **Shecte**: Connectivity by shepherding among consistently grazed patches only, distance-dependent: this counts the number of patches that sheep traverse to get from patch A to patch B. 
+- **Sheint**: Connectivity by shepherding, among consistently or intermittently grazed patches, distance-dependent: again, this counts the number of patches that sheep traverse to get from patch A to patch B. 
+- **Shenu**: Connectivity by shepherding, no distance effect. This considers only whether or not two patches are part of the same grazing system.  
+- **Forest**: This model is similar to Eu but considers forest as a barrier.
+
+Here, we import these distance matrices as a list of `dist` objects and check their names and dimensions: each has 106 rows and columns.  
+
+```{r}
+dModels <- readRDS(system.file("extdata", "dModels.rds", 
+                            package = "LandGenCourse")) 
+
+lapply(dModels, function(ls) dim(as.matrix(ls)))
+```
+Note: the distance matrices contain 106 patches. All of these are considered as source populations. However, we will only calculate Si indices for the 65 patches included in the Dianthus dataset. 
+
+## 3. Optimize the scaling parameter alpha
+
+In order to calculate Hanski's index, we first need to optimize the value of alpha for each distance model, using presence-absence data for the two time steps of 1989 and 2009. 
+
+Import the patch-level data for all 106 patches in the study area.
+
+```{r}
+Patches <- read.csv(system.file("extdata", "PATCH_XY_Dianthus.csv", 
+                            package = "LandGenCourse"),
+         header=TRUE, row.names=1)
+tibble::as_tibble(Patches)
+```
+
+Check that the patch IDs match between `Patches` and the distance matrices. Here we tabulate the number of rows for which the patch names match perfectly. This is the case for all 106 rows, which is great.
+
+```{r}
+table(Patches$patch == rownames(dModels$Eu))
+```
+
+The function 'get.alphafit' optimizes alpha for each model and stores the values in  table 'table.alpha.
+
+- First, we create an empty matrix (with a single column and five rows, one per model) to hold the optimized alpha value for each model (i.e., for each distance matrix).
+- We define the list of values of alpha that should be considered. Here we will use `nseq=100` values between 0.1 and 2.5.
+- Then we define the function get.alphafit that will take four arguments:
+  - `alpha`: scaling parameter of the exponential function
+  - `d`: distance matrix
+  - `pj`: whether or not the species was recorded in a patch in the second survey.
+  - `Op`: number of surveys (out of two) that the species was recorded in the patch.
+
+```{r}
+table.alpha <- matrix(NA, nrow=5)
+dimnames(table.alpha) <- list(models=(names(dModels)))
+
+nseq = 100
+alpha = seq(0.1,2.5, length = nseq)
+
+get.alphafit <- function(alpha, d, pj, Op)
+{
+  expo<-exp(-alpha* d )
+  diag(expo)<-0
+  matr<-sweep(expo,2, pj, "*")
+  Si <-rowSums(sweep(matr, 2, Op/2, "*"), na.rm=TRUE)
+  mod<- glm(cbind(Op,2 -Op) ~ Si, family=binomial)
+  deviance(mod)
+}
+``` 
+     
+Apply the function to optimize alpha.  
+
+```{r}
+pj <- Patches$Dc.09
+Op <- (Patches$Dc.89 + Patches$Dc.09)
+for(m in 1:length(dModels))
+{
+  table.alpha[m] <- (optimize(get.alphafit, interval=alpha,
+                              d=as.matrix(dModels[[m]]), pj, Op)$minimum)
+}
+table.alpha
+``` 
+
+These are the optimized scaling parameters alpha of the distance term (related to dispersal ability) in the incidence function $S_{i}$, where $p_{j}$ is 1 if the species is present in source population j and 0 if it is absent, and $d_{ij}$ is the pairwise distance between source patch j and focal patch i: 
+
+$S_{i}$ = $\sum_{j\neq i} exp(-\alpha d_{ij})p_{j}$
+
+## 4. Calculate Hanski's index Si with source patch parameters
+
+We will consider there alternative source patch parameters
+
+- $p_{j}$: whether or not the species was observed in 2009.
+- $A_{j}$: area of the patch in ha.
+- $N_{j}$: indicator of population size. This was recorded in the field in four ordinal categories:
+    - 1: <4     (too few to treat as population)
+    - 2: 4-40   (small enough for complete sampling)
+    - 3: 41-100 (small enough to count)
+    - 4: >100   (very large)
+     
+Note that here, $N_{j}$ is treated as a numeric variable. While this is an over-interpretation, though preliminary analyses showed that this linearized the relationships between variables.
+
+```{r}
+pj <- Patches$Dc.09
+Aj <- Patches$Ha
+Nj <- Patches$pop09
+``` 
+
+Compile three alternative source patch parameters for each patch. Note that we set the area Aj to zero of the species was not recorded in the patch. This is done by multiplication with pj. 
+
+```{r}
+Source<- data.matrix(data.frame(pj=pj, Aj=pj*Aj, Nj=Nj))
+mod <-rep(1:5, rep(3,5))
+```
+
+Prepare an empty table Si to hold the connectivity indices $S_{i}$, one for each combination of focal patch *i* (rows), distance model $d_{ij}$ and source patch parameter (15 columns: 5 distances x 3 parameters).
+
+```{r}
+Si <- data.frame(matrix(NA,nrow(Patches),ncol=15))
+     dimnames(Si) <- list(row.names(Patches),
+     paste(rep(names(dModels), rep(3,5)), 
+           rep(c("pj", "Aj", "Nj"),5), sep="_"))
+```
+
+Define function `get.Si` with three arguments:
+
+- `alpha`: the optimized alpha value from above
+- `d`: the distance matrix
+- `Ap`: the source patch parameter to be used.
+
+```{r}
+get.Si <- function(alpha, d, Ap)
+{
+  expo<-exp(-alpha*d)
+  diag(expo)<-0
+  matr<-sweep(expo,2, Ap, "*")
+  S <- rowSums(sweep(matr, 2, Op/2, "*"), na.rm=TRUE)
+}
+```
+
+Apply function `get.Si` to calculate `Si` values. `sb` indicates which column of `Ap` to use as source patch parameter.
+
+```{r}
+sb <- rep(1:3,5)
+for (n in 1:ncol(Si))
+{
+  Si[,n] <- get.Si(alpha=table.alpha[mod[n]], 
+                   d=as.matrix(dModels[[mod[n]]]),
+                   Ap=Source[,sb[n]])
+}
+``` 
+
+Table with results: values of Si. Column names are a combination of distance matrix and source patch parameter.
+
+```{r}
+tibble::as_tibble(Si)  
+``` 
+
+Note: the dataset `Dianthus` used in the Week 7 Worked Example only contains Si values for 65 patches with genetic data (i.e., the patches where *D. carthusianorum* was observed, and sampled, during the second survey 2009). 
+
+```{r message=FALSE, warning=TRUE, include=FALSE}
+LandGenCourse::detachAllPackages()
+```
+
+
+
+
+
+
