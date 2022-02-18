@@ -29,11 +29,10 @@ The following data will be imported:
   - **Ha**: patch area in ha.
   - **pop09**: population size in 2009 (categorical, 4 levels, see below).
 
-```{r}
-library(tibble)
+```{r message=FALSE, warning=FALSE}
+#library(tibble)
 library(dplyr)
 library(LandGenCourse)
-
 ```
 
 
