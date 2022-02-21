@@ -228,58 +228,61 @@ Similarly to `sp` being replaced by `sf`, `raster` is being replaced by `terra`.
 Let's again extract the categorical raster layer into a new object 'NLCD'. 
 
 - The function `rast` of package `terra` converts a `raster` object (package `raster`) to a `SpatRaster` object (package `terra`). 
-- We use `as.factor` to tell R that this is a categorical raster layer. This is necessary because the values are coded numerically with values between 11 - 95.
+- We can use `as.factor` to tell R that this is a categorical raster layer. 
+
+Here, we import the raster both as numeric and as categorical raster (factor).
 
 ```{r}
 NLCD <- raster(rasters[6])
-NLCD.terra <- terra::as.factor(terra::rast(NLCD))
+NLCD.num <- terra::rast(NLCD)
+NLCD.cat <- terra::as.factor(terra::rast(NLCD))
 ```
+
+The underlying code in package `terra` for creating categorical rasters seems to have changed lately. Here we will use a work-around based on the numeric map, `NLCD.num`. Check back later for an update.
+
+What values occur in the raster? These are codes for cover types.
 
 Here is a description of the cover types: https://www.mrlc.gov/data/legends/national-land-cover-database-2019-nlcd2019-legend
 
-So far, we only have the codes in the raster attribute table (RAT). We can display that table with the function `cats` (for categories). 
-
 ```{r}
-tibble::as_tibble(terra::cats(NLCD.terra, layer=1)[[1]])
+sort(unique(values(NLCD.num)))
 ```
 
-- R created a column ID. With categorical rasters, terra always numbers levels starting with 0. The ID zero here refers to missing values
-- The column nlcd contains the land cover categories. Note that terra concluded that there must be values from 1 - 95 and thus created as many categories, but only the codes actually present in the raster are listed (11, 12, 31, 42, 52, 71, 90, 95).
+We will import a table with predefined colors (using hex color code) from the file `Colortable_LULC.csv` that is included with `LandGenCourse`. 
 
-Let's add some columns with labels and predefined colors (using hex color code). A color table ("Colortable_LULC.csv") is already in the data folder. 
+This list has more entries (e.g., 21-24) than we need, because not all US land cover classes occur in the study area. 
 
-This list has more entries (e.g., 21-24) than we need, because not all US land cover classes occur in the study area. We need to make sure the colors and cover types are stored as 'character', because the missing factor levels would later create problems.
+Check in the table below that the colors and cover types are stored as 'character'. (Luckily, since R 4.0, this is the new default for function `read.csv`). If they were coded as factors that could lead to errors later on.
 
 ```{r}
 ColTab <- read.csv(system.file("extdata", "Colortable_LULC.csv", 
                             package = "LandGenCourse"), header=TRUE)
-ColTab$color <- as.character(ColTab$color)
-ColTab$attribute <- as.character(ColTab$attribute)
 ColTab
 ```
 
-We merge this list with the raster attribute table of `NLCD.terra`. Le'ts print only the rows with values in column `nlcd`:
+We merge this list with the list of values in `NLCD.num` to create a raster attribute table (RAT). An RAT is a table that contains attributes for each distinct value in a raster.
 
 ```{r}
-RAT <- merge(terra::cats(NLCD.terra, layer=1), ColTab, 
-             by.x="ID", by.y="value", all.x=TRUE, sort=TRUE)
-RAT %>% filter(!is.na(nlcd))
-```
-Finally, we add the RAT to NLCD.terra using the function `setCats`. attribute column from RAT to define the levels of `NLCD.terra`. 
-
-```{r}
-terra::setCats(NLCD.terra, layer=1, value=RAT) 
+tmp <- data.frame(nlcd=sort(unique(values(NLCD.num))))
+RAT <- merge(tmp, ColTab, 
+             by.x="nlcd", by.y="value", all.x=TRUE, sort=TRUE)
+RAT
 ```
 
-Note that color has a special meaning as it is not a true attribute but defines the color scheme used for plotting. A `SpatRaster` object in `terra` has a dedicated slot `coltab` for this. Again, we need to specify the layer, here we use `layer=1`.
+Now we can use tmp to plot the map with the predifined color palette
 
-```{r}
-terra::coltab(NLCD.terra, layer=1) <- RAT$color
-```
+- We first define the dataset with `tm_shape`
+- With `tm_raster`, we tell `tmap` that we want to plot raster values
+  - `style="cat"` tells `tmap` to interpret values as categories 
+  - `palette` defines the colors
+  - `labels` defines the labels to be used for the categories
+  - `title` defines the legend caption for the categories
+- With tm_layout, we tell tmap where to place the legend (outside to the right of map)
+- With `tm_grid(lines=FALSE)` we tell `tmap` to show the coordinates along x and y axes but to suppress grid lines that would be drawn on top of the map (change it to TRUE to see the effect)
 
 ```{r fig.width=7}
-Map3 <- tm_shape(NLCD.terra) + 
-  tm_raster(labels=cats(NLCD.terra, layer=1)$attribute,
+Map3 <- tm_shape(NLCD.num) + 
+  tm_raster(style="cat", palette=RAT$color, labels=RAT$attribute,
             title="Land cover") +
   tm_layout(legend.outside=TRUE, legend.outside.position="right") +
   tm_grid(lines=FALSE)
@@ -306,7 +309,6 @@ This time, we'll export the map to a PDF file.
 ```{r}
 tmap_save(Map4, paste0(here::here(), "/output/RasterMap.pdf"), height=6, width=8)
 ```
-
 
 
 
