@@ -66,7 +66,7 @@ We will model allelic richness 'A' as a function of the following predictors:
 - **IBR**: connectivity index Si ('Sheint_pj') based on the number of continuously or intermittently grazed patches between source and focal patch. This represents a hypothesis of isolation by resistance (IBR). Specifically, this model assumes connectivity via sheep-mediated seed dispersal, where seeds are likely to be transported from patch to patch within the same grazing system (shepherding route). Seeds are assumed to disperse most likely to the next patch (in either direction) along the grazing route, and less likely to more remote patches along the route.
 - **PatchSize**: Logarithm of calcareous grassland patch size in ha. 
 
-The connectivity indices Si were calculated for each focal patch i, integrating over all other patches j where the species was present (potential source patches) using Hanski's incidence function.
+**Bonus Materials**: The connectivity indices Si were calculated for each focal patch i, integrating over all other patches j where the species was present (potential source patches) using Hanski's incidence function. See the Week 7 Bonus Material for how this was done!
 
 ### a) Import data
 
