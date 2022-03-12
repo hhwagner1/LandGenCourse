@@ -9,7 +9,7 @@ output:
     fig_width: 4 
     fig_height: 3.5
 vignette: >
-  %\VignetteIndexEntry{Week 7: Bonus Materials}
+  %\VignetteIndexEntry{Week 10: Bonus Materials}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
