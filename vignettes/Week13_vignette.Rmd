@@ -13,20 +13,20 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-## 1. Overview of Worked Example
+## 1. Overview of Worked Example {-}
 
-### a) Background
+### a) Background {-}
 
 There are many ways graphs can be implemented to understand population structure and relate that structure to landscape characteristics (see Dyer and Nason 2004). In this exercise, we will calculate various graph metrics and apply graphs to fit a gravity model.  
 
 Gravity models are a type of inferential model that exploit graph characteristics. Gravity models include both at-site and between-site landscape data. They are a type of graph consisting of nodes and edges. These nodes and edges of landscape characteristics associated with these graph elements.
 
-### b) Data set
+### b) Data set {-}
 
 In this exercise, you will use the gravity model framework to build an empirical model of gene flow for the Columbia spotted frog dataset in central Idaho that you have used for several other exercises (Murphy et al. 2010).
 
 
-### c) Required R libraries
+### c) Required R libraries {-}
 
 Install some packages needed for this worked example.
 
@@ -48,42 +48,39 @@ library(sp)
 #library(deldir)
 ```
 
+## 2. Calculating graph metrics {-}
 
-#### Set working and data directories  - NEEDS TO BE REMOVED  
-#wd = "C:/R/spatialR/day3/session6" # set your working directory here
-#setwd(wd)
-#ddir = file.path("C:/R/spatialR/day3", "data", "S6")
+### a) Read in, make a spatial object and plot wetlands {-}  
 
+Read in the wetland csv file ("Wetlands.csv"). 
 
-## 2. Calculating graph metrics
-
-### a) Read in, make a spatial object and plot wetlands (Wetlands.csv).  
-
-Read in the wetland csv file. 
 ```{r}
 wetlands <- read.csv(system.file("extdata", "Wetlands.csv", 
                             package = "LandGenCourse"), header = TRUE) 
 str(wetlands)
 ```
 
-Coerce to a SpatialPointsDataFrame and look at the structure of the related dataframe.  
+Coerce to a SpatialPointsDataFrame and look at the structure of the related dataframe. 
+
 ```{r}
 sp::coordinates(wetlands) <- ~X+Y
 class(wetlands)
 str(wetlands)
 ```
 
-Plot the wetlands
+Plot the wetlands.
+
 ```{r}
 plot(wetlands, asp=1, bty="n", xlab="", ylab="", main = "All Wetlands")
   points(wetlands, pch=19, cex=0.75, col="blue")
 ```
 
-### b) Create a graph from the wetlands 
+### b) Create a graph from the wetlands {-} 
 
 We'll create a graph that could represent connectivity using Delaunay triangulation, then plot the result.  
 
-Delaunay triangulation, create delaunay graph
+Delaunay triangulation, create delaunay graph.
+
 ```{r}
 options(warn=-1)
 wetlandgraph <- deldir::deldir(coordinates(wetlands)[,1], 
@@ -92,7 +89,8 @@ wetlandgraph <- deldir::deldir(coordinates(wetlands)[,1],
 options(warn=0)
 ```
 
-Plot the graph with the wetlands
+Plot the graph with the wetlands.
+
 ```{r}
 plot(wetlands, asp=1, bty="n", xlab="", ylab="", main = "All Wetlands")
   points(wetlands, pch=19, cex=0.75, col="blue")
@@ -105,7 +103,7 @@ plot(wetlandgraph, wlines = "triang", wpoints="none",
 - What other types of graphs could you build?  
 - Can you build a different graph and use this graph in your analysis?
 
-### c) Create adjacency matrix
+### c) Create adjacency matrix {-}
 
 What wetlands are connected to each other based on the Delaunay triangulation? Create an adjacency matrix from the graph object and make an adjacency matrix. 
 
@@ -118,7 +116,7 @@ adj <- matrix(0, length(wetlands$X), length(wetlands$Y))
   } 
 ```
 
-### d) Calculate graph metrics
+### d) Calculate graph metrics {-}
 
 This graph, if it is ecologically meaningful  contains information in the graph structure itself. Calculate graph metrics of degree and betweenness.  
 
@@ -135,7 +133,7 @@ plot(wetnet)
 ```
 
 
-### e) Add graph metrics to data.frame
+### e) Add graph metrics to data.frame {-}
 
 Calculate degree- the number of connections a node has  
 
@@ -154,9 +152,9 @@ head(wetlands@data)
 
 - Can you code your own degree or betweenness centrality function?
 
-## 3. Combine frog data with graph metrics
+## 3. Combine frog data with graph metrics {-}
 
-### a) Add graph node data to frog site data
+### a) Add graph node data to frog site data {-}
 
 Using the RALU_Site data, read in the data, add the node data (betweenness and degree) and create a shape file that includes the node data. This process will mirror part 1.  
 
@@ -165,33 +163,37 @@ Using the RALU_Site data, read in the data, add the node data (betweenness and d
 - What are the fields here?  
 - What data are included?  
 
-Import site data
+Import site data.
+
 ```{r}
 sites <- read.csv(system.file("extdata", "RALU_Site.csv", 
                             package = "LandGenCourse"), header = TRUE) 
 head(sites)
 ```
 
-Extract degree and betweenness from graph data
+Extract degree and betweenness from graph data.
+
 ```{r}
 nodestats <- as.data.frame(wetlands@data[,3:5])
 degree.betweenness <- nodestats[which(nodestats$SiteName %in% sites$SiteName),]
 head(degree.betweenness)
 ```
 
-Add to site data
+Add to site data.
+
 ```{r}
 sites <- merge(degree.betweenness, sites, by= "SiteName" )
 head(sites)
 ```
 
 Note: Using names is dangerous as, small changes in names can result in non-matches. In this case, the ID fields are not consistent (data were collected at different times for different purposes originally). However, names are standardized in a drop-down list of a database. So they are a matching field. My preference is do to this type of operation on a numeric field.  
+
 ```{r}
 coordinates(sites) <- ~X+Y
 str(sites)
 ```
 
-### b) Check data types
+### b) Check data types {-}
 
 Get data as proper type. Are all of the data fields reading as the correct type?
 
@@ -206,16 +208,17 @@ sites@data$SiteID <- as.factor(sites@data$SiteID)
 class(sites@data$SiteID)
 ```
 
-## 4. Merge graph with genetic distance data
+## 4. Merge graph with genetic distance data {-}
 
 Create graph from site locations and merge with genetic distance data.
 
-### a) Build graph from occupied sites
+### a) Build graph from occupied sites {-}
 
 To assess connectivity using a gravity model, we need to build a graph from the occupied frog sites. This could be any type of graph, but I generally use saturated or pruned by some maximum distance.
   
 
-Note: make sure to use correct field here:
+Note: make sure to use correct field here.
+
 ```{r}
 dist.graph <- GeNetIt::knn.graph(sites, row.names = sites@data[,"SiteID"])
 #dist.graph@proj4string@projargs <- "+proj=utm +zone=11 +ellps=GRS80 +towgs84=0,0,0,-0,-0,-0,0 +units=m +no_defs "
@@ -224,11 +227,12 @@ dist.graph <- GeNetIt::knn.graph(sites, row.names = sites@data[,"SiteID"])
 
 The "k greater than one-third of the number of data points" is a warning issued by the k nearest neighbor function.  In our case, this is not a problem as we want a graph that k is equal to 1-n, that is a saturated graph.
 
-### b) Merge graph with genetic distance
+### b) Merge graph with genetic distance {-}
 
 This involves: reading in RALU_Dps genetic distance. Read in genetic distance file (RALU_Dps), convert to flow (1-distance) and unfold into a dataframe. Then merge graph with genetic distances.
 
-Read in the genetic distance matrix
+Read in the genetic distance matrix.
+
 ```{r}
 gdist <- read.csv(system.file("extdata", "RALU_Dps.csv", 
                             package = "LandGenCourse"), header=TRUE)
@@ -237,25 +241,29 @@ gdist <- as.matrix (gdist)
 head(gdist)
 ```
 
-Convert genetic distance to flow
+Convert genetic distance to flow.
+
 ```{r}
 gdist <- GeNetIt::flow(gdist)
 head(gdist)
 ```
 
-Convert genetid "flow" matrix into an unfolded dataframe with site IDs
+Convert genetid "flow" matrix into an unfolded dataframe with site IDs.
+
 ```{r}
 gdist <- GeNetIt::dmatrix.df(gdist)
 head(gdist)
 ```
 
-The default column name is "distance" as this matrix could represent multiple type of distances. We are renaming here to avoid confusion as to the type of distance here.  
+The default column name is "distance" as this matrix could represent multiple type of distances. We are renaming here to avoid confusion as to the type of distance here. 
+
 ```{r}
 names(gdist)[3] <- "GDIST"
 names(gdist)
 ```
 
 Some housekeeping here to rename colums to from, to nodes and remove "X"s added in conversion from matrix.
+
 ```{r}
 names(gdist)[1] <- "FROM"
 names(gdist)[2] <- "TO"
@@ -265,6 +273,7 @@ names(gdist)
 ```
 
 Create an identifier of to from nodes to connect back to the graph and link gdist data to knn graph.
+
 ```{r}
 gdist <- cbind(from.to=paste(gdist[,1], gdist[,2], sep="."), gdist)
 dist.graph@data$from.to <- paste(dist.graph$from_ID, dist.graph$to_ID, sep=".")
@@ -272,7 +281,7 @@ dist.graph <- merge(dist.graph, gdist, by = "from.to")
 head(dist.graph@data)
 ```
 
-### c) Write out results (ASCII csv and lines shapefile).
+### c) Write out results (ASCII csv and lines shapefile) {-}
 
 Saving the results (as ASCII csv and lines shapefile) is is a really useful operation for your own data, especially if you have a large graph, so you don't have to recreate this object.  
 
@@ -288,9 +297,9 @@ Uncheck the following lines to write out a shapefile. This is commented out as r
 #                driver="ESRI Shapefile", check_exists=TRUE, overwrite_layer=TRUE)
 ```
 
-## 5. Preparing raster-based covariates 
+## 5. Preparing raster-based covariates {-} 
 
-### a) Import raster data as stack 
+### a) Import raster data as stack {-} 
 
 This function will import a raster stack with nine raster maps of the study area.
 ```{r}
@@ -299,19 +308,21 @@ xvars
 names(xvars)
 ```
 
-### b) Calculate wetland area within buffer
+### b) Calculate wetland area within buffer {-}
 
 You want to know if areas of dense wetlands produce more frogs. Calculate the proportion of the landscape around each site that is wetland. What buffer distance will you use?
 
 We can create a wetland raster from the NLCD data. Wetland classes are 11 (open water), 90 and 95.
 
 Create a vector of reclassification where non-wetland is a 0, wetland is a 1.
+
 ```{r}
 m <- c(0,10.8, 0,10.9,12.1,1,12.9,89.1,0, 89.5,95.1,1)
   reclass <- matrix(m, ncol=3, byrow=TRUE)
 ```
 
-Reclassifying nlcd by the reclass matrix
+Reclassifying nlcd by the reclass matrix.
+
 ```{r warning=FALSE}
 wetlnd <- raster::reclassify(xvars$nlcd, reclass) 
 ```
@@ -324,13 +335,14 @@ wetlnd <- raster::reclassify(xvars$nlcd, reclass)
 plot(wetlnd)
 ```
 
-Adding this new parameter to our raster stack
+Adding this new parameter to our raster stack.
+
 ```{r}
 xvars <- raster::stack(xvars, wetlnd)
 names(xvars)
 ```
 
-### c) Create raster of wetland proportion 
+### c) Create raster of wetland proportion {-} 
 
 Create a raster of the proportion of landscape (PLAND) that is wetland, using a 300 m radius. 
 
@@ -368,9 +380,9 @@ head(sites@data)
 
 - Try creating some additional metrics of your own from these rasters.  
 
-## 6. Extract raster stats for nodes and edges 
+## 6. Extract raster stats for nodes and edges {-} 
 
-### a) Extract at-site variables from rasters
+### a) Extract at-site variables from rasters {-}
 
 Add characteristics of sample sites from your rasters as potential at site variables.  Here we are extracting the raster values that intersect our wetlands (point data).  What raster is not included in this step?  Why?  What at-site characteristics may impact the production of potential migrants?
 
@@ -380,7 +392,8 @@ sites@data <- data.frame(sites@data, raster::extract(xvars, sites))
 ```{r}
 names(sites@data)
 ```
-### b) Add covariates to graph edges.  
+
+### b) Add covariates to graph edges {-}  
 
 Calculating statistical moments (e.g., mean, sdev) for categorical variables makes no sense. We we will remove them here.  
 
@@ -388,7 +401,8 @@ Calculating statistical moments (e.g., mean, sdev) for categorical variables mak
 idx <- which(names(xvars) %in% c("nlcd","wetlnd"))
 ```
 
-### c) Calculating stats along edges
+### c) Calculating stats along edges {-}
+
 Here we define the projection of the distance graph and then calculate statistics
 
 You can calculate any statistical moment you wish from your sample of the landscape between nodes. Make sure that these moments are ecologically/biologically meaningful.
@@ -410,7 +424,7 @@ names(dist.graph@data)
 - What other statistical moments do you want?  
 - Can you create a function?
 
-### d) Calculating stats for categorical variables
+### d) Calculating stats for categorical variables {-}
 
 What about categorical variables?  Moments are nonsensical. 
 
@@ -439,7 +453,7 @@ wetstats <- GeNetIt::graph.statistics(dist.graph, r=xvars$nlcd, buffer= NULL,
 - What other categorical variables would you like to include in the analysis?  Can you create a function for these variables?
   
   
-### e) Add node data to graph  
+### e) Add node data to graph {-}  
 
 First create a list of names for the node data
 
@@ -482,11 +496,11 @@ node <- GeNetIt::build.node.data(sites@data, group.ids = "SiteID", from.parms = 
 head(node)
 ```
 
-## 7. Gravity Models 
+## 7. Gravity Models {-} 
 
 Now we get to create gravity models!
 
-### a) Merge distance and site data
+### a) Merge distance and site data {-}
 
 Merge edge (distance graph) and edge (site) data.
 ```{r}
@@ -495,12 +509,12 @@ gdata <- merge(dist.graph, node, by.x="from_ID", by.y="SiteID")
   names(gdata)
 ```
 
-### b) Define a set of models
+### b) Define a set of models {-}
 
 Think about hypothesis and create a set of models.  What type of constraint? Write out model statements.  HOWEVER, need to check for correlations (#3) before settling on a final set of model. At this point, make a list of these models in a text editor, but do not run these models until you check correlations.
   
 
-### c) Check for correlations  
+### c) Check for correlations {-}  
 
 You will need to do nodes and edges separately, remember that data have to be ln transformed. For zero values, a common approach is ln(x - (min(x) - 1))
 
@@ -527,9 +541,10 @@ edgecor.ln <- cor(edge.ln, y = NULL,
 round(edgecor.ln, 3) 
 ```
 
-### c) Write out resultss
+### c) Write out results {-}
 
 Figure as pdf file:
+
 ```{r}
 pdf(file=paste0(here::here(),"/output/node.cor.pdf"), width=20, height=20)
    pairs(nodecor.ln, pch=19, cex=0.50)
@@ -537,6 +552,7 @@ dev.off()
 ```
 
 Correlation data:
+
 ```{r}
 write.csv(round(edgecor.ln, 4), 
           file = paste0(here::here(),"/output/EdgeCorrelationsLn.csv"))
@@ -544,17 +560,19 @@ write.csv(round(nodecor.ln, 4),
           file = paste0(here::here(),"/output/NodeCorrelationsLn.csv"))
 ```
 
-### e) Compare models
+### e) Compare models {-}
 
 Run and compare models representing your hypotheses.  Remember - we compete models using ML but use REML for final fit. Also remember that the null model contains distance (and all models must contain distance).
 
 Null model:
+
 ```{r}
 ( null <- GeNetIt::gravity(y = "GDIST", x = c("length"), d = "length", group = "from_ID", 
                   data = gdata, method = "ML") )
 ```
 
 Global model (this was based on my hypotheses):
+
 ```{r}
   ( global <- GeNetIt::gravity(y = "GDIST", x = c("length", "wet.pct.nlcd", 
                                          "median.gsp", "from.Depth", 
@@ -566,13 +584,15 @@ Global model (this was based on my hypotheses):
 ```
 
 Published model:
+
 ```{r}
 ( published <- GeNetIt::gravity(y = "GDIST", x = c("length", "median.gsp", "from.Depth", 
                     "from.hli", "median.cti", "median.srr"), d = "length", 
 				     group = "from_ID", data = gdata, method = "ML"))
 ```
 
-Habitat hypothesis
+Habitat hypothesis:
+
 ```{r}
 ( habitat <- GeNetIt::gravity(y = "GDIST", x = c("length", "wet.pct.nlcd", "median.gsp"), d = "length", 
                      group = "from_ID", data = gdata, method = "ML") )
@@ -580,30 +600,32 @@ Habitat hypothesis
 ```                     
 
 Compare models: these are the names of the hypotheses (models) I tested.
+
 ```{r}
 #compare.models(null, depth, product, climate, wetlands, topo, habitat, global)
 #compare.models(depth, product, climate, wetlands, topo, habitat, published, global, null) 
 GeNetIt::compare.models(null, habitat, global, published) #NOTE - global will need to be edited to match your paramters
 ```
 
-
  
-### f) Diagnostic plots
+### f) Diagnostic plots {-}
 
 ```{r}
 par(mfrow=c(2,3))
    for (i in 1:6) { plot(global, type=i) } 
 ```
 
-### g) Fit final model(s)
+### g) Fit final model(s) {-}
 
 Habitat:
+
 ```{r}
 habitat_fit <- GeNetIt::gravity(y = "GDIST", x = c("length", "wet.pct.nlcd", "median.gsp"), 
                        d = "length", group = "from_ID", data = gdata, method = "REML")
 ```
 
 Global:
+
 ```{r}
 global_fit <- GeNetIt::gravity(y = "GDIST", x = c("length", "wet.pct.nlcd", "median.gsp", 
                                          "from.Depth", "from.ffp", "from.hli", 
@@ -614,18 +636,20 @@ global_fit <- GeNetIt::gravity(y = "GDIST", x = c("length", "wet.pct.nlcd", "med
 ```
 
 Published:
+
 ```{r}
 published_fit <- GeNetIt::gravity(y = "GDIST", x = c("length", "median.gsp", "from.Depth", 
                     "from.hli", "median.cti", "median.srr"), d = "length", 
 				     group = "from_ID", data = gdata, method = "REML") 
 ```
 
-Compare models
+Compare models:
+
 ```{r}
 GeNetIt::compare.models(global_fit, habitat_fit, published_fit)
 ```
 					  
-### h) Effect size
+### h) Effect size {-}
 
 This effect size is NOT backwards transformed.  We are working on effect sizes for backwards transformed data.
 

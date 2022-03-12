@@ -13,9 +13,9 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-## 1. Overview of Worked Example
+## 1. Overview of Worked Example {-}
 
-### a) Goals and Background
+### a) Goals and Background {-}
 
 **Goals**: The goal of this worked example is for you to become familiar with creating and analyzing landscape genetic hypotheses using maximum likelihood population effect models (MLPE; Van Strien et al. 2012) and information theory. With this approach, we focus on evaluating evidence for the influence of the (intervening) landscape on link-based metrics (i.e. genetic distance). Incorporating node-based effects (i.e. pond size, etc.) will be covered in the gravity modeling lab. 
 
@@ -25,7 +25,7 @@ Here's a map of the study area. The lines represent those pair-wise links betwee
  
 ![Map of study area](WE12_Fig1.png)
 
-### b) Data set
+### b) Data set {-}
 
 In previous labs, you have created genetic distance matrices, so here we are going to start with those data already complete, as are the landscape data. For MLPE, two vectors representing the nodes at the ends of each link must be created. These are already included in the data set (`pop1` and `pop2`). 
 
@@ -48,7 +48,7 @@ Each row in the file 'CSF_network.csv' represents a link between two pairs of sa
 - **pop1**: 'From' population.
 - **pop2**: 'To' population.
 
-### c) Required packages
+### c) Required packages {-}
 
 ```{r packages global_options, include=TRUE, results="hide", message=FALSE, warning=FALSE}
 library(LandGenCourse)
@@ -57,7 +57,7 @@ library(ggplot2)
 #require(usdm)
 ```
 
-### d) Import data
+### d) Import data {-}
 
 First, read in the dataset. It is named CSF (Columbia spotted frog) to differentiate it from the RALU dataset you have used in previous labs (same species, very different landscapes). 
 
@@ -84,9 +84,9 @@ The response Y in our MLPE models will be `logDc.km`, the genetic distance per g
 For this exercise, you will test 5 alternative hypotheses. At the end, you will be invited to create your own hypotheses from these variables and test support for them.
 
 
-## 2. Fitting candidate models
+## 2. Fitting candidate models {-}
 
-### a) Alternative hypotheses
+### a) Alternative hypotheses {-}
 
 In information theory, we evaluate evidence for a candidate set of hypotheses that we develop from the literature and theory. Although it is mathematically possible (and often practiced) to fit all possible combinations of input variables, that approach is not consistent with the methodology (see Burnham and Anderson 2002 Chapter 8, the reading for this unit, for more detail). Here, your "a priori"" set of hypotheses (as in the Week 12 Conceptual Exercise) is as follows:
 
@@ -96,7 +96,7 @@ In information theory, we evaluate evidence for a candidate set of hypotheses th
 4.	**Energy conservation model**: slope, shrub, dev
 5.	**Historical model**: soils, slope, solarinso
 
-### b) Prepare for model fitting
+### b) Prepare for model fitting {-}
 
 Because link data are not independent (i.e. the genetic diversity at node 1 influences both the node1/node2 genetic distance and that from node1/node3, etc.), we need to develop a set of random effects to account for this dependency, so that we seperate the pattern due to this covariance from the signal of landscape influence on genetic distance. We start by creating matrices from the `pop1` and `pop2` variables:
 
@@ -169,7 +169,7 @@ With such sets of compositional data, we need to omit one variable to avoid mult
 cor(CSF.df, CSFdata$grass)
 ```
 
-### c) Fit all five models
+### c) Fit all five models {-}
 
 Now we have to remake the modeling objects with our new and improved data frame, but referring to our z-transformed data (thanks to Martin Van Strien and Helene Wagner for the base model code):
 
@@ -246,7 +246,7 @@ mod4 <- MLPE(logDc.km ~ slope + shrub + dev + (1|pop1), CSFdata)
 mod5 <- MLPE(logDc.km ~ soils + slope + solarinsoz + (1|pop1), CSFdata)
 ```
 
-### d) Compare evidence for models
+### d) Compare evidence for models {-}
 
 First we need to refit the models with REML = FALSE to get a useable estimate of likelihood for AIC and BIC. To do this, we'll create a new function called MLPEnoREML and use it to fit our 5 models.
 
@@ -306,7 +306,7 @@ CSF.IC$AICc <- CSF.IC$AIC + 2*CSF.IC$k*(CSF.IC$k+1)/(48-CSF.IC$k-1)
 CSF.IC
 ```
 
-### e) Calculate evidence weights
+### e) Calculate evidence weights {-}
 
 Next we calculate evidence weights for each model based on AICc and BIC. These can be interpreted as the probability that the model is the closest to truth in the candidate model set. 
 
@@ -339,7 +339,7 @@ In the multi-model inference approach, we can look across all the models in the 
 4.	**Energy conservation model**: slope, shrub, dev
 5.	**Historical model**: soils, slope, solarinso
 
-### f) Confidence intervals for predictors
+### f) Confidence intervals for predictors {-}
 
 According to Row et al. (2017), we can use the confidence interval from the variables in the models to identify those that are contributing to landscape resistance. Looking at models 2 and 3, we have some evidence that shrub and forest cover matter, but it's not as strong as the evidence for ag and development. Let's look at the parameter estimates to understand more. Note that for parameter estimation we use the REML estimates.
 
@@ -364,7 +364,7 @@ In essence, we use the confidence intervals to assess whether we can differentia
 
 **Question 6**:  We excluded grass from our models because of multicollinearity. How could we investigate the importance of this variable?
 
-## 3. Your turn to test additional hypotheses!
+## 3. Your turn to test additional hypotheses! {-}
 
 Create your own (small) set of hypotheses to rank for evidence using the dataset provided. Modify the code above to complete the following steps: 
 
@@ -376,7 +376,7 @@ Create your own (small) set of hypotheses to rank for evidence using the dataset
 
 What can you infer from your analysis about what influences gene flow of this species?
 
-## 4. References
+## 4. References {-}
 
 - Burnham KP and DR Anderson. 2002. Model Selection and Multimodel Inference: A Practical Information Theoretic Approach. Chapter 8, p. 437-454. Springer-Verlag, New York.
 

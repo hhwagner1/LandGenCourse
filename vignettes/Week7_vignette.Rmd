@@ -13,9 +13,9 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-## 1. Overview of Worked Example
+## 1. Overview of Worked Example {-}
 
-### a) Goals 
+### a) Goals {-} 
 
 This worked example shows:
 
@@ -25,13 +25,13 @@ This worked example shows:
 - How to perform spatial filtering with Moran eigenvector maps (MEM).
 - How to fit a spatially varying coefficients model (SVC).
 
-### b) Data set
+### b) Data set {-}
 
 Here we analyze population-level data of the wildflower *Dianthus carthusianorum* (common name: Carthusian pink) in 65 calcareous grassland patches in the Franconian Jura, Germany (Rico et al. 2013): 
 
 - **Dianthus**: Spatial point data frame with population-level data (patch characteristics, grazing regime, genetic diversity, 15 alternative connectivity indices Si), included in package 'LandGenCourse'. To load the data, type (without quotes): 'data(Dianthus)'. For a definition of the variables, type: '?Dianthus'.
 
-### c) Required R packages
+### c) Required R packages {-}
 
 Note: the function 'library' will always load the package, even if it is already loaded, whereas 'require' will only load it if it is not yet loaded. Either will work.
 
@@ -58,7 +58,7 @@ if(!require(spmoran)) install.packages("spmoran", repos='http://cran.us.r-projec
 #require(spmoran)
 ```
 
-## 2. Explore data set
+## 2. Explore data set {-}
 
 We will model allelic richness 'A' as a function of the following predictors:
 
@@ -68,7 +68,7 @@ We will model allelic richness 'A' as a function of the following predictors:
 
 **Bonus Materials**: The connectivity indices Si were calculated for each focal patch i, integrating over all other patches j where the species was present (potential source patches) using Hanski's incidence function. See the Week 7 Bonus Material for how this was done!
 
-### a) Import data
+### a) Import data {-}
 
 ```{r}
 data(Dianthus)
@@ -76,7 +76,7 @@ data(Dianthus)
 
 Allelic richness 'A' was not calculate for populations with < 5 individuals. Here we extract only the patches with 'A' values, and the variables needed, and store them in a data frame 'Dianthus.df'.
 
-### b) Create a map
+### b) Create a map {-}
 
 The functions in package 'ggmap' expect the projection to be Longitude/Latitude. We could start by transforming the projection of the Dianthus dataset (ignore the warning about CRS object having no comment):
 
@@ -88,7 +88,7 @@ make_bbox(lon = Longitude, lat = Latitude, data = Dianthus@data, f = 0.2)
 
 ```
 
-Here, however, we use a shortcut as the 'Dianthus@data' dataframe already contains variables with Longitude and Latitude. We use these to define the bounding box for the map, extending the map extent by 20% ('f=0.2'). 
+Here, however, we use a shortcut as the `Dianthus@data` dataframe already contains variables with Longitude and Latitude. We use these to define the bounding box for the map, extending the map extent by 20% ('f=0.2'). 
 
 ```{r}
 bbox <- make_bbox(lon = Longitude, lat = Latitude, data = Dianthus@data, f = 0.2)
@@ -129,7 +129,7 @@ There are three types of stamen maps: terrain, toner (black and white), and wate
 - toner-lite
 - watercolor
 
-### c) Explore correlations
+### c) Explore correlations {-}
 
 When fitting linear models, it is always a good idea to look at the correlations first. 
 
@@ -194,9 +194,9 @@ round(matrix(cor(Dianthus@data$A, Dianthus@data[,15:29],
 - Correlations with 'A' are highest for the two 'IBR' models that assume seed dispersal over a limited number of patches along shepherding routes ('Shecte' and 'Sheint'. These two models include only continuously grazed, or both continuously and intermittently grazed patches, respectively. 
 - Correlations for models that take in to account population size ('Nj') are only slightly lower, whereas those that use patch size ('Aj') as a proxy for the size of the seed emigrant pool had lower correlations. 
 
-## 3. Test regression residuals for spatial autocorrelation
+## 3. Test regression residuals for spatial autocorrelation {-}
 
-### a) Fit regression models
+### a) Fit regression models {-}
 
 Here we fit three multiple regression models to explain variation in allelic richness:
 
@@ -243,7 +243,7 @@ par(mfrow=c(1,1))
 
 Not really!
 
-### b) Test for spatial autocorrelation (Moran's I):
+### b) Test for spatial autocorrelation (Moran's I) {-}
 
 Before we interpret the models, let's check whether the assumption of independent residuals is violated by spatial autocorrelation in the residuals. 
 
@@ -287,6 +287,7 @@ spdep::moran.test(Dianthus.df$IBR, listw.gab)
 ```{r}
 spdep::moran.test(Dianthus.df$PatchSize, listw.gab) 
 ```
+
 **Questions:**
 
 - Which variables showed statistically signficant spatial autocorrelation?
@@ -306,12 +307,12 @@ spdep::lm.morantest(mod.lm.PatchSize, listw.gab)
 
 Quite a bit of the spatial autocorrelation in allelic richness can be explained by the spatial structure in the predictors IBR and PatchSize. There is still statistically significant spatial autocorrelation in the residuals, though it is not strong any more. 
 
-## 4. Fit models with spatially correlated error (GLS) with package 'nlme'
+## 4. Fit models with spatially correlated error (GLS) with package 'nlme' {-}
 
 One way to account for spatial autocorrelation in the residuals is to fit a Generalized Least Squares model (GLS) with a spatially autocorrelated error structure. 
 See also: http://rfunctions.blogspot.ca/2017/06/how-to-identify-and-remove-spatial.html
 
-### a) Plot empirical variogram
+### a) Plot empirical variogram {-}
 
 The error structure in a GLS is defined in a geostatistical framework, based on a variogram and as a function of distance between observations. Hence we start with plotting an empirical variogram of the residuals, with a smooth line. Here we specify 'resType = "normalized", which means that the variogram will be fitted to the normalized residuals of the model. 
 
@@ -335,7 +336,7 @@ ggplot(data=semivario, aes(x=dist, y=variog)) + geom_point() + geom_smooth(se=FA
 - Estimate the range of the variogram from the intersection of the smooth line with the horizontal line.
 - Estimate the nugget effect from the intercept at Distance = 0.
 
-### b) Fit variogram models
+### b) Fit variogram models {-}
 
 We can ask R to fit different types of variogram models to this empirical variogram. The model family (e.g., exponential, gaussian, spherical) determines the general shape of the curve that will be fitted. With 'nugget=T', we indicate that a nugget effect should be fitted. 
 
@@ -355,7 +356,7 @@ mod.corRatio <- update(model.lm, correlation = nlme::corRatio(form = ~ x + y, nu
 #mod.corLin <- update(model.lm, correlation = nlme::corLin(form = ~ x + y, nugget=T))
 ```
 
-### c) Select best-fitting model
+### c) Select best-fitting model {-}
 
 Now we compare all models for which we did not get an error message:
 
@@ -402,7 +403,7 @@ plot(semivario, smooth = TRUE)
 
 The variogram of the residuals (after accounting for spatial autocorrelation as modeled by the variogram model) does look better!
 
-### d) Plot fitted variogram model
+### d) Plot fitted variogram model {-}
 
 How can we plot the fitted variogram? Let's first store it in an object 'Fitted.variog', then plot it. Note that the fitted variogram itself has two classes, "Variogram" and "data.frame". The plot created by `plot(Fitted.variog)` is a "trellis" object. 
 
@@ -446,7 +447,7 @@ ggplot(data=Fitted.variog, aes(x=dist, y=variog)) + geom_point() +
   geom_hline(yintercept=1,linetype="dashed")
 ```
 
-### e) Add random factor
+### e) Add random factor {-}
 
 The package `nlme` allows us also to include random factors. Here we add `System` as a random factor and test whether this would improve the model fit.
 
@@ -487,11 +488,11 @@ MuMIn::model.sel(model.lm, mod.corExp, mod.corRatio, mod.lme.corExp)
 - How about the slope estimate for PatchSize? 
 
 
-## 5. Fit spatial simultaneous autoregressive error models (SAR)
+## 5. Fit spatial simultaneous autoregressive error models (SAR) {-}
 
 An alternative way to account for spatial autocorrelation in the residuals is spatial regression with a simultaneous autoregressive error model (SAR).
 
-### a) Fit and compare alternative SAR models
+### a) Fit and compare alternative SAR models {-}
 
 The method `errorsarlm` fits a simultaneous autoregressive model ('sar') to the error ('error') term of a 'lm' model. 
 
@@ -519,7 +520,7 @@ data.frame(AICc = sapply(Models, MuMIn::AICc)) %>%
 
 The best model ('mod.sar.IBR.d1') is the one with (row-standardized) inverse-distance weights ('listw.d1'). It is only slightly better than the model with the (row-standardized) binary weights ('listw.gab'), whereas the nonspatial model and the one with (row-standardized) inverse squared distance weights have much less support. 
 
-### b) Interpret best-fitting SAR model
+### b) Interpret best-fitting SAR model {-}
 
 Let's have a look at the best model. With the argument `Nagelkerke = TRUE`, we request a pseudo R-squared. 
 
@@ -530,13 +531,13 @@ summary(mod.sar.IBR.d1, Nagelkerke = TRUE)
 - Again, PatchSize is significant but not IBR. 
 - The section starting with 'Lamba' summarizes the fitted spatial autocorrelation term. It is not statistically significant (p-value = 0.1039 for the Likelihood Ratio test LR).
 
-## 6. Spatial filtering with MEM using package 'spmoran'
+## 6. Spatial filtering with MEM using package 'spmoran' {-}
 
 See tutorial for 'spmoran' package: https://arxiv.org/ftp/arxiv/papers/1703/1703.04467.pdf
 
 Both GLS and SAR fitted a spatially correlated error structure of a relatively simple form to the data. Gene flow could be more complex and for example, could create spatial autocorrelation structure that is not the same in all directions or in all parts of the study area. Moran Eigenvector Maps (MEM) allows a more flexible modeling of spatial structure in the data. In spatial filtering, we use MEM spatial eigenvectors to account for any spatial structure while fitting and testing the effect of our predictors.
 
-### a) Default method
+### a) Default method {-}
 
 The new package `spmoran` makes this really easy. First, we create the MEM spatial eigenvectors. This implies defining neighbors and weights, but this is well hidden in the code below. The function `meigen` here takes the coordinates, calculates a minimum spanning tree (so that each site has at least one neighbour), and finds the maximum distance 'h' from the spanning tree. It then calculates neighbor weights as `exp(-dij / h)`. 
 
@@ -591,7 +592,7 @@ sfd.res$e
 
 Here, 'adjR2' is rather high (0.437), but this includes the selected MEM spatial eigenvectors! 
 
-### b) Using a custom connectivity matrix
+### b) Using a custom connectivity matrix {-}
 
 We know already that `listw.d1` fit the data well, so let's re-run the model with our own definition of spatial weights. With the funciton 'listw2mat', we convert from `listw` format to a full connnectivity matrix. 
 
@@ -613,7 +614,7 @@ Note: the messages tell us that 'cmat' has been made symmetric before analysis, 
 - What could cause a difference in model performance?
 - Does this affect the results for PatchSize and IBR? Compare both parameter estimates and p-value between two two models.
 
-### c) Plot spatial eigenvectors
+### c) Plot spatial eigenvectors {-}
 
 So far, we have treated the MEM spatial eigenvectors as a black box. What kind of patterns do they represent? 
 
@@ -655,7 +656,7 @@ With the default method (defining neighbors based on a distance cut-off), the sp
 
 This means that the spatial eigenvectors derived from the Gabriel graph were more effective at capturing the spatial variation in allelic richness than the default method. This spatial component is then controlled for when assessing the relationship between allelic richness and the predictors (PatchSize and IBR).
 
-### d) Random effect model
+### d) Random effect model {-}
 
 The previous model selected 15 MEM spatial eigenvectors, and thus fitted 15 additional models. Just like the random effects for family and population in Week 6 lab, we can save a few parameters here by fitting the set of MEM eigenvectors as a random effect. This is done by the function 'resf'. 
 
@@ -677,7 +678,7 @@ We get an additional output 'sfr.res$s' with two variance parameters:
 - **spcomp_SE**: standard error of the spatial component. 
 - **spcomp_Moran.I/max(Moran.I)**: Moran's I of the spatial component, rescaled by the maximum possible value. From the help file: "Based on Griffith (2003), the scaled Moran'I value is interpretable as follows: 0.25-0.50:weak; 0.50-0.70:moderate; 0.70-0.90:strong; 0.90-1.00:marked." 
 
-## 7. Fit spatially varying coefficients model with package 'spmoran'
+## 7. Fit spatially varying coefficients model with package 'spmoran' {-}
 
 See: https://arxiv.org/ftp/arxiv/papers/1703/1703.04467.pdf
 
@@ -685,7 +686,7 @@ Now comes the coolest part!
 
 So far, we have fitted the same model for all sites. Geographically weighted regression (GWR) would allow relaxing this. Spatial filtering with MEM can be used to accomplish the same goal, and the 'spmoran' tutorial calls this a 'Spatially Varying Coefficients' model (SVC). The main advantage is that we can visualize how the slope parameter estimates, and their p-values, vary across the study area! This is a great exploratory tool that can help us better understand what is going on. 
 
-### Model with PatchSize and IBR
+### Model with PatchSize and IBR {-}
 
 We fit the model with 'resf_vc'. 
 
@@ -741,7 +742,7 @@ ggplot(as.data.frame(Result), aes(x, y, col=p.IBR < 0.05, size=b.IBR)) +
 - The very small dots in the first map are the ungrazed patches.
 - From the second map, it looks like the significant values were the one with negative slope estimates, for which we don't have a biological interpretation.
 
-### Model with IBR only
+### Model with IBR only {-}
 
 Keep in mind that 'IBR' and 'PatchSize' showed a strong correlation. The parameter estimates could therefore depend quite a bit on the other variables. To help with the interpretation, let's repeat the last analysis just with 'IBR', without 'PatchSize'. 
 
@@ -777,7 +778,7 @@ This is a very different map of results!
 - There are 3 - 4 clusters of sites where the IBR models is not effective at explaining variation in allelic richness: in the very East, in the South-East, and one area in the South-West. 
 - Knowing the study area, these are distinct regions (e.g. valleys) that may suggest further biological explanations.
 
-## 8. Conclusions
+## 8. Conclusions {-}
 
 - We moved from pair-wise distance matrices (link-based) to node-based analysis by integrating the explanatory distance matrices for IBD and IBR into patch-level connectivity indices Si (neighborhood analysis). 
 - We found no support for the IBD model, and strong support for the IBR model when tested without additional predictors. 
@@ -787,7 +788,7 @@ This is a very different map of results!
 - The evidence is not conclusive, however, the observed patterns could also be explained by population size, which in this species seems to be associated with patch size. This makes sense if smaller patches contain smaller populations with higher rates of genetic drift.
 
 
-## 9. R Exercise Week 7
+## 9. R Exercise Week 7 {-}
 
 The *Pulsatilla vulgaris* dataset that we've been analyzing in the R exercises has two variables that were observed or calculated for each sampled mother plant (i.e., those plants from which seeds were collected; see DiLeo et al. 2017, Journal of Ecology):
 

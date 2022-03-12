@@ -14,9 +14,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-## 1. Overview
+## 1. Overview {-}
 
-### a) Background and Goals
+### a) Background and Goals {-}
 
 In this lab, you will use the `gstudio` package to analyse parent-offspring data for the wildflower *Pulsatilla vulgaris*. You will learn: 
 
@@ -28,7 +28,7 @@ The data are from DiLeo et al. (in press). The data include genotypes from seeds
 
 Here, we will recreate one analysis from DiLeo et al. (in press), looking at the ecological factors that best explain pollen immigration rates of the seven populations. 
 
-### b) Data set
+### b) Data set {-}
 
 There are three data files associated with this lab: 
 
@@ -36,7 +36,7 @@ There are three data files associated with this lab:
 - "pulsatilla_momVariables.csv", which contains ecological variables collect for each mother, and 
 - "pulsatilla_population.csv", which contains landscape and population size information for each of the seven populations. 
 
-### c) Required packages
+### c) Required packages {-}
 
 Install some packages needed for this worked example.
 
@@ -64,11 +64,11 @@ library(ggmap)
 #library(cowplot)
 ```
 
-## 2. Import Genotypes
+## 2. Import Genotypes {-}
 
 The package `gstudio` makes it very easy to import genotype data (see Week 1). Typically, we store our genotype data in a spreadsheet with one line per individual and two columns per locus. Using the `read_population` function, we tell `gstudio` which columns contain our loci. The argument `type="column"` indicates that our raw text file stores genotypes in two columns per locus.
 
-### a) Import genotype data
+### a) Import genotype data {-}
 
 ```{r, import}
 dat <- gstudio::read_population(system.file("extdata",              
@@ -91,7 +91,7 @@ There are 12 columns:
 - **2 coordinate columns, X & Y**: The geographic coordinates of the sample (Euclidean coordinate system Gauss-Krueger GK4 with CRS("+init=epsg:31468")).
 - **7 locus columns**: For each locus, the microsatellite genotype is stored in a single column with alleles separated by ":".
 
-### b) Plot map of sampling locations
+### b) Plot map of sampling locations {-}
 
 To create a map with `qmplot` (see Week 4), here we do the following:
 
@@ -115,9 +115,9 @@ MyMap + geom_text(data = Coords, mapping = aes(Longitude, Latitude,
               nudge_x = 0.005, nudge_y = c(0,0,0.002,-0.001,0,0,0)) 
 ```
 
-## 3. Pollen pool genetic structure
+## 3. Pollen pool genetic structure {-}
 
-### a) Subtract maternal contribution to offspring genotype
+### a) Subtract maternal contribution to offspring genotype {-}
 
 Let's look at the data for the mother with the ID=3083 and her associated offspring:
 
@@ -140,7 +140,7 @@ The pollen pool data can be analysed as any other population genetic data.
 
 Note: There are some missing genotypes for the offspring that trigger warnings, which you may ignore. Here we suppressed the warnings to reduce output.
 
-### b) 'TwoGener' analysis (AMOVA of pollen pool data)
+### b) 'TwoGener' analysis (AMOVA of pollen pool data) {-}
 
 For example, we can conduct an AMOVA (see Week 4) to test if pollen pools belonging to different mothers are signficantly differentiated from one another. When an AMOVA is applied to pollen pools it is called a 'TwoGener' analysis (Two-generational analysis; Smouse et al. 2001, Dyer et al. 2004). 
 
@@ -170,7 +170,7 @@ Looking at the variance components and the phi-statistics (analogue to F-statist
 - Are pollen pools more differentiated among populations or among mothers within populations?
 - What does this mean biologically?
 
-### c) Including space: Isolation by distance
+### c) Including space: Isolation by distance {-}
 
 The 'TwoGener' analysis gives a summary statistic describing overall differentiation, but this does not tell us anything about **why** the pollen pools are differentiated. In order to better understand **why**, we can analyse the data spatially just like any other landscape genetic dataset. 
 
@@ -209,7 +209,7 @@ vegan::mantel(xy.dist, dps)
 
 Note: it seems that the `mantel` function in `vegan` automatically tests a one-sided alternative that the Mantel correlation is greater than zero. This means that if we had used 'Dps' as a measure of genetic similarity, the default setting would have resulted in a p-value of 0.999. Unfortunately, for now, this is not discussed in the help file and there is no option to change the alternative. 
 
-## 4. Paternity analysis
+## 4. Paternity analysis {-}
 
 'TwoGener' and related methods are sensitive to inbreeding and strong genetic structure of adult populations, although methods exist to correct for some of these things (e.g. Dyer et al. 2004). However, it is often the best (or only) option for quantifying pollen flow for high density species where other analyses such as paternity assignment cannot be conducted. 
 
@@ -217,7 +217,7 @@ In our case, we have complete sampling of potential fathers within the seven pop
 
 Note that we do not have complete sampling of all potential fathers within the larger study region, and so we assume that any seed that is not assigned to a father is a pollen immigration event. In this section, we will conduct a paternity analysis using the `gstudio` package and relate the results to landscape variables.
 
-### a) Exclusion probabilities
+### a) Exclusion probabilities {-}
 
 First let's check if our genetic markers have sufficient information (genetic resolution) to discriminate among alternative fathers by calculating exclusion probabilites.
 
@@ -241,7 +241,7 @@ The code below does the following:
 
 We see that when using all seven loci, we achieve a very high exlusion probability, and that on average we should be able to exclude 99.9 of alternative fathers.
 
-### b) Paternity analysis
+### b) Paternity analysis {-}
 
 We will use the `gstudio` function `paternity`, which conducts a fractional-allocation paternity analyis. This approach is useful when full exclusion cannot be achieved. In case multiple potential fathers cannot be exluded for a particular offspring, a likelihood of paternity is calculated for each non-excluded father based on Mendelian transition probabilites. 
 
@@ -307,7 +307,7 @@ pat.sub <- pat.sub[,1:4] # get rid of the tmp_ID column
 
 ```
 
-### c) Visualize reconstructed pollen flow events in space
+### c) Visualize reconstructed pollen flow events in space {-}
 
 We can use the `spiderplot_data` function from `gstudio` to visualize the paternity assignments. `spiderplot_data` takes the output from `paternity` and combines it with spatial XY coordinate information. The output includes the coordinates of both mother (X, Y) and father (Xend, Yend) for each offspring. Here we will also add in the population IDs so that we can visualize each of the seven populations separately. Note that the function asks for "longitude" and "latitude" but any form of spatial XY coordinates will do.
 
@@ -340,7 +340,7 @@ Try modifying the code to look at patterns from other populations.
 - Do pollen flow events appear to be amongst near-neigbours?
 - Are there clear differences in pollen flow patterns among populations?
 
-### d) Visualize dispersal kernel
+### d) Visualize dispersal kernel {-}
 
 We can calculate the distance of each pollen flow event, and then plot the distribution to visualize the dispersal kernel.
 
@@ -361,14 +361,14 @@ ggplot(pat.sub[pat.sub$pollen.dist >0,]) +
   ylab("Number of pollen flow events")
 ```
 
-## 5. Linking paternity to ecological variables
+## 5. Linking paternity to ecological variables {-}
 
 Now that we have conducted our paternity analysis, we can ask which ecological factors explain the patterns that we see. 
 
 - First we will look within populations: what factors explain pollen flow distances within populations? 
 - Second, we will look at the population level: what factors explain pollen immigration rates?
 
-### a) Explain pollen flow within populations
+### a) Explain pollen flow within populations {-}
 
 We have collected some information about mothers, which we now add to the 'pat.sub' dataframe. Specifically, we have measured:
 
@@ -437,7 +437,7 @@ cowplot::plot_grid(Mom.isolation.plot, Flower.density.plot,
 - Which moms (isolated/non-isolated, surrounded by more/less flowers) tend to receive pollen from further away?
 - What biological processes might explain these patterns?
 
-### b) Explain pollen flow at the population level
+### b) Explain pollen flow at the population level {-}
 
 Now let's look at the population level. First we need to calculate how many offspring were unable to be assigned a father. We do this by adding the first four columns of the paternity analysis output (which contains only successful assignments) to the offspring dataframe (which includes all offspring, regardless of assignment). If there is no assigment, 'Fij' will be NA in the newly merged data frame.
 
@@ -516,7 +516,7 @@ ggplot(pop.df, aes(x=forest.250, y=num.out/num.tot)) + geom_point() +
 
 We see that populations surrounded by more forest receive less outside pollen, although it is apparent that there is one outlier (population A21) with a high proportion of immigration pollen but intermediate levels of surrounding forest. This is likely also a product of our choice of paternity anlaysis - in our original paper (DiLeo et al. in press) we were able to assign a much higher proportion of fathers in popualtion A21, giving us lower pollen immigration rates. 
 
-## 6. References
+## 6. References {-}
 
 - DiLeo MF, R Holderegger and HH Wagner (*in press*). Contemporary pollen flow as a multiscale process: evidence from the insect-pollinated herb *Pulsatilla vulgaris*. Journal of Ecology. https://doi.org/10.1111/1365-2745.12992
 

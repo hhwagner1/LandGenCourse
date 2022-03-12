@@ -15,9 +15,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-## 1. Overview of Worked Example
+## 1. Overview of Worked Example {-}
 
-### a) Goals 
+### a) Goals {-} 
 
 This worked example shows how to:
 
@@ -27,7 +27,7 @@ This worked example shows how to:
 - Assess temporal changes (between years for same site) and evidence for extinction events 
 - Perform power analysis and sample size calculation for the temporal study
 
-### b) Data set 
+### b) Data set {-} 
 
 Lamy et al. (2012) sampled the freshwater snail *Drepanotrema depressissimum* in a fragmented landscape of tropical ponds on the island of Guadeloupe in the French West Indies. They used a spatially and temporally stratified sampling design with a total of 25 sites, where 12 sites formed four well-separated clusters of three neighbouring sites each, to study spatial variability, and 12 sites spread across the island were sampled in multiple years to study temporal variability. For each site and year, 22 - 34 individuals were genotyped at ten microsatellite loci. The species is diploid, hermaphroditic, and outcrossed.  
 
@@ -37,11 +37,11 @@ A key characteristic of this system is the presence of a dry and a rainy season.
 
 - **dd.site**: Population-level data from Tables 2 - 5 of Lamy et al. (2012) are available in dataset 'dd.site' (with 25 variables) in package 'LandGenCourse'. To load it, type: data(dd.site). 
 
-#### Reference:
+#### Reference {-}
 
 Lamy, T., Pointier, J. P., Jarne, P. and David, P. (2012), Testing metapopulation dynamics using genetic, demographic and ecological data. Molecular Ecology, 21: 1394–1410. doi:10.1111/j.1365-294X.2012.05478.x
 
-### c) Required R libraries
+### c) Required R libraries {-}
 
 Install some packages needed for this worked example.
 
@@ -65,7 +65,7 @@ library(ggplot2)
 #require(car)  
 ```
 
-### d) Import data
+### d) Import data {-}
 
 Let's import the genetic data (spatial and temporal data sets combined, 42 combinations of site and year). Use '?dd.ecogen' to check helpfile with data set desription.
 
@@ -109,11 +109,11 @@ In the following, we'll perform three types of analyses:
 - Compare 12 populations in 4 clusters: differentiation within vs. among clusters?
 - Compare 12 sites over time, some of which experienced a local extinction event.
 
-## 2. Spatial distribution of genetic structure
+## 2. Spatial distribution of genetic structure {-}
 
 How similar are populations from nearby habitat patches compared to populations across the island? To answer this question, we perform a hiearchical AMOVA (analysis of molecular variance) with individuals from 12 populations that form 4 clusters with 3 populations each. 
 
-### a) Creating a 'genind' object with the hierarchical data set
+### a) Creating a 'genind' object with the hierarchical data set {-}
 
 First, we need to extract the samples that belong to the hierarchical data set. There are four clusters: "North", "East", "Center" and "South". We are looking for the observations where the variable "Cluster" has one of these four values, all other observations will have a missing value for "Cluster". We can use '!is.na' to extract all rows with non-missing values. Then we convert to a 'genind' object.
 
@@ -122,12 +122,12 @@ dd.ecogen.Cluster <- dd.ecogen[!is.na(dd.ecogen[["S"]]$Cluster),]
 dd.genind.Cluster <- EcoGenetics::ecogen2genind(dd.ecogen.Cluster)
 ```
 
-### b) Hierarchical AMOVA 
+### b) Hierarchical AMOVA {-} 
 
 There are several implementations of AMOVA in R, e.g. in pacakges 'ade4', 'pegas' and 'vegan'. The 'ade4' implementation is closest to the original implementation in Arlequin. Package 'poppr' has a wrapper function 'poppr.amova' that makes it easy to perform AMOVA with the 'ade4' or with the 'pegas' implementation (see '?poppr.amova' for a discussion of their pros and cons). Here we'll use 'ade4'.
 
 - The first argument is the 'genind' object. 
-- The argument 'hier' defines the hierarchy, with the top level first  (i.e., here SITE is nested within Cluster). The variables are expected to be found in the @strata slot of the 'genind' object. 
+- The argument 'hier' defines the hierarchy, with the top level first  (i.e., here SITE is nested within Cluster). The variables are expected to be found in the `@strata` slot of the 'genind' object. 
 - The argument 'within=FALSE' specifies that within-individual variance (i.e., observed heterozygosity) should not be tested. Setting this to 'TRUE' can lead to problems with missing values. 
 
 First we run the AMOVA and estimate the percent of molecular variance at each hierarchical level.
@@ -151,7 +151,7 @@ amova.test
 - What does this mean biologically?
 - Are both levels statistically significant?
 
-## 3. What determines genetic differentiation among sites? 
+## 3. What determines genetic differentiation among sites? {-} 
 
 What factors explain site-specific Fst? Let's consider the key micro-evolutionary processes:
 
@@ -164,7 +164,7 @@ First, we create a new SpatialPointsDataFrame with the subset of data for the sp
 dd.spatial <- dd.site[dd.site@data$Spatial==TRUE, ]
 ```
 
-### a) Correlation matrix
+### a) Correlation matrix {-}
 
 Let's start with a correlation matrix.
 
@@ -180,7 +180,7 @@ cor(dd.spatial@data[ , c("FST.GESTE", "NLT", "C", "D")],
 - Are the two factors confounded for this data set?
 - Would you prefer 'C' or 'D' to quantify patch connectivity? Does it matter? What does this mean biologically?
 
-### b) Scatterplots
+### b) Scatterplots {-}
 
 Let's plot the response variable FST.GESTE against each of the two predictors NLT and C. Here, we use functions from the package `ggplot2` (already loaded) to define two ggplot objects `NLT.plot` and `C.plot`, then we plot them side-by-side with the function `cowplot::plot_grid`. 
 
@@ -203,7 +203,7 @@ C.plot <- ggplot(dd.spatial@data, aes(x=C, y=FST.GESTE, label=SITE)) +
 cowplot::plot_grid(NLT.plot, C.plot)
 ```
 
-### c) Regression model
+### c) Regression model {-}
 
 The two predictors 'NLT' and 'C' are not strongly correlated. We'll fit a regression model with both predictors. Here we use function 'scale' to standardize each variable, so that we can interpret the regression slope coefficients as partial correlation coefficients (beta coefficients). 
 
@@ -229,7 +229,7 @@ If we had more than two predictors, it would be a good idea to calculate varianc
 car::vif(mod.diff)
 ```
 
-### d) Which populations don't fit the general pattern?
+### d) Which populations don't fit the general pattern? {-}
 
 Let's plot the residuals in space. The function 'bubble' from the package 'sp' evaluates the projection information of the SpatialPointsDataFrame 'dd.spatial'. 
 
@@ -271,7 +271,7 @@ What might explain the large residuals for the two sites 'PTC' and 'DESB'?
 - Site 'PTC' lies on the tip of a peninsula and thus is very isolated geographically.
 - Site 'DESB' is a very instable site that can frequently dry out during the dry season, as it is shallow and lies in the comparatively dry northern part of the island. In addition, although 'DESB' is surrounded by many ponds, these ponds never get connected to 'DESB' hydrologically during the rainy season. Therefore, immigration can only occur via cattle or birds, which are much less important drivers of gene flow than immigration by hydrological connectivity during the rainy season.  
 
-### e) Regression model without outliers
+### e) Regression model without outliers {-}
 
 We can use the same index 'a' to exclude the potential outliers from the regression model:
 
@@ -292,13 +292,13 @@ par(mfrow=c(1,1))
 ```
 
 
-## 4. What determines genetic diversity?
+## 4. What determines genetic diversity? {-}
 
 - Can the same predictors (population size and connectivity) explain genetic diversity? 
 - Is patch size ('Size') a good proxy for population size (as often used in ecological studies)?
 - Which measure of genetic diversity shows the stronger response, allelic richness (rarefied) or expected heterozygosity?
 
-### a) Correlation matrix
+### a) Correlation matrix {-}
 
 ```{r}
 cor(dd.spatial@data[, c("RA", "He", "Size", "NLT", "C", "D")],
@@ -313,7 +313,7 @@ cor(dd.spatial@data[, c("RA", "He", "Size", "NLT", "C", "D")],
 - How strongly are 'Size' and 'NLT' correlated with each other? 
 - Does 'D' show a stronger correlation with diversity than with differentiation?
 
-### b) Regression models
+### b) Regression models {-}
 
 For allelic richness:
 
@@ -341,7 +341,7 @@ plot(mod.He, labels.id = dd.spatial@data$SITE)
 par(mfrow=c(1,1))
 ```
 
-## 5. Are genetic differentiation and diversity related?
+## 5. Are genetic differentiation and diversity related? {-}
 
 Would you expect a relationship between genetic diversity and genetic differentiation of individual patches?
 
@@ -354,12 +354,12 @@ cor(dd.site$He, dd.site$FST.GESTE, use = "pairwise.complete")
 There are a number of possible reasons for such a correlation. Can you put forward some hypotheses to explain this relationship? See Lamy et al. (2012) for their interpretation.
 
 
-## 6. Effect of recent extinction events
+## 6. Effect of recent extinction events {-}
 
 Several patches fell dry between observation years, which is assumed to signify extinction of the local population. Does genetic evidence support this interpretation, i.e., is there genetic evidence of bottlenecks or founder effects in *D. depressissimum*?
 
 
-### a) Effect of patch extinction event (temporal data set)
+### a) Effect of patch extinction event (temporal data set) {-}
 
 ```{r}
 dd.temporal <- dd.site[dd.site@data$MultiYear==TRUE,]
@@ -389,7 +389,7 @@ res.Fst.temp <- t.test(Fst.temp ~ APE, data=dd.temporal, alternative = "less")
 res.Fst.temp
 ```
 
-### b) Power analysis
+### b) Power analysis {-}
 
 The effect is not statistically significant. Does that mean that we found no effect of apparent population extinctions on temporal Fst? Let's check effect size. For means, Cohen's effect size is measured by d (which is measured in units of standard deviations):
 
@@ -421,7 +421,7 @@ pwr::pwr.t2n.test(n1=7, n2=5, d=-0.8, alternative = "less")
 
 So the power to detect at least a large effect, if it exists in the population, was only 0.355, way below the 0.8 (or even 0.95) that we would want to see. For a medium effect, the power is even smaller.
 
-### c) Sample size calculation
+### c) Sample size calculation {-}
 
 How large a sample would we have needed in each group to achieve a power of 0.8 to detect a large effect? And for a medium effect?
 
@@ -436,7 +436,7 @@ Hence, these particular results are inconclusive. There was a trend showing a la
 
 Note however that using additional evidence (e.g., population assignment tests), Lamy et al. (2012) concluded that extinctions were in fact less common in this system than previously assumed – in many cases of apparent extinction, individuals may still be present but just not detected.
 
-## 7. R Exercise Week 4
+## 7. R Exercise Week 4 {-}
 
 **Task:** Build on your previous exercises and plot the sites on a map downloaded from the internet. Explore the relationships between Hexp, census population size and percent forest cover within 500 m of the site (forest may act as a barrier for grassland plants). 
 
@@ -448,7 +448,7 @@ b) **Import your datasets from Weeks 2 & 3 R Exercises**. Here's an example for 
 c) **Plot sites on map from internet**: To get started, you may use this code (note the names of the variables with the spatial coordinates): 
 `myMap <- ggmap::qmplot(x=meanX, y=meanY,  data = as.data.frame(Pulsatilla.longlat), source = "stamen", maptype = "toner-lite")`
 Next, modify code from section 3.d to add labels for all sites and plot the map.
-d) **Combine data**: Use the function `dplyr::left_join` to add the variables from the dataset `H.pop` to the data frame in the @data slot of `Pulsatilla.longlat`. Notes: 
+d) **Combine data**: Use the function `dplyr::left_join` to add the variables from the dataset `H.pop` to the data frame in the `@data` slot of `Pulsatilla.longlat`. Notes: 
 
     - This is important, as the order of populations may not be the same in the two datasets. 
     - Remember to check the structure of the datasets (variable names and types) first so that you know which are the ID variables that you can use to match sites. 

@@ -13,16 +13,16 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-## 1. Overview of Worked Example
+## 1. Overview of Worked Example {-}
 
-### a) Goals 
+### a) Goals {-} 
 
 This worked example shows how to:
 
 - Convert spatial data into weights ("costs") based on different weighting approaches.
 - Calculate landscape resistance using least-cost and commute time (analogous to circuit theory) approaches.
 
-### b) Data set
+### b) Data set {-}
 
 This code builds on the data from the 'GeNetIt' package by Jeff Evans and Melanie Murphy that we've used already in the Week 2 Worked Example. We will use spatial data from central Idaho for Columbia spotted frogs (Murphy et al. 2010). 
 
@@ -35,9 +35,9 @@ This code builds on the data from the 'GeNetIt' package by Jeff Evans and Melani
 - hli:   Heat Load Index
 - nlcd:  USGS Landcover (categorical map)
 
-**Sampling locations**: We will model landscape resistance between the ponds from which Colombia spotted frogs were sampled. The spatial coordinates and site data are available in the 'GeNEtIt' package in the form of a SpatialPointsDataFrame 'ralu.site'. The slot @coords contains UTM coordinates (zone 11), and the slot @data contains 17 site variables for 31 sites. For meta data type: ?GeNetIt::ralu.site. 
+**Sampling locations**: We will model landscape resistance between the ponds from which Colombia spotted frogs were sampled. The spatial coordinates and site data are available in the 'GeNEtIt' package in the form of a SpatialPointsDataFrame 'ralu.site'. The slot `@coords` contains UTM coordinates (zone 11), and the slot `@data` contains 17 site variables for 31 sites. For meta data type: ?GeNetIt::ralu.site. 
 
-### c) Required R libraries 
+### c) Required R packages {-} 
 
 Install some packages needed for this worked example.
 
@@ -52,7 +52,7 @@ require(LandGenCourse)
 #require(gdistance)
 ```
 
-### d) Import rasters (gsp, err, cti, and ffp). 
+### d) Import rasters (gsp, err, cti, and ffp) {-} 
 
 Here we load the raster data as a SpatialPixelsDataFrame and convert them in to a raster stack.
 
@@ -61,7 +61,7 @@ data(rasters, package="GeNetIt")
 RasterMaps <- raster::stack(rasters)
 ```
 
-### e) Import site data with sampling locations
+### e) Import site data with sampling locations {-}
 
 In addition to spatial data, sample locations are also needed. Sample locations are located in the data folder (RALU_UTM.csv). Read in site locations (wetlands with Columbia spotted frogs).
 
@@ -72,17 +72,17 @@ sites <- ralu.site
 
 **Question 1**: What are UTMs and why might it be important to work in UTMs (as opposed to latitude and longitude)?
 
-## 2. Explore the data set
+## 2. Explore the data set {-}
 
 Explore these rasters by plotting them. As you go through this exercise, use the plot function at each step to make sure your outputs "make sense".
 
-### a) Plot all rasters
+### a) Plot all rasters {-}
 
 ```{r fig.width=8, fig.height=5.5}
 raster::plot(RasterMaps)
 ```
 
-### b) Plot spatial points over ffp raster
+### b) Plot spatial points over 'ffp' raster {-}
 
 These are the locations of the ponds where Columbia spotted frogs were sampled within the study area. 
 
@@ -92,9 +92,9 @@ raster::plot(RasterMaps$ffp)
 points(sites, pch=3)
 ```
 
-## 3. Setting cost values and calculating conductance
+## 3. Setting cost values and calculating conductance {-}
 
-### a) Resistance vs. conductance values 
+### a) Resistance vs. conductance values {-} 
 
 The next step involves creating cost categories from the continuous data. For the purposes of this exercise, a single "landscape resistance" cost surface will be created, based on merging the 4 variables, and employing expert opinion.
 
@@ -117,7 +117,7 @@ To create relative conductance values, reverse the rank order of the resistance 
 
 	1) cti, 2) gsp, 3) ffp, 4) err27 
 
-### b) As needed: Get all rasters at the same scale 
+### b) As needed: Get all rasters at the same scale {-} 
 
 Note: this step is not needed here as all rasters do already have the same resolution.
 
@@ -129,7 +129,7 @@ Here is some sample code to show how you would resample a raster 'cti' (assumed 
 #cti <- raster::resample(cti, gsp, method= "bilinear")
 ```
 
-### c) Calculate conductance values
+### c) Calculate conductance values {-}
 
 Functions (e.g., 1/err, ffp/5) rescale the raw data from each raster to represent costs that correspond to perceived differences among variables arising from expert opinion. A wide variety of functions could be used to achieve a variety of cost structures in order to test alternative hypotheses. 
 The err function is inverted compared to the other variables because the raw err data have low values relative to the other variables (< 1). 
@@ -176,7 +176,7 @@ cti.cost <- RasterMaps$cti/5
 cti.cost
 ```
 
-### d) Create a single landscape conductance raster
+### d) Create a single landscape conductance raster {-}
 
 Testing variables independently may be more appropriate depending on the research question but for the purposes of today's lab, a single conductance raster will be employed.
 
@@ -187,11 +187,11 @@ cost1
 
 **Question 2**: Plot your cost surface with your sample locations on top. What does this tell you?
 
-## 4. Convert conductance into effective distance 
+## 4. Convert conductance into effective distance {-} 
 
 The higher the conductance, the lower the cost or resistance of a cell, and vice versa. We want to integrate conductance across cells to derive some measure of effective (or ecological) distance. 
 
-### a) Create a transition layer
+### a) Create a transition layer {-}
 
 Transition layers are constructed from a raster, and they take the geographic references (projection, resolution, extent) from the original raster object. They also contain a matrix of probability of movement between cells which can be interpreted as "conductance". Each cell in the matrix represents a cell in the original raster object.
 
@@ -204,14 +204,14 @@ tr.cost1 <- gdistance::transition(cost1, transitionFunction=mean, directions=8)
 tr.cost1
 ```
 
-### b) Visually inspect the raster
+### b) Visually inspect the raster {-}
 
 ```{r}
 par(mar=c(2,2,1,1))
 raster::plot(raster::raster(tr.cost1))
 ```
 
-### c) Correct for geometric distortion
+### c) Correct for geometric distortion {-}
 
 Transition values are calculated based on values of adjacent cells in the cost raster. However, we used an 8 neighbor rule and the center of diagonally connected
 raster cells are farther apart from each other than the orthogonally connected cells. We are using UTM co-ordinates; however, in lat-long projections, cell sizes become smaller as you move poleward.
@@ -222,7 +222,7 @@ Values of the matrix have to be corrected for the first type of distortion for o
 tr.cost1 <- gdistance::geoCorrection(tr.cost1,type = "c",multpl=FALSE)
 ```
 
-### d) Plot shortest paths in space
+### d) Plot shortest paths in space {-}
 
 Here we do the following:
 
@@ -230,7 +230,7 @@ Here we do the following:
 - Calculate 'AtoB' as the shortest path (least cost path) between sites 1 and 2 
 - Plot the shortest path onto the map
 
-Note: the path is stored as a 'SpatialLines' object (package 'spdep'). A path is a sequence of coordinate pairs, which is stored in the @lines slot. Like a 'SpatialPointsDataFrame', a 'SpatialLines' object has a 'proje4string' attribute that stores the projection information. This means that we can easily plot it on top of a raster map. 
+Note: the path is stored as a 'SpatialLines' object (package 'spdep'). A path is a sequence of coordinate pairs, which is stored in the `@lines` slot. Like a 'SpatialPointsDataFrame', a 'SpatialLines' object has a 'proje4string' attribute that stores the projection information. This means that we can easily plot it on top of a raster map. 
 
 ```{r}	
 par(mar=c(2,2,1,2))
@@ -276,9 +276,9 @@ for(i in 1:length(Neighbours))
 
 **Question 4**: Are there paths that merge? How would you explain this? 
 
-## 5. Create cost-distance matrices
+## 5. Create cost-distance matrices {-}
 
-### a) Least cost distance
+### a) Least cost distance {-}
 
 The cost-distance matrix is based on the corrected transition layer and the site locations (here we supply a 'SpatialPointsDataFrame' object). The 'costDistance' function requires conductance values, even though cost distance will be 1/conductance (i.e., resistance). The cost distance is a function of the transition (tr.cost1, a transition object) and spatial locations (sites, a spatial object). 
 This is a single least-cost path (accumulated cost units as opposed to length units) between each pair of sites..
@@ -287,7 +287,7 @@ This is a single least-cost path (accumulated cost units as opposed to length un
 cost1.dist <- gdistance::costDistance(tr.cost1,sites)
 ```
 
-### b) Cost-distance matrix based on random paths (similar to Circuitscape)
+### b) Cost-distance matrix based on random paths (similar to Circuitscape) {-}
 
 Commute-time distance is an alternative to effective resistance from circuit theory. Commute-time is the expected time it takes for a random walk between nodes, and has been shown to correlate highly with effective resistance (Marrotte and Bowman 2017).
 
@@ -295,7 +295,7 @@ Commute-time distance is an alternative to effective resistance from circuit the
 comm1.dist <- gdistance::commuteDistance(x = tr.cost1, coords = sites)
 ```
 
-### c) Compare cost distances
+### c) Compare cost distances {-}
 
 Create a distance table to compare different cost distance estimates:
 
@@ -316,7 +316,7 @@ plot(cost1.dist~comm1.dist)
 
 **Question 6**: What is the major difference? What are the implications of this difference? When might you use one or other of the methods? 
 
-## 6. How does changing resolution affect these metrics? 
+## 6. How does changing resolution affect these metrics? {-} 
 
 Create a loop that runs through a sequential coarsening of the raster and calculate 
 these metrics and compare them to the finer resolution raster metric using a Spearman correlation. The loop will take a few minutes to run.
@@ -344,7 +344,7 @@ for(fac in res_fact){
 
 ```
 
-### b) Plot the results
+### b) Plot the results {-}
 
 ```{r}
 par(mar=c(4,4,1,1))
@@ -359,7 +359,7 @@ legend("bottomleft", legend = c("Costdist","Commdist"),
 **Question 7**: What effect does changing resolution have on these metrics? 
 
 
-## 7. References
+## 7. References {-}
 
 Evans IS (1972) General geomorphometry, derivatives of altitude, and descriptive statistics. In: Chorley RJ (ed) Spatial analysis in geomorphology. Harper & Row, New York.
 

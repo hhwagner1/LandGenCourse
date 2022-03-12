@@ -14,9 +14,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-## 1. Overview of Worked Example
+## 1. Overview of Worked Example {-}
 
-### a) Goals 
+### a) Goals {-}
 
 **Justification**: Natural selection acts on the heritable component of the total phenotypic variation. Traditionally, the heritable proportion of trait variation is estimated using information on the degree of relatedness between individuals. This approach (degree of relatedness) - extensively employed in breeding and evolutionary quantitative genetics – ignores the molecular underpinnings of traits. An alternative approach is  scanning genomes using molecular markers to search for so-called outlier loci (see week 11), where selection invoked a change in allele frequencies that is detectable as unusual differentiation between populations in different environments. This approach (outlier loci) – advocated in population genetics - neglects information about the trait variation, but assumes that the markers are in or close to genes that code for adaptive traits. Genetic outliers often hard to interpret because generally we lack information what phenotype they affect and if this phenotype results in fitness differences between populations. 
 
@@ -27,7 +27,7 @@ vignette: >
 -	Test for the presence of unusual trait differentiation among populations relative to differentiation  expected in the absence of adaptation
 -	Assess if trait differentiation is correlated with differentiation in environmental variables to try identifying the selective component of the environment. 
 
-### b) Data set 
+### b) Data set {-} 
 
 The data come from a study of western white pine (Pinus monticola Dougl. ex D. Don) sampled around the Lake Tahoe Basin of California and Nevada. These data consist of 157 trees sampled from 10 populations (n = 9 to 22 trees/population). Within each population, trees were sampled within three plots. For each plot, GPS coordinates were collected (i.e. each plot in each population has its own GPS coordinates) and used to generate a set of 7 environmental variables. From these trees, needle tissue was collected from which total DNA was extracted and genotyped for 164 single nucleotide polymorphisms (SNPs). Seeds were also collected and planted in a common garden. The seedlings (n = 5 to 35/tree) were measured for several phenotypic traits. The phenotypic trait we will be working with today is known as the carbon isotope ratio ($δ^{13}C$). It is the ratio of two isotopes of carbon ($^{13}C$ and $^{12}C$) relative to an experimental control, and it is strongly correlated with intrinsic water-use efficiency in plants. Plants need water to live, so it is not a stretch of the imagination to believe that this phenotypic trait has a link with plant fitness.
 
@@ -36,7 +36,7 @@ We will thus have the following data:
 - **WWP_phenotype_data.txt**: Phenotypic measurements for 5 seedlings per tree made in a common garden.
 - **WWP.ecogen**: an `ecogen` object (package `EcoGenetics`) with SNP genotypes for all trees sampled in the field, and with environmental data collected from each plot within each population.
 
-### c) Required R packages
+### c) Required R packages {-}
 
 Install some packages needed for this worked example.
 
@@ -75,13 +75,13 @@ source(system.file("extdata", "panel.cor.r",
                             package = "LandGenCourse"))
 ```
 
-## 2. Estimate genetic and non-genetic variance components from a common garden experiment
+## 2. Estimate genetic and non-genetic variance components from a common garden experiment {-}
 
 **Motivation**: A lot of genetics can be carried out without use of any molecular markers. Practitioners of empirical population genetics forget this quite often. A common garden allows us to create a standardized environment in which we minimize the influence of environment on the expression of a particular phenotypic trait. Phenotypic variation can be partitioned to genetic , environmental and residual components based on quantitative genetic theory. Further, we may also test for the presence of interaction between the genetic and environmental variation. The rationale of a common garden is to “standardize” the environment, thus phenotypic variation we observe is mainly due to genetic variation, even though environmental heterogeneity can never be completely eliminated and we still have to additionally control for it, e.g. using a block design (see below).
 
 **Goals & Background**: The goal for this part of the laboratory is to construct, fit, and assess LMMs for $δ^{13}C$. We will be using the data in the file named "WWP_phenotypic_data.txt". These data are organized in a tab-delimited text file with seedlings grouped by maternal tree (i.e. its mother tree), plot, and population. Also included is an experimental treatment known as “block”. In a common garden, seedlings from the same maternal tree are randomized among blocks to avoid the influence of micro-environmental variation on expression of phenotypic traits.
 
-### a) Import phenytypic data 
+### a) Import phenytypic data {-} 
 
 ```{r}
 phen <- read.delim(system.file("extdata", "WWP_phenotype_data.txt", 
@@ -97,7 +97,7 @@ phen$block <- as.factor(phen$block)
 sapply(phen, class)
 ```
 
-### b) Fit linear mixed effects models (LMM) to trait data observed on families
+### b) Fit linear mixed effects models (LMM) to trait data observed on families {-}
 
 Now,we are ready to fit a series of linear models. Here we will fit four models in total, though the last two are equivalent for our data: 
 - **mod1**: a model with only fixed effects (`intercept` and `block`), 
@@ -122,7 +122,7 @@ Models `mod3` and `mod4` produce identical results, **as long as each family has
 
 Notice that we are using `REML=TRUE`, which stands for restricted maximum likelihood. This method is advised for quantitative genetic analysis, because it provides correct (statistically unbiased) estimates of the variance components. The other approach would be to set `REML=FALSE`, in which case the method used is ML or maximum likelihood. However, ML generally underestimates the residual variance, thus leading to inflated estimates of the family variance and thus the heritability. ML would be needed e.g. to test fixed effects.
 
-### c) Compare model fit
+### c) Compare model fit {-}
 
 Now, let’s explore which model best fits our data. To do this we will use the Akaike Information Criterion (AIC). This statistic scores model fit while giving a  penalty for the number of parameters in a model. The model with the lowest score is the preferred model. We will learn more about model selection with AIC (and related measures like AICc, BIC) in Week 12.
 
@@ -146,7 +146,7 @@ Hence, model `mod3` (and its equivalent `mod4`) appears to be the best model. Th
 
 We will learn more about model selection later in the course (Week 12).
 
-### d) Check model validity
+### d) Check model validity {-}
 
 Is the model `mod4` valid? Let's check the residuals (see video!). 
 
@@ -184,9 +184,7 @@ The residual plots did not indicate any major problem. Hence we can proceed with
 Note: As an alternative, the R package `DHARMa` uses a simulation-based approach to provide residual diagnostics for hierachical (multi-level / mixed) regression models:
 https://theoreticalecology.wordpress.com/2016/08/28/dharma-an-r-package-for-residual-diagnostics-of-glmms/
 
-
-
-### e) Estimate variance components
+### e) Estimate variance components {-}
  
 How much of the variation in $d^{13}C$' is explained by the fixed and random effects? In models fitted with the function `lm`, we use the $R^2$ statistics to describe the total variance in the response explained by all the predictors in the model. In a mixed effects modeling context, there is no longer an obvious definition for $R^2$. Two approximate $R^2$ statistics have been implemented in the function `r.squaredGLMM` from the package `MuMIn` (which stands for multi-model inference):
 
@@ -221,7 +219,7 @@ Components / sum(Components)
 
 Compared to Cohen's (1988) effect sizes, population and family each had a medium-size effect (> 9% variance explained) on d13c values.
 
-### f) Significance testing
+### f) Significance testing {-}
 
 In quantitative genetics, we are more interested in estimating variance components and the size of effects than in hypothesis testing. In other contexts, however, linear mixed models are often used to test fixed effects while accounting for the random effects. Let's see how this works. 
 
@@ -260,13 +258,13 @@ This will return one line per fixed effect, each with a p-value (`Pr(>Chisq)`). 
 
 This result suggests that in the common garden experiment, there were differences in d13c among the seeds that are associated with blocks, i.e., the blocks did not provide exactly the same growing conditions. That is why it is so important to repeat all treatments (here: families) within each block, rather than planting the seeds from one family in one block and the seeds from another family in a different block. Because the common garden experiment was properly designed, we can include the variable `block` in the model to test and account for this effect. We included it as a fixed effect, though if there were six or more blocks, we would include it as a random effect. Either way will work to account for differences between blocks.
 
-## 3. Estimate trait heritability
+## 3. Estimate trait heritability {-}
 
 **Motivation**: Now that we have learned how to estimate genetic values for $δ^{13}C$, let’s learn how to estimate what fraction of the total variation in trait values is due to genetic effects. More precisely, we shall estimate the heritable proportion of the trait variation. Not all genetic effects are transmitted from one generation to the next, but the so-called additive genetic effects (see Week 6 lecture). Here we have data on half-siblings because seeds come from the same mother tree, but their father is most likely different because our species is wind pollinated. In such family structure, the estimation of the additive genetic variance is straightforward because  these analyses provide key information about whether or not local adaptation should even be considered. Remember that local adaptation is about genetically determined phenotypes that vary across environments in responses to differing selective pressures. This step allows us to assess how genetic variation for a phenotypic trait is distributed across the landscape.
 
 **Goals & Background**: The goal for this part of the laboratory is to estimate heritability, trait differentiation, and correlation with environment for trait values determined in Part 1. To do this, we will be using the output from the previous part of the laboratory and the environmental data contained in the file named `WWP_environmental_data.txt`. As with the phenotype file this is a tab-delimited text file.
 
-### a) Estimate heritability
+### a) Estimate heritability {-}
 
 Let’s start with estimating the heritability of $δ^{13}C$. If you remember from your undergraduate evolution course, heritability refers generally to the proportion of phenotypic variance due to genetic variance. It comes in at least two different versions. The version we are interested in is narrow-sense heritability ($h^2$), which is defined as the ratio of additive genetic variance to total phenotypic variance:
 
@@ -301,7 +299,7 @@ h2
 We have generated a point estimate for $h^2$. It represents the average $h^2$ across populations after removing the genetic effects due to population differences. To take this further and also get a SE (so that you can construct a confidence interval), you could check out this R package:
 https://bioconductor.org/packages/release/bioc/html/GeneticsPed.html
 
-### b) Estimate trait differentiation
+### b) Estimate trait differentiation {-}
 
 Great, we have shown that within population genetic variation is statistically greater than zero. What about among population genetic variation? Let’s get to that right now. To measure among population genetic variation we will use a statistic known as $Q_{ST}$. It is similar in concept to $F_{ST}$ from population genetics. To estimate $Q_{ST}$, we will use our LMM output again. If we assume that all seedlings are again half-siblings, then:
 
@@ -332,14 +330,14 @@ qst
 - Look at the quantities in the equation above, what is the denominator equal to? Is it the total phenotypic variance or the total genetic variance?
 
 
-## 4. Compare $Q_{st}$ to $F_{st}$ measured from SNP data
+## 4. Compare $Q_{st}$ to $F_{st}$ measured from SNP data {-}
  
 If you want to learn more about analyzing SNP data in R, here are some resources: 
 
 -  **adegenet SNP tutorial**: http://adegenet.r-forge.r-project.org/files/tutorial-genomics.pdf
 - **popgen.nescent.org** (click on 'Users' tab): http://popgen.nescent.org/
 
-### a) Import 'ecogen' object 
+### a) Import 'ecogen' object {-} 
 
 Load the data set 'WWP.ecogen'.
 
@@ -358,7 +356,7 @@ This 'ecogen' object has information in the following slots:
 
 
 
-### b) Compare $Q_{ST}$ to $F_{ST}$
+### b) Compare $Q_{ST}$ to $F_{ST}$ {-}
 
 See 'Week 6 Bonus Material' for calculating Fst from the SNP data.
 
@@ -401,13 +399,13 @@ Note: the values are somewhat different from what we calculated, most likely bec
 - Can the null hypothesis be rejected with alpha = 0.05?
 - What does this mean biologically? 
 
-## 5. Assess correlation between trait and environment
+## 5. Assess correlation between trait and environment {-}
 
 **Motivation**: Similar to the fixed effects, estimates of the random effects can be also extracted from a mixed effects model and used in further analysis. Such estimates are called Best Linear Unbiased Predictions or BLUPs. They are technically predictions because when you fit a mixed effects model, initially only the mean and variance of the random effects are estimated. Then, the random effects or BLUPs for a given experimental unit (e.g., population or family) can be "predicted" from the estimated mean and variance (and the data).
 
 **Goals and background**: Here we will extract block, population and family effects from the model. Then we will correlate the plot-level bioclimatic data with the population effects to see if population differences in seedling d13C trait can be explained by the environment at the site where the mother tree stands. The underlying idea is to look if selection has made the population different. 
 
-### a) Describe and extract effects
+### a) Describe and extract effects {-}
 
 Which blocks, populations or trees had higher mean d13c values than others? To answer this question, we extract and plot the fixed and random effects. We'll start with the fixed effect for `block`. 
 
@@ -446,7 +444,7 @@ prov.eff
 head(fam.eff)
 ```
 
-### b) Correlation of population effect with environment
+### b) Correlation of population effect with environment {-}
 
 We have population effects estimated for 10 populations, and bioclimatic data for 30 plots (3 plots x 10 populations). If we used all 157 rows of the site data set, this would inflate our sample size. To avoid this, we first extract 30 unique rows (one per plot) from the site data `WWP.ecogen@E`. Then we use `match` to find for each plot the corresponding population. This returns the row number (`index`) and we use it to extract the corresponding population effect.
 
@@ -477,9 +475,7 @@ How to read this plot:
 - OVerall, does the population effect appear to be related to the environment?
 
 
-
-
-## 7. R Exercise Week 6
+## 7. R Exercise Week 6 {-}
 
 **Task:** Test whether observed heterozygosity of *Pulsatilla vulgaris* adults depends on census population size. Fit a model at the individual level where you include a random effect for population.
 
@@ -490,7 +486,7 @@ a) **Load packages**:
     - Please install the package `inbreedR` (to calculate individual measures of heterozygosity) from CRAN, if it is not yet installed.
     - You may want to load the packages `dplyr` and `ggplot2`. Alternatively, you can use `::` to call functions from packages. 
 
-b) **Import data and extract adults**. 
+b) **Import data and extract adults**: 
 
     - Use the code below to import the data.
     - Use `dplyr::filter` to extract adults with `OffID == 0`.

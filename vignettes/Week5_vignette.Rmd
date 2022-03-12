@@ -14,9 +14,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-## 1. Overview of Worked Example
+## 1. Overview of Worked Example {-}
 
-### a) Goals 
+### a) Goals {-}
 
 This worked example shows how to:
 
@@ -25,7 +25,7 @@ This worked example shows how to:
 - Create Mantel correlograms for the genetic data.
 - Calculate and test Moran's I for population-level genetic diversity data.
 
-### b) Data set 
+### b) Data set {-} 
 
 This is a larger version of the frog data set used in Weeks 1 - 3.
 
@@ -35,7 +35,7 @@ Here, we will analyze microsatellite data from Funk et al. (2005) and Murphy et 
 - **Frogs_diversity_allpops.csv**: Table with genetic diversity variables similar to Week 3. 
 - **ralu_coords_allpops.csv**: Spatial coordinates (both in UTM and LongLat format), and basin.
 
-### c) Required R packages
+### c) Required R packages {-}
 
 Install some packages (not on CRAN) that are needed for this worked example.
 
@@ -68,9 +68,9 @@ library(EcoGenetics)
 #require(spdep)
 ```
 
-## 2. Data import and manipulation
+## 2. Data import and manipulation {-}
 
-### a) Create an ecogen object
+### a) Create an ecogen object {-}
 
 Import the site data that we used before in Week 2. 
 
@@ -106,7 +106,7 @@ Frogs.ecogen
 
 The summary confirms that we now have data in the `S` and `G` slots. In addition, EcoGenetics created a table of absolute frequencies (i.e. counts) of alleles for each individual in slot `A`. 
 
-### b) Aggregate to ecopop
+### b) Aggregate to 'ecopop' {-}
 
 Most of our analysis for this lab will be at the population level. The function `ecogen2ecopop` aggregates from individual to population-level data. 
 
@@ -117,7 +117,7 @@ Frogs.ecopop
 
 Instead of 413 individuals, we now have data for 30 populations. Slot `AF` contains the population-level absolute frequencies (counts) of alleles.  
 
-### b) Add site-level data
+### b) Add site-level data {-}
 
 Before importing the genetic diversity, spatial coordinates and site data into the `ecopop` object, we need to match the rows and extract the data for the sampled populations. 
 
@@ -133,7 +133,7 @@ Subset <- left_join(Subset, Frogs.diversity)
 
 R tells us that it used the shared ID variable `Pop` to join the data. 
 
-Now we can join the site data. Note: with `as.data.frame`, we combine the @data and @coords slots of the SpatialPointsDataFrame `ralu.site` to a single data frame. 
+Now we can join the site data. Note: with `as.data.frame`, we combine the `@data` and `@coords` slots of the SpatialPointsDataFrame `ralu.site` to a single data frame. 
 
 ```{r}
 Subset <- left_join(Subset, as.data.frame(Frogs.coords))
@@ -141,9 +141,9 @@ Subset <- left_join(Subset, as.data.frame(Frogs.coords))
 
 This time, R used the shared ID variable `SiteName` to join the data. 
 
-Now we have all site-level data in the data frame `Subset` that has the same row names as `Frogs.ecopop`. We check the names of the variables to decide which ones to put where. Then we assign them to their respective slots (@C for the custom data, here genetic diversity, @E for the environmental data, and @XY for the coordinates). 
+Now we have all site-level data in the data frame `Subset` that has the same row names as `Frogs.ecopop`. We check the names of the variables to decide which ones to put where. Then we assign them to their respective slots (`@C` for the custom data, here genetic diversity, `@E` for the environmental data, and `@XY` for the coordinates). 
 
-The argument pop specifies the matching ID variable in the @S slot. When we aggregated from `Frogs.ecogen` to `Frogs.ecopop`, unfortunately EcoGenetics renamed the variable `SiteName` to `pop`. The argument `pop_levels` identifies the corresponding ID variable in `Subset`. 
+The argument pop specifies the matching ID variable in the `@S` slot. When we aggregated from `Frogs.ecogen` to `Frogs.ecopop`, unfortunately EcoGenetics renamed the variable `SiteName` to `pop`. The argument `pop_levels` identifies the corresponding ID variable in `Subset`. 
 
 ```{r}
 names(Subset)
@@ -154,7 +154,7 @@ Frogs.ecopop <- EcoGenetics::eco.fill_ecogen_with_df(Frogs.ecopop,
 Frogs.ecopop
 ```
 
-### c) Export to adegenet and gstudio
+### c) Export to 'adegenet' and 'gstudio' {-}
 
 'EcoGenetics' provides convenient functions for converting genetic data to and from other packages.
 
@@ -193,13 +193,13 @@ Frogs.gstudio <- data.frame(ecoslot.S(Frogs.ecogen), dat)
 tibble::as_tibble(Frogs.gstudio)        
 ```
 
-## 3. Calculate genetic distances 
+## 3. Calculate genetic distances {-} 
 
 Here, we'll calculate a number of different measures of genetic distance, using functions from several packages. Adding the package name to each distance matrix name helps keeping track of methods used. Normally you would not calculate all of them for your own data, and some are redundant, as we will see.
 
 Note: Some functions provide an option `linearized = TRUE` to linearize distances `d` by calculating `d/(1-d)`. This should result in more linear relationships when plotted or correlated against geographic distance.Here we don't linearize, we can do so later manually.
 
-### a) Genetic distances calculated from genind object
+### a) Genetic distances calculated from genind object {-}
 
 Pairwise Fst with package `hierfstat`:
 
@@ -232,7 +232,7 @@ GD.pop.NeiGst <- mmod::pairwise_Gst_Nei(Frogs.genind, linearized = FALSE)
 ```
  
 
-### b) More distance matrices with 'gstudio'
+### b) More distance matrices with 'gstudio' {-}
 
 ```{r}
 GD.pop.Euclidean.gstudio <-gstudio::genetic_distance(Frogs.gstudio, mode = "Euclidean", stratum="SiteName")
@@ -242,7 +242,7 @@ GD.pop.Dps.gstudio <-gstudio::genetic_distance(Frogs.gstudio, mode = "Dps", stra
 GD.pop.Jaccard.gstudio <-gstudio::genetic_distance(Frogs.gstudio, mode = "Jaccard", stratum="SiteName")
 ```
 
-### c) Assemble distance matrices
+### c) Assemble distance matrices {-}
 
 We'll store the population-level genetic distances in a list 'GD.pop'.
 
@@ -278,7 +278,7 @@ Note: the following functions calculate distance matrices at the individual leve
 - adegenet::propShared()
 - gstudio::genetic_distance(mode = "AMOVA")
 
-### d) Export genetic distance matrices
+### d) Export genetic distance matrices {-}
 
 Optional: You can use `save` to save an R object to your file system, and `load` to read it in again. Note: the default setting is that `save` will overwrite existing files with the same name.
 
@@ -292,7 +292,7 @@ The code is commented out with `#`. To run it, remove the `#`. The first part cr
 #load(paste0(here::here(),"/output/GD.pop.RData"))
 ```
 
-## 4. Perform a Mantel test to test for IBD
+## 4. Perform a Mantel test to test for IBD {-}
 
 First, we calculate geographic (Euclidean) distances `Dgeo` with the `dist` function, using the spatial coordinates that we imported from ralu.site. These are UTM coordinates and thus metric. 
 
@@ -300,7 +300,7 @@ First, we calculate geographic (Euclidean) distances `Dgeo` with the `dist` func
 Dgeo <- as.vector(dist(ecoslot.XY(Frogs.ecopop)[,1:2]))
 ```
 
-### a) Visually check linearity
+### a) Visually check linearity {-}
 
 Before we quantify the linear relationship between genetic and geographic distances, let's check visually whether the relationship is indeed linear. To start, we will define genetic distance `Dgen` based on proportion of shared alleles.
 
@@ -337,7 +337,7 @@ lines(loess.smooth(log(Dgeo), Dgen), col="red")
 - What happened to the spread of points along the x axis (geographic distance)?
 - What do the units of the x-axis represent, after the transformation?
 
-### b) Perform Mantel test
+### b) Perform Mantel test {-}
 
 Next, we perform a Mantel test with the function `mantel` from the `vegan` package.
 
@@ -394,11 +394,11 @@ data.frame(Mantel.r = sapply(Mantel.test, function(x) x$obs),
 - Did the transformation lead to higher Mantel correlations for all measures of genetic distance used here? 
 - Why was it higher?
 
-## 5. Create Mantel correlogram for genetic data
+## 5. Create Mantel correlogram for genetic data {-}
 
 Let's look at the relationship between genetic distance and geographic distance in a different way, with a Mantel correlogram. Note that this method does not make the assumption of linearity. 
 
-### a) Create a first Mantel correlogram
+### a) Create a first Mantel correlogram {-}
 
 Here, we'll create a population-level Mantel correlogram with the proportion of shared alleles.
 
@@ -433,7 +433,7 @@ EcoGenetics::eco.plotCorrelog(corm)
 
 You can hover over individual points of the correlogram to see the test statistic and mean distance.
 
-### b) Vary distance class definition
+### b) Vary distance class definition {-}
 
 Under IBD, at least the first distance lag should show positive spatial autocorrelation. Here, it is the first two classes, as indicated by the red symbols. 
 
@@ -515,7 +515,7 @@ Unlike a Mantel test, where all pairs are considered, in geostatistics we typica
 - There are few pairs in of these bins, making estimates highly variable.
 - Not all pairs contribute (equally) to the largest distance classes (those in the center of the study area are not involved in very large distances).
 
-### c) Alternative measures of genetic distances
+### c) Alternative measures of genetic distances {-}
 
 Which measure of genetic distance would provide the strongest Mantel correlation in the first distance class for this data set? 
 
