@@ -13,12 +13,12 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-## 1. Overview
+## 1. Overview {-}
 
 This bonus vignette uses the new packages `sf`, `terra`, and `tmap`, yet it can only scratch the surface. For a thorough introduction to geocomputation with R, see this excellent Gitbook: https://geocompr.robinlovelace.net/index.html. 
 
 
-### a) Goals 
+### a) Goals {-} 
 
 This bonus material expands the Worked Example to show:
 
@@ -29,7 +29,7 @@ This bonus material expands the Worked Example to show:
 
 Try modifying the code to import your own data!
 
-### b) Required R libraries
+### b) Required R packages {-}
 
 ```{r message=FALSE, warning=TRUE}
 library(LandGenCourse)
@@ -43,7 +43,7 @@ library(dplyr)
 library(tibble)
 ```
 
-## 2. Convert 'SpatialPointsDataFrame' to 'sf' object 
+## 2. Convert 'SpatialPointsDataFrame' to 'sf' object {-} 
 
 While 'sp' was a major achievement, it is being replaced now by 'sf', which is short for "simple feature". The conversion is easy. The resulting S3 object is a data frame and also an 'sf' object.
 
@@ -59,9 +59,9 @@ Check whether the projection has been defined:
 sf::st_crs(Sites.sf)$input
 ```
 
-## 3. Plot variables (first 10 in data set)
+## 3. Plot variables (first 10 in data set) {-}
 
-### a) Plot geometry
+### a) Plot geometry {-}
 
 The package sf makes a clear distinction between the geometry information (spatial coordinates: where in space) and attribute information (what's at these locations). Hence, when using the function plot with sf objects, we need to decide what we want to plot: geometry or attributes?
 
@@ -71,7 +71,7 @@ To plot the geometry, we use function `st_geometry` to extract the geometry info
 plot(st_geometry(Sites.sf))
 ```
 
-### b) Plot attributes in space
+### b) Plot attributes in space {-}
 
 If we don't extract the geometry, then R will assume that we want to plot attribute data. The default is to plot the first ten attributes. 
 
@@ -95,7 +95,7 @@ Note: To learn about options for the 'plot' function for 'sf' objects, access th
 plot(Sites.sf[,c("Basin", "Depth_m")], pch=16)
 ```
 
-### c) Create a static bubble plot with 'tmap'
+### c) Create a static bubble plot with 'tmap' {-}
 
 The tmap package (for plotting thematic maps) is a great new tool for plotting maps. It is based on the grammar of graphics concepts, which take a bit of getting used to. Most importantly, we need the following parts:
 
@@ -148,7 +148,7 @@ Map1 <- tm_shape(Sites.sf, bbox=Bbox2) + tm_sf(size = "Depth_m")
 Map1
 ```
 
-### d) Create an interactive bubble plot with 'tmap'
+### d) Create an interactive bubble plot with 'tmap' {-}
 
 This is not a great plot yet. Let's tweak it a bit:
 
@@ -190,7 +190,7 @@ Uncomment the code below by removing the hashtag (#) and run it. Go ahead and to
 #Map2
 ```
 
-### e) Export maps
+### e) Export maps {-}
 
 Save the map to folder `output`:
 
@@ -205,7 +205,7 @@ tmap_save(Map1, paste0(here::here(), "/output/StaticMap.png"), height=7)
 ```
 
 
-## 4. Export site data as ESRI shapefile
+## 4. Export site data as ESRI shapefile {-}
 
 To export your results to GIS software, you can write them into an ESRI shapefile, which is a widely used data format for sharing geospatial vector data. 
 
@@ -219,7 +219,7 @@ The argument `delete_dsn` specifies whether any existing file with the same name
 #st_write(Sites.sf, paste0(here(),"/output/Sites.shp"), delete_dsn = TRUE)
 ```
 
-## 5. Use 'terra'  and 'tmap' to display categorical map with color scheme
+## 5. Use 'terra'  and 'tmap' to display categorical map with color scheme {-}
 
 Now to a more tricky topic. Recall that the last raster layer in the Worked Example, `nlcd`, contains categorical land cover data that are coded numerically. The `raster` package actually misinterpreted them as numeric data. 
 

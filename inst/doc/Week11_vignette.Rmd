@@ -13,26 +13,28 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-## 1. Overview of Worked Example
+## 1. Overview of Worked Example {-}
 
-### a) Goals
+### a) Goals {-}
+
 This worked example will illustrate the use of two types of genotype-environment association analyses, one univariate and one multivariate. Specifically, you will learn:
 
-* Strategies for screening and preparing predictor variables for different GEA analyses;
-* How to run and interpret a Latent Factor Mixed Model (LFMM);
-* One option for post-processing LFMM results using the genomic inflation factor (GIF) and false discovery rate (FDR) to correct for multiple tests;
-* How to run and interpret Redundancy Analysis for GEA.
+- Strategies for screening and preparing predictor variables for different GEA analyses;
+- How to run and interpret a Latent Factor Mixed Model (LFMM);
+- One option for post-processing LFMM results using the genomic inflation factor (GIF) and false discovery rate (FDR) to correct for multiple tests;
+- How to run and interpret Redundancy Analysis for GEA.
 
-### b) Data set
+### b) Data set {-}
+
 We will reanalyze genomic data from 94 North American gray wolves (*Canis lupus*) sampled across Canada and Alaska (Schweizer et al., 2016). We are interested in understanding how wolves may be locally adapted to environmental conditions across their North American range.
 
 The genetic data are individual-based, and are input as allele counts (i.e. 0/1/2) for each locus. In the interest of computational efficiency, we will use a randomly sampled subset of 10,000 single nucleotide polymorphism (SNP) markers from the full data set (which contains 42,587 SNPs).
 
 In addition, we have eight environmental predictors that are ecologically relevant and are not highly correlated (|r| < 0.7). This is a reduced set of predictors from the 12 originally included by Schweizer et al. (2016).
 
-### c) Required R libraries
+### c) Required R libraries {-}
 
-You may need to install packages 'qvalue' from BioClim and 'lfmm' from GitHub:
+You may need to install packages `qvalue` from BioClim and `lfmm` from GitHub:
 
 ```{r install global_options, include=TRUE, results="hide", message=FALSE, warning=FALSE}
 if(!requireNamespace("qvalue", quietly = TRUE)) {  
@@ -53,9 +55,10 @@ library(lfmm)     # Used to run LFMM
 library(qvalue)   # Used to post-process LFMM output
 ```
 
-## 2. Import and prepare the data
+## 2. Import and prepare the data {-}
 
-### a) Import the genetic data
+### a) Import the genetic data {-}
+
 I downloaded these data from the Schweizer et al. (2016) [Dryad repository](http://datadryad.org/resource/doi:10.5061/dryad.c9b25) and converted them from .tped to .raw format using plink (Purcell et al., 2007). Then, using the R package `adegenet` (Jombart 2008), I read in the .raw data and extracted the matrix of 94 individuals x 42,587 SNPs. Finally, I randomly sampled 10,000 columns (SNPs) from the full data set, which is what we will analyze in this worked example.
 
 The full data in .raw format are available in the Supplemental Information for Forester et al. (2018). If you want to analyze the full data set, use the `read.PLINK` call from `adegenet` to read the data into R.
@@ -78,7 +81,8 @@ sum(is.na(gen.imp)) # No NAs
 We could also use this imputation approach within ecotypes (rather than across all individuals). Other promising imputation methods for species lacking a reference genome include: using ancestry values from `snmf` in the `LEA` package (Frichot & Francois 2015), and the program LinkImpute (Money et al., 2015).
 
 
-### b) Import the environmental data
+### b) Import the environmental data {-}
+
 The original data set comes with 12 predictors, but many of them are highly correlated, which can cause problems for regression-based methods like LFMM and RDA. I conducted variable reduction using the |0.7| "rule of thumb" (Dormann et al., 2013) and an ecological interpretation of the relevance of possible predictors. Can you double check the correlations among the variables?
 
 For more information on the rationale for variable reduction, see the full [RDA vignette](http://popgen.nescent.org/2018-03-27_RDA_GEA.html). 
@@ -121,11 +125,12 @@ pred.PC1 <- scores(pred.pca, choices=1, display="sites", scaling=0)
 ```
 
 
-## 3. Latent Factor Mixed Models (LFMM): a univariate GEA
+## 3. Latent Factor Mixed Models (LFMM): a univariate GEA {-}
 
 LFMM is a univariate test, which means that it builds a model for each SNP and each predictor variable. In this case, we will run 10,000 SNPs x 1 synthetic predictor = 10,000 separate LFMM tests. 
 
-### a) Determine K
+### a) Determine K {-}
+
 LFMM requires an estimate of the number of populations in the data (K). To determine the most likely value of K, we'll use PCA, noting that there are many different approaches for determining "K" from genetic data (more below). It is also reasonable to run LFMM with different values of K, if there is uncertainty.
 
 We'll use a broken stick criterion to determine K. The broken stick stopping rule states that principal components should be retained as long as observed eigenvalues are higher than corresponding random broken stick components.
@@ -155,7 +160,7 @@ K <- 3
 ```
 
 
-### b) Run LFMM
+### b) Run LFMM {-}
 
 LFMM is a regression model that includes unobserved variables (latent factors, set with "K") that correct the model for confounding effects, such as population structure. The latent factors are estimated simultaneously with the environmental and response variables, which can help improve power when environment and demography are correlated.
 
@@ -168,7 +173,8 @@ wolf.lfmm <- lfmm_ridge(Y=gen.imp, X=pred.PC1, K=K) # change K as you see fit
 That was fast! As you'll see, post-processing these results is what takes up most of our time and effort...
 
 
-### c) Identify LFMM candidates using False Discovery Rate
+### c) Identify LFMM candidates using False Discovery Rate {-}
+
 Next, we post-process the model output. We will move fast here; I strongly recommend reading "Controlling false discoveries in genome scans for selection" (Francois et al., 2016) if you will be running these post-processing steps on your own data! Decisions made here can dramatically impact the candidate markers you identify.
 
 The steps for post-processing are:
@@ -251,9 +257,9 @@ Using K=3, the default GIF correction, and an FDR threshold of 0.10, we only det
 
 
 
-## 4. Redundancy Analysis (RDA): a multivariate GEA
+## 4. Redundancy Analysis (RDA): a multivariate GEA {-}
 
-### a) Run RDA
+### a) Run RDA {-}
 
 RDA is a multivariate ordination technique that can analyze many loci and environmental predictors simultaneously. For this reason, we can input all of the SNPs and environmental predictors at once, with no need to correct for multiple tests. RDA determines how groups of loci covary in response to the multivariate environment, and can better detect processes that result in weak, multilocus molecular signatures relative to univariate tests (Rellstab et al., 2015; Forester et al., 2018).
 
@@ -311,7 +317,7 @@ Here, the SNPs are in red (in the center of each plot), and the individuals are 
 See the full [RDA vignette](http://popgen.nescent.org/2018-03-27_RDA_GEA.html) for details on how to make more informative (and prettier!) RDA plots for this data set. For example, we could more clearly visualize the identified candidate loci in the ordination space and see how they are linked to the environmental predictors. We could also use RDA to investigate how wolf ecotypes (based on individual genotypes) are distributed in relation to the environmental predictors (Forester et al., 2018, Figures 9 & 10).
 
 
-### b) Identify RDA candidates
+### b) Identify RDA candidates {-}
 
 We'll use the loadings of the SNPs (their location) in the ordination space to determine which SNPs are candidates for local adaptation. The SNP loadings are stored as `species` in the RDA object. We'll extract the SNP loadings from the first three constrained axes, based on our assessment of the screeplot above. 
 
@@ -385,7 +391,7 @@ intersetcor(wolf.rda)[,1:3]
 Generally, candidate SNPs on axis 1 represent multilocus sets of SNP genotypes associated most strongly with annual mean temperature and annual precipitation; SNPs on axis 2 represent genotypes associated with mean diurnal range; and SNPs on axis 3 represent genotypes associated with precipitation seasonality. See the full [RDA vignette](http://popgen.nescent.org/2018-03-27_RDA_GEA.html) for additional investigation of candidate SNPs. 
 
 
-## 5. Compare LFMM and RDA candidates
+## 5. Compare LFMM and RDA candidates {-}
 
 Let's see what kind of overlap we have in our candidates from the two methods. Remember that we had only 12 candidates for LFMM and 134 candidates for RDA.
 
@@ -400,7 +406,8 @@ An important note: A common approach in studies that use GEAs and populations di
 the (excellent!) FDR paper for more options based on combining z-scores across different tests: Francois et al. (2016).
 
 
-## 6. A quick note on controlling for population structure in RDA
+## 6. A quick note on controlling for population structure in RDA {-}
+
 We are still testing approaches to controlling for population structure in RDA. We've generally found that using ancestry values (e.g. from `snmf` or Admixture) or MEMs (Moran's Eigenvector Maps, aka spatial eigenvectors) is overly conservative.
 
 So far, the best approach (e.g. balancing true positives and false negatives) is to compute a PCA of the genetic data and select relevant PCs (e.g. using the broken stick criteron as we did above), then use retained PCs in a partial RDA:
@@ -419,7 +426,7 @@ You will want to check for correlations between retained PCs and your environmen
 
 
 
-## 7. References
+## 7. References {-}
 
 Borcard D, Gillet F, Legendre P (2011) [*Numerical Ecology with R*](http://www.springer.com/us/book/9781441979759). Springer, New York.
 

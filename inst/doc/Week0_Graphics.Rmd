@@ -14,7 +14,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-## 1. Overview 
+## 1. Overview {-} 
 
 This worked example is adapted from "Applied Population Genetics" by Rodney Dyer. The entire book is available here: http://dyerlab.github.io/applied_population_genetics/index.html 
 
@@ -43,9 +43,9 @@ library(ggplot2)
 library(RColorBrewer)
 ```
 
-## 2. Univariate plots
+## 2. Univariate plots {-}
 
-### 2.1. Barplots and histograms
+### 2.1. Barplots and histograms {-}
 
 Univariate data can represent either counts (e.g., integers) of items or vectors of data that have decimal components (e.g., frequency distributions, etc.).  If the sampling units are discrete, then a the `barplot()` function can make a nice visual representation.  Here is an example using some fictions data.
 
@@ -137,7 +137,7 @@ ggplot( iris, aes(x=Sepal.Length)) + geom_bar(fill="lightblue") +
 ```
 
 
-### 2.2. Plotting Parameters
+### 2.2. Plotting Parameters {-}
 
 There are several parameters common to the various plotting functions used in the basic R plotting functions.  Here is a short table of the most commonly used ones.
 
@@ -161,11 +161,7 @@ ylab     | ylab="Frequency" | Sets the label attached to the y-axis.
 
 
 
-
-
-
-
-### 2.3. Density Plots
+### 2.3. Density Plots {-}
 
 Another way of looking at the distribution of univariate data is through the use of the `density()` function. This function takes a vector of values and creates a probability density function of it returning an object of class "density". 
 
@@ -190,9 +186,9 @@ The corresponding `ggplot` approach is:
 ggplot( iris, aes(x=Sepal.Length)) + geom_density()
 ```
 
-## 3. Bivariate plots
+## 3. Bivariate plots {-}
 
-### 3.1. Overlaying Plots by grouping
+### 3.1. Overlaying Plots by grouping {-}
 
 The data in the previous density plot represents the sepal lengths across all three iris species.  It may be more useful to plot them as the density of each species instead of combined.  Overlaying plots is a pretty easy feature built into the default R plotting functionalities.
 
@@ -291,7 +287,7 @@ Notice how we add the fill color to the `aes()` function because the categories 
 
 
 
-### 3.2. Boxplots
+### 3.2. Boxplots {-}
 
 Boxplots are a display of distributions of continuous data within categories, much like what we displayed in the previous staggered barplot.  It is often the case that boxplots depict differences in mean values while giving some indication of the dispersal around that mean.  This can be done in the staggered barplot as above but not quite as specifically.
 
@@ -320,7 +316,7 @@ ggplot(iris, aes(x=Species, y=Sepal.Length)) +
   xlab("Iris Species") + ylab("Sepal Width (cm)")
 ```
 
-### 3.3. Scatter Plots
+### 3.3. Scatter Plots {-}
 
 With two sets of continuous data, we can produce scatter plots.  These consist of 2- (or 3-) coordinates where we can plot our data.  With the addition of alternative colors (`col=`) and/or plot shapes (`pch=`) passed to the generic plot() command, we can make really informative graphical output. Here I plot two characteristics of the iris data set, sepal length and width, and use the species to indicate alternative symbols.
 
@@ -348,9 +344,9 @@ ggplot(iris,aes(x=Sepal.Length,y=Sepal.Width, shape=Species)) + geom_point()
 
 and the shapes are specified automatically.
 
-## 4. Advanced plotting
+## 4. Advanced plotting {-}
 
-### 4.1. Multiple Plots
+### 4.1. Multiple Plots {-}
 
 The last figure was a bit confusing.  You can see a few points where the three species have the same measurements for both sepal length and width—both *I. versicolor* and *I. virginica* have examples with sepal widths of 3.0cm and lengths of 6.7cm.  For some of these it would be difficult to determine using a graphical output like this if there were more overlap.  In this case, it may be a more informative approach to make plots for each species rather than using different symbols.  
 
@@ -386,7 +382,7 @@ plot( lm( Sepal.Length ~ Sepal.Width, data=iris))
 ```
 
 
-### 4.2. Color Palettes
+### 4.2. Color Palettes {-}
 
 The default plotting colors in R are black and white.  However, there is a rich set of colors available for your plotting needs.  The easiest set are named colors.  At the time of this writing, there are 
 
@@ -430,7 +426,7 @@ rainbow(10)
 ```
 
 
-### 4.3. RColorBrewer
+### 4.3. RColorBrewer {-}
 
 The ggplot2 library has a slightly more interesting color palette, but it too is often a bit lacking.  You have total control over the colors you produce and can specify them as RGB, hex (e.g. the way the web makes colors), or CMYK.  You can also define your own color palettes.  
 
@@ -452,7 +448,7 @@ p + scale_color_brewer(type="div", palette=6)
 ```
 
 
-### 4.4. Saving Imagery
+### 4.4. Saving Imagery {-}
 
 Creating a graphic for display on your screen is only the first step.  For it to be truly useful, you need to save it to a file, often with specific parameters such as DPI or image size, so that you can use it outside of R.  
 
@@ -510,7 +506,7 @@ ggsave(filename = default_name(plot), plot = last_plot(),
 Either approach will allow you to produce publication quality graphics.
 
 
-### 4.5. Interactive Graphics
+### 4.5. Interactive Graphics {-}
 
 There are several other libraries available for creating useful plots in R.  The most dynamical ones are based on javascript and as such are restricted to web or ebook displays.  Throughout this book, I will be showing how you can use various libraries to create interactive content as well as providing some 'widgets' that will demonstrate how some feature of popualtion or landscape structure changes under a specified model.  These widgets are also written in R and are hosted online as a [shiny](http://shiny.rstudio.org) application.  I would encourage you to look into creating dynamcial reports using these techniques, they *can* facilitate a better understanding of the underlying biology than static approaches.
 

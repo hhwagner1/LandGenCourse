@@ -13,7 +13,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-## 1. Overview of Bonus Materials
+## 1. Overview of Bonus Materials {-}
 
 The Week 7 Worked Example used patch-level values of an Si index as predictors. Here we show how these were calculated from distance matrices. The main steps are:
 
@@ -36,7 +36,7 @@ library(LandGenCourse)
 ```
 
 
-## 2. Import ecological distance matrices
+## 2. Import ecological distance matrices {-}
 
 Each distance matrix represents one hypothesis about gene flow in this system (see Week 7 video). 
 
@@ -56,7 +56,7 @@ lapply(dModels, function(ls) dim(as.matrix(ls)))
 ```
 Note: the distance matrices contain 106 patches. All of these are considered as source populations. However, we will only calculate Si indices for the 65 patches included in the Dianthus dataset. 
 
-## 3. Optimize the scaling parameter alpha
+## 3. Optimize the scaling parameter alpha {-}
 
 In order to calculate Hanski's index, we first need to optimize the value of alpha for each distance model, using presence-absence data for the two time steps of 1989 and 2009. 
 
@@ -120,7 +120,7 @@ These are the optimized scaling parameters alpha of the distance term (related t
 
 $S_{i}$ = $\sum_{j\neq i} exp(-\alpha d_{ij})p_{j}$
 
-## 4. Calculate Hanski's index Si with source patch parameters
+## 4. Calculate Hanski's index Si with source patch parameters {-}
 
 We will consider there alternative source patch parameters
 
