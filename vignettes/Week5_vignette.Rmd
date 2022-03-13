@@ -554,7 +554,7 @@ EcoGenetics::eco.plotCorrelog(corm.GD.pop$Nei.adegenet)
 - Starting with the first distance class, how many consecutive distance classes showed significant spatial autocorrelation?
 - At what distance (range), roughly, did the positive autocorrelation disappear?
 
-## 6. Specify spatial weights and calculate Moran's I
+## 6. Specify spatial weights and calculate Moran's I {-}
 
 In this part, we'll quantify and test Moran's I for the genetic diversity data as calculated in Week 3 lab.
 
@@ -562,7 +562,7 @@ Note: Above, we used a distance lag approach from geostatistics, here we use spa
 
 For a detailed tutorial on defining spatial neighbors and weights, see: https://cran.r-project.org/web/packages/adespatial/vignettes/tutorial.html#irregular-samplings
 
-### a) Defining spatial neighbors
+### a) Defining spatial neighbors {-}
 
 The function `chooseCN` (package: `adegenet`) provides an interface for choosing a connection network, i.e., for defining spatial neighbors. The underlying functions are defined in package `spdep` (for defining spatial dependences). It can return the following graph types:
 
@@ -604,7 +604,7 @@ par(mfrow=c(1,1))
 
 For spatial statistics, spatial neighbors are used to calculate a local mean. We want each site to have multiple neighbors, but they should be nearby only. Gabriel graph (type = 2) is often a good option, and we'll use it for the rest of this worked example.
 
-### b) Defining spatial weights
+### b) Defining spatial weights {-}
 
 By default, `chooseCN` returns row-standardized weights, so that for each site, the weights of its neighbors sum to 1. This means that a local mean can be calculated as a weighted mean of the other sites (non-neighboring sites have a weight of 0).
 
@@ -616,7 +616,7 @@ spdep::nb2mat(nb.gab)[1:5,1:5]
 
 Each row contains the weights for the neighbors of one site. We see that the third site is a neighbor of the second site and vice versa. However, the weights are not the same. It seems that site 2 has six neighbors, so each has a weight of 0.167, whereas site 3 has four neighbors, each with a weight of 0.25.
 
-### c) Calculating and testing Moran's I
+### c) Calculating and testing Moran's I {-}
 
 Let's see whether rarefied allelic richness, Ar, shows spatial autocorrelation among these sites.
 
@@ -643,7 +643,7 @@ p.value = sapply(Frogs.moran, function(x) x$p.value)),3)
 - Sample size n had a negative value of Moran's I (obs). What does this mean?
 - Did all four variables show statistically significant spatial autocorrelation?
 
-## 7. R Exercise Week 5
+## 7. R Exercise Week 5 {-}
 
 **Task:** Assess fine-scale spatial genetic structure in *Pulsatilla vulgaris* within a single patch, A25: Test for IBD with Mantel rank correlation, and use a Mantel correlogram to assess the range of spatial autocorrelation. 
 

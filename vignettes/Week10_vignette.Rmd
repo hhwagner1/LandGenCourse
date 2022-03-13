@@ -22,6 +22,10 @@ This worked example shows how to:
 - Convert spatial data into weights ("costs") based on different weighting approaches.
 - Calculate landscape resistance using least-cost and commute time (analogous to circuit theory) approaches.
 
+**Bonus Materials**:
+
+The Week 10 bonus vignette is a tutorial for the R package `radish`, which provides a user-friendly interface for optimizing landscape resistance models. 
+
 ### b) Data set {-}
 
 This code builds on the data from the 'GeNetIt' package by Jeff Evans and Melanie Murphy that we've used already in the Week 2 Worked Example. We will use spatial data from central Idaho for Columbia spotted frogs (Murphy et al. 2010). 
@@ -321,7 +325,7 @@ plot(cost1.dist~comm1.dist)
 Create a loop that runs through a sequential coarsening of the raster and calculate 
 these metrics and compare them to the finer resolution raster metric using a Spearman correlation. The loop will take a few minutes to run.
 
-### a) Create loop
+### a) Create loop {-}
 
 ```{r}
 cor_cost <- c()
