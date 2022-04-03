@@ -1,6 +1,6 @@
 ---
 title: "Week 12: Model Selection"
-author: "Caren Goldberg"
+author: "Caren Goldberg and Helene Wagner"
 date: "`r Sys.Date()`"
 show_toc: true
 output:
@@ -50,11 +50,19 @@ Each row in the file 'CSF_network.csv' represents a link between two pairs of sa
 
 ### c) Required packages {-}
 
+Install corMLPE if it is not yet installed.
+
+```{r}
+if(!requireNamespace("corMLPE", quietly = TRUE)) 
+  remotes::install_github("nspope/corMLPE")
+```
+
 ```{r packages global_options, include=TRUE, results="hide", message=FALSE, warning=FALSE}
 library(LandGenCourse)
 library(ggplot2)
-#require(lme4)
-#require(usdm)
+#library(nlme)
+#library(usdm)
+#library(corMLPE)
 ```
 
 ### d) Import data {-}
@@ -65,6 +73,13 @@ First, read in the dataset. It is named CSF (Columbia spotted frog) to different
 CSFdata <- read.csv(system.file("extdata", "CSF_network.csv", 
                                         package = "LandGenCourse"))
 head(CSFdata) 
+```
+The variable solarinso is on a very different scale, which can create problems with model fitting with some methods. To avoid this, we scale it.
+
+Note: we could use the scale function without specifying the arguments 'center' or 'scale', as both are 'TRUE' by default. The argument 'center=TRUE' centers the variable by subtracting the mean, the 'scale=TRUE' argument rescales the variables to unit variance by dividing each value by the standard deviation. The resulting variable has a mean of zero and a standard deviation and variance of one.
+
+```{r}
+CSFdata$solarinsoz <- scale(CSFdata$solarinso, center=TRUE, scale=TRUE)
 ```
 
 Take a look at the column names and make sure you and R agree on what everything is called, and on the data types (e.g., factor vs. character).
@@ -96,53 +111,9 @@ In information theory, we evaluate evidence for a candidate set of hypotheses th
 4.	**Energy conservation model**: slope, shrub, dev
 5.	**Historical model**: soils, slope, solarinso
 
-### b) Prepare for model fitting {-}
+### b) Check for multicollinearity {-}
 
-Because link data are not independent (i.e. the genetic diversity at node 1 influences both the node1/node2 genetic distance and that from node1/node3, etc.), we need to develop a set of random effects to account for this dependency, so that we seperate the pattern due to this covariance from the signal of landscape influence on genetic distance. We start by creating matrices from the `pop1` and `pop2` variables:
-
-Create the `Zl` and `ZZ` matrices:
-
-```{r}
-Zl <- lapply(c("pop1","pop2"), function(nm) 
-  Matrix:::fac2sparse(CSFdata[[nm]], "d", drop=FALSE))
-ZZ <- Reduce("+", Zl[-1], Zl[[1]])
-```
-
-Note: The list 'Zl' contains two sparse matrices, one for the 'from' node in 'pop1' and one for the 'to' node in 'pop2'. Each sparse matrix has 20 rows (for the 20 populations) and 48 columns (for the 48 links). Each column has a single value of '1' that indicates the 'from' or 'to' population of the corresponding link. The matrix 'ZZ' is again a sparse matrix that is the sum of the two sparse matrices in 'Zl'. Each column thus has two values of '1', one for the 'from' and one for the 'to' node.
-
-Now we can fit an `lmer` model (linear mixed model; see Week 6 videos) to the data. 
-
-```{r}
-mod1 <- lme4::lFormula(logDc.km ~ solarinso + forest + ag + shrub + 
-                       dev + (1|pop1), data = CSFdata, REML = TRUE)
-```
-
-At this point an error message appears: "Warning message: Some predictor variables are on very different scales: consider rescaling". 
-
-Which variable is causing this problem? To check, get R to show you the first few rows of the dataset:
-
-```{r}
-head(CSFdata)
-```
-
-One of these variables is a lot larger than the others, but has a small range. This often happens with variables such as easting and can cause issues for model fit. The common solution is to z-transform (standardize) the data, which is conveniently done in R using the `scale` function.
-
-Note: we could use the scale function without specifying the arguments 'center' or 'scale', as both are 'TRUE' by default. The argument 'center=TRUE' centers the variable by subtracting the mean, the 'scale=TRUE' argument rescales the variables to unit variance by dividing each value by the standard deviation. The resulting variable has a mean of zero and a standard deviation and variance of one. 
-
-```{r}
-solarinsoz <- scale(CSFdata$solarinso, center=TRUE, scale=TRUE)
-```
-
-We then can attach these data back to our dataframe and check to make sure this worked:
-
-```{r}
-CSFdata <- cbind(CSFdata, solarinsoz)
-names(CSFdata)
-```
-
-If `solarinsoz` is there, you are good.
-
-While we are at it, we will make sure that these variables do not have issues with multicollinearity.
+Before we add predictor variables to a model, we should make sure that these variables do not have issues with multicollinearity, i.e., that they are not highly correlated among themselves. To this end, we calculate variance inflation factors, VIF.
 
 Make a dataframe of just the variables to test (note, you cannot use factors here):
 
@@ -151,9 +122,9 @@ CSF.df <- with(CSFdata, data.frame(solarinsoz, forest, dev, shrub, ag))
 usdm::vif(CSF.df)
 ```
 
-If you get an error that there is no package called 'usdm', use install.packages("usdm")
+If you get an error that there is no package called 'usdm', use `install.packages("usdm")`.
 
-Numbers less than 10, or 3, or 4, depending on who you ask, are considered to not be collinear enough to affect model outcomes. So we are good to go here. What would happen if we added grass to this?
+VIF values less than 10, or 3, or 4, depending on who you ask, are considered to not be collinear enough to affect model outcomes. So we are good to go here. What would happen if we added grass to this?
 
 ```{r}
 usdm::vif(cbind(CSF.df, grass=CSFdata$grass))
@@ -171,107 +142,70 @@ cor(CSF.df, CSFdata$grass)
 
 ### c) Fit all five models {-}
 
-Now we have to remake the modeling objects with our new and improved data frame, but referring to our z-transformed data (thanks to Martin Van Strien and Helene Wagner for the base model code):
+The R package `corMLPE` makes it easy to fit an MLPE model to our dataset. We use the function `gls` from package `nlme` to fit a "generalized least squares" model to the data. 
+
+This is similar to a spatial regression model we've seen in Week 7. The main difference is how we define the correlation structure of the errors: instead of using a function of the spatial coordinates, we use a function of the population indicators: `correlation=corMLPE(form=~pop1+pop2)`.
+
+Note: for linear mixed models, see Week 6 videos. For gls models, see Week 7 videos.
 
 ```{r}
-Zl <- lapply(c("pop1","pop2"), function(nm) 
-  Matrix:::fac2sparse(CSFdata[[nm]], "d", drop=FALSE))
-ZZ <- Reduce("+", Zl[-1], Zl[[1]])
+mod1 <- nlme::gls(logDc.km ~ solarinsoz + forest + ag + shrub + dev, 
+                  correlation=corMLPE::corMLPE(form=~pop1+pop2), 
+                  data=CSFdata, method="REML")
 ```
 
-Fit an lmer model to the data:
+This is the closest to a full model in our dataset (although our models are not completely nested), so we will take a look at the residuals.
 
 ```{r}
-mod_1 <- lme4::lFormula(logDc.km ~ solarinsoz + forest + ag + shrub + 
-                        dev + (1|pop1), data = CSFdata, REML = TRUE)
+plot(mod1, abline=c(0,0)) 
 ```
 
-In the fitted model replace Zt slot (matrix for the random effects generated with just pop1) with the ZZ matrix created above:
+Residuals are centered around zero and do not show large groupings or patterns, although there is some increase in variation at larger numbers (heteroscedasticity: the plot thickens). Here, this means that the model is having a more difficult time predicting larger genetic distances per km. We will keep that in mind as we move on.
 
-```{r}
-mod_1$reTrms$Zt <- ZZ
-```
+Next we will check to make sure the residuals are normally distributed. This is an important assumption for models fitted with (Restricted) Maximum Likelihood.
 
-Refit the model (this involves a few steps of optimization starting from the previously fitted model `mod_1`):
+We'll check this with two plots: 
 
-```{r}
-dfun <- do.call(lme4::mkLmerDevfun, mod_1)
-opt <- lme4::optimizeLmer(dfun)
-mod1 <- lme4::mkMerMod(environment(dfun), opt, mod_1$reTrms, fr = mod_1$fr)
-summary(mod1)
-```
+- Histogram (left): we want to see a symmetric, bell-shaped distribution.
+- Normal probability plot (right): we want to see the points fall on a straight line, without systematic deviations.
 
-In this output, we focus on the estimates of fixed effects, which we will use later to examine the effect of each variable. Note that there are no p-values because of the nature of these models and the philosophy of the package writers. There are packages available that calculate these but the results may be misleading. 
-This is the closest to a full model in our dataset (although our models are not completely nested), so we will take a look at the residuals:
-
-```{r}
-plot(mod1) 
-```
-
-Residuals are centered around zero and do not show large groupings or patterns, although there is some increase in variation at larger numbers (so the model is having a more difficult time predicting larger genetic distances per km). We will keep that in mind as we move on.
-
-Next we will check to make sure the residuals are normally distributed. 
-
-```{r}
+```{r fig.height=4, fig.width=7}
+par(mfrow=c(1,2))
 hist(residuals(mod1)) 
+qqnorm(residuals(mod1))
+par(mfrow=c(1,1))
 ```
 
-This can also be done with the `qqmath` function in package lattice if you are more used to seeing qq plots. These residuals look okay so we will move on (but if this were a publication we would do a closer examination of the shape of the data at the ends of the distribution). 
+These residuals look okay so we will move on (but if this were a publication we would do a closer examination of the shape of the data at the ends of the distribution). 
 
-Now we will make a function (called MLPE) to fit the rest of our models, so that we are not typing the same code over and over (which causes errors and long code that is difficult to navigate or update):
+Recall that mod1 had the following formula: 
+`logDc.km ~ solarinsoz + forest + ag + shrub + dev`. 
 
-
-```{r}
-MLPE <- function(variables, data) {
-  mod2 <- lme4::lFormula(variables, data = data, REML = TRUE)
-  dfun <- do.call(lme4::mkLmerDevfun, mod2)
-  opt <- lme4::optimizeLmer(dfun)
-  mod_2 <- lme4::mkMerMod(environment(dfun), opt, mod2$reTrms,fr = mod2$fr)
-  mod2$reTrms$Zt <- ZZ
-
-# Refit the model
-  dfun <- do.call(lme4::mkLmerDevfun, mod2)
-  opt <- lme4::optimizeLmer(dfun)
-  modelout <- lme4::mkMerMod(environment(dfun), opt, mod2$reTrms,fr = mod2$fr)
-  return(modelout)
-}
-```
-
-To use this function, we define variables (the model as we want it to run) and data (the object that contains our data).
+Here we'll use the function `update` to change the list of predictors in the model (i.e., the right-hand side of the formula, starting with the tilde symbol `~`).
 
 ```{r}
-mod2 <- MLPE(logDc.km ~ forest + ag + shrub + dev + (1|pop1), CSFdata)
-mod3 <- MLPE(logDc.km ~ ag + dev + (1|pop1), CSFdata)
-mod4 <- MLPE(logDc.km ~ slope + shrub + dev + (1|pop1), CSFdata)
-mod5 <- MLPE(logDc.km ~ soils + slope + solarinsoz + (1|pop1), CSFdata)
+mod2 <- update(mod1, ~ forest + ag + shrub + dev)
+mod3 <- update(mod1, ~ ag + dev)
+mod4 <- update(mod1, ~ slope + shrub + dev)
+mod5 <- update(mod1, ~ soils + slope + solarinsoz)
 ```
 
 ### d) Compare evidence for models {-}
 
-First we need to refit the models with REML = FALSE to get a useable estimate of likelihood for AIC and BIC. To do this, we'll create a new function called MLPEnoREML and use it to fit our 5 models.
+Our goal here is to compare five models that all have the same random effects (the population effects modeled by the correlation structure) but differ in the fixed effects. Recall from the Week 6 videos:
+
+- Use REML to test random effects, and to get AIC to compare models with different random effects.
+- Use ML to test fixed effects, and to get AIC to compare models with different fixed effects.
+- Use REML for parameter estimates of fixed effects. 
+
+We can use the function update again, this time to change the fitting method from `method="REML"` to `method="ML"`.
 
 ```{r}
-MLPEnoREML <- function(variables, data) {
-  mod2 <- lme4::lFormula(variables, data = data, REML = FALSE)
-  dfun <- do.call(lme4::mkLmerDevfun, mod2)
-  opt <- lme4::optimizeLmer(dfun)
-  mod_2 <- lme4::mkMerMod(environment(dfun), opt, mod2$reTrms,fr = mod2$fr)
-  mod2$reTrms$Zt <- ZZ
-
-# Refit the model
-  dfun <- do.call(lme4::mkLmerDevfun, mod2)
-  opt <- lme4::optimizeLmer(dfun)
-  modelout <- lme4::mkMerMod(environment(dfun), opt, mod2$reTrms,fr = mod2$fr)
-  return(modelout)
-}
-```
-
-```{r}
-mod1noREML <- MLPEnoREML (logDc.km ~ solarinsoz + forest + ag + shrub + dev + (1|pop1), CSFdata)
-mod2noREML <- MLPEnoREML(logDc.km ~ forest + ag + shrub + dev + (1|pop1), CSFdata)
-mod3noREML <- MLPEnoREML(logDc.km ~ ag + dev + (1|pop1), CSFdata)
-mod4noREML <- MLPEnoREML(logDc.km ~ slope + shrub + dev + (1|pop1), CSFdata)
-mod5noREML <- MLPEnoREML(logDc.km ~ soils + slope + solarinsoz + (1|pop1), CSFdata)
+mod1noREML <- update(mod1, method="ML")
+mod2noREML <- update(mod2, method="ML")
+mod3noREML <- update(mod3, method="ML")
+mod4noREML <- update(mod4, method="ML")
+mod5noREML <- update(mod5, method="ML")
 ```
 
 In information theory, we use information criteria (AIC, BIC) to evaluate the relative distance of our hypothesis from truth. For more information, see Burnham and Anderson (2002).
@@ -299,18 +233,25 @@ CSF.IC
 
 **Question 2**:	How does k relate to the number of parameters in each model?
 
-Now, calculate AICc and add it to the dataframe:
+**Disclaimer**:
+
+- More research is needed to establish how to best account for sample size in MLPE. Here we use N = number of pairs. 
+- More generally, more research is needed to establish whether delta values and evidence weights calculated from MLPE are indeed valid.
+
+
+Calculate AICc and add it to the dataframe (experimental, see disclaimer above):
 
 ```{r}
-CSF.IC$AICc <- CSF.IC$AIC + 2*CSF.IC$k*(CSF.IC$k+1)/(48-CSF.IC$k-1)
+N = nrow(CSFdata)  # Number of unique pairs
+CSF.IC$AICc <- CSF.IC$AIC + 2*CSF.IC$k*(CSF.IC$k+1)/(N-CSF.IC$k-1)
 CSF.IC
 ```
 
 ### e) Calculate evidence weights {-}
 
-Next we calculate evidence weights for each model based on AICc and BIC. These can be interpreted as the probability that the model is the closest to truth in the candidate model set. 
+Next we calculate evidence weights for each model based on AICc and BIC. If all assumptions are met, these can be interpreted as the probability that the model is the closest to truth in the candidate model set. 
 
-Calculate model weights for AICc:
+Calculate model weights for AICc (experimental, see disclaimer above):
 
 ```{r}
 AICcmin <- min(CSF.IC$AICc)
@@ -319,7 +260,7 @@ sumRL <- sum(RL)
 CSF.IC$AICcmin <- RL/sumRL
 ```
 
-Calculate model weights for BIC:
+Calculate model weights for BIC (experimental, see disclaimer above):
 
 ```{r}
 BICmin <- min(CSF.IC$BIC)
@@ -340,6 +281,8 @@ In the multi-model inference approach, we can look across all the models in the 
 5.	**Historical model**: soils, slope, solarinso
 
 ### f) Confidence intervals for predictors {-}
+
+The `summary` function for the model fitted with "ML" provides a model summary that includes a table with t-tests for each fixed effect in a Frequentist approach (see Week 6 Worked Example). Here we stay within the information-theoretic approach and use a different approach than significance testing to identify the most important predictors.
 
 According to Row et al. (2017), we can use the confidence interval from the variables in the models to identify those that are contributing to landscape resistance. Looking at models 2 and 3, we have some evidence that shrub and forest cover matter, but it's not as strong as the evidence for ag and development. Let's look at the parameter estimates to understand more. Note that for parameter estimation we use the REML estimates.
 
@@ -376,11 +319,44 @@ Create your own (small) set of hypotheses to rank for evidence using the dataset
 
 What can you infer from your analysis about what influences gene flow of this species?
 
-## 4. References {-}
+## 4. Nested model (NMLPE) for hierarchical sampling designs {-}
+
+Jaffe et al. (2019) proposed nested MLPE (NMLPE) to account for an additional level of hierarchical sampling. In their example, they had sampled multiple sites (clusters), and within each site, multiple colonies (populations). 
+
+When they fitted a MLPE model that did not account for the hierarchical level of sites, there was unaccounted autocorrelation in the residuals. They tested for this by sorting the pairwise distances by site and then calculating an autocorrelation function (ACF) as a function of lag distance along rows (i.e., the lag represented how many rows apart to values were in the dataset). The following pseudo-code is based on code in the supplementary material of Jaffe et al. (2019).
+
+Sort data frame with pairwise data by site, then by pop (pseudo-code). Note: this is only needed for the ACF analysis.
+
+```{r}
+# df <- df[order(df$site, df$pop1, df$pop2),]
+```
+
+MLPE model (pseudo-code):
+
+```{r}
+# m1 <- gls(Genetic.distance ~ Predictor.distance, 
+#           correlation = corMLPE(form = ~ pop1+pop2), data = df)
+# acf(resid(m1, type='normalized')) ## Autocorrelation function
+```
+
+The package corMLPE contains another function, corNMLPE2, where we can specify cluster as an additional hierarchical level of non-independence in the data. The ACF of this model did not show any autocorrelation anymore. 
+
+NMLPE model (pseudo-code)
+```{r}
+# m2 <- gls(Genetic.distance ~ Predictor.distance, 
+#           correlation = corMLPE(form = ~ pop1+pop2, clusters = site), data = df)
+# acf(resid(m2, type='normalized')) ## Autocorrelation function
+```
+
+Note that this is a method to account for hierarchical sampling designs. It does not explicitly account for spatial autocorrelation - indeed, no spatial information is included, unless Euclidean distance is included as a predictor in the model.
+
+## 5. References {-}
 
 - Burnham KP and DR Anderson. 2002. Model Selection and Multimodel Inference: A Practical Information Theoretic Approach. Chapter 8, p. 437-454. Springer-Verlag, New York.
 
 - Goldberg CS and LP Waits (2010). Comparative landscape genetics of two pond-breeding amphibian species in a highly modified agricultural landscape. Molecular Ecology 19: 3650-3663.
+
+- Jaffé, R, Veiga, JC, Pope, NS, et al. (2019). Landscape genomics to the rescue of a tropical bee threatened by habitat loss and climate change. Evol Appl. 12: 1164– 1177. https://doi-org.myaccess.library.utoronto.ca/10.1111/eva.12794 
 
 - Row JR, ST Knick, SJ Oyler-McCance, SC Lougheed and BC Fedy (2017). Developing approaches for linear mixed modeling in landscape genetics through landscape-directed dispersal simulations. Ecology & Evolution 7: 3751–3761.
 
