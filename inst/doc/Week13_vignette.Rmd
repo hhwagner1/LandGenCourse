@@ -7,21 +7,21 @@ output:
     toc: yes
 ---
 
-## 1. Overview of Worked Example
+## 1. Overview of Worked Example {-}
 
-### a) Background
+### a) Background {-}
 
 There are many ways graphs can be implemented to understand population structure and relate that structure to landscape characteristics (see Dyer and Nason 2004). In this exercise, we will calculate various graph metrics and apply graphs to fit a gravity model.
 
 Gravity models are a type of inferential model that exploit graph characteristics. Gravity models include both at-site and between-site landscape data. They are a type of graph consisting of nodes and edges. These nodes and edges represent landscape characteristics associated with these graph elements.
 
-### b) Data set
+### b) Data set {-}
 
 In this exercise, you will use the gravity model framework to build an empirical model of gene flow for the Columbia spotted frog dataset in central Idaho that you have used for several other exercises (Murphy et al. 2010).
 
-## 2. Setup
+## 2. Setup {-}
 
-#### Add required packages
+#### Add required packages {-}
 
 This code checks of all required packages are installed, and if so, loads them. If any are missing, it will return a message that identifies the packages that need to be installed. If that happens, install the packages and run the code again.
 
@@ -43,7 +43,7 @@ p <- c("raster", "rgdal", "igraph", "sp", "GeNetIt", "spatialEco", "leaflet",
   }
 ```
 
-#### Prepare work environment
+#### Prepare work environment {-}
 
 ```{r environment}
 # Get the path to your project folder
@@ -57,7 +57,7 @@ back.transform <- function(y) exp(y + 0.5 * stats::var(y))
 rmse = function(p, o){ sqrt(mean((p - o)^2)) }
 ```
 
-#### Download data
+#### Download data {-}
 
 This may take a moment as the file is large (148.7 MB).
 
@@ -71,11 +71,11 @@ if(!file.exists(file.path(Path, "data", "Wetlands.csv")))
 }
 ```
 
-## 3. Wetland complex data preparation 
+## 3. Wetland complex data preparation {-}
 
 In this sections, we will read in all wetland locations in the study area and calculate a few graph-based metrics to assign to wetland sites that data was collected at. This allows us to put our samples into the context of the larger wetland system thus, accounting for proximity and juxtaposition. 
 
-### a) Read in wetlands data 
+### a) Read in wetlands data {-} 
 
 Read file "Wetlands.csv".
 
@@ -93,7 +93,7 @@ wetlands <- st_as_sf(wetlands, coords = c("X", "Y"),
 str(wetlands)
 ```
 
-### b) Create wetlands graph 
+### b) Create wetlands graph {-} 
 
 Create Gabriel graph from the wetlands to represent a "realization" of connectivity and spatial arrangement. 
 
@@ -104,12 +104,13 @@ gg <- graph2nb(gabrielneigh(st_coordinates(wetlands)),sym=TRUE)
 
 plot(gg, coords=st_coordinates(wetlands))
 ```
+
 **Questions**: 
 
 - This graph may or may not be the best representation of wetland connectivity.  What other types of graphs could you build? 
 - What wetlands are connected to each other based on the graph?
 
-### c) Graph metrics
+### c) Graph metrics {-}
 
 To calculate graph metrics, we need to do a few steps:
 
@@ -150,7 +151,7 @@ wetlands$closeness <- igraph::closeness(wg, weights=w)
 wetlands
 ```
 
-### d)  Plot graph metric 
+### d)  Plot graph metric {-} 
 
 Plot results using the graph edges and wetlands points with the attributes "betweenness", "closeness" and "degree".
 
@@ -190,7 +191,7 @@ title("Wetlands Gabriel graph degree")
 - How might it not be ecologically or biologically meaningful?
   
 
-## 4. Wetland field-data preparation 
+## 4. Wetland field-data preparation {-} 
 
 In this section we will read the field data and add the node metrics we just calculated.
 
@@ -226,9 +227,9 @@ head(sites)
 
 - What are the fields here? What data are included in `sites`?   
 
-## 5. Saturated Graph
+## 5. Saturated Graph {-}
 
-### a) Create graph from site locations 
+### a) Create graph from site locations {-} 
 
 To assess connectivity using a gravity model, we need to build a graph from the occupied frog sites create a graph. This could be any type of graph, but I generally use saturated (essentially a full genetic distance matrix) or pruned by some maximum distance.
 
@@ -246,7 +247,7 @@ Note: Can create a distance-constrained graph with max.dist arg (not run)
 ```
 
 
-### b)  Merge the graph with genetic distance 
+### b)  Merge the graph with genetic distance {-} 
 
 Read in the genetic distance data and make a matrix, gdist, then unfold data
 
@@ -278,9 +279,9 @@ dist.graph <- merge(dist.graph, gdist, by = "from.to")
 
 - What is in the resulting object?
 
-## 6. Spatial model data prepration
+## 6. Spatial model data prepration {-}
 
-### a)  Read raster data using terra
+### a)  Read raster data using 'terra' {-}
 
 ```{r files}
 list.files(file.path(Path,"data"), "tif$")
@@ -288,7 +289,7 @@ xvars <- rast(list.files(file.path(Path, "data"), "tif$",
                         full.names = TRUE))
 ```
 
-### b) Reclassify wetlands
+### b) Reclassify wetlands {-}
 
 NLCD is land cover data.  The wetland classes are 11 and 90-95 (for this system and vintage NLCD data)
 
@@ -302,7 +303,7 @@ wetlnd <- classify(xvars[["nlcd"]], reclass)
 ```
 
 
-### c)  Calculate the proportion of the landscape around sites 
+### c)  Calculate the proportion of the landscape around sites {-}
 
 Assign proportion of landcover that is wetland to sites as pwetland.  You could create a binary raster for any cover type of interest and calculate this parameter.
 
@@ -348,7 +349,7 @@ Alternatively, you can use the `landscapemetrics` package (see Week 2) to calcul
 
 Note: as per help file, the argument `y` of the function `sample_lsm` can accept an `sf` points object (e.g., `sites`). This returned an error though, hence we first convert `sites` to an `sp` object, using the function `as_Spatial`. 
 
-```{r landscapemetrics}
+```{r landscapemetrics, eval=FALSE}
 sites.sp <- as_Spatial(sites)
 nlcd_sampled <- landscapemetrics::sample_lsm(landscape = xvars[["wetlnd"]], 
                                              what = "lsm_c_pland",
@@ -368,7 +369,7 @@ head(pwetland)
 Note: these values are sorted by `SiteID` and are not in the same order as the `sf` object `sites`, that's why the first six values may not be the same.
 
 
-### d)  Add values of rasters to sample sites 
+### d)  Add values of rasters to sample sites {-} 
 
 This adds potential "at site" variables, keep as sf POINT class object.  We are removing raster 6 as knowing the cover class from NLCD that intersects the same points is not very useful information. 
 
@@ -380,7 +381,7 @@ sites <- st_sf(data.frame(as.data.frame(sites), stats),
 ```
 
 
-### e)  Add raster covariates to graph edges (lines). 
+### e)  Add raster covariates to graph edges (lines) {-} 
 
 Remove `nlcd` and `wetlnd` rasters before calculating statistics, as calculating statistics on categorical data is nonsensical.   
 
@@ -401,7 +402,7 @@ dist.graph <- st_sf(data.frame(as.data.frame(dist.graph), stats),
                     geometry=dist.graph$geometry)
 ```
 
-### f)  What about categorical variables? 
+### f)  What about categorical variables? {-} 
 
 Statistical moments (mean, variance, etc.) are nonsensical for categorical variables. Here we create a function for returning the percent wetland between sites. Then we use it to calculate an additional statistic and add the result to the graph. 
  
@@ -427,7 +428,7 @@ suppressWarnings(
 dist.graph$wet.pct.nlcd <- as.numeric(wetstats[,1]) 
 ```
 
-### g)  Evaluate node and edge correlations
+### g)  Evaluate node and edge correlations {-}
  
 We need to evaluate correlations in the data to avoid overdispersion in our models (remember lab from Week 12, where we calculated the variance inflation factor, VIF). 
 
@@ -485,7 +486,7 @@ It also returns a vector of correlated variables:
 node.cor
 ```
 
-### h)  Add node data 
+### h)  Add node data {-} 
  
 Build and add node (at-site) level data to graph, then merge edge (distance graph) and edge (between-site) data.   
 
@@ -512,9 +513,9 @@ for(i in 5:ncol(gdata))
 }
 ```
 
-## 7. Gravity model
+## 7. Gravity model {-}
 
-### a) Develop hypothesis   
+### a) Develop hypothesis {-}   
 
 What type of gravity model do you wish to run (production or attraction constraint)?  Think about what hypotheses that you want to test. Write out model statements that group parameters into hypotheses and run models. Remember to run a NULL that is just distance. 
 
@@ -595,7 +596,7 @@ NOTE: we are adding elevation here as a covariate. HOWEVER - elevation does not 
 
 ```
 
-### b)  Compare competing models 
+### b)  Compare competing models {-} 
 
 Should you use ML or REML? Create diagnostic plots.
 
@@ -611,7 +612,7 @@ par(mfrow=c(2,3))
    for (i in 1:6) { plot(null, type=i) } 
 ```
 
-### c)  Fit final model(s) and calculate effect size
+### c)  Fit final model(s) and calculate effect size {-}
 
 To calculate effect size, we refit the models with REML.
 
@@ -646,7 +647,9 @@ par(mfrow=c(2,3))
 ```
 
 
-### d)  Back predict global_fit model (can add other top models)
+### d)  Back predict global_fit model {-} 
+
+Feel free to add other top models.
 
 ```{r predict}
 gd <- back.transform(gdata$GDIST)
@@ -663,7 +666,7 @@ cat("RMSE of global", rmse(global.p, gd), "\n")
 cat("RMSE of production", rmse(production.p, gd), "\n")
 ```
 
-### e)  Aggregrate estimates and plot 
+### e)  Aggregrate estimates and plot {-} 
 
 We can aggregrate estimates back to the edges and nodes. An interactive map can be created using the `tmap` package (see Week 2 Bonus vignette).
 
@@ -709,6 +712,6 @@ Map + tm_layout(legend.outside=TRUE, legend.position = c("right", "top"))
 Plot interactive map: this may not render e.g. in Bookdown or when you knit your notebook to output formats other than `.html`. 
 
 ```{r interactive}
-tmap_mode(c("plot", "view")[2])
-Map 
+#tmap_mode(c("plot", "view")[2])
+#Map 
 ```
