@@ -15,17 +15,17 @@ vignette: >
 ---
 ## 1. Overview {-}
 
-This bonus vignette uses the new packages `sf`, `terra`, and `tmap`, yet it can only scratch the surface. For a thorough introduction to geocomputation with R, see this excellent Gitbook: https://geocompr.robinlovelace.net/index.html. 
+This bonus vignette uses the packages `sf`, `terra`, and `tmap`, yet it can only scratch the surface. For a thorough introduction to geocomputation with R, see this excellent Gitbook: https://geocompr.robinlovelace.net/index.html. 
 
 
 ### a) Goals {-} 
 
 This bonus material expands the Worked Example to show:
 
-- How to convert the site data from an `sp` object to an `sf` object, a new standard for geospatial vector data.
-- How to create static and interactive maps of an `sf` object with `tmap`. 
-- How to export an `sf` object to a, ESRI shapefile.
-- How to plot a categorical raster map with a predefined color scheme, using `tmap` and a new standard for raster data (`terra` package).
+- How to import and export ESRI shapefiles.
+- Compatibility with packages `sp` and `raster`
+- How to create static and interactive maps with `tmap`. 
+- How to plot a categorical raster with a predefined color scheme.
 
 Try modifying the code to import your own data!
 
@@ -33,42 +33,112 @@ Try modifying the code to import your own data!
 
 ```{r message=FALSE, warning=TRUE}
 library(LandGenCourse)
-library(sp)
 library(sf)
-library(raster)
 library(GeNetIt)
 library(terra)
 library(tmap)
 library(dplyr)
 library(tibble)
+library(here)
 ```
 
-## 2. Convert 'SpatialPointsDataFrame' to 'sf' object {-} 
+## 2. Import and export ESRI shapefiles {-}
 
-While 'sp' was a major achievement, it is being replaced now by 'sf', which is short for "simple feature". The conversion is easy. The resulting S3 object is a data frame and also an 'sf' object.
+ESRI shapefiles are a widely used data format for sharing geospatial vector data. With the package sf, they are easy to import and export. Here' we will export Sites.sf to a shapefile and then import it again. 
+
+### a) Export 'sf' object to shapefile
+
+The following code may produce a warning that column names were abbreviated. It writes the component files for the ESRI shapefile into the pre-existing folder `output` (the first line will create it if does not exist yet). Remember to remove the hashtags '#' to un-comment the code before running it.
+
+The argument `delete_dsn` specifies whether any existing file with the same name should be deleted first (i.e., overwritten). 
 
 ```{r}
 data(ralu.site)
-Sites.sf <- st_as_sf(ralu.site)
-class(Sites.sf)
+#if(!dir.exists(here("output"))) dir.create(here("output"))
+#dir.create(here("output/Sites"))
+#st_write(ralu.site, here("output/Sites/Sites.shp"), delete_dsn = TRUE)
 ```
 
-Check whether the projection has been defined:
+Navigate to the `Sites` folder in the `output` folder (Files tab). You should now see four component files of the shapefile. These four files are required parts of the shapefile, always keep (or share) them together! Some shapefiles will have additional, optional component files.
+
+- Sites.dbf
+- Sites.prj
+- Sites.shp
+- Sites.shx
+
+### b) Import shapefile to 'sf' object
+
+Importing a shapefile is very easy with the function `st_read` from the `sf` package. While you only need to provide the path to the `.shp` file, the other files listed above must be in the same folder.
 
 ```{r}
-sf::st_crs(Sites.sf)$input
+#Sites.sf_a <- st_read(here("output/Sites/Sites.shp"))
+#Sites.sf_a 
 ```
 
-## 3. Plot variables (first 10 in data set) {-}
+## 3. Compatibility with `sp` and `raster` objects {-} 
+
+The packages sf and terra recently replaced the older packages sp and raster. You may still encounter code that requires objects from these packages. Here we show how to convert between sf and sp, and between terra and raster. The conversion is easy, though please note that sp objects are S4 objects. 
+
+### a) Converting between `sf` and `sp`
+
+It is easy to convert an `sf` object into a `Spatial` object of package `sp`, using the function `as_Spatial` of the `sf` package. For point data, the resulting class will be a `SpatialPointsDataFrame`. 
+
+```{r}
+data(ralu.site)
+Sites.sp <- sf::as_Spatial(ralu.site)
+Sites.sp
+```
+We can convert the `Spatial` object back to an `sf` object with the function `st_as_sf` of the `sf` package:
+
+```{r}
+Sites.sf_b <- sf::st_as_sf(Sites.sp)
+Sites.sf_b
+```
+
+### b) Converting between `terra` and `raster`
+
+To convert a `SpatRaster` (`terra`) with multiple layers into `RasterStack` of the package `raster`, we use the function `stack` of the `raster` package:
+
+```{r}
+RasterMaps <- rast(system.file("extdata/covariates.tif", package="GeNetIt"))
+
+RasterMaps.r <- raster::stack(RasterMaps)
+RasterMaps.r 
+```
+
+To convert a single layer into a `RasterLayer` of the package `raster`, we would use the function `raster`:
+
+```{r}
+nlcd.r <- raster::raster(RasterMaps$nlcd)
+nlcd.r 
+```
+
+To convert from a `RasterLayer` (package `raster`) to a SpatRaster (package `terra`), we use the function `rast` of the `terra` package:
+
+```{r}
+nlcd <- terra::rast(nlcd.r)
+nlcd
+```
+
+We can use the same function to convert from a `RasterStack` (package `raster`) to a SpatRaster with multiple layers (package `terra`):
+
+```{r}
+RasterMaps_b <- terra::rast(RasterMaps.r)
+RasterMaps_b
+```
+
+## 4. Plotting spatial data with `tmap` {-}
 
 ### a) Plot geometry {-}
 
-The package sf makes a clear distinction between the geometry information (spatial coordinates: where in space) and attribute information (what's at these locations). Hence, when using the function plot with sf objects, we need to decide what we want to plot: geometry or attributes?
+The package `sf` makes a clear distinction between the geometry information (spatial coordinates: where in space) and attribute information (what's at these locations). Hence, when using the function `plot` with `sf` objects, we need to decide what we want to plot: geometry or attributes?
 
 To plot the geometry, we use function `st_geometry` to extract the geometry information from the `sf` object:
 
 ```{r}
-plot(st_geometry(Sites.sf))
+data(ralu.site)
+Sites.sf_c <- ralu.site
+plot(st_geometry(Sites.sf_c))
 ```
 
 ### b) Plot attributes in space {-}
@@ -81,7 +151,7 @@ For an overview of 'pch' symbol numbers, and colors, check: http://vis.supstat.c
 
 ```{r, fig.width=7, fig.height=6}
 par(mar=c(2,2,2,2))
-plot(Sites.sf, pch=16, cex=2)
+plot(Sites.sf_c, pch=16, cex=2)
 ```
 
 This is pretty cool! Let's have a closer look at two of the variables. 
@@ -89,15 +159,15 @@ This is pretty cool! Let's have a closer look at two of the variables.
 - `Basin` (left): this is a factor, and each factor level is assigned a different color.
 - `Depth_m` (right): this is a quantitative variable, and R automatically uses a color ramp (from blue to pink to orange) to indicate variation in the values.
 
-Note: To learn about options for the 'plot' function for 'sf' objects, access the help file by typing '?plot' and select 'Plot sf object'.
+Note: To learn about options for the `plot` function for `sf` objects, access the help file by typing `?plot` and select 'Plot sf object'.
 
 ```{r fig.show='hold'}
-plot(Sites.sf[,c("Basin", "Depth_m")], pch=16)
+plot(Sites.sf_c[,c("Basin", "Depth_m")], pch=16)
 ```
 
 ### c) Create a static bubble plot with 'tmap' {-}
 
-The tmap package (for plotting thematic maps) is a great new tool for plotting maps. It is based on the grammar of graphics concepts, which take a bit of getting used to. Most importantly, we need the following parts:
+The `tmap` package (for plotting thematic maps) is a great tool for plotting maps. It is based on the grammar of graphics concepts, which take a bit of getting used to. Most importantly, we need the following parts:
 
 - `tmap_mode("plot")`: to plot a static map (default)
 - `tm_shape`: this function defines the data to be used.
@@ -109,20 +179,21 @@ If we use `tm_sf` without arguments (i.e., with the default settings), we get a 
 
 ```{r message=FALSE}
 tmap_mode("plot")
-tm_shape(Sites.sf) + tm_sf()
+tm_shape(Sites.sf_c) + tm_sf()
 ```
 
-We can indicate an attribute to plot it:
+We can indicate an attribute to plot it. Also, there is a special function `tm_bubbles` for bubble plots. Here we define the bubble size by wetland depth and bubble color by basin. In addition, we specify that the legend should be placed outside of the plot, on the right.
 
 ```{r message=FALSE}
 tmap_mode("plot")
-tm_shape(Sites.sf) + tm_sf("Depth_m") 
+tm_shape(Sites.sf_c) + tm_bubbles(size="Depth_m", col="Basin") +
+  tm_layout(legend.outside=TRUE, legend.outside.position="right") 
 ```
 
-Let's make the boundary box (map extent) a little larger so that the symbols are not cut off. First we extract the boundary box of `Sites.sf` and save it as `Bbox`.
+Let's make the boundary box (map extent) a little larger so that the symbols are not cut off. First we extract the boundary box of `Sites.sf_c` and save it as `Bbox`.
 
 ```{r}
-Bbox = st_bbox(Sites.sf)
+Bbox = st_bbox(Sites.sf_c)
 Bbox
 ```
 
@@ -138,55 +209,49 @@ Bbox2
 
 Now we add the boundary box information as an argument `bbox` in function `tm_shape`. 
 
-To create a bubble plot, we indicate that the attribute `Depth_m` should be used to define the symbol size. 
-
 Note that we write the figure into an object, `Map1`, then plot the `Map1`. This will help e.g. with exporting the map, or we can later add more layers to this map object with `+`.
 
 ```{r message=FALSE}
 tmap_mode("plot")
-Map1 <- tm_shape(Sites.sf, bbox=Bbox2) + tm_sf(size = "Depth_m") 
+Map1 <- tm_shape(Sites.sf_c, bbox=Bbox2) + 
+  tm_bubbles(size="Depth_m", col="Basin") +
+  tm_layout(legend.outside=TRUE, legend.outside.position="right") 
 Map1
 ```
 
 ### d) Create an interactive bubble plot with 'tmap' {-}
 
-This is not a great plot yet. Let's tweak it a bit:
-
-- tmap_mode("view"): create an interactive map with a zoomable background map
-- `size="Depth_m"`: create a bubble plot where the symbol size is proportional to the value of a quantitative variable
-- `col="Basin"`: use a default color ramp to show different values, here for the categorical variable Basin. 
-
-
-- `tm_basemap(server = "OpenTopoMap")`: define what basemap should be used from internet.
-
-If you omit `tm_basemap(server = "OpenTopoMap")`, R will show "Esri.WorldGrayCanvas" and include an interactive menu to toggle between "Esri.WorldGrayCanvas", "OpenStreetMap", and "Esri.WorldTopoMap". 
-
-Uncomment the code below by removing the hashtag (#) and run it. Go ahead and play with the interactive map!
+Creating an interactive map with a basemap from the internet is not difficult. Un-comment the code below by removing the hashtag (#) and run it. Go ahead and play with the interactive map!
 
 ```{r message=FALSE}
 #tmap_mode("view")
-#tm_shape(Sites.sf) + tm_sf(size="Depth_m", col="Depth_m", palette = "Blues") 
+#tm_shape(Sites.sf_c) + tm_bubbles(size="Depth_m", col="Basin") 
+```
+
+By default, R will include an interactive menu to toggle between "Esri.WorldGrayCanvas", "OpenStreetMap", and "Esri.WorldTopoMap". We can add more base maps to this selection by providing a list of servers with the function `tm_basemap`. The first one listed will be shown by default.
+
+
+```{r message=FALSE}
+#tm_shape(Sites.sf_c) + tm_bubbles(size="Depth_m", col="Basin") +
+#tm_basemap(server = c("Esri.WorldTopoMap", "Esri.WorldGrayCanvas", 
+#                        "OpenStreetMap", "OpenTopoMap", "Esri.WorldImagery"))
 ```
 
 Let's make a few more changes:
 
-- We change the symbolization to fixed-size, filled circles with a black border, and plot them on top of filled circles that indicate the basin. Note that although both attributes are in the same dataset `Sites.sf`, we need to include a data statement for each attribute we add to the map (i.e., map layer), using `tm_shape(Sites.sf)`.
+- We change the symbolization to fixed-size, filled circles with a black border, and plot them on top of filled circles that indicate the basin. Note that although both attributes are in the same dataset `Sites.sf_c`, we need to include a data statement for each attribute we add to the map (i.e., map layer), using `tm_shape(Sites.sf)`.
 - We include the argument `bbox=Bbox2` for at least one of the map layers. This is not needed for the interactive map but will look better when exporting it as a static map.
-- We add a call to function `tm_basemap`, so that we can modify the list of the available basemap options. The first one listed in the argument `server` will be shown by default.
 
-Uncomment the code below by removing the hashtag (#) and run it. Go ahead and toggle between the base maps in the map below! Different base maps are suitable for different situations (data type, symbol type, size of study area) and purposes.
+Un-comment the code below by removing the hashtag (#) and run it. Go ahead and toggle between the base maps in the map below! Different base maps are suitable for different situations (data type, symbol type, size of study area) and purposes.
 
 ```{r message=FALSE}
 #tmap_mode("view")
 
-#Map2 <- tm_shape(Sites.sf, bbox=Bbox2) +  tm_sf("Basin", size=2, border.col="black") +
-#  tm_shape(Sites.sf) + tm_sf(size=0.8, col="Depth_m", 
+#Map2 <- tm_shape(Sites.sf_c, bbox=Bbox2) +  tm_sf("Basin", size=2, border.col="black") +
+#  tm_shape(Sites.sf_c) + tm_sf(size=0.8, col="Depth_m", 
 #                             palette = "Blues", border.col="black") +
 #  tm_basemap(server = c("Esri.WorldTopoMap", "Esri.WorldGrayCanvas", 
-#                        "OpenStreetMap", "OpenTopoMap", 
-#                        leaflet::providers$Stamen.Terrain, 
-#                        leaflet::providers$Stamen.Watercolor,
-#                        leaflet::providers$Stamen.TonerLite))
+#                        "OpenStreetMap", "OpenTopoMap", "Esri.WorldImagery"))
 #Map2
 ```
 
@@ -194,58 +259,41 @@ Uncomment the code below by removing the hashtag (#) and run it. Go ahead and to
 
 Save the map to folder `output`:
 
+- Remember to un-comment the code by removing the hashtags (#).
 - Interactive map saved to `html` file. This includes all the features of the interactive map `Map2`. 
 - Static map saved to `png` file, with height = 7 inches. This drops the base map and retains only the symbolized data.
 
 Go ahead and check out the two files!
 
 ```{r}
-tmap_save(Map1, paste0(here::here(), "/output/StaticMap.png"), height=7)
-#tmap_save(Map2, paste0(here::here(), "/output/InteractiveMap.html"))
+#if(!dir.exists(here("output"))) dir.create(here("output"))
+#tmap_save(Map1, here::here("output/StaticMap.png"), height=7)
+#tmap_save(Map2, here::here("output/InteractiveMap.html"))
 ```
 
+Navigate to the folder `output` (Files tab) and check out the saved maps! For the dynamic map (Map2), select "open in a web browser". You can share this file with others, who can open it in their browser and interact with the map without access to R or your data! 
 
-## 4. Export site data as ESRI shapefile {-}
+## 5. Plot a categorical map with predefined color scheme {-}
 
-To export your results to GIS software, you can write them into an ESRI shapefile, which is a widely used data format for sharing geospatial vector data. 
+### a) Define the raster attribute table {-}
 
-The following code may produce a warning that column names were abbreviated. It writes the component files for the ESRI shapefile into the pre-existing folder `output` (the first line will create it if does not exist yet). Remember to remove the hashtags '#' to uncomment the code before running it.
+Now to a more tricky topic. Recall that the last raster layer in the Worked Example, `nlcd`, contains categorical land cover data that are coded numerically. The `terra` package actually misinterpreted them as numeric data. 
 
-The argument `delete_dsn` specifies whether any existing file with the same name should be deleted first (i.e., overwritten). 
+Let's extract the categorical raster layer into a new object 'NLCD'. We can use `as.factor` to tell R that this is a categorical raster layer. 
+
+Here, we save the (numerical) raster layer `nlcd` as categorical raster (factor) `NLCD`.
 
 ```{r}
-#require(here)
-#if(!dir.exists(paste0(here(),"/output"))) dir.create(paste0(here(),"/output"))
-#st_write(Sites.sf, paste0(here(),"/output/Sites.shp"), delete_dsn = TRUE)
+RasterMaps <- rast(system.file("extdata/covariates.tif", package="GeNetIt"))
+NLCD <- terra::as.factor(RasterMaps$nlcd)
 ```
-
-## 5. Use 'terra'  and 'tmap' to display categorical map with color scheme {-}
-
-Now to a more tricky topic. Recall that the last raster layer in the Worked Example, `nlcd`, contains categorical land cover data that are coded numerically. The `raster` package actually misinterpreted them as numeric data. 
-
-Similarly to `sp` being replaced by `sf`, `raster` is being replaced by `terra`. The conversion is easy, using the function `rast`. 
-
-Let's again extract the categorical raster layer into a new object 'NLCD'. 
-
-- The function `rast` of package `terra` converts a `raster` object (package `raster`) to a `SpatRaster` object (package `terra`). 
-- We can use `as.factor` to tell R that this is a categorical raster layer. 
-
-Here, we import the raster both as numeric and as categorical raster (factor).
-
-```{r}
-NLCD <- raster(rasters[6])
-NLCD.num <- terra::rast(NLCD)
-NLCD.cat <- terra::as.factor(terra::rast(NLCD))
-```
-
-The underlying code in package `terra` for creating categorical rasters seems to have changed lately. Here we will use a work-around based on the numeric map, `NLCD.num`. Check back later for an update.
 
 What values occur in the raster? These are codes for cover types.
 
 Here is a description of the cover types: https://www.mrlc.gov/data/legends/national-land-cover-database-2019-nlcd2019-legend
 
 ```{r}
-sort(unique(values(NLCD.num)))
+levels(NLCD)[[1]]
 ```
 
 We will import a table with predefined colors (using hex color code) from the file `Colortable_LULC.csv` that is included with `LandGenCourse`. 
@@ -260,16 +308,36 @@ ColTab <- read.csv(system.file("extdata", "Colortable_LULC.csv",
 ColTab
 ```
 
-We merge this list with the list of values in `NLCD.num` to create a raster attribute table (RAT). An RAT is a table that contains attributes for each distinct value in a raster.
+We join this list with the list of factor levels of `NLCD` to create a raster attribute table (RAT). An RAT is a table that contains attributes for each distinct value in a raster.
+
+- Use function `left_join` to extract the corresponding row from `ColTab` for each row in `Levels(NLCD)`
+- Indicate which columns should be used to match the rows: `by=c("ID"="value")`. Note that `ID` is of type `numeric` whereas `nlcd` is `character`. As `value` is numeric, we match it with `ID`.
+- Copy the values from variable `attribute` to variable `nlcd`
+- Select the variables that we will need.
 
 ```{r}
-tmp <- data.frame(nlcd=sort(unique(values(NLCD.num))))
-RAT <- merge(tmp, ColTab, 
-             by.x="nlcd", by.y="value", all.x=TRUE, sort=TRUE)
-RAT
+RAT <- dplyr::left_join(levels(NLCD)[[1]], ColTab, by=c("ID"="value")) %>%
+  mutate(nlcd=attribute) %>% 
+  dplyr::select(ID, nlcd, color)
 ```
 
-Now we can use tmp to plot the map with the predifined color palette
+We replace the list of levels by the RAT:
+
+```{r}
+levels(NLCD) <- RAT
+NLCD
+```
+
+### b) Plot the map with `terra::plot`
+
+Now we can plot the map with the predefined color palette, using the `plot` function for `SpatRaster` objects:
+
+```{r}
+plot(NLCD, col=RAT$color)
+points(Sites.sf_c, pch=21, col="black", bg="white", cex=1)
+```
+
+### c) Plot the map with `tmap`
 
 - We first define the dataset with `tm_shape`
 - With `tm_raster`, we tell `tmap` that we want to plot raster values
@@ -280,12 +348,12 @@ Now we can use tmp to plot the map with the predifined color palette
 - With tm_layout, we tell tmap where to place the legend (outside to the right of map)
 - With `tm_grid(lines=FALSE)` we tell `tmap` to show the coordinates along x and y axes but to suppress grid lines that would be drawn on top of the map (change it to TRUE to see the effect)
 
+
 ```{r fig.width=7}
-Map3 <- tm_shape(NLCD.num) + 
-  tm_raster(style="cat", palette=RAT$color, labels=RAT$attribute,
+Map3 <- tm_shape(NLCD) + 
+  tm_raster(style="cat", palette=RAT$color, labels=RAT$nlcd,
             title="Land cover") +
-  tm_layout(legend.outside=TRUE, legend.outside.position="right") +
-  tm_grid(lines=FALSE)
+  tm_layout(legend.outside=TRUE, legend.outside.position="right") 
 Map3
 ```
 
@@ -298,7 +366,7 @@ Let's beef it up a bit. We can do so by adding layers to `Map3`:
 
 
 ```{r fig.width=7, warning=FALSE}
-Map4 <- Map3 + tm_shape(Sites.sf) +
+Map4 <- Map3 + tm_shape(Sites.sf_c) +
   tm_symbols(size=0.4, col="yellow", border.col="red") +
   tm_compass() + tm_scale_bar(bg.color="lightgray", bg.alpha=0.5)
 Map4
@@ -307,7 +375,8 @@ Map4
 This time, we'll export the map to a PDF file.
 
 ```{r}
-tmap_save(Map4, paste0(here::here(), "/output/RasterMap.pdf"), height=6, width=8)
+#if(!dir.exists(here("output"))) dir.create(here("output"))
+#tmap_save(Map4, here::here("output/RasterMap.pdf"), height=6, width=8)
 ```
 
 

@@ -16,17 +16,23 @@ editor_options:
   chunk_output_type: console
 ---
 
-There has been a lot of development recently in R regarding data types for geospatial data. We are currently in a transition period, where some packages still expect the "old" data types (based e.g. on packages `raster` and `sp`), others expect the "new" data types (based e.g. on packages `terra` and `sf`), and many accept both.
-
-This vignette uses the older packages `raster` and `sp`, as these are still widely used and compatible with other functions used in landscape genetics. The bonus vignette uses the new packages `sf`, `terra`, and `tmap`, yet it can only scratch the surface. 
-
-For a thorough introduction to geocomputation with R, see this excellent Gitbook: https://geocompr.robinlovelace.net/index.html. Note: 2nd edition expected for spring 2022.
 
 ## 1. Overview of Worked Example {-}
 
-This code builds on data and code from the `GeNetIt` package by Jeff Evans and Melanie Murphy. Landscape metrics will be calculated with the `landscapemetrics` package described in: Hesselbarth et al. (2019), Ecography 42: 1648-1657.
+### a) Background on spatial packages in R
 
-### a) Goals {-} 
+There has been a lot of development recently in R regarding object types for geospatial data. We are currently in a transition period, where some packages still expect the "old" object types (based e.g. on packages `raster` and `sp`), others expect the "new" object types (based e.g. on packages `terra` and `sf`), and some accept both. This vignette uses the newer packages `terra` and `sf`. The bonus vignette includes code for converting between `sf` and `sp`, and between `terra` and `raster`. 
+
+Further resources: 
+
+- **Intro GIS with R**: to learn about GIS functionality using R, https://bookdown.org/michael_bcalles/gis-crash-course-in-r/data.html#vector-data
+
+- **R Tutorial**: For an introductory tutorial on spatial data analysis with R, which explains object types in more detail than this worked example, see: https://rpubs.com/jguelat/fdsfd 
+
+- **Advanced**: For a thorough resource on spatial data analysis with R, see this excellent Gitbook: https://geocompr.robinlovelace.net/index.html.
+
+
+### b) Goals {-} 
 
 This worked example shows:
 
@@ -37,11 +43,13 @@ This worked example shows:
 
 Try modifying the code to import your own data!
 
-### b) Data set {-}
+### c) Data set {-}
+
+This code builds on data and code from the `GeNetIt` package by Jeff Evans and Melanie Murphy. Landscape metrics will be calculated with the `landscapemetrics` package described in: Hesselbarth et al. (2019), Ecography 42: 1648-1657.
 
 This code uses landscape data and spatial coordinates from 30 locations where Colombia spotted frogs (*Rana luteiventris*) were sampled for the full data set analyzed by Funk et al. (2005) and Murphy et al. (2010). Please see the separate introduction to the data set.
 
-- ralu.site: SpatialPointsDataFrame object with UTM coordinates (zone 11) in slot `@coords` and 17 site variables in slot `@data` for 31 sites. The data are included in the 'GeNetIt' package, for meta data type: ?ralu.site
+- `ralu.site`: `sf` object with UTM coordinates (zone 11) and 17 site variables for 31 sites. The data are included in the 'GeNetIt' package, for meta data type: ?ralu.site
 
 We will extract values at sampling point locations and within a local neighborhood (buffer) from six raster maps (see Murphy et al. 2010 for definitions), which are included with the `GeNetIt` package as a SpatialPixelsDataFrame called 'rasters':
 
@@ -52,7 +60,7 @@ We will extract values at sampling point locations and within a local neighborho
 - hli:   Heat Load Index
 - nlcd:  USGS Landcover (categorical map)
 
-### c) Required R packages {-}
+### d) Required R packages {-}
 
 Install some packages needed for this worked example.
 
@@ -62,65 +70,89 @@ if(!requireNamespace("GeNetIt", quietly = TRUE)) remotes::install_github("jeffre
 
 ```{r message=FALSE, warning=TRUE}
 library(LandGenCourse)
+library(here)
 library(landscapemetrics)
 library(dplyr)
-library(sp)
-library(raster)
+library(sf)
+library(terra)
 library(GeNetIt)
 library(tibble)
+library(tmap)
+library(RColorBrewer)
 ```
 
 ## 2. Import site data from .csv file {-}
 
-### a) Import data into SpatialPointsDataFrame {-}
+### a) Import data into an `sf` object {-}
 
-The site data are already in a SpatialPointsDataFrame named `ralu.site` that comes with the package `GeNetIt`. Use `data(ralu.site)` to load it. This will create an object `ralu.site`. 
-
-To demonstrate how to create a SpatialPointsDataFrame, we create a simple data frame `Sites` with the coordinates and site data.
+The site data are already in an `sf` object named `ralu.site` that comes with the package `GeNetIt`. Use `data(ralu.site)` to load it. This will create an object `ralu.site`. 
 
 ```{r}
 data(ralu.site)
 class(ralu.site)
-Sites <- data.frame(ralu.site@coords, ralu.site@data)
-class(Sites)
-head(Sites)
+```
+
+To demonstrate how to create an `sf` object from two data frames (one with the coordinates and one with the attribute data), we'll extract these data frames from the `sf` object `ralu.site` and then recreate the `sf` object (we'll call it `Sites`) from the two data frames.
+
+We can extract the coordinates with the function `st_coordinates`:
+
+```{r}
+Coordinates <- st_coordinates(ralu.site)
+head(Coordinates)
 ```
 
 **Question**: What are the variable names for the spatial coordinates?
 
-To illustrate importing spatial data from Excel, here we export the data as a csv file, import it again as a data frame, then convert it to a SpatialPointsDataFrame. First we create a folder `output` if it does not yet exist. 
+Similarly, we can drop the geometry (spatial information) from the `sf` object to reduce it to a data frame:
 
-Note: to run the code, remove all the hashtags `#` at the beginning of the lines to uncomment them. This part assumes that you have writing permission on your computer. Alternatively, try setting up your R project folder on an external drive where you have writing permission.
+```{r}
+Data <- st_drop_geometry(ralu.site)
+class(Data)
+```
 
-The second line exports the data in `Sites` as a .csv file. The third line re-imports the .csv file to re-create data frame `Sites`.
+Now we can create an `sf` object again. Here, we: 
+
+- combine the two data frames `Data` and `Coordinates` into a single data frame with function `data.frame`,
+- use the function `st_as_sf` from the `sf` package to convert this data frame to an `sf` object,
+- tell R that the variables with the coordinates are called "X" and "Y". 
+
+```{r}
+Sites <- data.frame(Data, Coordinates)
+Sites.sf <- st_as_sf(Sites, coords=c("X", "Y"))
+head(Sites.sf)
+```
+
+**Question**: Where and how are the spatial coordinates shown in the `sf` object `Sites.sf`?
+
+
+To illustrate importing spatial data from Excel, here we export the combined data frame as a csv file, import it again as a data frame, then convert it to an `sf` object. First we create a folder `output` if it does not yet exist. 
+
+Note: to run the code below, remove all the hashtags `#` at the beginning of the lines to un-comment them. This part assumes that you have writing permission on your computer. Alternatively, try setting up your R project folder on an external drive where you have writing permission.
+
+The code below does the following:
+
+- Line 1: Load package here that helps with file paths.
+- Line 2: Check if folder output exists, and if not, create it.
+- Line 3: Export the combined data frame as a .csv file.
+- Line 4: Re-imports the .csv file as a `data.frame` object `Sites`.
+- Line 5: Create `sf` object `Sites.sf` from df`.
 
 ```{r}
 #require(here)
-#if(!dir.exists(paste0(here(),"/output"))) dir.create(paste0(here(),"/output"))
-#write.csv(Sites, file=paste0(here(),"/output/ralu.site.csv"), 
-#          quote=FALSE, row.names=FALSE)
-#Sites <- read.csv(paste0(here(),"/output/ralu.site.csv"), header=TRUE)
+#if(!dir.exists(here("output"))) dir.create(here("output"))
+#write.csv(data.frame(Data, Coordinates), file=here("output/ralu.site.csv"), quote=FALSE, row.names=FALSE)
+#Sites <- read.csv(here("output/ralu.site.csv"), header=TRUE)
+#Sites.sf <- st_as_sf(df, coords=c("X", "Y"))
 ```
 
-The dataset `Sites` contains two columns with spatial coordinates and 17 attribute variables. So far, R treats the spatial coordinates like any other quantitative variables. To let R know this is spatial information, we import it into a spatial object type, a `SpatialPointsDataFrame` from the 'sp' package.
-
-The conversion is done with the function `coordinates`, which takes a data frame and converts it to a spatial object of the same name. The code is not very intuitive. 
-
-Note: the tilde symbol `~` (here before the first coordinate) is often used in R formulas, we will see it again later. It roughly translates to "is modeled as a function of".
-
-```{r}
-Sites.sp <- Sites
-coordinates(Sites.sp) <- ~coords.x1+coords.x2
-```
-
-Now R knows these are spatial data and knows how to handle them. It does not treat the coordinates as variables anymore, hence the first column is now `SiteName`.
+The `sf` object `Sites.sf` contains 17 attribute variables and one variable `geometry` that contains the spatial information. Now R knows these are spatial data and knows how to handle them. 
 
 ### b) Add spatial reference data {-}
 
-Before we can combine the sampling locations with other spatial datasets, such as raster data, we need to tell R where on earth these locations are (georeferencing). This is done by specifying the "Coordinate Reference System" (CRS) or a `proj4` string.
+Before we can combine the sampling locations with other spatial datasets, such as raster data, we need to tell R where on Earth these locations are (georeferencing). This is done by specifying the "Coordinate Reference System" (CRS).
 
-For a visual explanation of projections and coordinate systems, see:
-https://www.nwcg.gov/publications/pms437/mapping/using-gis
+For a great explanation of projections, see:
+https://michaelminn.net/tutorials/gis-projections/index.html
 
 For more information on CRS, see: https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf
 
@@ -129,90 +161,79 @@ We know that these coordinates are UTM zone 11 (Northern hemisphere) coordinates
 Here we call the function and the package simultaneously (this is good practice, as it helps keep track of where the functions in your code come from).
 
 ```{r}
-sp::proj4string(Sites.sp) <- sp::CRS(SRS_string = "EPSG:32611")
+st_crs(Sites.sf) <- 32611
 ```
 
-Note: this function only **declares** the existing projection, it does not change the coordinates to that projection. 
+**Question:** Print `Sites.sf` and check what CRS is listed in the header.
+
+**Important**: the code above, using function `st_crs`,  only **declares** the existing projection, it does not change the coordinates to that projection! 
+
+However, the `ralu.site` dataset uses a slightly different definition of the projection (the difference is in the `datum` argument `WGS84` vs. `NAD83`). Hence it may be safer to simply copy the crs information from ralu.site to Sites.sf. Again, this does not change the projection but declares that Sites.sf has the same projection as ralu.site. R even prints a warning to remind us of this:
+
+```{r}
+st_crs(Sites.sf) <- st_crs(ralu.site)
+```
+
 
 ### c) Change projection {-}
 
-In case we needed to **transform** the projection from UTM zone 11 to longitude/latitude (EPSG code: 4326), we could create a new `sp` object `Sites.sp.longlat`. We use the function `spTransform` to change the projection from the projection of the old object `Sites.sp` to the "longlat" coordinate system, which we define by the argument `CRSobj`.
+In case we needed to **transform** the projection, e.g., from UTM zone 11 to longitude/latitude (EPSG code: 4326), we could create a new `sf` object `Sites.sf.longlat`. We use the function `st_transform` to change the projection from the projection of the old object `Sites.sf` to the "longlat" coordinate system, which we define by the argument `crs`.
 
+With 
 ```{r}
-Sites.sp.longlat <- sp::spTransform(Sites.sp, 
-                      CRSobj = sp::CRS(SRS_string = "EPSG:4326"))
-head(Sites.sp.longlat@coords)
+Sites.sf.longlat <- st_transform(Sites.sf, crs = 4326)
+head(Sites.sf.longlat)
 ```
 
-**Question**: Where on earth is this? You can enter the coordinates from the "longlat" projection in Google maps. Note that Google expects the Latitude (Y coordinate) first, then the Longitude (X coordinate). Here, coords.x1 is the longitude (X) and coords.x2 is the latitude (Y). Thus, to locate the first site in Google maps, you will need to enter `45.15708, -114.5977`. Where is it located?  
+**Question**: What has changed in the summary?
 
-### d) Access data in 'SpatialPointsDataFrame' {-}
+### d) Map sampling sites on world map {-}
 
-As an S4 object, Sites.sp has predefined slots. These can be accessed with the `@` symbol:
+Where on earth is this? You could enter the coordinates from the "longlat" projection in Google maps. Note that Google expects the Latitude (Y coordinate) first, then the Longitude (X coordinate). In the variable `geometry`, longitude (e.g., -114.5977 for the first data point) is listed before latitude (45.15708 for the first data point). Thus, to locate the first site in Google maps, you will need to enter `45.15708, -114.5977`. 
 
-- `@data`: the attribute data
-- `@coords`: the spatial coordinates
-- `@coords.nrs`: the column numbers of the input data from which the coordinates were taken (filled automatically)
-- `@bbox`: bounding box, i.e., the minimum and maximum of x and y coordinates (filled automatically)
-- `@proj4string`: the georeferencing information
+There is a much easier way to find out where on Earth the sampling points are located. And we don't even need to change the coordinates to longitude/latitude - R will do this for us internally.
 
-```{r}
-slotNames(Sites.sp)
-```
-
-Here are the first few lines of the coordinates:
+- We load the R package `tmap` (which stands for "thematic maps")
+- With `tmap_mode("view")`, we indicate that we want to create an interactive map.
+- With `tm_shape(Sites.sf)` we select the data set (Sites.sf`) to be displayed. For now, we only plot the location, no attribute information. 
+- With `tm_sf`, we specify how the points should be displayed (color, size).
 
 ```{r}
-head(Sites.sp@coords)
+require(tmap)
+
+tmap_mode("view")
+tm_shape(Sites.sf) + tm_sf(col="red", size=1)
 ```
 
-And the proj4 string: Let's compare this to the proj4string of the original `ralu.site` dataset.
+**Question:** Try changing the basemap by clicking on the Layers symbol and selecting a different map. Which map is most informative for these data? Zoom in and out to find out where on Earth the sampling points are located. 
 
-```{r}
-Sites.sp@proj4string
-```
-
-The default for `get_proj4("utm11")` results in a slightly different proj4string than the `ralu.site` dataset. The difference is in the `datum` argument (`WGS84` vs. `NAD83`): 
-
-```{r}
-ralu.site@proj4string
-```
-
-Let's go with the original information and copy it:
-
-```{r}
-Sites.sp@proj4string <- ralu.site@proj4string
-```
+Note: see this week's bonus materials to learn more about creating maps with `tmap`.
 
 ## 3. Display raster data and overlay sampling locations, extract data {-} 
 
 ### a) Display raster data {-}
 
-The raster data for this project are already available in the package `GeNetIt`, under the name `rasters`, and we can load them with `data(rasters)`. They are stored as a `SpatialPixelsDataFrame`, another S4 object type from the `sp` package.
+The raster data for this project are already available in the package `GeNetIt`. They are stored as a `SpatRaster` object from package `terra`. 
 
 ```{r}
-data(rasters)
-class(rasters)
-```
-
-However, raster data are better analyzed with the package `raster`, which has an object type `raster`. Let's convert the data to a `RasterStack` of `RasterLayer` objects (i.e. a set of raster layers with the same spatial reference information).
-
-```{r}
-RasterMaps <- stack(rasters)
+RasterMaps <- rast(system.file("extdata/covariates.tif", package="GeNetIt"))
 class(RasterMaps)
 ```
 
-Printing the name of the raster stack displays a summary. A few explanations:
+Printing the name of the `SpatRaster` object displays a summary. A few explanations:
 
-- **dimensions**: number of rows (nrow), number of columns (ncol), number of cells (ncell), number of layers (nlayers). So we see there are 6 layers in the raster stack.
+- **dimensions**: number of rows (nrow), number of columns (ncol), number of layers (nlyr). So we see there are 6 layers (i.e., variables).
 - **resolution**: cell size is 30 m both in x and y directions (typical for Landsat-derived remote sensing data)
-- **coord.ref**: projected in UTM zone 11, though the 'datum' (NAD83) is different than what we used for the sampling locations. 
+- extent: the bounding box that defines the spatial extent of the raster data.
+- **coord.ref**: projected in UTM zone 11, with 'datum' (NAD83). 
+- **source**: the file from which the data were imported.
+- **names, min values, max values**: summary of the layers (variables).
 
 ```{r}
 RasterMaps
 ```
 
-Now we can use `plot`, which knows what to do with a raster stack.
+Now we can use `plot`, which knows what to do with a raster `SpatRaster` object.
 
 Note: layer `nlcd` is a categorical map of land cover types. See this week's bonus materials for how to better display a categorical map in R.
 
@@ -223,73 +244,96 @@ plot(RasterMaps)
 Some layers seem to show a similar pattern. It is easy to calculate the correlation between quantitative raster layers. Here, the last layer `ncld`, is in fact categorical (land cover type), and it's correlation here is meaningless.
 
 ```{r}
-layerStats(RasterMaps, 'pearson', na.rm=T)
+layerCor(RasterMaps, "pearson", na.rm=TRUE)$pearson
 ```
+
+**Questions**: 
+
+- What does each value in this table represent?
+- Which layers are most strongly correlated? 
+- What do these variables (layers) represent?
+- Is the correlation positive or negative? 
 
 ### b) Change color ramp, add sampling locations {-} 
 
-We can specify a color ramp by setting the `col` argument. The default is `terrain.colors(255)`. Here we change it to `rainbow(9)`, a rainbow colorpalette with 9 color levels.
+We can specify a color ramp by setting the `col` argument. The default is `terrain.colors(255)`. Here we change it to `rainbow(9)`, a rainbow color palette with 9 color levels.
 
-Note: To learn about options for the `plot` function for `raster` objects, access the help file by typing `?plot` and select `Plot a Raster object`.
+Note: To learn about options for the `plot` function for `SpatRaster` objects, access the help file by typing `?plot` and select `Make a map`.
 
 We can add the sampling locations (if we plot only a single raster layer). Here we use `rev` to reverse the color ramp for plotting raster layer `ffp`, and add the sites as white circles with black outlines.
 
 ```{r fig.width=4.45, fig.height=4}
 par(mar=c(3,3,1,2))
-plot(raster(RasterMaps, layer="ffp"), col=rev(rainbow(9)))
-points(Sites.sp, pch=21, col="black", bg="white")
+plot(RasterMaps, "ffp", col=rev(rainbow(9)))
+points(Sites.sf, pch=21, col="black", bg="white")
 ```
 
 **Question**: Recall that 'ffp' stands for frost free period (in days). What do you think is the average length of the frost free period at theses sampling sites?
 
 ### c) Extract raster values at sampling locations {-}
 
-The following code adds six variables to the data slot of Sites.sp. Technically we combine the columns of the existing data frame `Sites.sp` with the new columns in a new data frame with the same name. 
-
-R notices the difference in projection (CRS) between the sampling point data and the rasters and takes care of it, providing just a warning. 
+The following code adds six variables to `Sites.sf`. However, it automatically changes the object type to a `SpatVector` object, which we'll call `Sites.terra` to remind us of the object type. Technically we combine the columns of the existing data frame `Sites.sf` with the new columns in a new data frame with the same name. 
 
 ```{r}
-Sites.sp@data <- data.frame(Sites.sp@data, extract(RasterMaps, Sites.sp))
+Sites.terra <- terra::extract(RasterMaps, Sites.sf, bind=TRUE)
 ```
 
-Let's calcualate the mean length of the frost free period for these sites:
+We can convert back to an `sf` object:
 
 ```{r}
-mean(Sites.sp@data$ffp)
+Sites.sf <- sf::st_as_sf(Sites.terra)
+Sites.sf
+```
+
+Let's calculate the mean length of the frost free period for these sites:
+
+```{r}
+mean(Sites.sf$ffp)
 ```
 
 What land cover type is assigned to the most sampling units? Let's tabulate them.
 
 ```{r}
-table(Sites.sp@data$nlcd)
+table(Sites.sf$nlcd)
 ```
 
-Note: land cover types are coded by numbers. Check here what the numbers mean: https://www.mrlc.gov/data/legends/national-land-cover-database-2016-nlcd2016-legend
+Note: the land cover types are coded by numbers. Check here what the numbers mean: https://www.mrlc.gov/data/legends/national-land-cover-database-2016-nlcd2016-legend
 
 **Question**: A total of 21 sites are classified as `42`. What is this most frequent land cover type? 
 
 
 ## 4. Calculate landscape metrics {-}
 
-We are going to use the package [`landscapemetrics`](https://r-spatialecology.github.io/landscapemetrics/). It is an R package to calculate landscape metrics in a tidy workflow (for more information about tidy data see [here](https://www.jstatsoft.org/article/view/v059i10/)). `landscapemetrics` is basically a reimplementation of ['FRAGSTATS'](https://www.umass.edu/landeco/research/fragstats/fragstats.html), which allows an integration into larger workflows within the R environment. The core of the package are functions to calculate landscape metrics, but also several auxiliary functions exit.
+We are going to use the package [`landscapemetrics`](https://r-spatialecology.github.io/landscapemetrics/). It is an R package to calculate landscape metrics in a tidy workflow (for more information about tidy data see [here](https://www.jstatsoft.org/article/view/v059i10/)). `landscapemetrics` is basically a reimplementation of ['FRAGSTATS'](https://www.umass.edu/landeco/research/fragstats/fragstats.html), which allows an integration into larger workflows within the R environment. The core of the package are functions to calculate landscape metrics, but also several auxiliary functions exist.
 
-To facilitate an integration into larger workflows, `landscapemetrics` is based on the [`raster` package](https://CRAN.R-project.org/package=raster). To check if a raster is suitable for `landscapemetrics`, run the `check_landscape()` function first. The function checks the coordinate reference system (and mainly if units are in meters) and if the raster values are discrete classes. If the check fails, the calculation of metrics is still possible, however, especially metrics that are based on area and distances must be used with caution.
+To facilitate an integration into larger workflows, `landscapemetrics` is based on the `terra` and `stars` packages. It expects a raster with integers that represent land cover classes. To check if a raster is suitable for `landscapemetrics`, run the `check_landscape()` function first. The function checks the coordinate reference system (and mainly if units are in meters) and if the raster values are discrete classes. If the check fails, the calculation of metrics is still possible, however, especially metrics that are based on area and distances must be used with caution.
 
 ```{r}
-nlcd <- raster(RasterMaps, layer = "nlcd")
-
-landscapemetrics::check_landscape(nlcd)
+landscapemetrics::check_landscape(RasterMaps)
 ```
+
+**Question**: Which raster layer(s) are suitable for calculating landscape metrics? Why are the others not suitable? 
+
 
 There are three different levels of landscape metrics. Firstly, metrics can be calculated for each single patch (a patch is defined as neighbouring cells of the same class). Secondly, metrics can be calculated for a certain class (i.e. all patches belonging to the same class) and lastly for the whole landscape. All these levels are implemented and easily accessible in `landscapemetrics`. 
 
 All functions to calculate metrics start with `lsm_` (for landscapemetrics). The second part of the name specifies the level (patch - `p`, class - `c` or landscape - `l`). Lastly, the final part of the function name is the abbreviation of the corresponding metric (e.g. `enn` for the Euclidean nearest-neighbor distance). To list all available metrics, you can use the `list_lsm()` function. The function also allows to show metrics filtered by level, type or metric name. For more information about the metrics, please see either the corresponding helpfile(s) or [https://r-spatialecology.github.io/landscapemetrics](https://r-spatialecology.github.io/landscapemetrics/reference/index.html).
 
+List available diversity metrics: 
+
 ```{r}
 landscapemetrics::list_lsm(level = "landscape", type = "diversity metric")
+``` 
 
+List available area metrics: 
+
+```{r}
 landscapemetrics::list_lsm(metric = "area")
+``` 
 
+List available aggregation metrics:
+
+```{r}
 landscapemetrics::list_lsm(level = c("class", "landscape"), type = "aggregation metric", 
                            simplify = TRUE)
 ``` 
@@ -302,7 +346,7 @@ To calculate a single metric, just use the corresponding function. The result of
 
 ```{r}
 # calculate percentage of landscape of class
-percentage_class <- lsm_c_pland(landscape = nlcd)
+percentage_class <- lsm_c_pland(landscape = RasterMaps$nlcd)
 
 percentage_class
 ```
@@ -316,9 +360,9 @@ Because the resulting `tibble` is type stable, you can easily row-bind (`rbind`)
 
 ```{r}
 metrics <- rbind(
-  landscapemetrics::lsm_c_pladj(nlcd), 
-  landscapemetrics::lsm_l_pr(nlcd),
-  landscapemetrics::lsm_l_shdi(nlcd)
+  landscapemetrics::lsm_c_pladj(RasterMaps$nlcd), 
+  landscapemetrics::lsm_l_pr(RasterMaps$nlcd),
+  landscapemetrics::lsm_l_shdi(RasterMaps$nlcd)
   )
 
 metrics
@@ -331,7 +375,7 @@ However, watch out, for large rasters and many metrics, this can be rather slow 
 Calculate all patch-level metrics using wrapper:
 
 ```{r}
-nlcd_patch <- landscapemetrics::calculate_lsm(landscape = nlcd,
+nlcd_patch <- landscapemetrics::calculate_lsm(landscape = RasterMaps$nlcd,
                                               level = "patch")
 nlcd_patch
 ```
@@ -345,7 +389,7 @@ unique(nlcd_patch$metric)
 Calculate all aggregation metrics on landscape level:
 
 ```{r}
-nlcd_landscape_aggr <- landscapemetrics::calculate_lsm(landscape = nlcd, 
+nlcd_landscape_aggr <- landscapemetrics::calculate_lsm(landscape = RasterMaps$nlcd, 
                                                        level = "landscape", 
                                                        type = "aggregation metric")
 nlcd_landscape_aggr
@@ -354,7 +398,7 @@ nlcd_landscape_aggr
 Calculate specific metrics:
 
 ```{r}
-nlcd_subset <- landscapemetrics::calculate_lsm(landscape = nlcd, 
+nlcd_subset <- landscapemetrics::calculate_lsm(landscape = RasterMaps$nlcd, 
                                                what = c("lsm_c_pladj", 
                                                         "lsm_l_pr", 
                                                         "lsm_l_shdi"))
@@ -382,7 +426,7 @@ Because the metric names are only abbreviated, there is also a way to include th
 Add full metrics name to result:
 
 ```{r}
-nlcd_subset_full_a <- landscapemetrics::calculate_lsm(nlcd, 
+nlcd_subset_full_a <- landscapemetrics::calculate_lsm(RasterMaps$nlcd, 
                                                       what = c("lsm_c_pladj", 
                                                                "lsm_l_pr", 
                                                                "lsm_l_shdi"), 
@@ -406,35 +450,39 @@ To only get the results for class 42 (evergreen forest), you can just `dplyr::fi
 
 ```{r}
 forest_patch_metrics <- dplyr::filter(nlcd_patch, class == 42)
+forest_patch_metrics
 ```
 
-All functions make heavy use of connected components labeling to delineate patches (neighbouring cells of the same class). To get all patches of every class you can just use `get_patches()`. To get only a certain class, just specify the `class` argument and the neighbourhood rule can be chosen between 8-neighbour rule or 4-neighbour rule with the argument `directions`.
+All functions make heavy use of connected components labeling to delineate patches (neighbouring cells of the same class). To get all patches of every class you can just use `get_patches()`. This returns a list of layers (one layer per input raster map, here only one) with a separate SpatRaster for each class within the layer.
 
 ```{r}
 # connected components labeling of landscape
-cc_nlcd <- landscapemetrics::get_patches(nlcd, directions = 8)
+cc_nlcd <- landscapemetrics::get_patches(RasterMaps$nlcd, directions = 8)
 
-# show name of each class
-sapply(cc_nlcd, function(x) names(x)) 
-
-# the fourth list entry is class forest
-cc_forest_a <- cc_nlcd[4]
-cc_forest_b <- landscapemetrics::get_patches(nlcd, class = 42) # watch out: result is list with one entry
-
-cc_forest_a
-cc_forest_b
+# summarize the SpatRaster for class 42: 
+cc_nlcd$layer_1$class_42
 ```
 
-To plot the patches you can use the `show_patches()` function. Here we show patches of class 42 (forest) and class 52 (shrubland):
+To get only a certain class, just specify the `class` argument and the neighbourhood rule can be chosen between 8-neighbour rule or 4-neighbour rule with the argument `directions`.
+
+Note: although we only process a single class, the resulting object still is a list with the same structure as above. Thus, we access the SpatRaster for class 42 the same way:
 
 ```{r}
-show_patches(landscape = nlcd, class = c(42, 52), labels = FALSE)
+cc_forest <- landscapemetrics::get_patches(RasterMaps$nlcd, class = 42)
+
+cc_forest$layer_1$class_42
+```
+
+To plot the patches you can use the `show_patches()` function. Here we show patches of class 42 (forest) and class 52 (shrubland). Note that the color indicates patch ID!
+
+```{r}
+show_patches(landscape = RasterMaps$nlcd, class = c(42, 52), labels = FALSE)
 ```
 
 It is also possible to visualize only the core area of each patch using `show_cores()`. The core area is defined as all cells that are further away from the edge of each patch than a specified edge depth (e.g. 5 cells). Here we show core area with edge depth = 5 for class 42; try edge_depth = 1 for comparison:
 
 ```{r warning=FALSE}
-show_cores(landscape = nlcd, class = c(42), edge_depth = 5, labels = FALSE)
+show_cores(landscape = RasterMaps$nlcd, class = c(42), edge_depth = 5, labels = FALSE)
 ```
 
 Note: this may create a warning "no non-missing arguments to min; returning Inf" for each patch that does not have any core area. Here we suppressed the warnings for the chunk with the chunk option `warning=FALSE`.
@@ -442,32 +490,33 @@ Note: this may create a warning "no non-missing arguments to min; returning Inf"
 Lastly, you can plot the map and fill each patch with the corresponding metric value, e.g. patch size, using `show_lsm()`. Notice that there are two very large patches in class 42:
 
 ```{r}
-show_lsm(landscape = nlcd, class = c(42, 52), what = "lsm_p_area", labels = FALSE)
+show_lsm(landscape = RasterMaps$nlcd, class = c(42, 52), what = "lsm_p_area", labels = FALSE)
 ``` 
 
-### c) Extract forest patch size at samplig locations {-}
+### c) Extract forest patch size at sampling locations {-}
 
-Let's add forest patch size to the `Sites.sp` data. To extract landscape metrics of the patch in which each sampling point is located, use `extract_lsm()`. Which metrics are extracted can be specified by the `what` argument (similar to `calculate_lsm()`). However, only patch-level metrics are available. Please be aware, that the resulting `tibble` now has a new column, namely the ID of the sampling point (in the same order as the input points).
+Let's add forest patch size to the `Sites.sf` data. To extract landscape metrics of the patch in which each sampling point is located, use `extract_lsm()`. Which metrics are extracted can be specified by the `what` argument (similar to `calculate_lsm()`). However, only patch-level metrics are available. Please be aware that the resulting `tibble` now has a new column, namely the ID of the sampling point (in the same order as the input points).
 
 ```{r}
 # extract patch area of all classes:
-patch_size_sp <- extract_lsm(landscape = nlcd, y = Sites.sp, what = "lsm_p_area")
+patch_size_sf <- extract_lsm(landscape = RasterMaps$nlcd, y = Sites.sf, what = "lsm_p_area")
 
 # because we are only interested in the forest patch size, we set all area of class != 42 to 0:
-patch_size_sp_forest <- dplyr::mutate(patch_size_sp, 
+patch_size_sf_forest <- dplyr::mutate(patch_size_sf, 
                                       value = dplyr::case_when(class == 42 ~ value, 
                                                                class != 42 ~ 0))
-# add data to sp object:
-Sites.sp@data$ForestPatchSize <- patch_size_sp_forest$value
-Sites.sp@data$ForestPatchSize
+# add data to sf object:
+Sites.sf$ForestPatchSize <- patch_size_sf_forest$value
+Sites.sf$ForestPatchSize
 ```
 
 ### d) Plot a bubble map of forest patch size at sampling locations {-}
 
 ```{r fig.width=4.45, fig.height=4}
-par(mar = c(3,3,1,2))
-bubble(Sites.sp, "ForestPatchSize", fill = FALSE, key.entries = as.numeric(names(table(Sites.sp@data$ForestPatchSize))))
+tmap_mode("view")
+tm_shape(Sites.sf) + tm_bubbles(col="ForestPatchSize") 
 ```
+
 
 ## 5. Sample landscape metrics within buffer around sampling locations {-}
 
@@ -476,13 +525,13 @@ The package `landscapemetrics` has a built-in function `sample_lsm` to sample me
 The argument `size` specifies the buffer size in map units (e.g., meters): radius for circles, half of the side length for squares. Here, the value `size = 500` results in a square window of 1000 m x 1000 m centered at the sampling location. 
 
 ```{r}
-nlcd_sampled <- landscapemetrics::sample_lsm(landscape = nlcd, 
+nlcd_sampled <- landscapemetrics::sample_lsm(landscape = RasterMaps$nlcd, 
                                              what = c("lsm_l_ta", 
                                                       "lsm_c_np",
                                                       "lsm_c_pland", 
                                                       "lsm_c_ai"),
                                              shape = "square",
-                                             y = Sites.sp, 
+                                             y = Sites.sf, 
                                              size = 500)
 nlcd_sampled
 ```
@@ -494,13 +543,14 @@ It is also possible to get the clippings of the buffer around sampling locations
 ```{r}
 # sample some metrics within buffer around sample location and returning sample
 # plots as raster
-nlcd_sampled_plots <- landscapemetrics::sample_lsm(landscape = nlcd, 
+
+nlcd_sampled_plots <- landscapemetrics::sample_lsm(landscape = RasterMaps$nlcd, 
                                                    what = c("lsm_l_ta",
                                                             "lsm_c_np",
                                                             "lsm_c_pland",
                                                             "lsm_c_ai"),
                                                    shape = "square",
-                                                   y = Sites.sp, 
+                                                   y = Sites.sf, 
                                                    size = 500, 
                                                    return_raster = TRUE)
 
@@ -509,26 +559,42 @@ nlcd_sampled_plots
 
 The result will be a nested `tibble` containing the `plot_id`, the metrics and a `RasterLayer` with the clipped buffers (as a `list`). Attention: Because several metrics on class- and landscape-level the clipped buffers will be "repeated" several times.
 
-Here we show results for the first four sampling locations:
+Here we show results for the first four sampling locations. We use a for loop to avoid repeating code.
   
 ```{r, fig.width=8, fig.height=5.5}
 unique_plots <- unique(nlcd_sampled_plots$raster_sample_plots)[1:4]
 
 par(mfrow = c(2,2))
-plot(unique_plots[[1]], 
-     main = paste(Sites.sp$SiteName[1]), 
-     col = rev(rainbow(9)))
-plot(unique_plots[[2]],
-     main = paste(Sites.sp$SiteName[2]),
-     col = rev(rainbow(9)))
-plot(unique_plots[[3]],
-     main = paste(Sites.sp$SiteName[3]), 
-     col = rev(rainbow(9)))
-plot(unique_plots[[4]],
-     main = paste(Sites.sp$SiteName[4]), 
-     col = rev(rainbow(9)))
+for(i in 1:4)
+{
+  plot(unique_plots[[i]], type="classes",
+     main = paste(Sites.sf$SiteName[i]))
+}
 par(mfrow = c(1,1))
 ```
+
+To use consistent colors for the land cover types, we need to tweak things a bit.
+
+- Determine how many colors are needed (`nColor`): number of cover types in raster `nlcd`.
+- Define a set of `nColor` colors, using a categorical color ramp from package `RColorBrewer`: `Colors`
+- For each clipped buffer, we use the function `is.element` to determine for each land cover type if it is present in the buffer. The vector Present is of type logical (TRUE/FALSE). 
+- Then we specify the colors to be used as the subset of Colors for which Present is TRUE. (A shorter alternative would be: `col=Colors[Present]`).
+
+```{r}
+nColors <- nrow(unique(RasterMaps$nlcd))
+Colors <- RColorBrewer::brewer.pal(n = nColors, name = "Dark2") 
+
+par(mfrow = c(2,2))
+for(i in 1:4)
+{
+  Present <- is.element(unique(RasterMaps$nlcd)$nlcd, unique(unique_plots[[i]])$nlcd)
+  plot(unique_plots[[i]], type="classes",
+       col=Colors[Present==TRUE],
+     main = paste(Sites.sf$SiteName[i]))
+}
+par(mfrow = c(1,1))
+```
+
 
 ### b) Extract landscape metric of choice for a single cover type (as vector) {-}
 
@@ -593,7 +659,7 @@ forest_500_df <- dplyr::filter(nlcd_sampled,
                                class == 42)
 
 # data.frame with id and name of site
-SiteName_df <- data.frame(id = 1:length(Sites.sp$SiteName), site_name = Sites.sp$SiteName)
+SiteName_df <- data.frame(id = 1:length(Sites.sf$SiteName), site_name = Sites.sf$SiteName)
 
 # add site_name to metrics using plot_id and id of sampling sites
 forest_500_df <- dplyr::left_join(forest_500_df, SiteName_df, by = c("plot_id" = "id"))
@@ -601,14 +667,13 @@ forest_500_df <- dplyr::left_join(forest_500_df, SiteName_df, by = c("plot_id" =
 forest_500_df
 ```
 
-Done!
+Done! 
 
 Check out this week's bonus material to see:
 
-- How to convert the site data from an `sp` object to an `sf` object, a new standard for geospatial vector data.
-- How to create static and interactive maps of an `sf` object with `tmap`. 
-- How to export an `sf` object to a, ESRI shapefile.
-- How to plot a categorical raster map with a predefined color scheme, using `tmap` and a new standard for raster data (`terra` package).
+- More details on how to create static and interactive maps of an `sf` object with `tmap`. 
+- How to import and export ESRI shapefiles.
+- How to plot a categorical raster map with a predefined color scheme, using `tmap` and `terra`. package).
 
 ## 6. R Exercise Week 2 {-}
 
@@ -616,21 +681,21 @@ Check out this week's bonus material to see:
 
 **Hints:**
 
-a) **Load libraries**: Load libraries `gstudio`, `dplyr`, `tibble` and `sp`. 
+a) **Load libraries**: Load libraries `gstudio`, `dplyr`, `tibble` and `sf`. 
 b) **Import data**: Re-use your code from Week 1 exercise to import the dataset `pulsatilla_genotypes.csv` into `gstudio`. Recall that the resulting object is a data.frame. Check the variables with function `str`. Which variables contain the sites and the spatial coordinates?
 c) **Summarize by site**: Use the function `group_by` from library `dplyr` to group individuals (rows) by site (using pipe notation: `%>%`), and add the function `summarize` to count the number of genotyped individuals per population (i.e., sampling site). Recall that this can be done with nesting the function `n` within `summarize`:  
 `summarize(nIndiv = n())`.   
 Write the result into a new object `Pulsatilla`.
 d) **Add mean coordinates**: You can nest multiple functions within `summarize` and separate them with a comma. E.g., to calculate both sample size and the mean of a variable `myVar`, you could write:  
 `summarize(nIndiv = n(), myMean = n(myVar))`  
-Modify your code to calculate number of genotyped individuals for each site and their mean X and Y coordinates. Your object 'Pulsatilla' should now have three columns, one with the number of individuals and two with the mean coordinates. Display the dataset with `as_tibble` to check.
-e) **Convert to spatial object**: Modify code from section 2.a to convert your dataframe `Pulsatilla` to a "SpatialPointsDataFrame" object (package `sp`). Make sure to adjust the correct variable names for the coordinates (i.e., the variable names that you assigned in the previous step for the mean X and Y coordinates).
-f) **Specify known projection**: Specify the proj4string as follows:   
-`proj4string(Pulsatilla) <- CRS("+init=epsg:31468")`
-g) **Transform projection**: Adapt code from section 2.c to transform the projection to the "longlat" coordinate system, and write it into an object `Pulsatilla.longlat`. Display the `coords` slot of `Pulsatilla.longlat` and check on Google maps where the first site is located.
-h) **Create bubble plot**: Adapt code from section 4.c to create a bubble plot of the number of individuals per population. Note: you may drop the argument `key.entries` as it has a default.
+Modify your code to calculate the number of genotyped individuals for each site and their mean X and Y coordinates. Your object 'Pulsatilla' should now have three columns, one with the number of individuals and two with the mean coordinates. Display the dataset with `as_tibble` to check.
+e) **Convert to sf object**: Modify code from section 2.a to convert your data frame `Pulsatilla` to an `sf` object. Make sure to adjust the variable names for the coordinates (i.e., use the variable names that you assigned in the previous step for the mean X and Y coordinates).
+f) **Specify known projection**: The correct EPSG number for this dataset is: 31468. You can specify the CRS with: 
+`st_crs(Pulsatilla) <- 31468`.
+g) **Transform projection**: Adapt code from section 2.c to transform the projection to the "longlat" coordinate system, and write it into an object `Pulsatilla.longlat`. 
+h) **Create bubble plot**: Adapt code from section 4.d to create a bubble plot of the number of individuals per population. Note: you may drop the argument `key.entries` as it has a default.
 i) **Save data as R object**: Save the object `Pulsatilla.longlat` as an R object using the following code:  
-`saveRDS(Pulsatilla.longlat, file = paste0(here::here(), "/output/Pulsatilla.longlat.rds"))`.  
+`saveRDS(Pulsatilla.longlat, file = here::here("output/Pulsatilla.longlat.rds"))`.  
 We will need it for a later R exercise.
 
 **Question:** Where on earth are the sites in the *Pulsatilla* dataset located?

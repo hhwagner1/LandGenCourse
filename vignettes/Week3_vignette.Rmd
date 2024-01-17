@@ -41,7 +41,6 @@ All required packages should have been installed already when you installed 'Lan
 #require(adegenet)
 require(LandGenCourse)
 #require(pegas)       
-#require(sp)
 #require(PopGenReport)
 require(dplyr)
 require(poppr) 
@@ -129,7 +128,7 @@ To summarize, let's calculate, for each locus, the proportion of populations whe
 We write the results into a data frame 'Prop.loci.out.of.HWE' and use '=' to specify the name for each column. 
 
 ```{r}
-alpha=0.05
+alpha=0.05 # /96
 Prop.loci.out.of.HWE <- data.frame(Chisq=apply(HWE.test.chisq<alpha, 2, mean), 
            MC=apply(HWE.test.MC<alpha, 2, mean))
 Prop.loci.out.of.HWE             # Type this line again to see results table
@@ -331,10 +330,9 @@ Here we use 'seppop' to split the genind object by population, then 'sapply' to 
   Hobs <- t(sapply(seppop(Frogs.genind), function(ls) summary(ls)$Hobs))
   Hexp <- t(sapply(seppop(Frogs.genind), function(ls) summary(ls)$Hexp))
   {cat("Expected heterozygosity (Hexp):", "\n")
-  round(Hexp, 2)
-  cat("\n", "Observed heterozygosity (Hobs):", "\n")
+  round(Hexp, 2)}
+  {cat("\n", "Observed heterozygosity (Hobs):", "\n")
   round(Hobs, 2)}
-  # 1 - Hobs/Hexp
 ``` 
 Locus F shows variation only in two populations (i.e., Hexp = 0 in 10 populations). 
 
