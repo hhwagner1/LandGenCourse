@@ -6,16 +6,10 @@
   Site-level data from Lamy et al. (2012).
 }
 \usage{dd.site}
-\format{A SpatialPointsDataFrame frame with 42 populations (combinations of site x year) and 22 variables, in the following slots:
+\format{An 'sf' object with 42 populations (combinations of site x year) and 22 variables:
 \describe{
-  \item{coords}{Spatial coordinates: \describe{
-    \item{Longitude}{West (WGS84)}
-    \item{Latitude}{North (WGS84)}
-  }}
   \item{proj4string}{Projection: "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"}
   \item{bbox}{Boundary box: spatial extent}
-
-  \item{data}{Site variables: \describe{
     \item{SiteID}{Combination of SITE and YEAR}
     \item{SITE}{Site name (abbreviated)}
     \item{YEAR}{Year of sampling}
@@ -37,7 +31,9 @@
     \item{D}{Density of favourable habitats: Number of water bodies within a radius of 2 km. From Table 4.}
     \item{APA}{Apparent population age: Time in years since the most recent potential founder effect. From Table 4.}
     \item{NLT}{Long-term population size: Combination of observed density and site size averaged over years. From Table 4.}
-    \item{Fst.temp}{Mean pairwise FST between temporal samples within site. From Table 5.}}
+    \item{Fst.temp}{Mean pairwise FST between temporal samples within site. From Table 5.}
+    \item{geometry}{Spatial coordinates (Longitude, Latitude: WGS84)}
+  }}}
 }}}
 \references{
 Lamy, T., Pointier, J. P., Jarne, P. and David, P. (2012), Testing metapopulation dynamics using genetic, demographic and ecological data. Molecular Ecology, 21: 1394–1410. doi:10.1111/j.1365-294X.2012.05478.x}
