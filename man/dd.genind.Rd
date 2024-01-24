@@ -3,7 +3,7 @@
 \alias{dd.genind}
 \title{Genetic data for the freshwater snail \emph{Drepanotrema depressissimum}}
 \description{
-  Data used in Lamy et al. (2012).
+  Data used in Lamy et al. (2012). See 'dd.ecogen' for a detailed description.
 }
 \usage{dd.genind}
 \format{A 'genind' object with 1271 individuals, 10 loci, and 372 alleles:
