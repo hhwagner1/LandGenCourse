@@ -94,7 +94,7 @@ round(Null.alleles$null.allele.freq$summary2,2)}
 
 
 ## ----------------------------------------------------------------------------------------------------
-Sum <- summary(Frogs.genind)
+Sum <- adegenet::summary(Frogs.genind)
 names(Sum)
 
 

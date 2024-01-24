@@ -14,9 +14,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-## 1. Overview of Worked Example {-}
+### 1. Overview of Worked Example {-}
 
-### a) Goals {-} 
+#### a. Goals {-} 
 
 This worked example shows how to:
 
@@ -24,7 +24,7 @@ This worked example shows how to:
 - Assess genetic diversity.
 - Aggregate genetic data at the population level.
 
-### b) Data set {-} 
+#### b. Data set {-} 
 
 This is the same data set as used in Weeks 1 & 2.
 
@@ -33,7 +33,7 @@ Microsatellite data for 181 individuals of Colombia spotted frogs (Rana luteiven
 - **ralu.loci**: Data frame with populations and genetic data (181 rows x 9 columns). Included in package 'LandGenCourse'. To load it, type: data(ralu.loci)
 - **ralu.site**: Spatial points data frame with spatial coordinates and site variables Included in package GeNetIt'. To load it, type: data(ralu.site)
 
-### c) Required R packages {-}
+#### c. Required R packages {-}
 
 All required packages should have been installed already when you installed 'LandGenCourse'.
 
@@ -46,11 +46,11 @@ require(dplyr)
 require(poppr) 
 ```
 
-## 2. Basic checking of markers and populations {-}
+### 2. Basic checking of markers and populations {-}
 
 Before we do landscape genetic analysis, we need to perform a basic population genetic analysis of the genetic data, in order to better understand the nature and quality of the data and to check for underlying assumptions of population genetic models and corresponding methods. 
 
-### a) Re-create genind object {-} 
+#### a. Re-create genind object {-} 
 
 Adapted from Week 1 tutorial: 
 
@@ -67,7 +67,7 @@ Frogs.genind <- adegenet::df2genind(X=Frogs[,c(4:11)], sep=":", ncode=NULL,
 Frogs.genind
 ```
 
-### b) Check that markers are polymorphic {-}
+#### b. Check that markers are polymorphic {-}
 
 The genetic resolution depends on the number of markers and their polymorphism. The table above and the summary function for genind objects together provide this information. Now we run the summary function:
 
@@ -80,7 +80,7 @@ The output of the summary function shows us the following:
 - Expected heterozygosity varies between 0.14 (locus C) and 0.78 (locus E)
 - There's a reasonable level of missing values (10.6%) 
 
-### c) Check for deviations from Hardy-Weinberg equilibrium (HWE) {-}
+#### c. Check for deviations from Hardy-Weinberg equilibrium (HWE) {-}
 
 See also: http://dyerlab.github.io/applied_population_genetics/hardy-weinberg-equilibrium.html
 
@@ -123,7 +123,7 @@ HWE.test.MC <- t(data.matrix(HWE.test))
 round(HWE.test.MC,3)}
 ```
 
-To summarize, let's calculate, for each locus, the proportion of populations where it was out of HWE. Here we'll use the conservative cut-off of alpha = 0.05 for each test. There are various ways of modifying this, including a simple Bonferroni correction, where we divide alpha by the number of tests, which you can activate here by removing the # in front of the line.
+To summarize, let's calculate, for each locus, the proportion of populations where it was out of HWE. Here we'll use the conservative cut-off of alpha = 0.05 for each test. There are various ways of modifying this, including a simple Bonferroni correction, where we divide alpha by the number of tests, which you can activate here by removing the ## i. front of the line.
 
 We write the results into a data frame 'Prop.loci.out.of.HWE' and use '=' to specify the name for each column. 
 
@@ -168,7 +168,7 @@ After using false discovery rate correction for the 8 * 12 = 96 tests performed,
 Note: exact results are likely to differ somewhat between runs due to the permutation tests.
 
 
-### d) Check for linkage disequilibrium (LD) {-}
+#### d. Check for linkage disequilibrium (LD) {-}
 See also: https://grunwaldlab.github.io/Population_Genetics_in_R/Linkage_disequilibrium.html
 
 For microsatellite markers, we typically don't know where on the genome they are located. The closer together two markers are on a chromosome, the more likely they are inherited together, which means that they don't really provide independent information. Testing for linkage disequilibrium assesses this, for each pair of loci, by checking whether alleles of two loci are statistically associated.
@@ -189,7 +189,7 @@ The strongest correlation is around 0.2, for markers E and H.
 
 Effect size: If rbarD can be interpreted similarly to a linear correlation coefficient r, that would mean that less than 5% of the variation in one marker is shared with the other marker (recall from stats: the amount of variance explained in regression, Rsquared, is the square of the linear correlation coefficient). This is probably not large enough to worry about.  
 
-### e) Check for null alleles {-}
+#### e. Check for null alleles {-}
 
 See also Dakin and Avise (2004): http://www.nature.com/articles/6800545
 
@@ -240,7 +240,7 @@ Relevant papers for the Estimation-Maximization algorithm:
 - Chapuis and Estoup (2007), Mol. Biol. Evol. 24:621–631, doi: 10.1093/molbev/msl191.
 
 
-### f) Overall interpretation {-}
+#### f. Overall interpretation {-}
 
 - **Spatial genetic structure**: The Columbia spotted frog data used in this lab come from a study area with a great deal of genetic structure.  If we use a population assignment test (see Week 9), each basin is a separate unit with significant substructure within basins. Testing for significant genetic distance, most pairs of ponds have a genetic distance that is significantly different from zero. 
 - **HWE**: Therefore, we expect global estimates (i.e., the whole dataset) of He to be out of HWE due to population substructure (HWE assumes panmictic populations). We would also expect data to be out of HWE when analyzing data by basin due to population substructure. We could, then, test HWE and linkage disequilibrium at the pond level (as shown here). However, some ponds have low sample sizes (which refleect a low number of individuals: based on repeated surveys of sites, most if not nearly all animals were captured). 
@@ -250,18 +250,18 @@ So, what do we do? We can look for patterns.  Are there loci that are consistent
 
 - **Null alleles**: Missing data can imply null (non-amplifying) alleles. In this case, while there are loci that have higher “drop-out” rates than others, this is more likely due to some loci being more difficult to call (the authors were very strict in removing any questionable data; equivocal calls resulting in no data). In addition, some of the samples used in this study were toe clips which with low yields of DNA, resulting in incomplete genotypes. While presence of null alleles is a possibility, genetic structure, breeding patterns at low population size and aggressive quality control of genotypes can all explain the results. Finally, with all of the structure in these data, there are examples (at the basin level and pond level) of unique alleles that are fixed or nearly fixed. When the data are assessed globally, this will result in a similar pattern to the presence of null alleles and will result in positive null allele tests.
 
-## 3. Assess genetic diversity {-} 
+### 3. Assess genetic diversity {-} 
 
 These measures are typically quantified per population. 
 
-### a) Rarefied allelic richness {-} 
+#### a. Rarefied allelic richness {-} 
 
 Both nominal sample size (number of frogs sampled) and valid sample size (e.g., for each locus, the number of frogs with non-missing genetic data) vary between sites. We would expect the number of alleles found in a population to increase with the number of individuals genotyped. 
 
 We can check this by plotting the number of alleles against sample size. Here we create an object 'Sum' that contains the summary of the genind object, then we can access its elements by '$' to plot what we need. The function 'names' lists the names of the elements, which reduced the guesswork.
 
 ```{r}
-Sum <- summary(Frogs.genind)
+Sum <- adegenet::summary(Frogs.genind)
 names(Sum)
 ```
 
@@ -305,7 +305,7 @@ plot(colMeans(Richness$pop.sizes), Richness$mean.richness,
 abline(lm(Richness$mean.richness ~ colMeans(Richness$pop.sizes)), col="red")
 ```
 
-### b) Observed and expected heterozygosity {-} 
+#### b. Observed and expected heterozygosity {-} 
 
 Note: Writing the 'genind' summary into an object 'Sum' allows accessing its attributes by name.
 
@@ -348,7 +348,7 @@ Here we use 'apply' to apply the function 'mean' to the rows (MARGIN = 1). For c
   barplot(Hobs.pop, ylim=c(0,1), las=3, ylab="Observed heterozygosity")
 ```  
 
-### c) Create table with sitel-level genetic diversity measures {-}
+#### c. Create table with sitel-level genetic diversity measures {-}
 
 ```{r}
 Frogs.diversity <- data.frame(Pop = names(Hobs.pop),
@@ -369,7 +369,7 @@ You can save the R object 'Frogs.diversity' with the code below (need to uncomme
 ```
 
 
-## 4. Aggregate genetic data at population level (allele frequencies) {-}
+### 4. Aggregate genetic data at population level (allele frequencies) {-}
 
 For some analyses, we will need to aggregate data from the individual to the population level, e.g. as a table of allele frequencies per population.
 
@@ -392,7 +392,7 @@ The allele frequencies of all alleles from the same locus (e.g., A.1, A.2 and A.
 apply(Freq, MARGIN = 1, FUN = sum)    # Just checking
 ```
 
-## 5. R Exercise Week 3 {-}
+## R Exercise Week 3
 
 **Task:** Drop offspring (seeds) from dataset `pulsatilla_genotypes.csv`, check for HWE by site and locus and calculate Hexp for each site. 
 
