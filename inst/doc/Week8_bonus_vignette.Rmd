@@ -422,6 +422,7 @@ Extract the R code from the R Notebook and save it in a script file `Week3_vigne
 
 ```{r purl}
 infile = here::here("downloads/Week3_vignette.Rmd")
+
 outfile = here::here("downloads/Week3_vignette.R")
 
 knitr::purl(infile, outfile)
@@ -445,12 +446,21 @@ file.show(outfile)
 
 ### d) Profiling an R script {-}
 
-We can now use the function source to read and execute the code in the R script. We use the function Rprof to start and stop the profiling.
+We can now use the function `source` to read and execute the code in the R script. We use the function `Rprof` to start and stop the profiling.
+
+With `source(outfile)`, we can source and run the entire file. Here, we extract only the first 94 lines of the R script. 
 
 ```{r Rprof, include=FALSE}
 Rprof()
-source(outfile)
+
+#source(outfile)
+
+file.lines <- scan(outfile, what=character(), skip=0, nlines=94, sep='\n')
+file.lines.collapsed <- paste(file.lines, collapse='\n')
+source(textConnection(file.lines.collapsed))
+
 Rprof(NULL)
+
 ```
 
 With the function `summaryRprof`, we get a summary by function. First, let's check the total time spent executing the code, and the sample interval (in seconds). Note that profiling works in this way: as the code is executed, R checks at regular time intervals which function is being executed at that very moment. The `summaryRprof` function then tabulates the number of intervals, and thus the time used, by function. 
