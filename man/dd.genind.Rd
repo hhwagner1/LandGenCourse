@@ -13,10 +13,10 @@
     \item{all.names}{list of allele names for each locus}
     \item{ploidy}{ploidy of each individual  (range: 2-2)}
     \item{type}{codominant markers}
-    \item{strata}{a data frame with 4 columns ( SiteID, SITE, YEAR, Cluster ))
+    \item{strata}{a data frame with 4 columns ( SiteID, SITE, YEAR, Cluster )}
     \item{other}{a list : \describe{
       \item{xy}{Spatial coordinates (longitude, latitude: WGS84)}
-      }
+      }}
 }}
 \references{
 Lamy, T., Pointier, J. P., Jarne, P. and David, P. (2012), Testing metapopulation dynamics using genetic, demographic and ecological data. Molecular Ecology, 21: 1394–1410. doi:10.1111/j.1365-294X.2012.05478.x}
