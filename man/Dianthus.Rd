@@ -6,12 +6,8 @@
   Site-level data from Rico et al. 2014.
 }
 \usage{Dianthus}
-\format{A SpatialPointsDataFrame with 65 populations and 31 variables, in the following slots:
+\format{An sf object with point data for 65 populations and 31 variables, in the following slots:
 \describe{
-  \item{coords}{Spatial coordinates: \describe{
-    \item{x}{Easting (Gauss-Krueger GK4)}
-    \item{y}{Northing (Gauss-Krueger GK4)}
-  }}
   \item{proj4string}{CRS("+init=epsg:31468")}
   \item{bbox}{Boundary box: spatial extent}
 
@@ -48,6 +44,10 @@
     \item{Longitude}{Longitude: CRS("+init=epsg:4326")}
     \item{Latitude}{Latitude: CRS("+init=epsg:4326")}
     }
+    \item{geometry}{Spatial coordinates: \describe{
+      \item{}{Easting (Gauss-Krueger GK4)}
+      \item{}{Northing (Gauss-Krueger GK4)}
+  }}
 }}}
 \references{
 Rico, Y., Holderegger, R., Boehmer, H. J. and Wagner, H. H. (2014), Directed dispersal by rotational shepherding supports landscape genetic connectivity in a calcareous grassland plant. Mol Ecol, 23: 832–842. doi:10.1111/mec.12639}
