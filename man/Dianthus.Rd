@@ -43,10 +43,11 @@
     \item{Forest_Nj}{Connectivity index Si, calculated based on Euclidean distance but only if there is no forest between source and focal patch, using patch weights proportional to the rank of PopSize (ranging from 0 - 4)}
     \item{Longitude}{Longitude: CRS("+init=epsg:4326")}
     \item{Latitude}{Latitude: CRS("+init=epsg:4326")}
-    }
     \item{geometry}{Spatial coordinates: \describe{
       \item{}{Easting (Gauss-Krueger GK4)}
       \item{}{Northing (Gauss-Krueger GK4)}
+    }
+
   }}
 }}}
 \references{
