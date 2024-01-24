@@ -275,10 +275,13 @@ The barchart (left) shows that there is considerable variation among ponds in th
 par(mar=c(5.5, 4.5,1,1))
 barplot(Sum$pop.n.all, las=3, 
        xlab = "", ylab = "Number of alleles")
+``` 
+
+```{r, fig.show='hold'}
 plot(Sum$n.by.pop, Sum$pop.n.all, 
        xlab = "Sample size", ylab = "Number of alleles")
 abline(lm(Sum$pop.n.all ~ Sum$n.by.pop), col = "red")
-```  
+```
 
 Hence we should not compare the number of alleles directly. Instead, we'll use rarefied allelic richness (Ar). 
 
