@@ -73,17 +73,19 @@ if(!requireNamespace("radish", quietly = TRUE)) remotes::install_github("nspope/
 
 library(radish)
 library(raster)
+library(terra)
+library(sf)
+library(sp)
 ```
 
 ## 2. Import data {-}
 
 ### a) Import raster data {-}
 
-Load the raster data as a `SpatialPixelsDataFrame` and convert them in to a raster stack. As of this writing, `radish` requires that raster surfaces be provided as a `RasterStack`. The names of the layers within the stack will be your independent variable(s) when fitting the `radish` model. We'll make an object called `covariates` for use with `radish`.
+Load the raster data as a `SpatRaster` (package `terra`) with multiple layers. The names of the layers will be your independent variable(s) when fitting the `radish` model. We'll make an object called `covariates` for use with `radish`.
 
 ```{r rasters}
-data(rasters, package="GeNetIt")
-covariates <- raster::stack(rasters)
+covariates <- terra::rast(system.file("extdata/covariates.tif", package="GeNetIt"))
 ```
 
 ### b) Import sampling location data {-}
@@ -110,9 +112,9 @@ Because the genetic data are a subset of the larger data set, we need to select 
 sites_select <- sites[c(1:3,5:6,8,11:12,21,23,25:26),]
 
 ## Must be a SpatialPoints object
-sites_select <- SpatialPoints(sites_select)
+sites_select <- sp::SpatialPoints(sf::as_Spatial(sites_select))
 
-plot(covariates$hli, legend=FALSE)
+terra::plot(covariates[["hli"]])
 points(sites_select, pch = 19)
 ```
 
@@ -273,23 +275,37 @@ summary(fit_lsq)
 `radish` can be used to model the conductance of difference categories within raster surfaces too. This requires that the raster be provided with an associated RAT, see `?raster::ratify` . We're going to discretize the continuous gsp (growing season precipitation) surface to have 3 categories: low, medium, & high precipitation
 
 ```{r categorical}
-lc <- cut(raster::values(covariates$gsp), breaks = c(0, 260, 300, Inf)) 
-gsp_cat <- 
-  raster::ratify(raster::setValues(covariates$gsp, as.numeric(lc)))
+lc <- terra::classify(covariates[["gsp"]], c(0, 260, 300, Inf), 
+                      include.lowest=TRUE, brackets=TRUE)
+terra::set.cats(lc, layer=1, c("low precip.", "med precip.", "high precip."), active=1)
+terra::cats(lc)
+```
 
+```{r}
+terra::plot(lc)
+```
+
+The function `radish::conductance_surface` expects a raster stack (package `raster`) with a categorical variable. Hence we convert lc to a categorical `raster` object, `gsp_cat`. With the function ratify, we tell R that this is a categorical dataset, even though the values are coded numerically. 
+
+```{r}
+gsp_cat <- ratify(raster(lc))
 RAT <- levels(gsp_cat)[[1]]
 RAT$VALUE <- c("low precip.", "med precip.", "high precip.")
 levels(gsp_cat) <- RAT
-plot(gsp_cat, main = "Landscape classification")
+```
+
+```{r}
+gsp_cat
 ```
 
 Now we need to put everything together.
 
 ```{r together}
-surface_gsp <- conductance_surface(covariates = stack(gsp_cat),
+surface_gsp <- radish::conductance_surface(covariates = raster::stack(gsp_cat),
                                    coords = sites_select,
                                    directions = 8)
-fit_mlpe_cat <- radish(ralu.dc ~ gsp,
+
+fit_mlpe_cat <- radish::radish(ralu.dc ~ gsp,
                        data = surface_gsp, 
                        conductance_model = radish::loglinear_conductance, 
                        measurement_model = radish::mlpe)

@@ -43,7 +43,7 @@ Install some packages needed for this worked example.
 ```{r install global_options, include=TRUE, results="hide", message=FALSE, warning=FALSE}
 if(!requireNamespace("popgraph", quietly = TRUE))
 {
-  install.packages(c("RgoogleMaps", "geosphere", "proto", "sampling", 
+  install.packages(c("tmap", "geosphere", "proto", "sampling", 
                       "seqinr", "spacetime", "spdep"), dependencies=TRUE)
   remotes::install_github("dyerlab/popgraph")
 }
@@ -54,7 +54,7 @@ if(!requireNamespace("gstudio", quietly = TRUE)) remotes::install_github("dyerla
 library(LandGenCourse)
 library(dplyr)
 library(ggplot2)
-library(ggmap)
+library(tmap)
 #library(gstudio)
 #library(pegas)
 #library(vegan)
@@ -96,9 +96,8 @@ There are 12 columns:
 To create a map with `qmplot` (see Week 4), here we do the following:
 
 - Use functions from `dplyr` to get mean coordinates per population
-- Convert the coordinates to lat-lon coordinates with `sf_project` from the `sf` package. We use the EPSG reference numbers (http://epsg.io/) to specify the 'from' and 'to' coordinate systems. 
-- Download a "terrain" map from "stamen", with zoom level 12.
-- Add population labels with `geom_text`. We specify an offset along the x-axis,`nudge_x`, and for sites 'A25' and 'A26' also an offset along the y-axis to prevent labels from overlapping.
+- Convert the coordinates to lat-lon coordinates with `st_project` from the `sf` package. We use the EPSG reference numbers (http://epsg.io/) to specify the 'from' and 'to' coordinate systems.
+- Convert `Coords` to an `sf` object `Coords.sf` with lat/lon coordinates.
 
 ```{r fig.height=5, fig.width=7}
 Coords <- dat %>% group_by(Population) %>% 
@@ -106,14 +105,20 @@ Coords <- dat %>% group_by(Population) %>%
 Coords <- data.frame(Coords, sf::sf_project(from = "+init=epsg:31468", 
           to = "+init=epsg:4326", pts = Coords[c("X", "Y")]))
 names(Coords)[4:5] <- c("Longitude", "Latitude")
-
-bbox <- make_bbox(lon = Longitude, lat = Latitude, data = Coords, f=0.2)
-
-MyMap <- ggmap(get_stamenmap(bbox, maptype="terrain", zoom=12, force=TRUE)) 
-MyMap + geom_text(data = Coords, mapping = aes(Longitude, Latitude, 
-              label = Population), size = 4, col = "black", hjust = 0, 
-              nudge_x = 0.005, nudge_y = c(0,0,0.002,-0.001,0,0,0)) 
+Coords.sf <- sf::st_as_sf(Coords, coords=c("Longitude", "Latitude"), crs=sf::st_crs(4326))
 ```
+
+- Create an interactive map `MyMap` with `tmap`, specify the basemaps.
+- Add population labels with `tm_text`. 
+
+```{r}
+tmap_mode("view")
+MyMap <-
+  tm_basemap(c("Esri.WorldTopoMap", "Esri.WorldStreetMap", "Esri.WorldShadedRelief")) +
+  tm_shape(Coords.sf) + tm_sf(size = 1, col = "black")
+MyMap + tm_shape(Coords.sf) + tm_text(text = "Population", size = 1, col = "black",just="bottom")
+```
+
 
 ## 3. Pollen pool genetic structure {-}
 
@@ -304,7 +309,6 @@ pat.all$tmpID <- paste(pat.all$MomID, pat.all$OffID, sep="_")
 pat.sub <- pat.all[!duplicated(pat.all$tmpID),]
 # get rid of the tmpID column
 pat.sub <- pat.sub[,1:4] # get rid of the tmp_ID column
-
 ```
 
 ### c) Visualize reconstructed pollen flow events in space {-}
@@ -328,7 +332,7 @@ ggplot() +
   geom_point(data=dat[dat$Population==pop,], 
              aes(X,Y),size=3, color="red") +
   geom_segment(data=pat.sub[pat.sub$Population==pop,], 
-       aes(x=X, y=Y, xend=Xend, yend=Yend), size=0.5, alpha=0.2, 
+       aes(x=X, y=Y, xend=Xend, yend=Yend), linewidth=0.5, alpha=0.2, 
        arrow = arrow(ends = "first", length = unit(0.3, "cm"))) +
   theme(legend.position = "none")
 ```

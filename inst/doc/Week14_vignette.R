@@ -1,7 +1,7 @@
 ## ----install global_options, include=TRUE, results="hide", message=FALSE, warning=FALSE--------------
 if(!requireNamespace("popgraph", quietly = TRUE))
 {
-  install.packages(c("RgoogleMaps", "geosphere", "proto", "sampling", 
+  install.packages(c("tmap", "geosphere", "proto", "sampling", 
                       "seqinr", "spacetime", "spdep"), dependencies=TRUE)
   remotes::install_github("dyerlab/popgraph")
 }
@@ -12,7 +12,7 @@ if(!requireNamespace("gstudio", quietly = TRUE)) remotes::install_github("dyerla
 library(LandGenCourse)
 library(dplyr)
 library(ggplot2)
-library(ggmap)
+library(tmap)
 #library(gstudio)
 #library(pegas)
 #library(vegan)
@@ -39,13 +39,15 @@ Coords <- dat %>% group_by(Population) %>%
 Coords <- data.frame(Coords, sf::sf_project(from = "+init=epsg:31468", 
           to = "+init=epsg:4326", pts = Coords[c("X", "Y")]))
 names(Coords)[4:5] <- c("Longitude", "Latitude")
+Coords.sf <- sf::st_as_sf(Coords, coords=c("Longitude", "Latitude"), crs=sf::st_crs(4326))
 
-bbox <- make_bbox(lon = Longitude, lat = Latitude, data = Coords, f=0.2)
 
-MyMap <- ggmap(get_stamenmap(bbox, maptype="terrain", zoom=12, force=TRUE)) 
-MyMap + geom_text(data = Coords, mapping = aes(Longitude, Latitude, 
-              label = Population), size = 4, col = "black", hjust = 0, 
-              nudge_x = 0.005, nudge_y = c(0,0,0.002,-0.001,0,0,0)) 
+## ----------------------------------------------------------------------------------------------------
+tmap_mode("view")
+MyMap <-
+  tm_basemap(c("Esri.WorldTopoMap", "Esri.WorldStreetMap", "Esri.WorldShadedRelief")) +
+  tm_shape(Coords.sf) + tm_sf(size = 1, col = "black")
+MyMap + tm_shape(Coords.sf) + tm_text(text = "Population", size = 1, col = "black",just="bottom")
 
 
 ## ----dat---------------------------------------------------------------------------------------------
@@ -149,7 +151,6 @@ pat.sub <- pat.all[!duplicated(pat.all$tmpID),]
 pat.sub <- pat.sub[,1:4] # get rid of the tmp_ID column
 
 
-
 ## ----spiderplot_data---------------------------------------------------------------------------------
 pat.sub <- gstudio::spiderplot_data(pat.sub, dat, longitude = "X", latitude = "Y")
 # Join data to add population IDs
@@ -165,7 +166,7 @@ ggplot() +
   geom_point(data=dat[dat$Population==pop,], 
              aes(X,Y),size=3, color="red") +
   geom_segment(data=pat.sub[pat.sub$Population==pop,], 
-       aes(x=X, y=Y, xend=Xend, yend=Yend), size=0.5, alpha=0.2, 
+       aes(x=X, y=Y, xend=Xend, yend=Yend), linewidth=0.5, alpha=0.2, 
        arrow = arrow(ends = "first", length = unit(0.3, "cm"))) +
   theme(legend.position = "none")
 

@@ -15,11 +15,13 @@ if(!requireNamespace("radish", quietly = TRUE)) remotes::install_github("nspope/
 
 library(radish)
 library(raster)
+library(terra)
+library(sf)
+library(sp)
 
 
 ## ----rasters-----------------------------------------------------------------------------------------
-data(rasters, package="GeNetIt")
-covariates <- raster::stack(rasters)
+covariates <- terra::rast(system.file("extdata/covariates.tif", package="GeNetIt"))
 
 
 ## ----location----------------------------------------------------------------------------------------
@@ -36,9 +38,9 @@ ralu.dc <- as.matrix(read.csv(system.file("extdata", "ralu_dc.csv",
 sites_select <- sites[c(1:3,5:6,8,11:12,21,23,25:26),]
 
 ## Must be a SpatialPoints object
-sites_select <- SpatialPoints(sites_select)
+sites_select <- sp::SpatialPoints(sf::as_Spatial(sites_select))
 
-plot(covariates$hli, legend=FALSE)
+terra::plot(covariates[["hli"]])
 points(sites_select, pch = 19)
 
 
@@ -130,21 +132,33 @@ summary(fit_lsq)
 
 
 ## ----categorical-------------------------------------------------------------------------------------
-lc <- cut(raster::values(covariates$gsp), breaks = c(0, 260, 300, Inf)) 
-gsp_cat <- 
-  raster::ratify(raster::setValues(covariates$gsp, as.numeric(lc)))
+lc <- terra::classify(covariates[["gsp"]], c(0, 260, 300, Inf), 
+                      include.lowest=TRUE, brackets=TRUE)
+terra::set.cats(lc, layer=1, c("low precip.", "med precip.", "high precip."), active=1)
+terra::cats(lc)
 
+
+## ----------------------------------------------------------------------------------------------------
+terra::plot(lc)
+
+
+## ----------------------------------------------------------------------------------------------------
+gsp_cat <- ratify(raster(lc))
 RAT <- levels(gsp_cat)[[1]]
 RAT$VALUE <- c("low precip.", "med precip.", "high precip.")
 levels(gsp_cat) <- RAT
-plot(gsp_cat, main = "Landscape classification")
+
+
+## ----------------------------------------------------------------------------------------------------
+gsp_cat
 
 
 ## ----together----------------------------------------------------------------------------------------
-surface_gsp <- conductance_surface(covariates = stack(gsp_cat),
+surface_gsp <- radish::conductance_surface(covariates = raster::stack(gsp_cat),
                                    coords = sites_select,
                                    directions = 8)
-fit_mlpe_cat <- radish(ralu.dc ~ gsp,
+
+fit_mlpe_cat <- radish::radish(ralu.dc ~ gsp,
                        data = surface_gsp, 
                        conductance_model = radish::loglinear_conductance, 
                        measurement_model = radish::mlpe)
