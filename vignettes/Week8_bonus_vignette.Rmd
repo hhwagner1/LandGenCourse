@@ -370,90 +370,71 @@ Here's an example of a named chunk: the name 'myChunkName' has been added in the
 
 More generally, this is where chunk options are added in the R Notebook. Here's a long list of chunk options: https://yihui.name/knitr/options/
 
-### b) Profiling some lines of code with 'profvis' {-}
+### b) Profiling some lines of code {-}
 
-With the `profvis` package (from CRAN), we can provide code as an argument to the `profvis` function. Within the round brackets `profvis()`, use curly brackets to allow for multiple lines of code: `profvis({ })`
+RStudio has a built-in menu for profiling. Check it out:
 
-Note: here we use the chunk option 'include=FALSE' to suppress the output (figures created by the code), we only want to get the profile for the code.
+- Select the five lines of code below, from `dat <- data.frame(` until `lm(y ~ x, data=dat)`
+- In RStudio's menu, click on 'Profile' > 'Profile Selected Line(s)'.
 
-```{r profvis1, include=FALSE}
+```{r samplecode, include=FALSE}
+dat <- data.frame(
+     x = rnorm(5e5), 
+     y = rnorm(5e5))   
+mean(dat$x)
+with(dat, cor(x, y))
+lm(y ~ x, data=dat)
+```
+
+You can achieve the same with a call to the funciton 'profvis' of the 'profvis' package:
+
+```{r profvis}
 profvis::profvis({
-  x <- rnorm(100)
-  mean(x)
-  hist(x)
-  qqnorm(x)
+  dat <- data.frame(
+       x = rnorm(5e5), 
+       y = rnorm(5e5))   
+  mean(dat$x)
+  with(dat, cor(x, y))
+  lm(y ~ x, data=dat)
 })
 ```
 
-The results will be opened in a 'Profile' tab. The upper part has again two tabs (the lower part is less intuitive to interpret, we'll ignore it here):
+The results will be opened in a 'Profile' tab. The upper part has two tabs (the lower part is less intuitive to interpret, we'll ignore it here):
 
 - **Flame Graph**: this plots horizontal bars indicating the amount of memory and time used by each line of code, in the original order of the code.
 - **Data**: code is sorted by resource use, with the most 'costly' line `qqnorm` at the top of the list. You can click on the triangle before each line to see more detail.
 
-The results may depend on the speed of your computer. With my machine, I get a value of 20 for `hist` and another 30 for `qqnorm`, but nothing for the other lines. Check the sample interval at the bottom of the 'Profile' tab: time was estimated by observing every 10 milliseconds what the computer was doing. The other lines must have been too fast to be recorded.
+The results may depend on the speed of your computer. Check the sample interval at the bottom of the 'Profile' tab: time was estimated by observing every 10 milliseconds what the computer was doing. Some lines lines must have been too fast to be recorded.
 
-RStudio has a built-in menu for profiling that does the same thing. Check it out:
-
-- Select the four lines of code above, from `x <- rnorm(100)` until `qqnorm(x)`
-- In RStudio's menu, click on 'Profile' > 'Profile Selected Line(s)'.
-
-### c) Profiling an R script with 'profvis' {-}
-
-The function `profvis` can also profile an entire R script. To try this, let's first create a small R script with the four lines of code that we profiled above.
-
-Note: Obviously, what we do here is not a recommended way of creating and saving an R script. Normally, you would write the code directly into a script file in the 'Source' tab in RStudio and save it with menu commands.
-
-- We open a file connection, and as the file does not exist yet, it will be created. 
-- We use a relative path to save the file in the 'output' folder in the workspace. 
-- With `writeLines`, we write each line into the file, but we need to wrap each line in quotes.
-- Then we close the file connection.
-- Finally, we use `file.show` to show the file in a tab.
-
-Note: An 'output' folder should have been created already when you accessed this worked example with the Addin. We are not creating the folder with 'dir.create' because this would not work when knitting the R Notebook.
-
-```{r Rscript}
-myPath <- file.path(here::here(), "output/myScript.R")
-fileConn <- file(myPath)
-writeLines(c("x <- rnorm(100)",
-             "mean(x)",
-             "hist(x)",
-             "qqnorm(x)"), fileConn)
-close(fileConn)
-file.show(myPath)
-```
-
-Check the tab 'R Information', which should now display the content of the file 'myScript.R'. Are the quotes still there? 
-
-Now we can pass the file to `profvis`:
-
-```{r profvis2}
-profvis::profvis(source(myPath))
-```
-
-- The 'Flame Graph' should look the same as before. 
-- The content of the 'Data' tab is different. Click on the triangle before 'source' to navigate to: 'source' > 'withVisible' > 'eval' > 'eval'.
-- That's where the actual lines of code are profiled. 
-
-### d) Converting an R Notebook to an R script {-}
+### c) Converting an R Notebook to an R script {-}
 
 Unfortunately, we can't profile an entire R Notebook (as far as I know). However, we can extract the R code as a script file, then profile the script file. 
 
-The file 'myNotebook.Rmd' contains the same R code as our file 'myScript.R', but in the format of an R Notebook, with R markdown text (e.g. titles) and several chunks of code. 
+Copy an R Notebook file (`Week3_vignette.Rmd`) to the downloads folder. This is just so that we have an example of an `.Rmd` file to extract the code from.
 
-Note: With 'file.show', the Notebook is opened with a simple text editor (without the coloring etc.). Alternatively, you could run 'file.edit' to open it with the familiar RStudio editor.
 
-```{r myNotebook}
-inFile <- system.file("extdata", "myNotebook.Rmd", package = "LandGenCourse")
-file.show(inFile)
-#file.edit(inFile)
+```{r notebook}
+file.copy(from=system.file("doc", "Week3_vignette.Rmd", package = "LandGenCourse"),
+                     to=file.path(here::here(), "downloads", "Week3_vignette.Rmd"))
 ```
 
-We can use the function 'purl' from the 'knitr' package to extract the R code from the R Notebook file 'myNotebook.Rmd':
+Extract the R code from the R Notebook and save it in a script file `Week3_vignette.R` in the downloads folder. You may adapt the infile and outfile to extract the code from any R Notebook saved in your project. 
 
 ```{r purl}
-outFile <- file.path(here::here(), "output/myNotebook.R")
-knitr::purl(inFile, output=outFile, quiet=TRUE)
-file.show(outFile)
+infile = here::here("downloads/Week3_vignette.Rmd")
+outfile = here::here("downloads/Week3_vignette.R")
+
+knitr::purl(infile, outfile)
+```
+
+Let's open the two files and compare them. Note that `file.show` opens a simple text version, whereas `file.edit` shows the colored versions commonly displayed by the RStudio editor.
+
+```{r file.show}
+file.show(infile)
+file.show(outfile)
+
+#file.edit(infile)
+#file.edit(outfile)
 ```
 
 **Question**: Compare the two files (they should be open, check the tabs of the source pane). 
@@ -462,13 +443,44 @@ file.show(outFile)
 - What happened to the titles and text?
 - What about the header information?
 
-Now we can pass the file to `profvis` (uncomment by removing hashtag `#` to run code):
+### d) Profiling an R script {-}
 
-```{r profvis3}
-#profvis::profvis(source(outFile), prof_output=file.path(here::here(), "output/output.prof"))
+We can now use the function source to read and execute the code in the R script. We use the function Rprof to start and stop the profiling.
+
+```{r Rprof, include=FALSE}
+Rprof()
+source(outfile)
+Rprof(NULL)
 ```
 
-**Question**: Which lines of code took the longest to run in this example?
+With the function `summaryRprof`, we get a summary by function. First, let's check the total time spent executing the code, and the sample interval (in seconds). Note that profiling works in this way: as the code is executed, R checks at regular time intervals which function is being executed at that very moment. The `summaryRprof` function then tabulates the number of intervals, and thus the time used, by function. 
+
+```{r sampling.interval}
+summaryRprof()[c("sampling.time", "sample.interval")]	
+```
+The attribute `$by.total` only lists the top-level functions called (not any functions called internally by that top-level function). 
+
+```{r summaryRprof}
+summaryRprof()$by.total
+```
+
+Note: The functions are listed by total time, in decreasing order. The two functions `eval` and `source`, are related to evaluating (running) the code from the sourced R script file.
+
+- **total.time**: total time spent executing the function (including functions called by it)
+- **total.pct**: (ignore this) percent time spent executing the function (including functions called by it)
+- **self.time**: total time spent executing the function itself (excluding functions called by it)
+- **self.pct**: percent time spent executing the function itself (excluding functions called by it)
+
+**Questions:** 
+
+- How much time did the call to `PopGenReport::null.all` use? 
+- How much of this time was used by the function itself, and how much by functions being called by it?
+- What might explain this?
+
+If you need to see a summary with more detail, `$by.self` lists each function used, even internal functions. 
+
+If you want to profile memory use rather than processing time, see here: https://developer.r-project.org/memory-profiling.html
+
 
 ## 5. Creating and executing a Bash R script {-}
 

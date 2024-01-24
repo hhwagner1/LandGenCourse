@@ -29,7 +29,7 @@ This worked example shows:
 
 Here we analyze population-level data of the wildflower *Dianthus carthusianorum* (common name: Carthusian pink) in 65 calcareous grassland patches in the Franconian Jura, Germany (Rico et al. 2013): 
 
-- **Dianthus**: Spatial point data frame with population-level data (patch characteristics, grazing regime, genetic diversity, 15 alternative connectivity indices Si), included in package 'LandGenCourse'. To load the data, type (without quotes): 'data(Dianthus)'. For a definition of the variables, type: '?Dianthus'.
+- **Dianthus**: 'sf' object with population-level data (patch characteristics, grazing regime, genetic diversity, 15 alternative connectivity indices Si) for sampling locations, included in package 'LandGenCourse'. To load the data, type (without quotes): 'data(Dianthus)'. For a definition of the variables, type: '?Dianthus'.
 
 ### c) Required R packages {-}
 
@@ -46,7 +46,8 @@ library(nlme)
 library(dplyr)
 library(spatialreg)
 library(ggplot2)
-library(ggmap)
+library(tmap)
+#library(sf)
 source(system.file("extdata", "panel.cor.r", 
                             package = "LandGenCourse"))
 ```
@@ -78,72 +79,35 @@ Allelic richness 'A' was not calculate for populations with < 5 individuals. Her
 
 ### b) Create a map {-}
 
-The functions in package 'ggmap' expect the projection to be Longitude/Latitude. We could start by transforming the projection of the Dianthus dataset (ignore the warning about CRS object having no comment):
+With tmap (see Week 3 Worked Example), mapping the points is easy. Here, we use color to indicate allelelic richness.
+
+Note that tmap internally converts the CRS to lat/long to plot the points on a basemap from the internet. See here for a list of available basemaps: https://leaflet-extras.github.io/leaflet-providers/preview/
 
 ```{r}
-Dianthus.longlat <- sp::spTransform(Dianthus, 
-             CRSobj = sp::CRS(SRS_string = "EPSG:4326"))
-
-make_bbox(lon = Longitude, lat = Latitude, data = Dianthus@data, f = 0.2)
-
+tmap_mode("view")
+tm_basemap(c("Esri.WorldTopoMap", "Esri.WorldStreetMap", "Esri.WorldShadedRelief")) +
+tm_shape(Dianthus) + tm_sf(col="A")
 ```
 
-Here, however, we use a shortcut as the `Dianthus@data` dataframe already contains variables with Longitude and Latitude. We use these to define the bounding box for the map, extending the map extent by 20% ('f=0.2'). 
+Toggle between the basemaps to visualize the topographic relief and forest cover.
 
-```{r}
-bbox <- make_bbox(lon = Longitude, lat = Latitude, data = Dianthus@data, f = 0.2)
-```
-
-Now we can obtain a stamen map for the study area from the internet and add points for the sampling sites. Here we use a terrain map. 
-
-Note: here we use two types of maps from the source 'stamen', which is freely available: a `terrain` map and a `toner` map. Starting in mid 2018, accessing maps from Google with 'source = google' requires an API key.
-
-To plot the maps side-by-side, we first write each map into an object, then use the function `gridExtra::grid.arrange` to plot them on the same row. This works for a wide range of figures, including `ggplot2` or `trellis`-type plots.
-
-```{r fig.height=4, fig.width=7, message=FALSE}
-StamenMap.terrain <- ggmap(get_stamenmap(bbox, maptype = "terrain", zoom=12)) + 
-  geom_point(aes(x =  Longitude, y = Latitude), data = Dianthus.longlat@data, 
-             colour = "black", size = 2)
-
-StamenMap.toner <- ggmap::ggmap(get_stamenmap(bbox, maptype = "toner", zoom=12, force = TRUE)) + 
-  geom_point(aes(x =  Longitude, y = Latitude), data = Dianthus.longlat@data, 
-             colour = "black", size = 2) 
-
-gridExtra::grid.arrange(StamenMap.terrain, StamenMap.toner, nrow=1)
-```
-
-As you can see from the terrain map, most sites lie on the steep slopes between an upper and a lower Jurassic plateau. A few sites lie at the forest edge on the upper plateau, typically in areas where the soil is too shallow to allow crop farming. With in the study area, all known sites were sampled. Additional sites are expected to be found mainly in the valley system in the Southwest.
-
-There are three types of stamen maps: terrain, toner (black and white), and watercolor. Terrain and toner maps have three components each (background, labels, lines), which can be downloaded individually if needed. Hence, the argument 'maptype' has the following options:
-
-- terrain
-- terrain-background
-- terrain-labels
-- terrain-lines
-- toner
-- toner-2010
-- toner-background
-- toner-hybrid
-- toner-labels
-- toner-lines
-- toner-lite
-- watercolor
+As you can see from the shaded relief, most sites lie on the steep slopes between an upper and a lower Jurassic plateau. A few sites lie at the forest edge on the upper plateau, typically in areas where the soil is too shallow to allow crop farming. With in the study area, all known sites were sampled. Additional sites are expected to be found mainly in the valley system in the Southwest.
 
 ### c) Explore correlations {-}
 
 When fitting linear models, it is always a good idea to look at the correlations first. 
 
 ```{r fig.height=5, fig.width=7}
-Dianthus.df <- data.frame(A=Dianthus@data$A, IBD=Dianthus@data$Eu_pj, 
-                          IBR=Dianthus@data$Sheint_pj,
-                          PatchSize=log(Dianthus@data$Ha),
-                          System=Dianthus@data$System,
-                          Longitude=Dianthus@data$Longitude,
-                          Latitude=Dianthus@data$Latitude,
-                          x=Dianthus@coords[,1], y=Dianthus@coords[,2])
+Dianthus.df <- data.frame(A=Dianthus$A, IBD=Dianthus$Eu_pj, 
+                          IBR=Dianthus$Sheint_pj,
+                          PatchSize=log(Dianthus$Ha),
+                          System=Dianthus$System,
+                          Longitude=Dianthus$Longitude,
+                          Latitude=Dianthus$Latitude,
+                          st_coordinates(Dianthus))
 
 # Define 'System' for ungrazed patches
-Dianthus.df$System=as.character(Dianthus@data$System)
+Dianthus.df$System=as.character(Dianthus$System)
 Dianthus.df$System[is.na(Dianthus.df$System)] <- "Ungrazed"
 Dianthus.df$System <- factor(Dianthus.df$System, 
                              levels=c("Ungrazed", "East", "South", "West"))
@@ -151,27 +115,33 @@ Dianthus.df$System <- factor(Dianthus.df$System,
 # Remove patches with missing values for A
 Dianthus.df <- Dianthus.df[!is.na(Dianthus.df$A),]
 dim(Dianthus.df)
-pairs(Dianthus.df[,-c(5:7)], lower.panel=panel.smooth, 
+
+```
+
+Create a scatterplot matrix. The variables are plotted against each other and labeled along the diagonal. You will find histograms on the diagonal, scatterplots and a smooth line in the lower triangle, and the linear correlation coefficient r (with p-value) in the upper triangle. Stronger correlations are indicated with a larger font. You may ignore any warnings about graphical parameters.
+
+```{r fig.height=7, fig.width=8, warning=FALSE}
+graphics::pairs(Dianthus.df[,-c(5:7)], lower.panel=panel.smooth, 
       upper.panel=panel.cor, diag.panel=panel.hist)
 ```
 
 **Questions:**
 
-- How strong is the association between 'Eu_pj' and 'A'? What does this suggest about the hypothesis of IBD?
-- How strong is the association between 'Sheint_pj' and 'A'? What does this suggest about the hypothesis of sheep-mediated gene flow (IBR)?
+- How strong is the linear relationship between 'Eu_pj' and 'A'? What does this suggest about the hypothesis of IBD?
+- How strong is the linear relationship between 'Sheint_pj' and 'A'? What does this suggest about the hypothesis of sheep-mediated gene flow (IBR)?
 - Which variable seems to be a better predictor of allelic richness: patch size 'Ha' or the logarithm of patch size, 'PatchSize'?
 - Is logHa correlated with 'IBD' or 'IBR'?
-- Are any of the variables correlated with the spatial coordinates x and y?
+- Are any of the variables correlated with the spatial coordinates X and Y?
 
 Do the three grazing systems, and the ungrazed patches, differ in allelic richness A? Also, let's check the association between patch size and population size. Here we create boxplots that show the individual values as dots. We add a horizontal jitter to avoid overlapping points.
 
 ```{r fig.height=3.5, fig.width=7}
 
-Boxplot1 <- ggplot(Dianthus.df, aes(x=System, y=A)) + 
+Boxplot1 <- ggplot(Dianthus, aes(x=System, y=A)) + 
   geom_boxplot() + xlab("Grazing system") + ylab("Allelic richness (A)") +
   geom_jitter(shape=1, position=position_jitter(0.1), col="blue")
 
-Boxplot2 <- ggplot(Dianthus@data, aes(x=factor(pop09), y=log(Ha))) + 
+Boxplot2 <- ggplot(Dianthus, aes(x=factor(pop09), y=log(Ha))) + 
   geom_boxplot() + xlab("Population size class") + ylab("PatchSize (log(Ha))") +
   geom_jitter(shape=1, position=position_jitter(0.1), col="blue")
 
@@ -185,7 +155,7 @@ Despite this relationship, connectivity models Si that only considered *Dianthus
 We can check this by calculating the correlation of allelelic richness 'A' with each of the 15 connectivity models 'Si' in the data set. 
 
 ```{r}
-round(matrix(cor(Dianthus@data$A, Dianthus@data[,15:29], 
+round(matrix(cor(Dianthus$A, st_drop_geometry(Dianthus)[,15:29], 
                  use="pairwise.complete.obs"), 5, 3, byrow=TRUE, 
            dimnames=list(c("Eu", "Shecte", "Sheint", "Shenu", "Forest"), 
                          c("pj", "Aj", "Nj"))),3)
@@ -249,7 +219,7 @@ Before we interpret the models, let's check whether the assumption of independen
 
 To calculate and test Moran's I, we first need to define neighbours and spatial weights. Here we use a Gabriel graph to define neighbours. 
 
-We define weights in three ways (see Week 5 video and tutorial for code explanation): 
+We define weights in three ways (see Week 5 video and tutorial for explanation of code): 
 
 - **listw.gab**: 1 = neighbour, 0 = not a neighbour.
 - **listw.d1**: inverse distance weights: neighbour j with weight 1/dij
@@ -260,7 +230,7 @@ In each case, we row-standardize the weights with the option 'style = "W"'.
 Note: when using 'graph2nb', make sure to use the argument 'sym=TRUE'. This means that if A is a neighbour of B, B is also a neighbour of A. The default is 'sym=FALSE', which may result in some sites not having any neighbours assigned (though this would not be evident from the figure!).
 
 ```{r}
-xy <- data.matrix(Dianthus.df[,c("x", "y")])
+xy <- data.matrix(Dianthus.df[,c("X", "Y")])
 nb.gab <- spdep::graph2nb(spdep::gabrielneigh(xy), sym=TRUE)
 par(mar=c(0,0,0,0))
 plot(nb.gab, xy)
@@ -275,15 +245,26 @@ listw.d2 <- spdep::nb2listw(nb.gab, style = "W", glist=dlist)
 
 Now we can quantify and test Moran's I for each variable to test for spatial autocorrelation in response and predictor variables. For now, we'll take the simple weights 'listw.gab'.
 
+Allelic richness A:
+
 ```{r}
 spdep::moran.test(Dianthus.df$A, listw.gab)             
 ```
+
+IBD:
+
 ```{r}
 spdep::moran.test(Dianthus.df$IBD, listw.gab)
 ```
+
+IBR: 
+
 ```{r}
 spdep::moran.test(Dianthus.df$IBR, listw.gab) 
 ```
+
+PatchSize:
+
 ```{r}
 spdep::moran.test(Dianthus.df$PatchSize, listw.gab) 
 ```
@@ -295,12 +276,20 @@ spdep::moran.test(Dianthus.df$PatchSize, listw.gab)
 
 Next, let's test each model for autocorrelation in the residuals:
 
+IBD:
+
 ```{r}
 spdep::lm.morantest(mod.lm.IBD, listw.gab) 
 ```
+
+IBR: 
+
 ```{r}
 spdep::lm.morantest(mod.lm.IBR, listw.gab)          
 ```
+
+PatchSize:
+
 ```{r}
 spdep::lm.morantest(mod.lm.PatchSize, listw.gab)       
 ```
@@ -320,7 +309,7 @@ The expected value of the semivariance will be 1. Hence it would make sense to a
 
 ```{r}
 model.lm <- nlme::gls(A ~ IBR + PatchSize, data = Dianthus.df, method="REML")
-semivario <- nlme::Variogram(model.lm, form = ~x  + y, resType = "normalized")
+semivario <- nlme::Variogram(model.lm, form = ~X  + Y, resType = "normalized")
 ```
 
 If you want to create your own figure, e.g. with 'ggplot2', you can access the values stores in the data frame 'semivario' to plot the points, and add a smooth line yourself. Then we can add a horizontal line with 'geom_hline'.
@@ -349,11 +338,11 @@ Note: Here we want to compare mixed models with the same fixed effects but diffe
 ```{r}
 model.lm <- nlme::gls(A ~ IBR + PatchSize, data = Dianthus.df, method="REML")
 
-mod.corExp <- update(model.lm, correlation = nlme::corExp(form = ~ x + y, nugget=T))
-mod.corGaus <- update(model.lm, correlation = nlme::corGaus(form = ~ x + y, nugget=T))
-mod.corSpher <- update(model.lm, correlation = nlme::corSpher(form = ~ x + y, nugget=T))
-mod.corRatio <- update(model.lm, correlation = nlme::corRatio(form = ~ x + y, nugget=T))
-#mod.corLin <- update(model.lm, correlation = nlme::corLin(form = ~ x + y, nugget=T))
+mod.corExp <- update(model.lm, correlation = nlme::corExp(form = ~ X + Y, nugget=T))
+mod.corGaus <- update(model.lm, correlation = nlme::corGaus(form = ~ X + Y, nugget=T))
+mod.corSpher <- update(model.lm, correlation = nlme::corSpher(form = ~ X + Y, nugget=T))
+mod.corRatio <- update(model.lm, correlation = nlme::corRatio(form = ~ X + Y, nugget=T))
+#mod.corLin <- update(model.lm, correlation = nlme::corLin(form = ~ X + Y, nugget=T))
 ```
 
 ### c) Select best-fitting model {-}
@@ -370,7 +359,7 @@ We refit the best model with maximum likelihood to test the fixed effects.
 
 ```{r}
 mod.corExp.ML <- nlme::gls( A ~ PatchSize + IBR, data = Dianthus.df, method="ML",
-                            correlation = nlme::corExp(form = ~ x + y, nugget=T))
+                            correlation = nlme::corExp(form = ~ X + Y, nugget=T))
 car::Anova(mod.corExp.ML) 
 ```
 
@@ -396,7 +385,7 @@ The normal probability plot still looks about the same.
 Note that the function `residplot` recognized that we have a `gls` model and added a plot of the auto-correlation function, ACF. Here we have a value of 1 for the distance lag 0, which is the comparison of each value with itself. All other values are low. Recall that the autcorrelation is inversely related to the semivariogram (which does not report the value for lag = 0):
 
 ```{r}
-semivario <- nlme::Variogram(mod.corExp, form = ~ x + y, 
+semivario <- nlme::Variogram(mod.corExp, form = ~ X + Y, 
                              resType = "normalized")
 plot(semivario, smooth = TRUE)
 ```
@@ -458,7 +447,7 @@ The package `nlme` allows us also to include random factors. Here we add `System
 ```{r}
 mod.lme.corExp <- nlme::lme( A ~ PatchSize + IBR, 
                              random = ~ 1 | System, data = Dianthus.df, 
-                            correlation = nlme::corExp(form = ~ x + y, nugget=T),
+                            correlation = nlme::corExp(form = ~ X + Y, nugget=T),
                             method="REML")
 summary(mod.lme.corExp)
 ```
@@ -590,7 +579,7 @@ Finally, let's look at the summary results for the fitted model:
 sfd.res$e
 ```
 
-Here, 'adjR2' is rather high (0.437), but this includes the selected MEM spatial eigenvectors! 
+Here, `adjR2` is rather high (0.437), but this includes the selected MEM spatial eigenvectors! 
 
 ### b) Using a custom connectivity matrix {-}
 
@@ -618,33 +607,39 @@ Note: the messages tell us that 'cmat' has been made symmetric before analysis, 
 
 So far, we have treated the MEM spatial eigenvectors as a black box. What kind of patterns do they represent? 
 
-First, we plot all the selected (significant) eigenvectors. A convenient way to do so is converting to a SpatialPointsDataFrame and then use the function 'spplot'.
+First, we plot all the selected (significant) eigenvectors. A convenient way to do so is converting to an `sf` object and then use the function `plot`.
 
-Here we need tweak the column names of the eigenvectors, which are called "X1", "X2" etc., to match the row names of table 'sf.res$r', which uses "sf1", "sf2" etc. 
+Here we need tweak the column names of the eigenvectors, which are called "X1", "X2" etc., to show which spatial eigenvectors (sf1, sf2, etc.) are being plotted. We will plot all 15 eigenvectors that were selected above, in order of importance. 
 
-- In the first line, we create a data frame 'SF' that combines the coordinates from 'xy' with the eigenvectors from 'meigw'. By specifying `sf=meigw$sf`, the column names will be prefaced by 'sf.', so that "X1" becomes "sf.1". 
-- With the function `gsub`, we substitute "." by an empty vector "", i.e., we remove the period from the name, so that "sf.1" becomes "sf1". This is a bit tricky because of the special meanings of '.': we need to escape (here we use "[.]") to indicate that '.' should be interpreted and matched literally as a period symbol, not as a wildcard that matches any character. Function `sub` substitutes the first occurrence of the symbol, whereas `gsub` substitutes all occurrences.
+- In the first line, we create a data frame 'MEM' that combines the coordinates from 'xy' with the eigenvectors from 'meigw', ordered by importance.  
+- We add the names for the eigenvectors. `sfw.res$other$sf_id` contains the numbers (ID's) of the selected eigenvectors.
+- Then we convert the data frame `MEM` to an `sf` object with `st_as_sf`.
+- The plot function for `sf` objects will plot each attribute. Here we specify that the axes should be plotted (`axes=TRUE`), but no ticks along the axes (`xaxt`, `yaxt`) should be shown - thus, only a box will be drawn around each plot. By default, the first ten variables will be plotted. To show all variables, we use the argument `max.plot = ncol(MEM) - 1`.
 
-```{r fig.height=5, fig.width=7}
-SF <- data.frame(xy, sf=meigw$sf)
-names(SF) <- gsub("[.]", "", names(SF))
-sp::coordinates(SF) <- ~ x + y
-sp::spplot(SF, row.names(sfw.res$r), colorkey = TRUE)
+```{r  fig.width=8}
+MEM <- data.frame(xy, meigw$sf[,sfw.res$other$sf_id])
+names(MEM)[-c(1,2)] <- paste0("sf", sfw.res$other$sf_id)
+
+MEM <- st_as_sf(MEM, coords=c("X", "Y"))
+plot(MEM, axes=TRUE, yaxt = "n", xaxt = "n", max.plot = ncol(MEM) - 1)
 ```
 
-The panel starts at the bottom left, so that the most important spatial eigenvector (sf6) is plotted at the bottom left, the second most important (sf22) second from left, etc. 
+The most important spatial eigenvector (sf6) is plotted at the top left, the second most important (sf23) second from left, etc. 
 
-The smallest numbers are patterns with the largest spatial scale (sf1), which here shows a gradient from East to West. The most important eigenvector (sf6) shows a finer-scale pattern with the highest values (yellow) in the center, lowest values East and West, and intermediate value North and South. 
+The smallest numbers are patterns with the largest spatial scale (sf1), which here shows a gradient from East to West. The most important eigenvector (sf6) shows a finer-scale pattern with the highest values (yellow) in the center, lowest values East and West, and intermediate values North and South. 
 
-However, these patterns individually are not meaningful. More importantly, we can plot the total spatial component in the response as a weighted sum of these component patterns, where the weights correspond to the regression coefficients in table 'sf.res$r'. Here we create a panel with two plots, the modeled spatial components 'sf' on the left and the response 'A' on the right (the mean has been removed to make values comparable). 
+However, these patterns individually are not meaningful. More importantly, we can plot the total spatial component in the response as a weighted sum of these component patterns (`MEM$wmean`), where the weights correspond to the regression coefficients (`Estimate`) in table `sfw.res$r`. Here we create a panel with two plots, the modeled spatial components `MEM.w` on the left and the response allelic richness `A` on the right (the mean has been removed to make values comparable). 
+
+Note: you could calculate the weighted mean `sfw.res$sf` yourself as follows: `data.matrix(st_drop_geometry(MEM[,1:15])) %*% sfw.res$r$Estimate`
 
 ```{r fig.height=3, fig.width=7}
-SF@data$sf <- sfw.res$sf
-SF@data$A <- scale(Dianthus.df$A, scale = FALSE)
-sp::spplot(SF, c("sf", "A"), colorkey = TRUE)
+MEM$wmean <- sfw.res$sf
+#MEM$pred <- sfw.res$pred
+MEM$A <- scale(Dianthus.df$A, scale = FALSE)
+plot(MEM[c("wmean", "A")])
 ```
 
-Obviously, a big part of the variation in allelic richness is already captured by 'sf'. In essence the model then tries to explain the difference between these two sets of values by the predictors "PatchSize" and "IBR".
+Obviously, a big part of the variation in allelic richness is already captured by the weighted mean `MEM$wmean`. In essence the model then tries to explain the difference between these two sets of values by the predictors "PatchSize" and "IBR".
 
 Let's quantify the correlation of this spatial component with allelic richness, and compare the correlation between the two models:
 
@@ -652,7 +647,7 @@ Let's quantify the correlation of this spatial component with allelic richness, 
 cor(Dianthus.df$A, data.frame(sfd=sfd.res$sf, sfw=sfw.res$sf))
 ```
 
-With the default method (defining neighbors based on a distance cut-off), the spatial component modeled by the significant MEM spatial eigenvectors showed a correlation of 0.625 with the response variable. Using a Gabriel graph with inverse distance weights increased this correlation to 0.772. 
+With the default method (defining neighbors based on a distance cut-off), the spatial component modeled by the significant MEM spatial eigenvectors showed a correlation of 0.625 with the response variable. Using a Gabriel graph with inverse distance weights increased this correlation to 0.805. 
 
 This means that the spatial eigenvectors derived from the Gabriel graph were more effective at capturing the spatial variation in allelic richness than the default method. This spatial component is then controlled for when assessing the relationship between allelic richness and the predictors (PatchSize and IBR).
 
@@ -675,8 +670,8 @@ Note: we can't compare AIC with the previous models, as the model was fitted wit
 
 We get an additional output 'sfr.res$s' with two variance parameters: 
 
-- **spcomp_SE**: standard error of the spatial component. 
-- **spcomp_Moran.I/max(Moran.I)**: Moran's I of the spatial component, rescaled by the maximum possible value. From the help file: "Based on Griffith (2003), the scaled Moran'I value is interpretable as follows: 0.25-0.50:weak; 0.50-0.70:moderate; 0.70-0.90:strong; 0.90-1.00:marked." 
+- **random_SE**: standard error of the random effect (spatial component). 
+- **Moran.I/max(Moran.I)**: Moran's I of the spatial component, rescaled by the maximum possible value. From the help file: "Based on Griffith (2003), the scaled Moran'I value is interpretable as follows: 0.25-0.50:weak; 0.50-0.70:moderate; 0.70-0.90:strong; 0.90-1.00:marked." 
 
 ## 7. Fit spatially varying coefficients model with package 'spmoran' {-}
 
@@ -693,16 +688,16 @@ We fit the model with 'resf_vc'.
 ```{r}
 rv_res <- spmoran::resf_vc( y=Dianthus.df$A, 
                             x = Dianthus.df[,c("PatchSize", "IBR")], 
-                            xconst = NULL, meig = meigw, method = "reml")
+                            xconst = NULL, meig = meigw, method = "reml", x_sel = FALSE)
 ```
 
-Instead of one slope estimate for each predictor, we now get a different estimate for each combination of parameter and site (sounds like overfitting?). Here's a summary of the distbiution of these estimates.
+Instead of one slope estimate for each predictor, we now get a different estimate for each combination of parameter and site (sounds like overfitting?). Here's a summary of the distribution of these estimates.
 
 ```{r}
 summary( rv_res$b_vc ) 
 ```
 
-The slope estimate for PatchSize varied between 0 and 0.098, with a mean of 0.046. The slope estimate for the 'IBR' term varied between -0.81 and 0.34, with a mean very close to 0! That is an astounding range of variation. Keep in mind that we really expect a positive relationship, there is no biological explanation for a ngeative relationship. 
+The slope estimate for `PatchSize` varied between 0.017 and 0.1, with a mean of 0.045. The slope estimate for the 'IBR' term varied between -0.66 and 0.23, with a mean close to 0! That is an astounding range of variation. Keep in mind that we really expect a positive relationship, there is no biological explanation for a negative relationship. 
 
 Here is a similar summary of the p-values:
 
@@ -723,9 +718,9 @@ Let's start with PatchSize. Here,  we first plot PatchSize in space, with symbol
 
 ```{r fig.show='hold'}
 require(ggplot2)
-ggplot(as.data.frame(Result), aes(x, y, size=PatchSize)) +
+ggplot(as.data.frame(Result), aes(X, Y, size=PatchSize)) +
   geom_point(color="darkblue") + coord_fixed()
-ggplot(as.data.frame(Result), aes(x, y, col=p.PatchSize < 0.05, size=b.PatchSize)) +
+ggplot(as.data.frame(Result), aes(X, Y, col=p.PatchSize < 0.05, size=b.PatchSize)) +
   geom_point() + coord_fixed()
 ```
 
@@ -733,9 +728,9 @@ Let's do the same for 'IBR':
 
 ```{r fig.show='hold'}
 require(ggplot2)
-ggplot(as.data.frame(Result), aes(x, y, size=IBR)) +
+ggplot(as.data.frame(Result), aes(X, Y, size=IBR)) +
   geom_point(color="darkgreen") + coord_fixed()
-ggplot(as.data.frame(Result), aes(x, y, col=p.IBR < 0.05, size=b.IBR)) +
+ggplot(as.data.frame(Result), aes(X, Y, col=p.IBR < 0.05, size=b.IBR)) +
   geom_point() + coord_fixed()
 ```
 
@@ -749,7 +744,7 @@ Keep in mind that 'IBR' and 'PatchSize' showed a strong correlation. The paramet
 ```{r}
 rv_res <- spmoran::resf_vc( y=Dianthus.df$A, 
                             x = Dianthus.df[,c("IBR")], 
-                            xconst = NULL, meig = meigw, method = "reml")
+                            xconst = NULL, meig = meigw, method = "reml", x_sel = FALSE)
 summary( rv_res$b_vc ) 
 ```
 Now the range of slope estimates is smaller, most sites have a positive estimate, and the mean is approx. 0.21.
@@ -764,11 +759,8 @@ Let's plot the results onto a gray-scale, stamen terrain map to facilitate inter
 
 ```{r fig.height=6, fig.width=7, message=FALSE}
 Result <- data.frame(Dianthus.df, b=rv_res$b_vc, p=rv_res$p_vc, resid=rv_res$resid)
-names(Result)
-
-ggmap::ggmap(get_stamenmap(bbox, maptype = "terrain", color="bw", force=TRUE, zoom=12)) + 
-   geom_point(aes(x =  Longitude, y = Latitude, col=p.V1 < 0.05, size=b.V1), data = Result) 
-              
+ggplot(as.data.frame(Result), aes(X, Y, col=p.V1 < 0.05, size=b.V1)) +
+  geom_point() + coord_fixed()
 ```
 
 This is a very different map of results!
@@ -777,6 +769,16 @@ This is a very different map of results!
 - The sites with larger positive estimates show significant effects, whereas those with small or negative estimates show non-significant effects.
 - There are 3 - 4 clusters of sites where the IBR models is not effective at explaining variation in allelic richness: in the very East, in the South-East, and one area in the South-West. 
 - Knowing the study area, these are distinct regions (e.g. valleys) that may suggest further biological explanations.
+
+```{r fig.height=6, fig.width=7, message=FALSE}
+Result.sf <- st_as_sf(Result, coords=c("X", "Y"), crs=st_crs(Dianthus))
+Result.sf$Significant <- Result.sf$p.V1 < 0.05
+
+tmap_mode("view")
+tm_shape(Result.sf) + tm_bubbles(size="b.V1", col="Significant")
+```
+
+We can compare this to a model with fixed 
 
 ## 8. Conclusions {-}
 

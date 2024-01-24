@@ -12,29 +12,42 @@
 
 <meta name="author" content="Yessica Rico and Helene Wagner" />
 
-<meta name="date" content="2022-02-17" />
+<meta name="date" content="2024-01-24" />
 
 <title>Week 7: Bonus Materials</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
 
 
 <style type="text/css">
-  code {
-    white-space: pre;
-  }
-  .sourceCode {
-    overflow: visible;
-  }
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
@@ -52,55 +65,54 @@ pre > code.sourceCode { white-space: pre-wrap; }
 pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
-  { counter-reset: source-line 0; }
+{ counter-reset: source-line 0; }
 pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
+{ position: relative; left: -4em; counter-increment: source-line; }
 pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
 div.sourceCode
-  {   }
+{ }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -109,13 +121,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -127,7 +146,225 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20800px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%2020px%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%200%3B%0Apadding%3A%204px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%3Anot%28%5Bclass%5D%29%20%7B%0Amargin%3A%20auto%3B%0Amin%2Dwidth%3A%2040%25%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%5Bsummary%3D%22R%20argblock%22%5D%20%7B%0Awidth%3A%20100%25%3B%0Aborder%3A%20none%3B%0A%7D%0Atable%3Anot%28%5Bclass%5D%29%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%3Anot%28%5Bclass%5D%29%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%3Anot%28%5Bclass%5D%29%2C%20table%3Anot%28%5Bclass%5D%29%20th%2C%20table%3Anot%28%5Bclass%5D%29%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%3Anot%28%5Bclass%5D%29%20tr%2Eodd%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%2013px%3B%0Apadding%2Dbottom%3A%201px%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f5f5f5%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0A%7D%0Apre%20%7B%0Aoverflow%2Dx%3A%20auto%3B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200%2010px%200%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20white%3B%0Aborder%3A%20%23f5f5f5%201px%20solid%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20code%20%7B%0Acolor%3A%20%23444%3B%0Abackground%2Dcolor%3A%20white%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20monospace%3B%0Afont%2Dsize%3A%2090%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%204px%3B%0Acolor%3A%20%23d14%3B%0Aborder%3A%201px%20solid%20%23e1e1e8%3B%0Awhite%2Dspace%3A%20inherit%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Atable%20%3E%20caption%2C%20div%2Efigure%20p%2Ecaption%20%7B%0Afont%2Dstyle%3A%20italic%3B%0A%7D%0Atable%20%3E%20caption%20span%2C%20div%2Efigure%20p%2Ecaption%20span%20%7B%0Afont%2Dstyle%3A%20normal%3B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%200%2010px%3B%0A%7D%0Atable%3Anot%28%5Bclass%5D%29%20%7B%0Amargin%3A%20auto%20auto%2010px%20auto%3B%0A%7D%0Aimg%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0Amax%2Dwidth%3A%20100%25%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f5f5f5%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f5f5f5%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f5f5f5%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Adiv%2Er%2Dhelp%2Dpage%20%7B%0Abackground%2Dcolor%3A%20%23f9f9f9%3B%0Aborder%2Dbottom%3A%20%23ddd%201px%20solid%3B%0Amargin%2Dbottom%3A%2010px%3B%0Apadding%3A%2010px%3B%0A%7D%0Adiv%2Er%2Dhelp%2Dpage%3Ahover%20%7B%0Abackground%2Dcolor%3A%20%23f4f4f4%3B%0A%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 800px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 20px;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 0;
+padding: 4px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table:not([class]) {
+margin: auto;
+min-width: 40%;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table[summary="R argblock"] {
+width: 100%;
+border: none;
+}
+table:not([class]) th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table:not([class]) td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table:not([class]), table:not([class]) th, table:not([class]) td {
+border-left-style: none;
+border-right-style: none;
+}
+table:not([class]) tr.odd {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 13px;
+padding-bottom: 1px;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f5f5f5;
+border-radius: 3px;
+color: #333;
+}
+pre {
+overflow-x: auto;
+border-radius: 3px;
+margin: 5px 0 10px 0;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: white;
+border: #f5f5f5 1px solid;
+}
+pre:not([class]) code {
+color: #444;
+background-color: white;
+}
+code {
+font-family: monospace;
+font-size: 90%;
+}
+p > code, li > code {
+padding: 2px 4px;
+color: #d14;
+border: 1px solid #e1e1e8;
+white-space: inherit;
+}
+div.figure {
+text-align: center;
+}
+table > caption, div.figure p.caption {
+font-style: italic;
+}
+table > caption span, div.figure p.caption span {
+font-style: normal;
+font-weight: bold;
+}
+p {
+margin: 0 0 10px;
+}
+table:not([class]) {
+margin: auto auto 10px auto;
+}
+img:not([class]) {
+background-color: #FFFFFF;
+padding: 2px;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+max-width: 100%;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f5f5f5;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f5f5f5;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f5f5f5;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+div.r-help-page {
+background-color: #f9f9f9;
+border-bottom: #ddd 1px solid;
+margin-bottom: 10px;
+padding: 10px;
+}
+div.r-help-page:hover {
+background-color: #f4f4f4;
+}
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -141,21 +378,27 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Week 7: Bonus Materials</h1>
 <h4 class="author">Yessica Rico and Helene Wagner</h4>
-<h4 class="date">2022-02-17</h4>
+<h4 class="date">2024-01-24</h4>
 
 
 <div id="TOC">
 <ul>
-<li><a href="#overview-of-bonus-materials">1. Overview of Bonus Materials</a></li>
-<li><a href="#import-ecological-distance-matrices">2. Import ecological distance matrices</a></li>
-<li><a href="#optimize-the-scaling-parameter-alpha">3. Optimize the scaling parameter alpha</a></li>
-<li><a href="#calculate-hanskis-index-si-with-source-patch-parameters">4. Calculate Hanski’s index Si with source patch parameters</a></li>
+<li><a href="#overview-of-bonus-materials" id="toc-overview-of-bonus-materials">1. Overview of Bonus
+Materials</a></li>
+<li><a href="#import-ecological-distance-matrices" id="toc-import-ecological-distance-matrices">2. Import ecological
+distance matrices</a></li>
+<li><a href="#optimize-the-scaling-parameter-alpha" id="toc-optimize-the-scaling-parameter-alpha">3. Optimize the scaling
+parameter alpha</a></li>
+<li><a href="#calculate-hanskis-index-si-with-source-patch-parameters" id="toc-calculate-hanskis-index-si-with-source-patch-parameters">4.
+Calculate Hanski’s index Si with source patch parameters</a></li>
 </ul>
 </div>
 
-<div id="overview-of-bonus-materials" class="section level2">
-<h2>1. Overview of Bonus Materials</h2>
-<p>The Week 7 Worked Example used patch-level values of an Si index as predictors. Here we show how these were calculated from distance matrices. The main steps are:</p>
+<div id="overview-of-bonus-materials" class="section level2 unnumbered">
+<h2 class="unnumbered">1. Overview of Bonus Materials</h2>
+<p>The Week 7 Worked Example used patch-level values of an Si index as
+predictors. Here we show how these were calculated from distance
+matrices. The main steps are:</p>
 <ul>
 <li>Import ecological distance matrices</li>
 <li>Optimize the scaling parameter alpha</li>
@@ -163,34 +406,56 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <p>The following data will be imported:</p>
 <ul>
-<li><strong>dModels.rds</strong>: a list of 5 distance matrices (stored as <code>dist</code> objects) among all 106 calcareous grassland patches in the study area. Each distance matrix represents a biological hypothesis about functional connectivity of <em>D. carthusianorum</em> (see below).</li>
-<li><strong>PATCH_XY_Dianthus.csv</strong>: data frame with patch attributes for all 106 calcareous grassland patches in the study area. We will use the following attributes:
+<li><strong>dModels.rds</strong>: a list of 5 distance matrices (stored
+as <code>dist</code> objects) among all 106 calcareous grassland patches
+in the study area. Each distance matrix represents a biological
+hypothesis about functional connectivity of <em>D. carthusianorum</em>
+(see below).</li>
+<li><strong>PATCH_XY_Dianthus.csv</strong>: data frame with patch
+attributes for all 106 calcareous grassland patches in the study area.
+We will use the following attributes:
 <ul>
-<li><strong>Dc.89, Dc.09</strong>: binary variables indicating whether or not <em>D. carthusianorum</em> was recorded in the patch in the first survey in 1989, or the second survey in 2009, respectively.</li>
+<li><strong>Dc.89, Dc.09</strong>: binary variables indicating whether
+or not <em>D. carthusianorum</em> was recorded in the patch in the first
+survey in 1989, or the second survey in 2009, respectively.</li>
 <li><strong>Ha</strong>: patch area in ha.</li>
-<li><strong>pop09</strong>: population size in 2009 (categorical, 4 levels, see below).</li>
+<li><strong>pop09</strong>: population size in 2009 (categorical, 4
+levels, see below).</li>
 </ul></li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#library(tibble)</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(LandGenCourse)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co">#library(tibble)</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(LandGenCourse)</span></code></pre></div>
 </div>
-<div id="import-ecological-distance-matrices" class="section level2">
-<h2>2. Import ecological distance matrices</h2>
-<p>Each distance matrix represents one hypothesis about gene flow in this system (see Week 7 video).</p>
+<div id="import-ecological-distance-matrices" class="section level2 unnumbered">
+<h2 class="unnumbered">2. Import ecological distance matrices</h2>
+<p>Each distance matrix represents one hypothesis about gene flow in
+this system (see Week 7 video).</p>
 <ul>
-<li><strong>Eu</strong>: Euclidean (geographic) distance, representing IBD</li>
-<li><strong>Shecte</strong>: Connectivity by shepherding among consistently grazed patches only, distance-dependent: this counts the number of patches that sheep traverse to get from patch A to patch B.</li>
-<li><strong>Sheint</strong>: Connectivity by shepherding, among consistently or intermittently grazed patches, distance-dependent: again, this counts the number of patches that sheep traverse to get from patch A to patch B.</li>
-<li><strong>Shenu</strong>: Connectivity by shepherding, no distance effect. This considers only whether or not two patches are part of the same grazing system.<br />
+<li><strong>Eu</strong>: Euclidean (geographic) distance, representing
+IBD</li>
+<li><strong>Shecte</strong>: Connectivity by shepherding among
+consistently grazed patches only, distance-dependent: this counts the
+number of patches that sheep traverse to get from patch A to patch
+B.</li>
+<li><strong>Sheint</strong>: Connectivity by shepherding, among
+consistently or intermittently grazed patches, distance-dependent:
+again, this counts the number of patches that sheep traverse to get from
+patch A to patch B.</li>
+<li><strong>Shenu</strong>: Connectivity by shepherding, no distance
+effect. This considers only whether or not two patches are part of the
+same grazing system.<br />
 </li>
-<li><strong>Forest</strong>: This model is similar to Eu but considers forest as a barrier.</li>
+<li><strong>Forest</strong>: This model is similar to Eu but considers
+forest as a barrier.</li>
 </ul>
-<p>Here, we import these distance matrices as a list of <code>dist</code> objects and check their names and dimensions: each has 106 rows and columns.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dModels <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;dModels.rds&quot;</span>, </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>)) </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">lapply</span>(dModels, <span class="cf">function</span>(ls) <span class="fu">dim</span>(<span class="fu">as.matrix</span>(ls)))</span></code></pre></div>
+<p>Here, we import these distance matrices as a list of
+<code>dist</code> objects and check their names and dimensions: each has
+106 rows and columns.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>dModels <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;dModels.rds&quot;</span>, </span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                            <span class="at">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>)) </span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="fu">lapply</span>(dModels, <span class="cf">function</span>(ls) <span class="fu">dim</span>(<span class="fu">as.matrix</span>(ls)))</span></code></pre></div>
 <pre><code>## $Eu
 ## [1] 106 106
 ## 
@@ -205,16 +470,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## 
 ## $Forest
 ## [1] 106 106</code></pre>
-<p>Note: the distance matrices contain 106 patches. All of these are considered as source populations. However, we will only calculate Si indices for the 65 patches included in the Dianthus dataset.</p>
+<p>Note: the distance matrices contain 106 patches. All of these are
+considered as source populations. However, we will only calculate Si
+indices for the 65 patches included in the Dianthus dataset.</p>
 </div>
-<div id="optimize-the-scaling-parameter-alpha" class="section level2">
-<h2>3. Optimize the scaling parameter alpha</h2>
-<p>In order to calculate Hanski’s index, we first need to optimize the value of alpha for each distance model, using presence-absence data for the two time steps of 1989 and 2009.</p>
-<p>Import the patch-level data for all 106 patches in the study area.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Patches <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;PATCH_XY_Dianthus.csv&quot;</span>, </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>),</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">header=</span><span class="cn">TRUE</span>, <span class="at">row.names=</span><span class="dv">1</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">as_tibble</span>(Patches)</span></code></pre></div>
+<div id="optimize-the-scaling-parameter-alpha" class="section level2 unnumbered">
+<h2 class="unnumbered">3. Optimize the scaling parameter alpha</h2>
+<p>In order to calculate Hanski’s index, we first need to optimize the
+value of alpha for each distance model, using presence-absence data for
+the two time steps of 1989 and 2009.</p>
+<p>Import the patch-level data for all 106 patches in the study
+area.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>Patches <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;PATCH_XY_Dianthus.csv&quot;</span>, </span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>                            <span class="at">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>),</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>         <span class="at">header=</span><span class="cn">TRUE</span>, <span class="at">row.names=</span><span class="dv">1</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">as_tibble</span>(Patches)</span></code></pre></div>
 <pre><code>## # A tibble: 106 × 20
 ##    patch    id Elements2008 Elements2008.4 cat   type      Ha   area        x
 ##    &lt;chr&gt; &lt;int&gt;        &lt;int&gt;          &lt;int&gt; &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;
@@ -228,65 +498,85 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8 A07a      8            1              1 4     A     0.200  0.002  4431362.
 ##  9 A08       9            3              2 5     F     0.464  0.0046 4428814.
 ## 10 A09      10            4              3 3     F     0.0704 0.0007 4428809.
-## # … with 96 more rows, and 11 more variables: y &lt;dbl&gt;, size.cat &lt;int&gt;,
-## #   sizeCat &lt;chr&gt;, size.cat2 &lt;chr&gt;, pj08 &lt;dbl&gt;, pj89 &lt;dbl&gt;, pop09 &lt;int&gt;,
-## #   grazing &lt;int&gt;, Dc.89 &lt;int&gt;, Dc.09 &lt;int&gt;, Sampled &lt;int&gt;</code></pre>
-<p>Check that the patch IDs match between <code>Patches</code> and the distance matrices. Here we tabulate the number of rows for which the patch names match perfectly. This is the case for all 106 rows, which is great.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(Patches<span class="sc">$</span>patch <span class="sc">==</span> <span class="fu">rownames</span>(dModels<span class="sc">$</span>Eu))</span></code></pre></div>
+## # ℹ 96 more rows
+## # ℹ 11 more variables: y &lt;dbl&gt;, size.cat &lt;int&gt;, sizeCat &lt;chr&gt;, size.cat2 &lt;chr&gt;,
+## #   pj08 &lt;dbl&gt;, pj89 &lt;dbl&gt;, pop09 &lt;int&gt;, grazing &lt;int&gt;, Dc.89 &lt;int&gt;,
+## #   Dc.09 &lt;int&gt;, Sampled &lt;int&gt;</code></pre>
+<p>Check that the patch IDs match between <code>Patches</code> and the
+distance matrices. Here we tabulate the number of rows for which the
+patch names match perfectly. This is the case for all 106 rows, which is
+great.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">table</span>(Patches<span class="sc">$</span>patch <span class="sc">==</span> <span class="fu">rownames</span>(dModels<span class="sc">$</span>Eu))</span></code></pre></div>
 <pre><code>## &lt; table of extent 0 &gt;</code></pre>
-<p>The function ‘get.alphafit’ optimizes alpha for each model and stores the values in table ’table.alpha.</p>
+<p>The function ‘get.alphafit’ optimizes alpha for each model and stores
+the values in table ’table.alpha.</p>
 <ul>
-<li>First, we create an empty matrix (with a single column and five rows, one per model) to hold the optimized alpha value for each model (i.e., for each distance matrix).</li>
-<li>We define the list of values of alpha that should be considered. Here we will use <code>nseq=100</code> values between 0.1 and 2.5.</li>
-<li>Then we define the function get.alphafit that will take four arguments:
+<li>First, we create an empty matrix (with a single column and five
+rows, one per model) to hold the optimized alpha value for each model
+(i.e., for each distance matrix).</li>
+<li>We define the list of values of alpha that should be considered.
+Here we will use <code>nseq=100</code> values between 0.1 and 2.5.</li>
+<li>Then we define the function get.alphafit that will take four
+arguments:
 <ul>
-<li><code>alpha</code>: scaling parameter of the exponential function</li>
+<li><code>alpha</code>: scaling parameter of the exponential
+function</li>
 <li><code>d</code>: distance matrix</li>
-<li><code>pj</code>: whether or not the species was recorded in a patch in the second survey.</li>
-<li><code>Op</code>: number of surveys (out of two) that the species was recorded in the patch.</li>
+<li><code>pj</code>: whether or not the species was recorded in a patch
+in the second survey.</li>
+<li><code>Op</code>: number of surveys (out of two) that the species was
+recorded in the patch.</li>
 </ul></li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>table.alpha <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow=</span><span class="dv">5</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(table.alpha) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">models=</span>(<span class="fu">names</span>(dModels)))</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>nseq <span class="ot">=</span> <span class="dv">100</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">=</span> <span class="fu">seq</span>(<span class="fl">0.1</span>,<span class="fl">2.5</span>, <span class="at">length =</span> nseq)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>get.alphafit <span class="ot">&lt;-</span> <span class="cf">function</span>(alpha, d, pj, Op)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  expo<span class="ot">&lt;-</span><span class="fu">exp</span>(<span class="sc">-</span>alpha<span class="sc">*</span> d )</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">diag</span>(expo)<span class="ot">&lt;-</span><span class="dv">0</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  matr<span class="ot">&lt;-</span><span class="fu">sweep</span>(expo,<span class="dv">2</span>, pj, <span class="st">&quot;*&quot;</span>)</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  Si <span class="ot">&lt;-</span><span class="fu">rowSums</span>(<span class="fu">sweep</span>(matr, <span class="dv">2</span>, Op<span class="sc">/</span><span class="dv">2</span>, <span class="st">&quot;*&quot;</span>), <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  mod<span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="fu">cbind</span>(Op,<span class="dv">2</span> <span class="sc">-</span>Op) <span class="sc">~</span> Si, <span class="at">family=</span>binomial)</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">deviance</span>(mod)</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>table.alpha <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow=</span><span class="dv">5</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">dimnames</span>(table.alpha) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">models=</span>(<span class="fu">names</span>(dModels)))</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>nseq <span class="ot">=</span> <span class="dv">100</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>alpha <span class="ot">=</span> <span class="fu">seq</span>(<span class="fl">0.1</span>,<span class="fl">2.5</span>, <span class="at">length =</span> nseq)</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>get.alphafit <span class="ot">&lt;-</span> <span class="cf">function</span>(alpha, d, pj, Op)</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>{</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>  expo<span class="ot">&lt;-</span><span class="fu">exp</span>(<span class="sc">-</span>alpha<span class="sc">*</span> d )</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>  <span class="fu">diag</span>(expo)<span class="ot">&lt;-</span><span class="dv">0</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>  matr<span class="ot">&lt;-</span><span class="fu">sweep</span>(expo,<span class="dv">2</span>, pj, <span class="st">&quot;*&quot;</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>  Si <span class="ot">&lt;-</span><span class="fu">rowSums</span>(<span class="fu">sweep</span>(matr, <span class="dv">2</span>, Op<span class="sc">/</span><span class="dv">2</span>, <span class="st">&quot;*&quot;</span>), <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>  mod<span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="fu">cbind</span>(Op,<span class="dv">2</span> <span class="sc">-</span>Op) <span class="sc">~</span> Si, <span class="at">family=</span>binomial)</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>  <span class="fu">deviance</span>(mod)</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>}</span></code></pre></div>
 <p>Apply the function to optimize alpha.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pj <span class="ot">&lt;-</span> Patches<span class="sc">$</span>Dc<span class="fl">.09</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>Op <span class="ot">&lt;-</span> (Patches<span class="sc">$</span>Dc<span class="fl">.89</span> <span class="sc">+</span> Patches<span class="sc">$</span>Dc<span class="fl">.09</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(m <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(dModels))</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  table.alpha[m] <span class="ot">&lt;-</span> (<span class="fu">optimize</span>(get.alphafit, <span class="at">interval=</span>alpha,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                              <span class="at">d=</span><span class="fu">as.matrix</span>(dModels[[m]]), pj, Op)<span class="sc">$</span>minimum)</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>table.alpha</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>pj <span class="ot">&lt;-</span> Patches<span class="sc">$</span>Dc<span class="fl">.09</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>Op <span class="ot">&lt;-</span> (Patches<span class="sc">$</span>Dc<span class="fl">.89</span> <span class="sc">+</span> Patches<span class="sc">$</span>Dc<span class="fl">.09</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="cf">for</span>(m <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(dModels))</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>{</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  table.alpha[m] <span class="ot">&lt;-</span> (<span class="fu">optimize</span>(get.alphafit, <span class="at">interval=</span>alpha,</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>                              <span class="at">d=</span><span class="fu">as.matrix</span>(dModels[[m]]), pj, Op)<span class="sc">$</span>minimum)</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>}</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>table.alpha</span></code></pre></div>
 <pre><code>##         
 ## models        [,1]
 ##   Eu     2.1708021
 ##   Shecte 0.6195857
 ##   Sheint 1.2055182
-##   Shenu  2.4999427
+##   Shenu  2.3661953
 ##   Forest 2.4999322</code></pre>
-<p>These are the optimized scaling parameters alpha of the distance term (related to dispersal ability) in the incidence function <span class="math inline">\(S_{i}\)</span>, where <span class="math inline">\(p_{j}\)</span> is 1 if the species is present in source population j and 0 if it is absent, and <span class="math inline">\(d_{ij}\)</span> is the pairwise distance between source patch j and focal patch i:</p>
-<p><span class="math inline">\(S_{i}\)</span> = <span class="math inline">\(\sum_{j\neq i} exp(-\alpha d_{ij})p_{j}\)</span></p>
+<p>These are the optimized scaling parameters alpha of the distance term
+(related to dispersal ability) in the incidence function <span class="math inline">\(S_{i}\)</span>, where <span class="math inline">\(p_{j}\)</span> is 1 if the species is present in
+source population j and 0 if it is absent, and <span class="math inline">\(d_{ij}\)</span> is the pairwise distance between
+source patch j and focal patch i:</p>
+<p><span class="math inline">\(S_{i}\)</span> = <span class="math inline">\(\sum_{j\neq i} exp(-\alpha
+d_{ij})p_{j}\)</span></p>
 </div>
-<div id="calculate-hanskis-index-si-with-source-patch-parameters" class="section level2">
-<h2>4. Calculate Hanski’s index Si with source patch parameters</h2>
+<div id="calculate-hanskis-index-si-with-source-patch-parameters" class="section level2 unnumbered">
+<h2 class="unnumbered">4. Calculate Hanski’s index Si with source patch
+parameters</h2>
 <p>We will consider there alternative source patch parameters</p>
 <ul>
-<li><span class="math inline">\(p_{j}\)</span>: whether or not the species was observed in 2009.</li>
-<li><span class="math inline">\(A_{j}\)</span>: area of the patch in ha.</li>
-<li><span class="math inline">\(N_{j}\)</span>: indicator of population size. This was recorded in the field in four ordinal categories:
+<li><span class="math inline">\(p_{j}\)</span>: whether or not the
+species was observed in 2009.</li>
+<li><span class="math inline">\(A_{j}\)</span>: area of the patch in
+ha.</li>
+<li><span class="math inline">\(N_{j}\)</span>: indicator of population
+size. This was recorded in the field in four ordinal categories:
 <ul>
 <li>1: &lt;4 (too few to treat as population)</li>
 <li>2: 4-40 (small enough for complete sampling)</li>
@@ -294,41 +584,51 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>4: &gt;100 (very large)</li>
 </ul></li>
 </ul>
-<p>Note that here, <span class="math inline">\(N_{j}\)</span> is treated as a numeric variable. While this is an over-interpretation, though preliminary analyses showed that this linearized the relationships between variables.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pj <span class="ot">&lt;-</span> Patches<span class="sc">$</span>Dc<span class="fl">.09</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>Aj <span class="ot">&lt;-</span> Patches<span class="sc">$</span>Ha</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>Nj <span class="ot">&lt;-</span> Patches<span class="sc">$</span>pop09</span></code></pre></div>
-<p>Compile three alternative source patch parameters for each patch. Note that we set the area Aj to zero of the species was not recorded in the patch. This is done by multiplication with pj.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>Source<span class="ot">&lt;-</span> <span class="fu">data.matrix</span>(<span class="fu">data.frame</span>(<span class="at">pj=</span>pj, <span class="at">Aj=</span>pj<span class="sc">*</span>Aj, <span class="at">Nj=</span>Nj))</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span><span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="fu">rep</span>(<span class="dv">3</span>,<span class="dv">5</span>))</span></code></pre></div>
-<p>Prepare an empty table Si to hold the connectivity indices <span class="math inline">\(S_{i}\)</span>, one for each combination of focal patch <em>i</em> (rows), distance model <span class="math inline">\(d_{ij}\)</span> and source patch parameter (15 columns: 5 distances x 3 parameters).</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>Si <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="cn">NA</span>,<span class="fu">nrow</span>(Patches),<span class="at">ncol=</span><span class="dv">15</span>))</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>     <span class="fu">dimnames</span>(Si) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">row.names</span>(Patches),</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>     <span class="fu">paste</span>(<span class="fu">rep</span>(<span class="fu">names</span>(dModels), <span class="fu">rep</span>(<span class="dv">3</span>,<span class="dv">5</span>)), </span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>           <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;pj&quot;</span>, <span class="st">&quot;Aj&quot;</span>, <span class="st">&quot;Nj&quot;</span>),<span class="dv">5</span>), <span class="at">sep=</span><span class="st">&quot;_&quot;</span>))</span></code></pre></div>
+<p>Note that here, <span class="math inline">\(N_{j}\)</span> is treated
+as a numeric variable. While this is an over-interpretation, though
+preliminary analyses showed that this linearized the relationships
+between variables.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>pj <span class="ot">&lt;-</span> Patches<span class="sc">$</span>Dc<span class="fl">.09</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>Aj <span class="ot">&lt;-</span> Patches<span class="sc">$</span>Ha</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>Nj <span class="ot">&lt;-</span> Patches<span class="sc">$</span>pop09</span></code></pre></div>
+<p>Compile three alternative source patch parameters for each patch.
+Note that we set the area Aj to zero of the species was not recorded in
+the patch. This is done by multiplication with pj.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>Source<span class="ot">&lt;-</span> <span class="fu">data.matrix</span>(<span class="fu">data.frame</span>(<span class="at">pj=</span>pj, <span class="at">Aj=</span>pj<span class="sc">*</span>Aj, <span class="at">Nj=</span>Nj))</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>mod <span class="ot">&lt;-</span><span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="fu">rep</span>(<span class="dv">3</span>,<span class="dv">5</span>))</span></code></pre></div>
+<p>Prepare an empty table Si to hold the connectivity indices <span class="math inline">\(S_{i}\)</span>, one for each combination of focal
+patch <em>i</em> (rows), distance model <span class="math inline">\(d_{ij}\)</span> and source patch parameter (15
+columns: 5 distances x 3 parameters).</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>Si <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="cn">NA</span>,<span class="fu">nrow</span>(Patches),<span class="at">ncol=</span><span class="dv">15</span>))</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>     <span class="fu">dimnames</span>(Si) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">row.names</span>(Patches),</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>     <span class="fu">paste</span>(<span class="fu">rep</span>(<span class="fu">names</span>(dModels), <span class="fu">rep</span>(<span class="dv">3</span>,<span class="dv">5</span>)), </span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>           <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;pj&quot;</span>, <span class="st">&quot;Aj&quot;</span>, <span class="st">&quot;Nj&quot;</span>),<span class="dv">5</span>), <span class="at">sep=</span><span class="st">&quot;_&quot;</span>))</span></code></pre></div>
 <p>Define function <code>get.Si</code> with three arguments:</p>
 <ul>
 <li><code>alpha</code>: the optimized alpha value from above</li>
 <li><code>d</code>: the distance matrix</li>
 <li><code>Ap</code>: the source patch parameter to be used.</li>
 </ul>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>get.Si <span class="ot">&lt;-</span> <span class="cf">function</span>(alpha, d, Ap)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  expo<span class="ot">&lt;-</span><span class="fu">exp</span>(<span class="sc">-</span>alpha<span class="sc">*</span>d)</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">diag</span>(expo)<span class="ot">&lt;-</span><span class="dv">0</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  matr<span class="ot">&lt;-</span><span class="fu">sweep</span>(expo,<span class="dv">2</span>, Ap, <span class="st">&quot;*&quot;</span>)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  S <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(<span class="fu">sweep</span>(matr, <span class="dv">2</span>, Op<span class="sc">/</span><span class="dv">2</span>, <span class="st">&quot;*&quot;</span>), <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>Apply function <code>get.Si</code> to calculate <code>Si</code> values. <code>sb</code> indicates which column of <code>Ap</code> to use as source patch parameter.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sb <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="dv">5</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (n <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(Si))</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  Si[,n] <span class="ot">&lt;-</span> <span class="fu">get.Si</span>(<span class="at">alpha=</span>table.alpha[mod[n]], </span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">d=</span><span class="fu">as.matrix</span>(dModels[[mod[n]]]),</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">Ap=</span>Source[,sb[n]])</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>Table with results: values of Si. Column names are a combination of distance matrix and source patch parameter.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">as_tibble</span>(Si)  </span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>get.Si <span class="ot">&lt;-</span> <span class="cf">function</span>(alpha, d, Ap)</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>{</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  expo<span class="ot">&lt;-</span><span class="fu">exp</span>(<span class="sc">-</span>alpha<span class="sc">*</span>d)</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="fu">diag</span>(expo)<span class="ot">&lt;-</span><span class="dv">0</span></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>  matr<span class="ot">&lt;-</span><span class="fu">sweep</span>(expo,<span class="dv">2</span>, Ap, <span class="st">&quot;*&quot;</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>  S <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(<span class="fu">sweep</span>(matr, <span class="dv">2</span>, Op<span class="sc">/</span><span class="dv">2</span>, <span class="st">&quot;*&quot;</span>), <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>}</span></code></pre></div>
+<p>Apply function <code>get.Si</code> to calculate <code>Si</code>
+values. <code>sb</code> indicates which column of <code>Ap</code> to use
+as source patch parameter.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>sb <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="dv">5</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="cf">for</span> (n <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(Si))</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>{</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>  Si[,n] <span class="ot">&lt;-</span> <span class="fu">get.Si</span>(<span class="at">alpha=</span>table.alpha[mod[n]], </span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>                   <span class="at">d=</span><span class="fu">as.matrix</span>(dModels[[mod[n]]]),</span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>                   <span class="at">Ap=</span>Source[,sb[n]])</span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>}</span></code></pre></div>
+<p>Table with results: values of Si. Column names are a combination of
+distance matrix and source patch parameter.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>tibble<span class="sc">::</span><span class="fu">as_tibble</span>(Si)  </span></code></pre></div>
 <pre><code>## # A tibble: 106 × 15
 ##    Eu_pj Eu_Aj Eu_Nj Shecte_pj Shecte_Aj Shecte_Nj Sheint_pj Sheint_Aj Sheint_Nj
 ##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
@@ -342,9 +642,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ##  8 1.21  1.62   3.82  2.00e+ 0  6.83e+ 0  7.11e+ 0  8.76e- 1  1.60e+ 0  2.87e+ 0
 ##  9 1.60  2.99   4.41  8.52e-26  1.41e-25  2.46e-25  1.00e+ 0  2.56e+ 0  3.32e+ 0
 ## 10 1.82  2.14   4.38  8.52e-26  1.42e-25  2.46e-25  3.28e- 1  3.53e- 1  7.79e- 1
-## # … with 96 more rows, and 6 more variables: Shenu_pj &lt;dbl&gt;, Shenu_Aj &lt;dbl&gt;,
-## #   Shenu_Nj &lt;dbl&gt;, Forest_pj &lt;dbl&gt;, Forest_Aj &lt;dbl&gt;, Forest_Nj &lt;dbl&gt;</code></pre>
-<p>Note: the dataset <code>Dianthus</code> used in the Week 7 Worked Example only contains Si values for 65 patches with genetic data (i.e., the patches where <em>D. carthusianorum</em> was observed, and sampled, during the second survey 2009).</p>
+## # ℹ 96 more rows
+## # ℹ 6 more variables: Shenu_pj &lt;dbl&gt;, Shenu_Aj &lt;dbl&gt;, Shenu_Nj &lt;dbl&gt;,
+## #   Forest_pj &lt;dbl&gt;, Forest_Aj &lt;dbl&gt;, Forest_Nj &lt;dbl&gt;</code></pre>
+<p>Note: the dataset <code>Dianthus</code> used in the Week 7 Worked
+Example only contains Si values for 65 patches with genetic data (i.e.,
+the patches where <em>D. carthusianorum</em> was observed, and sampled,
+during the second survey 2009).</p>
 </div>
 
 <script type="text/javascript">

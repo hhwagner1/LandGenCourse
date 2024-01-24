@@ -1,4 +1,4 @@
-## ----message=FALSE, warning=TRUE----------------------------------------------
+## ----message=FALSE, warning=TRUE---------------------------------------------------------------------
 library(LandGenCourse)
 library(PopGenReport )   #load the package
 library(secr)            #to create a random habitat
@@ -8,13 +8,15 @@ library(raster)
 #library(tibble)
 #library(here)
 #library(ggplot2)
-#library(Sunder)   # requires mnormt
+#library(MLPE)
 
-## ----message=FALSE, warning=TRUE----------------------------------------------
+
+## ----message=FALSE, warning=TRUE---------------------------------------------------------------------
 if(!require(secr)) install.packages("secr", repos='http://cran.us.r-project.org')
 #library(secr)
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 if(!requireNamespace("popgraph", quietly = TRUE))
 {
   install.packages(c("RgoogleMaps", "geosphere", "proto", "sampling", 
@@ -23,37 +25,39 @@ if(!requireNamespace("popgraph", quietly = TRUE))
 }
 if(!requireNamespace("gstudio", quietly = TRUE)) remotes::install_github("dyerlab/gstudio")
 
-## ----setup--------------------------------------------------------------------
+
+## ----setup-------------------------------------------------------------------------------------------
 knitr::opts_knit$set(root.dir = normalizePath("..")) 
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 nx=50
 ny=50
 set.seed(555) #(to make sure we have the same example running)
 #tempmask<-secr::make.mask(nx=nx,ny=ny,spacing=1)
 tempgrid<-secr::make.grid(nx=nx,ny=ny,spacing=1)
 
-## -----------------------------------------------------------------------------
-#r <- raster(secr::randomHabitat(secr::as.mask(tempgrid), p = 0.5, A = 0.5))
-#table(values(r), exclude="")
 
-## -----------------------------------------------------------------------------
+## ----------------------------------------------------------------------------------------------------
 tmp <- secr::randomHabitat(secr::as.mask(tempgrid), p = 0.5, A = 0.5)
 r <- as.data.frame(tempgrid) 
 r$resistance <- 10
 r$resistance[as.numeric(row.names(tmp))] <- 1
-r <- rasterFromXYZ(r)
+r <- raster::rasterFromXYZ(r)
 
-## -----------------------------------------------------------------------------
-#values(r)[is.na(values(r))==T]<-10
+
+## ----------------------------------------------------------------------------------------------------
 table(values(r), exclude="")
-par(mar=c(1,1,1,1))
+
+
+## ----------------------------------------------------------------------------------------------------
 plot(r)
 
-## ---- echo=TRUE---------------------------------------------------------------
+
+## ----echo=TRUE---------------------------------------------------------------------------------------
 createpops <- function(n=10, minDist=5, landscape=r, habitat=1, plot=TRUE)
 { 
-  HabitatCells <- c(1:length(landscape))[values(landscape)==habitat]
+  HabitatCells <- c(1:length(values(landscape)))[values(landscape)==habitat]
   Selected <- sample(HabitatCells, 1)
   Remaining <- HabitatCells[!is.element(HabitatCells, Selected)]
   while (length(Selected) < n & length(Remaining) > 0)
@@ -76,11 +80,12 @@ createpops <- function(n=10, minDist=5, landscape=r, habitat=1, plot=TRUE)
   return(Selected)
 }
 
-## ---- echo=TRUE---------------------------------------------------------------
-par(mar=c(1,1,1,1))
+
+## ----echo=TRUE---------------------------------------------------------------------------------------
 createpops(n=8, minDist = 3, landscape = r, plot = TRUE)
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 para<- list()
 #Define populations (dynamics)
 para$n.pops=8
@@ -92,8 +97,8 @@ para$sex.ratio <- 0.5
 para$n.cov <- 3 
 #number of covariates (before the loci in the data.frame, do not change this!!)
 
-## -----------------------------------------------------------------------------
 
+## ----------------------------------------------------------------------------------------------------
 #reproduction
 para$n.offspring = 2
 
@@ -109,7 +114,8 @@ para$n.allels <- 10
 para$n.loci <- 20
 para$mut.rate <- 0.001
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 par(mar=c(1,1,1,1))
 para$method <- "leastcost" #rSPDdistance, commute
 para$NN <- 8  #number of neighbours for the cost distance method
@@ -147,155 +153,176 @@ para$NN <- 8  #number of neighbours for the cost distance method
   para
 
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 simpops.0 <- PopGenReport::init.popgensim(para$n.pops, para$n.ind, 
                            para$sex.ratio, para$n.loci, 
                            para$n.allels, para$locs, para$n.cov )  
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 names(simpops.0)  #the names of the subpopulations
 head(simpops.0$A[,1:6]) # a list of the first 6 individuals and columns of population A
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 gsp <- PopGenReport::pops2genind(simpops.0, locs =para$locs)
 gsp #check the genind object
 summary(gsp)  #some summary statistics
 round(mmod::pairwise_Gst_Nei(gsp),5)
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 gen.mat <- PopGenReport::pairwise.fstb(gsp)  
 round(gen.mat ,5)
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 PopGenReport::wassermann(eucl.mat = eucl.mat, cost.mats = list(cost=cost.mat), 
                            gen.mat = gen.mat, plot=F)$mantel.tab
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 simpops <- PopGenReport::run.popgensim(simpops.0, steps=3, cost.mat, 
                          n.offspring=para$n.offspring, n.ind=para$n.ind,
                          para$mig.rate, para$disp.max, para$disp.rate, 
                          para$n.allels, para$mut.rate,
                          n.cov=para$n.cov, rec="none")
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 gsp <- PopGenReport::pops2genind(simpops, para$locs, para$n.cov)
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 gen.mat <- PopGenReport::pairwise.fstb(gsp)   
 round(gen.mat ,3)
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 PopGenReport::wassermann(eucl.mat = eucl.mat, cost.mats = list(cost=cost.mat), 
              gen.mat = gen.mat, plot=F)$mantel.tab
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 res <- PopGenReport::wassermann(eucl.mat = eucl.mat, 
                                 cost.mats = list(cost=cost.mat), 
                                 gen.mat = gen.mat, plot=F)$mantel.tab
 res[res$model == "Gen ~cost | Euclidean", "p"]
 
-## -----------------------------------------------------------------------------
-getArray <- function(gen)
+
+## ----------------------------------------------------------------------------------------------------
+if(!requireNamespace("corMLPE", quietly = TRUE)) 
+  remotes::install_github("nspope/corMLPE")
+
+
+## ----------------------------------------------------------------------------------------------------
+eucl.vect <- as.vector(as.dist(eucl.mat))
+cost.vect <- as.vector(as.dist(cost.mat))
+gen.vect <- as.vector(as.dist(gen.mat))
+
+
+## ----------------------------------------------------------------------------------------------------
+Pop <- matrix(names(as.dist(eucl.mat)), nrow(eucl.mat), ncol(eucl.mat), byrow=F)
+pop1 <-Pop[lower.tri(Pop)]
+pop2 <-t(Pop)[lower.tri(Pop)]
+
+
+## ----------------------------------------------------------------------------------------------------
+Link.data <- data.frame(gen.vect, eucl.vect, cost.vect, pop1, pop2)
+
+
+## ----------------------------------------------------------------------------------------------------
+GE <- nlme::gls(gen.vect ~ eucl.vect + cost.vect, 
+                  correlation=corMLPE::corMLPE(form=~pop1+pop2), 
+                  data=Link.data, method="ML")
+G <- update(GE,  ~ eucl.vect)
+E <- update(GE,  ~ cost.vect)
+MuMIn::AICc(GE, G, E)
+
+
+## ----------------------------------------------------------------------------------------------------
+tmp <- MuMIn::AICc(GE, G, E)
+row.names(tmp)[tmp$AICc == min(tmp$AICc)]
+
+
+## ----------------------------------------------------------------------------------------------------
+getMLPE <- function(gen=gen.mat, eucl=eucl.mat, cost=cost.mat)
 {
-  tmp <- Reduce(rbind,lapply(split(data.frame(gen@tab), gen@pop), 
-                               colSums, na.rm=TRUE))
-  row.names(tmp) <- levels(gen@pop)
-  tmp <- split(data.frame(t(tmp)), gen@loc.fac)
-  Array <- array(0, dim=c(ncol(tmp[[1]]), length(tmp), nrow(tmp[[1]])))
-  for(i in 1:length(tmp))
-  {
-    Array[,i,] <- t(tmp[[i]])
-  }
-  return(Array)
+  Pop <- matrix(names(as.dist(eucl)), nrow(eucl), ncol(eucl), byrow=F)
+  Link.data <- data.frame(
+    eucl.vect = as.vector(as.dist(eucl)),
+    cost.vect = as.vector(as.dist(cost)),
+    gen.vect = as.vector(as.dist(gen)),
+    pop1 = Pop[lower.tri(Pop)],
+    pop2 = t(Pop)[lower.tri(Pop)]
+  )
+  GE <- nlme::gls(gen.vect ~ eucl.vect + cost.vect, 
+                  correlation=corMLPE::corMLPE(form=~pop1+pop2), 
+                  data=Link.data, method="ML")
+  G <- update(GE,  ~ eucl.vect)
+  E <- update(GE,  ~ cost.vect)
+  tmp <- MuMIn::AICc(GE, G, E)
+  return(row.names(tmp)[tmp$AICc == min(tmp$AICc)])
 }
 
-## -----------------------------------------------------------------------------
-Array <- getArray(gsp)
-dim(Array)
 
-## -----------------------------------------------------------------------------
-D.G <- as.matrix(dist(para$locs))
-D.E <- cost.mat
-nit <- 10^2   ## just for the example, should be much larger, e.g. 50000
-output <- Sunder::MCMCCV(Array,D.G,D.E,
-                     nit=nit,thinning=max(nit/10^3,1),
-                     theta.max=c(10,10*max(D.G),10*max(D.E),1,0.9),
-                     theta.init=c(1,2,1,1,0.01),
-                     run=c(1,1,1), ud=c(0,1,1,0,0),
-                     n.validation.set=dim(Array)[1]*dim(Array)[2]/10,
-                     print.pct=FALSE)
+## ----------------------------------------------------------------------------------------------------
+getMLPE()
 
-## -----------------------------------------------------------------------------
-names(which.max(output$mod.lik))
 
-## -----------------------------------------------------------------------------
-print(output$mod.lik)
-
-## -----------------------------------------------------------------------------
-getSunder <- function(gen=gsp, locs=para$locs, cost=cost.mat, nit=10^2)
-{
-  Array <- getArray(gen)
-  D.G <- as.matrix(dist(locs))
-  D.E <- cost
-  output <- Sunder::MCMCCV(Array,D.G,D.E,
-                     nit,thinning=max(nit/10^3,1),
-                     theta.max=c(10,10*max(D.G),10*max(D.E),1,0.9),
-                     theta.init=c(1,2,1,1,0.01),
-                     run=c(1,1,1), ud=c(0,1,1,0,0),
-                     n.validation.set=dim(Array)[1]*dim(Array)[2]/10,
-                     print.pct=FALSE)
-  return(names(which.max(output$mod.lik)))
-}
-
-## -----------------------------------------------------------------------------
-getSunder()
-
-## -----------------------------------------------------------------------------
+## ----------------------------------------------------------------------------------------------------
 timesteps <- seq(from=5 , to=45, by=20)
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 repeats <- factor(1:5)
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 para.space <- expand.grid(rep=repeats, time=timesteps)
 tibble::as_tibble(para.space)
 
-## ---- eval =F-----------------------------------------------------------------
-#  #initialize
-#  simpops.0 <- PopGenReport::init.popgensim(para$n.pops, para$n.ind,
-#                             para$sex.ratio, para$n.loci,
-#                             para$n.allels, para$locs, para$n.cov )
-#  #run for 20 generations
-#  simpops <- PopGenReport::run.popgensim(simpops.0, steps=20, cost.mat,
-#                           n.offspring=para$n.offspring, n.ind=para$n.ind,
-#                           para$mig.rate, para$disp.max, para$disp.rate,
-#                           para$n.allels, para$mut.rate,
-#                           n.cov=para$n.cov, rec="none")
 
-## ---- eval=F------------------------------------------------------------------
-#  #for (i in 1:nrow(para.space))
-#  #{
-#  #  #initialize
-#  #  simpops.0 <- PopGenReport::init.popgensim(para$n.pops, para$n.ind,
-#  #                           para$sex.ratio, para$n.loci, para$n.allels,
-#  #                           para$locs, para$n.cov )
-#  #
-#  #  #run for para.space$time[i] generations
-#  #  simpops <- PopGenReport::run.popgensim(simpops.0,
-#  #                           steps=para.space$time[i], cost.mat,
-#  #                           n.offspring=para$n.offspring, n.ind=para$n.ind,
-#  #                           para$mig.rate, para$disp.max, para$disp.rate,
-#  #                           para$n.allels, para$mut.rate,
-#  #                           n.cov=para$n.cov, rec="none")
-#  #}
+## ----eval =F-----------------------------------------------------------------------------------------
+## #initialize
+## simpops.0 <- PopGenReport::init.popgensim(para$n.pops, para$n.ind,
+##                            para$sex.ratio, para$n.loci,
+##                            para$n.allels, para$locs, para$n.cov )
+## #run for 20 generations
+## simpops <- PopGenReport::run.popgensim(simpops.0, steps=20, cost.mat,
+##                          n.offspring=para$n.offspring, n.ind=para$n.ind,
+##                          para$mig.rate, para$disp.max, para$disp.rate,
+##                          para$n.allels, para$mut.rate,
+##                          n.cov=para$n.cov, rec="none")
 
-## -----------------------------------------------------------------------------
+
+## ----eval=F------------------------------------------------------------------------------------------
+## #for (i in 1:nrow(para.space))
+## #{
+## #  #initialize
+## #  simpops.0 <- PopGenReport::init.popgensim(para$n.pops, para$n.ind,
+## #                           para$sex.ratio, para$n.loci, para$n.allels,
+## #                           para$locs, para$n.cov )
+## #
+## #  #run for para.space$time[i] generations
+## #  simpops <- PopGenReport::run.popgensim(simpops.0,
+## #                           steps=para.space$time[i], cost.mat,
+## #                           n.offspring=para$n.offspring, n.ind=para$n.ind,
+## #                           para$mig.rate, para$disp.max, para$disp.rate,
+## #                           para$n.allels, para$mut.rate,
+## #                           n.cov=para$n.cov, rec="none")
+## #}
+
+
+## ----------------------------------------------------------------------------------------------------
 if(!dir.exists(paste0(here::here(),"/output"))) 
   dir.create(paste0(here::here(),"/output"))
 if(!dir.exists(paste0(here::here(),"/output/simout")))
   dir.create(paste0(here::here(),"/output/simout"))
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 # create a timer (just to know how long it will take roughly)
 timer0 <- round(proc.time()[3],2)
 
@@ -332,12 +359,14 @@ for (i in 1:nrow(para.space))
 }
 
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 head(dir(paste0(here::here(), "/output/simout")))
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 res <- data.frame(rep=NA, time=NA, fst=NA, r.Eucl=NA, p.Eucl=NA, 
-                  r.cost=NA, p.cost=NA, Sunder=NA)
+                  r.cost=NA, p.cost=NA, MLPE=NA)
 
 #load all files in the folder
 filenames <- list.files(path= paste0(here::here(), "/output/simout"), pattern="sim")
@@ -356,26 +385,32 @@ for (i in 1:length(filenames))
   gen.mat <- PopGenReport::pairwise.fstb(sim$gi)  
   res [i,3] <- mean(gen.mat[lower.tri(gen.mat)])
   
+  #Distance matrices
+  eucl.mat <- dist(sim$para$locs)
+  cost.mats = list(cost=sim$cost.mat)
+  
   #partial Mantel tests
-  wass <- PopGenReport::wassermann(eucl.mat = dist(sim$para$locs), 
+  wass <- PopGenReport::wassermann(eucl.mat, 
                                 cost.mats = list(cost=sim$cost.mat), 
                                 gen.mat = gen.mat, plot=F)$mantel.tab
   res[i,4:5] <- wass[wass$model == "Gen ~Euclidean | cost", 2:3]
   res[i,6:7] <- wass[wass$model == "Gen ~cost | Euclidean", 2:3]
   
   #Sunder
-  res[i,8] <- getSunder(gen=sim$gi, locs=sim$para$locs, 
-                           cost=sim$cost.mat, nit=10^2) #if you have time, set nit=10^3
+  res[i,8] <- getMLPE(gen=gen.mat, eucl=eucl.mat, cost=sim$cost.mat)
 }
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 head(res)
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 ggplot2::ggplot(res, ggplot2::aes(x=time, y=fst)) + 
          ggplot2::geom_point(position = ggplot2::position_jitter(w = 0.5))
 
-## ----message=FALSE------------------------------------------------------------
+
+## ----message=FALSE-----------------------------------------------------------------------------------
 library(dplyr)
 Pulsatilla.gstudio <- gstudio::read_population(path=system.file("extdata",
                             "pulsatilla_genotypes.csv", 
@@ -384,12 +419,14 @@ Pulsatilla.gstudio <- gstudio::read_population(path=system.file("extdata",
                     phased=FALSE, sep=",", header=TRUE)
 Adults.gstudio <- Pulsatilla.gstudio %>% filter(OffID == 0)
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 #SamePatch <- outer(Adults.gstudio$Population, Adults.gstudio$Population, FUN = "==")
 #SamePatch[SamePatch == "FALSE"] <- NA
 #Dgeo.within <- SamePatch * Dgeo
 
-## -----------------------------------------------------------------------------
+
+## ----------------------------------------------------------------------------------------------------
 #R = 499
 #Cor.perm.unrestricted <- rep(NA, R)
 #for(r in 1:R)
@@ -400,6 +437,7 @@ Adults.gstudio <- Pulsatilla.gstudio %>% filter(OffID == 0)
 #approx.p.unrestricted <- mean(c(Cor.obs, Cor.perm.unrestricted) >= Cor.obs)
 #approx.p.unrestricted
 
-## ----message=FALSE, warning=TRUE, include=FALSE-------------------------------
+
+## ----message=FALSE, warning=TRUE, include=FALSE------------------------------------------------------
 LandGenCourse::detachAllPackages()
 

@@ -40,7 +40,7 @@ library(raster)
 #library(tibble)
 #library(here)
 #library(ggplot2)
-#library(Sunder)   # requires mnormt
+#library(MLPE)
 ```
 
 Package `secr` not automatically installed with 'LandGenCourse':
@@ -89,31 +89,25 @@ tempgrid<-secr::make.grid(nx=nx,ny=ny,spacing=1)
 
 In the function 'randomHabitat', the argument 'A' specifies the expected proportion of habitat, and 'p' controls the level of fragmentation, i.e., degree of spatial aggregation (sorry this is naming may be a bit confusing, but that's what it says in the help file: ?randomHabitat). The function simulates a map with these parameters and returns a data frame with only those points from 'tempgrid' that are habitat. It expects an input object of class 'mask' (an object type specific to the 'secr' package), hence we pass 'as.mask(tempgrid)'. 
 
-The function 'raster' of the 'secr' package (NOT from the 'raster' package) converts the data frame into a raster object. This object has one numeric variable that is 1 for habitat cells and missing for all other cells, we verify this with 'table'. 
-
-Note: there may be a warning about non-missing arguments, you can ignore it.
-
-```{r }
-#r <- raster(secr::randomHabitat(secr::as.mask(tempgrid), p = 0.5, A = 0.5))
-#table(values(r), exclude="")
-```
-
-NOTE: April 2021: This does not seem to work anymore. Workaround:
+Finally, we create a `raster` object (package `raster``) called `r` with the simulated habitat.
 
 ```{r}
 tmp <- secr::randomHabitat(secr::as.mask(tempgrid), p = 0.5, A = 0.5)
 r <- as.data.frame(tempgrid) 
 r$resistance <- 10
 r$resistance[as.numeric(row.names(tmp))] <- 1
-r <- rasterFromXYZ(r)
+r <- raster::rasterFromXYZ(r)
 ```
 
-Now we set all missing values (i.e., non-habitat) to 10 and verify this again with 'table'.  
+Let's verify that we have two values in the raster: 1 for habitat, 10 for non-habitat
+
+```{r}
+table(values(r), exclude="")
+```
+
+Plot the habitat map
 
 ```{r }
-#values(r)[is.na(values(r))==T]<-10
-table(values(r), exclude="")
-par(mar=c(1,1,1,1))
 plot(r)
 ```
 
@@ -121,7 +115,7 @@ We have thus created a numeric raster with a resistance surface where habitat ce
 
 ### b) Add populations to the landscape (using minimal distance) {-}
 
-We create a function that allows us to set up 'n' subpopulations in the habitat only (grid cells with value = 1). The subpopulations should be at least 'minDist' units apart, given any resistance surface 'landscape'. We also include an option to plot a raster map with the sampled locations of the populations. 
+We create a function that allows us to set up 'n' subpopulations in the habitat only (grid cells with value = 1). The sub-populations should be at least 'minDist' units apart, given any resistance surface 'landscape'. We also include an option to plot a raster map with the sampled locations of the populations. 
 
 We define a few variables within the function that help keep track. Note that we keep track of the cells by their raster cell number (which goes from 1:ncells). Here's what the code does:
 
@@ -142,7 +136,7 @@ We define a few variables within the function that help keep track. Note that we
 ```{r, echo=TRUE}
 createpops <- function(n=10, minDist=5, landscape=r, habitat=1, plot=TRUE)
 { 
-  HabitatCells <- c(1:length(landscape))[values(landscape)==habitat]
+  HabitatCells <- c(1:length(values(landscape)))[values(landscape)==habitat]
   Selected <- sample(HabitatCells, 1)
   Remaining <- HabitatCells[!is.element(HabitatCells, Selected)]
   while (length(Selected) < n & length(Remaining) > 0)
@@ -169,7 +163,6 @@ createpops <- function(n=10, minDist=5, landscape=r, habitat=1, plot=TRUE)
 Test the function above:
 
 ```{r, echo=TRUE}
-par(mar=c(1,1,1,1))
 createpops(n=8, minDist = 3, landscape = r, plot = TRUE)
 ```
 
@@ -201,7 +194,6 @@ para$n.cov <- 3
 Define population dynamics:
 
 ```{r}
-
 #reproduction
 para$n.offspring = 2
 
@@ -361,91 +353,90 @@ res <- PopGenReport::wassermann(eucl.mat = eucl.mat,
 res[res$model == "Gen ~cost | Euclidean", "p"]
 ```
 
-### c) Optional: Analyze your simulated populations using 'Sunder' {-}
+### c) Optional: Analyze your simulated populations with MLPE {-}
 
-See: http://www.nbi.dk/~botta/Sunder.html#overview
+We will cover this method, and model selection, in more detail in Week 12. 
 
-Sunder is an alternative (faster) implementation of BEDASSLE, which uses molecular covariance analysis as an alternative to partial Mantel test. All we want from this method for now is the best-model (note that there is no alternative 'none'):
+Install package `corMLPE` if needed:
+
+```{r}
+if(!requireNamespace("corMLPE", quietly = TRUE)) 
+  remotes::install_github("nspope/corMLPE")
+```
+
+To run the model, we need to extract the vector of pairwise distances from the three distance matrices:
+
+```{r}
+eucl.vect <- as.vector(as.dist(eucl.mat))
+cost.vect <- as.vector(as.dist(cost.mat))
+gen.vect <- as.vector(as.dist(gen.mat))
+```
+
+Define the two vectors of population effects: 
+
+```{r}
+Pop <- matrix(names(as.dist(eucl.mat)), nrow(eucl.mat), ncol(eucl.mat), byrow=F)
+pop1 <-Pop[lower.tri(Pop)]
+pop2 <-t(Pop)[lower.tri(Pop)]
+```
+
+Assemble the link-based dataset:
+
+```{r}
+Link.data <- data.frame(gen.vect, eucl.vect, cost.vect, pop1, pop2)
+```
+
+Fit and compare three models:
 
 - **G**: Geographic distance model (IBD)
-- **G**: Ecological distance model (IBR)
-- **G+E**: Both
+- **E**: Ecological distance model (IBR)
+- **GE**: Both
 
-To perform the Sunder analysis, we need to reformat the allele frequencies into a three-dimensional array (site x locus x allele). Here we define a function that takes as argument a 'genind' object and reformats it as needed.
+We will compare the three models by `AICc`, the small-sample version of AIC (see Week 12). The lower the value of AICc, the better is the model fit. The method includes a correction for the number of predictors in the model, so that we can make a fair comparison between GE (two predictors) to G and E (one predictor each). Note that because we are comparing models with the same random effects (population effects `pop1` and `pop2`, but with different fixed effects, we fit the models with maximum likelihood, `ML` (see Week 6). 
 
 ```{r}
-getArray <- function(gen)
+GE <- nlme::gls(gen.vect ~ eucl.vect + cost.vect, 
+                  correlation=corMLPE::corMLPE(form=~pop1+pop2), 
+                  data=Link.data, method="ML")
+G <- update(GE,  ~ eucl.vect)
+E <- update(GE,  ~ cost.vect)
+MuMIn::AICc(GE, G, E)
+```
+
+Which is the best model? 
+
+```{r}
+tmp <- MuMIn::AICc(GE, G, E)
+row.names(tmp)[tmp$AICc == min(tmp$AICc)]
+```
+
+Let's combine all of this into our own function to extract the vectors, define the population effects, run MLPE, and extract the name of the best fitting model
+
+```{r}
+getMLPE <- function(gen=gen.mat, eucl=eucl.mat, cost=cost.mat)
 {
-  tmp <- Reduce(rbind,lapply(split(data.frame(gen@tab), gen@pop), 
-                               colSums, na.rm=TRUE))
-  row.names(tmp) <- levels(gen@pop)
-  tmp <- split(data.frame(t(tmp)), gen@loc.fac)
-  Array <- array(0, dim=c(ncol(tmp[[1]]), length(tmp), nrow(tmp[[1]])))
-  for(i in 1:length(tmp))
-  {
-    Array[,i,] <- t(tmp[[i]])
-  }
-  return(Array)
-}
-```
-
-Apply the function to the genind object 'gsp' with the simulated genotypes:
-
-```{r}
-Array <- getArray(gsp)
-dim(Array)
-```
-
-Run the analysis (parameter settings: http://www.nbi.dk/~botta/Sunder.html#overview)
-
-```{r}
-D.G <- as.matrix(dist(para$locs))
-D.E <- cost.mat
-nit <- 10^2   ## just for the example, should be much larger, e.g. 50000
-output <- Sunder::MCMCCV(Array,D.G,D.E,
-                     nit=nit,thinning=max(nit/10^3,1),
-                     theta.max=c(10,10*max(D.G),10*max(D.E),1,0.9),
-                     theta.init=c(1,2,1,1,0.01),
-                     run=c(1,1,1), ud=c(0,1,1,0,0),
-                     n.validation.set=dim(Array)[1]*dim(Array)[2]/10,
-                     print.pct=FALSE)
-```
-
-Quick answer: the winner (best supporte model) is ...
-
-```{r}
-names(which.max(output$mod.lik))
-```
-
-What did we just do? We extracted the log-likelihood values for the three models 'G', 'E' and 'G+E', determined which value was the highest, and extracted the name of the winning model. Let's verify this by printing the log-likelihood values. The best model has the highest (= least negative) log-likelihood.
-
-```{r}
-print(output$mod.lik)
-```
-
-Let's combine all of this into our own function to convert the genind object, calculate Sunder and extract the name of the best fitting model
-
-```{r}
-getSunder <- function(gen=gsp, locs=para$locs, cost=cost.mat, nit=10^2)
-{
-  Array <- getArray(gen)
-  D.G <- as.matrix(dist(locs))
-  D.E <- cost
-  output <- Sunder::MCMCCV(Array,D.G,D.E,
-                     nit,thinning=max(nit/10^3,1),
-                     theta.max=c(10,10*max(D.G),10*max(D.E),1,0.9),
-                     theta.init=c(1,2,1,1,0.01),
-                     run=c(1,1,1), ud=c(0,1,1,0,0),
-                     n.validation.set=dim(Array)[1]*dim(Array)[2]/10,
-                     print.pct=FALSE)
-  return(names(which.max(output$mod.lik)))
+  Pop <- matrix(names(as.dist(eucl)), nrow(eucl), ncol(eucl), byrow=F)
+  Link.data <- data.frame(
+    eucl.vect = as.vector(as.dist(eucl)),
+    cost.vect = as.vector(as.dist(cost)),
+    gen.vect = as.vector(as.dist(gen)),
+    pop1 = Pop[lower.tri(Pop)],
+    pop2 = t(Pop)[lower.tri(Pop)]
+  )
+  GE <- nlme::gls(gen.vect ~ eucl.vect + cost.vect, 
+                  correlation=corMLPE::corMLPE(form=~pop1+pop2), 
+                  data=Link.data, method="ML")
+  G <- update(GE,  ~ eucl.vect)
+  E <- update(GE,  ~ cost.vect)
+  tmp <- MuMIn::AICc(GE, G, E)
+  return(row.names(tmp)[tmp$AICc == min(tmp$AICc)])
 }
 ```
 
 Let's test it:
 
 ```{r}
-getSunder()
+getMLPE()
 ```
 
 ## 5. Run simulator using a previously defined parameter set {-}
@@ -656,7 +647,7 @@ Here we do the following:
 
 ```{r}
 res <- data.frame(rep=NA, time=NA, fst=NA, r.Eucl=NA, p.Eucl=NA, 
-                  r.cost=NA, p.cost=NA, Sunder=NA)
+                  r.cost=NA, p.cost=NA, MLPE=NA)
 
 #load all files in the folder
 filenames <- list.files(path= paste0(here::here(), "/output/simout"), pattern="sim")
@@ -675,16 +666,19 @@ for (i in 1:length(filenames))
   gen.mat <- PopGenReport::pairwise.fstb(sim$gi)  
   res [i,3] <- mean(gen.mat[lower.tri(gen.mat)])
   
+  #Distance matrices
+  eucl.mat <- dist(sim$para$locs)
+  cost.mats = list(cost=sim$cost.mat)
+  
   #partial Mantel tests
-  wass <- PopGenReport::wassermann(eucl.mat = dist(sim$para$locs), 
+  wass <- PopGenReport::wassermann(eucl.mat, 
                                 cost.mats = list(cost=sim$cost.mat), 
                                 gen.mat = gen.mat, plot=F)$mantel.tab
   res[i,4:5] <- wass[wass$model == "Gen ~Euclidean | cost", 2:3]
   res[i,6:7] <- wass[wass$model == "Gen ~cost | Euclidean", 2:3]
   
   #Sunder
-  res[i,8] <- getSunder(gen=sim$gi, locs=sim$para$locs, 
-                           cost=sim$cost.mat, nit=10^2) #if you have time, set nit=10^3
+  res[i,8] <- getMLPE(gen=gen.mat, eucl=eucl.mat, cost=sim$cost.mat)
 }
 ```
 

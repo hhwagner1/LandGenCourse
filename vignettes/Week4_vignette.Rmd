@@ -33,9 +33,9 @@ Lamy et al. (2012) sampled the freshwater snail *Drepanotrema depressissimum* in
 
 A key characteristic of this system is the presence of a dry and a rainy season. In the dry season, many ponds can dry out, possibly causing extinction of the local snail populations. During the rainy season, ponds refill and can even overflow, thereby becoming connected through the hydrological network. During this rainy season, dispersal between ponds may occur. 
 
-- **dd.ecogen**: The dataset 'dd.ecogen' with genetic data for 1270 snails from 42 populations is included in package 'LandGenCourse'. To load it, type: data(dd.ecogen). 
+- **dd.genind**: The dataset 'dd.genind' with genetic data for 1270 snails from 42 populations is included in package 'LandGenCourse'. To load it, type: data(dd.genind). 
 
-- **dd.site**: Population-level data from Tables 2 - 5 of Lamy et al. (2012) are available in dataset 'dd.site' (with 25 variables) in package 'LandGenCourse'. To load it, type: data(dd.site). 
+- **dd.site**: Population-level data from Tables 2 - 5 of Lamy et al. (2012) are available in dataset `dd.site` (with 25 variables) in package `LandGenCourse`. To load it, type: `data(dd.site)`. 
 
 #### Reference {-}
 
@@ -43,46 +43,49 @@ Lamy, T., Pointier, J. P., Jarne, P. and David, P. (2012), Testing metapopulatio
 
 ### c) Required R libraries {-}
 
-Install some packages needed for this worked example.
-
-```{r}
-if(!requireNamespace("EcoGenetics", quietly = TRUE)) 
-  remotes::install_github("leandroroser/EcoGenetics-devel")
-```
 
 ```{r message=FALSE, warning=TRUE}
 library(LandGenCourse)
-library(EcoGenetics)
 library(methods)
-library(ggplot2)
+library(dplyr)
 #require(tibble)
 #require(poppr)
 #require(ade4)
 #require(pwr)
 #require(effsize)
-#require(sp)
-#require(ggmap)
-#require(car)  
+require(sf)
+#require(car) 
+library(ggplot2)
+library(tmap)
 ```
+
 
 ### d) Import data {-}
 
-Let's import the genetic data (spatial and temporal data sets combined, 42 combinations of site and year). Use '?dd.ecogen' to check helpfile with data set desription.
+Let's import the genetic data (spatial and temporal data sets combined, 42 combinations of site and year). 
 
-The 'ecogen' object 'dd.ecogen' contains individual-level data in the following slots:
+The 'genind' object 'dd.genind' contains individual-level data in the following slots:
 
-- **XY**: Spatial coordinates (lat-long format)
-- **G**: Microsatellite loci (columns = loci, rows = individuals)
-- **A**: Table of allele frequencies (columns = alleles, rows = individuals)
-- **S**: Structure variables (SiteID, SITE, YEAR, Cluster)
+- **tab**: a matrix of allele frequencies (one column per allele)
+- **loc.fac**: a factor that identifies the locus for each allele
+- **loc.n.all**: a vector with the number of alleles per locus
+- **all.names**: a list with allele names
+- **ploidy**: a vector with the ploidy of each individual (row)
+- **type**: marker type (here: "codom" as microsatellites are codominant)
+- **other**: a list with additional variables, here: spatial coordinates
+  - **xy**: a data frame with spatial coordinates (lat-long format)
+- **call**: call that created the object. Here it is empty.
+- **pop*: a factor with the population of each individual. Here it is empty as the information is in @strata.
+- **strata**: a data frame with structure variables, here: SiteID, SITE, YEAR, Cluster
+- **hierarchy**: a hierarchy. Here it is empty as the information is in @strata.
+
 
 ```{r}
-data(dd.ecogen, package = "LandGenCourse")
-dd.ecogen
-?dd.ecogen   
+data(dd.genind, package = "LandGenCourse")
+dd.genind
 ```
 
-We also import site-level data from Tables 2 - 5 in Lamy et al. (2012). Use '?dd.site' to check helpfile with data set desription of the variables.
+We also import site-level data from Tables 2 - 5 in Lamy et al. (2012). This is a (spatial) `sf` object. Use '?dd.site' to check the helpfile with the data set description of the variables (atribute data).
 
 ```{r}
 data(dd.site, package = "LandGenCourse")
@@ -113,13 +116,12 @@ In the following, we'll perform three types of analyses:
 
 How similar are populations from nearby habitat patches compared to populations across the island? To answer this question, we perform a hiearchical AMOVA (analysis of molecular variance) with individuals from 12 populations that form 4 clusters with 3 populations each. 
 
-### a) Creating a 'genind' object with the hierarchical data set {-}
+### a) Subsetting the 'genind' object {-}
 
-First, we need to extract the samples that belong to the hierarchical data set. There are four clusters: "North", "East", "Center" and "South". We are looking for the observations where the variable "Cluster" has one of these four values, all other observations will have a missing value for "Cluster". We can use '!is.na' to extract all rows with non-missing values. Then we convert to a 'genind' object.
+First, we need to extract the samples that belong to the hierarchical data set. There are four clusters: "North", "East", "Center" and "South". We are looking for the observations where the variable "Cluster" has one of these four values, all other observations will have a missing value for "Cluster". We can use '!is.na' to identify the rows with non-missing values. Because a genind object is at its core a data frame `@tab` with rows (individuals) and columns(alleles), we can subset rows or columns. Here we subset rows.
 
 ```{r}
-dd.ecogen.Cluster <- dd.ecogen[!is.na(dd.ecogen[["S"]]$Cluster),]
-dd.genind.Cluster <- EcoGenetics::ecogen2genind(dd.ecogen.Cluster)
+dd.genind.Cluster <- dd.genind[!is.na(dd.genind@strata$Cluster),]
 ```
 
 ### b) Hierarchical AMOVA {-} 
@@ -140,6 +142,8 @@ amova.result
 
 Then we test whether each variance component is statistically significant (i.e., significantly larger than zero).
 
+Note: if this takes very long, you can set `nrepet = 199` for this exercise (not for your research).
+
 ```{r}
 amova.test <- ade4::randtest(amova.result, nrepet = 999)
 amova.test
@@ -158,19 +162,23 @@ What factors explain site-specific Fst? Let's consider the key micro-evolutionar
 - **Genetic drift**: the smaller the population, the higher the rate of drift, hence we expect higher differention for small populations. Predictor: long-term population size 'NLT'.
 - **Gene flow**: gene flow homogenizes allele frequencies, hence we expect less differentiation for well connected patches. Predictors: connectivity 'C', density of favorable habitat 'D' (within 2 km radius).
 
-First, we create a new SpatialPointsDataFrame with the subset of data for the spatial analysis (25 ponds, one year each).
+First, we create a new `sf` object with the subset of data for the spatial analysis (25 ponds, one year each).
 
 ```{r}
-dd.spatial <- dd.site[dd.site@data$Spatial==TRUE, ]
+dd.spatial <- dd.site[dd.site$Spatial==TRUE,]
 ```
 
 ### a) Correlation matrix {-}
 
-Let's start with a correlation matrix.
+Let's start with a correlation matrix. 
+
+- First, we need to drop the geometry from the `sf` object with `st_drop_geometry`. This will return a data frame `dd.df` with the attribute data. 
+- We select the variables that we want to correlate with the function `cor`.
+- The attribute `use` of the function `cor` defines how to handle missing values. `use="pairwise.complete"` means that for each pair of variables, those individuals with no missing values for these variable will be used. See help file `?cor` for alternatives.
 
 ```{r}
-cor(dd.spatial@data[ , c("FST.GESTE", "NLT", "C", "D")], 
-    use="pairwise.complete")
+dd.df <- st_drop_geometry(dd.spatial)
+cor(dd.df[ , c("FST.GESTE", "NLT", "C", "D")], use="pairwise.complete")
 ```
 
 **Questions**: 
@@ -190,15 +198,15 @@ Let's plot the response variable FST.GESTE against each of the two predictors NL
 - We add backfilled labels (`geom_label`), define their size (`size`), and move them up a little along the y-axis (`nudge_y`)
 
 ```{r fig.height=4, fig.width=8}
-NLT.plot <- ggplot(dd.spatial@data, aes(x=NLT, y=FST.GESTE, label=SITE)) + 
+NLT.plot <- ggplot(dd.df, aes(x=NLT, y=FST.GESTE)) + 
   geom_point() + 
-  geom_smooth(method = lm, se = TRUE) +
-  geom_text(size=2, nudge_x=0, nudge_y=0.01, check_overlap=TRUE)
+  geom_smooth(formula = 'y ~ x', method = lm, se = TRUE) +
+  geom_text(aes(x=NLT, y=FST.GESTE, label=SITE), size=2, nudge_x=0, nudge_y=0.01, check_overlap=TRUE)
 
-C.plot <- ggplot(dd.spatial@data, aes(x=C, y=FST.GESTE, label=SITE)) + 
+C.plot <- ggplot(dd.df, aes(x=C, y=FST.GESTE)) + 
   geom_point() +
-  geom_smooth(method = lm, se = TRUE) +
-  geom_text(size=2.5, nudge_x=0, nudge_y=0.01, check_overlap=TRUE)
+  geom_smooth(formula = 'y ~ x', method = lm, se = TRUE) +
+  geom_text(aes(x=C, y=FST.GESTE, label=SITE), size=2.5, nudge_x=0, nudge_y=0.01, check_overlap=TRUE)
 
 cowplot::plot_grid(NLT.plot, C.plot)
 ```
@@ -219,7 +227,7 @@ Here's a link to a great resource about the interpretation of these plots genera
 
 ```{r fig.height=7, fig.width=8}
 par(mfrow=c(2,2))
-plot(mod.diff, labels.id = dd.spatial@data$SITE)
+plot(mod.diff, labels.id = dd.spatial$SITE)
 par(mfrow=c(1,1))
 ```
 
@@ -231,40 +239,49 @@ car::vif(mod.diff)
 
 ### d) Which populations don't fit the general pattern? {-}
 
-Let's plot the residuals in space. The function 'bubble' from the package 'sp' evaluates the projection information of the SpatialPointsDataFrame 'dd.spatial'. 
+Let's plot the residuals in space. The function `tm_bubbles` from the package 'sf' evaluates the projection information of the `sf` object 'dd.spatial'. First, we need to create some new variables:
+
+- Add the residuals as variable to dd.spatial. 
+- Add the absolute valuel of the residuals as another variable. 
+- Create an index variable `a` that identifies potential outliers (here: absolute value > 1.5)
 
 ```{r}
-dd.spatial@data$Residuals <- mod.diff$residuals
-sp::bubble(dd.spatial, zcol = "Residuals", col = c("red", "blue"))
+dd.spatial$Residuals <- mod.diff$residuals
+dd.spatial$Absolute <- abs(mod.diff$residuals)
+
+a <- which(dd.spatial$Absolute > 1.5)
 ```
 
-Or on a map from the internet, using 'qmplot' from the 'ggmap' package. It expects lat-lon coordinates that are stored in a data frame, not a SpatialPointsDataFrame. If we convert 'dd.spatial' with the function  'as.data.frame', R will return a data frame with the site variables and with the coordinates appended as additional columns. The code below does the following (see Week 4 video, part 2):
+Now we can create a bubble plot with the size of the bubble proportional to the absolute value of the residual, and the color according to the sign (positive or negative). For the latter, we use the argument `breaks`. Here, any value between -Inf and 0 will be plotted in red, and any value between 0 and Inf will be plotted in blue. 
 
-- Creates an index `a` that lists identifies the two potential outliers by their SITE names (logical),
-- Creates a vectors `a2` that contains the row numbers of the potential outliers, 
-- Grabs a grayscale map from the internet, plots all ponds with size and color according to their residuals, and stores the resulting map in the object `myMap`.
-- Plots the map and adds labels for the two potential outliers.The argument `size` affects font size and `label.padding` determines the size of the textbox for the label. 
+In addition, we label the two largest outliers (with absolute values >1.5) and position the labels with the argument `just`. Here, `just=c(0.7,2.5)` means that the labels are placed at 0.7 along the horizontal axes and at 2.5 along the vertical axis, compared to the point location. This requires some playing around with values.
 
-```{r fig.height=4.5, fig.width=7, message=FALSE}
-a <- is.element(dd.spatial@data$SITE, c("DESB", "PTC"))
-a2 <- c(1:nrow(dd.spatial@data))[a]
-myMap <- ggmap::qmplot(Longitude, Latitude,  data = as.data.frame(dd.spatial),
-              source = "stamen", maptype = "toner-lite", force=TRUE,  
-              col = sign(Residuals), size = abs(Residuals))
-myMap + ggplot2::geom_label(data = as.data.frame(dd.spatial[a2,]),
-                   mapping = ggplot2::aes(Longitude, Latitude, label = SITE),
-                   size = 4, label.padding = unit(0.2, "lines"), 
-                   col = "black", vjust = 0, nudge_x = 0, nudge_y = -0.015)
+```{r}
+tmap_mode("plot")
+
+Map1 <- tm_shape(dd.spatial) + tm_bubbles(size="Absolute",col="Residuals", 
+                                  breaks=c(-Inf, 0, Inf), palette=c("red", "blue")) +
+  tm_shape(dd.spatial[a,]) + tm_text(text="SITE", size=0.8, just=c(0.7,2.5))
+
+Map1
 ```
 
-Exports the last plot as a 'png' (Portable Network Graphics) file, specifying canvas size and resolution. To run the code, uncomment by removing '#' at the beginning of each line.
+Export this map as a pdf file. (Un-comment the lines below to run the code below, i.e., remove the hashtag symsbols '#').
 
 ```{r message=FALSE}
-#require(here)
-#if(!dir.exists(paste0(here(),"/output"))) dir.create(paste0(here(),"/output"))
-#ggplot2::ggsave(paste0(here(),"/output/ResidualMap.png"), 
-#               width = 7, height = 5.5, units = "in",  dpi = 300)
+#if(!dir.exists(here::here("output"))) dir.create(here::here("output"))
+#tmap_save(Map1, file=here::here("output/ResidualMap.pdf"), width = 7, height = 5.5, units = "in",  dpi = 300)
 ```
+
+By changing the mode to view, we can create convert the map into an interactive plot with a background map from the internet (see Week 2).
+
+Un-comment the lines below to run the code.
+
+```{r}
+#tmap_mode("view")
+#Map1
+```
+
 
 What might explain the large residuals for the two sites 'PTC' and 'DESB'?
 
@@ -273,21 +290,21 @@ What might explain the large residuals for the two sites 'PTC' and 'DESB'?
 
 ### e) Regression model without outliers {-}
 
-We can use the same index 'a' to exclude the potential outliers from the regression model:
+We can use the same index `a` to exclude the potential outliers from the regression model:
 
 ```{r}
 mod.diff.minus2 <- lm(scale(FST.GESTE) ~ scale(NLT) + scale(C), 
-               data=dd.spatial[-a2,])
+               data=dd.spatial[-a,])
 summary(mod.diff.minus2)
 ```
 
 - Did omitting the two sites improve model fit?
 - Did it change the nature of the results?
-- Does this affect the biologial interpretation?
+- Does this affect the biological interpretation?
 
 ```{r fig.height=7, fig.width=8}
 par(mfrow=c(2,2))
-plot(mod.diff.minus2, labels.id = dd.spatial@data$SITE[-a2])
+plot(mod.diff.minus2, labels.id = dd.spatial$SITE[-a])
 par(mfrow=c(1,1))
 ```
 
@@ -301,7 +318,7 @@ par(mfrow=c(1,1))
 ### a) Correlation matrix {-}
 
 ```{r}
-cor(dd.spatial@data[, c("RA", "He", "Size", "NLT", "C", "D")],
+cor(dd.df[, c("RA", "He", "Size", "NLT", "C", "D")],
     use="pairwise.complete")
 ```
 
@@ -324,7 +341,7 @@ summary(mod.RA)
 
 ```{r fig.height=7, fig.width=8}
 par(mfrow=c(2,2))
-plot(mod.RA, labels.id = dd.spatial@data$SITE)
+plot(mod.RA, labels.id = dd.spatial$SITE)
 par(mfrow=c(1,1))
 ```
 
@@ -337,7 +354,7 @@ summary(mod.He)
 
 ```{r fig.height=7, fig.width=8}
 par(mfrow=c(2,2))
-plot(mod.He, labels.id = dd.spatial@data$SITE)
+plot(mod.He, labels.id = dd.spatial$SITE)
 par(mfrow=c(1,1))
 ```
 
@@ -362,23 +379,23 @@ Several patches fell dry between observation years, which is assumed to signify 
 ### a) Effect of patch extinction event (temporal data set) {-}
 
 ```{r}
-dd.temporal <- dd.site[dd.site@data$MultiYear==TRUE,]
-cor(dd.temporal@data[, c("Fst.temp", "APE", "NLT", "C")], 
-    use="pairwise.complete")
+dd.temporal <- dd.site[dd.site$MultiYear==TRUE,]
+dd.temporal.df <- sf::st_drop_geometry(dd.temporal)
+cor(dd.temporal.df[, c("Fst.temp", "APE", "NLT", "C")], use="pairwise.complete")
 ```
 
 We can compare a number of competing models using the Akaike Information Criterion (AIC). Models with lower AIC are better (see Week 12).
 
 ```{r}
-mod.Fst.temp <- lm(scale(Fst.temp) ~ scale(APE), data=dd.temporal)
+mod.Fst.temp <- lm(scale(Fst.temp) ~ scale(APE), data=dd.temporal.df)
 summary(mod.Fst.temp)
 
 mod.Fst.temp.C <- lm(scale(Fst.temp) ~ scale(APE) + scale(C), 
-                     data=dd.temporal)
+                     data=dd.temporal.df)
 mod.Fst.temp.NLT <- lm(scale(Fst.temp) ~ scale(APE) + scale(NLT), 
-                       data=dd.temporal)
+                       data=dd.temporal.df)
 mod.Fst.temp.both <- lm(scale(Fst.temp) ~ scale(APE) + scale(NLT) + scale(C),  
-            data=dd.temporal)
+            data=dd.temporal.df)
 AIC(mod.Fst.temp, mod.Fst.temp.C, mod.Fst.temp.NLT, mod.Fst.temp.both)
 ```
 
@@ -400,7 +417,7 @@ The effect is not statistically significant. Does that mean that we found no eff
 We can let R calculate effect size for us:
 
 ```{r}
-effsize::cohen.d(Fst.temp ~ factor(APE), data=dd.temporal)
+effsize::cohen.d(Fst.temp ~ factor(APE), data=dd.temporal.df)
 ```
 
 So, we actually found a 'medium' effect (more than 0.5 standard deviations difference between group means). Maybe sample size was too small to have sufficient power?
@@ -408,7 +425,7 @@ So, we actually found a 'medium' effect (more than 0.5 standard deviations diffe
 Let's check sample size:
 
 ```{r}
-table(dd.temporal$APE[!is.na(dd.temporal$Fst.temp)])
+table(dd.temporal$APE[!is.na(dd.temporal.df$Fst.temp)])
 ```
 
 Ah, that explains a lot. There were only 5 sites with apparent extinction, and 7 without.
@@ -442,19 +459,17 @@ Note however that using additional evidence (e.g., population assignment tests),
 
 **Hints:**
 
-a) **Load packages**: You may want to load the packages `dplyr` and `ggplot2`. Alternatively, you can use `::` to call functions from packages.
-b) **Import your datasets from Weeks 2 & 3 R Exercises**. Here's an example for your code, adapt it as needed to import the R objects "Pulsatilla.longlat.rds" (SpatialPointsDataFrame, Week 2) and "H.pop.rds" (Week 3) that you saved previously:
-`Pulsatilla.longlat <- readRDS(paste0(here::here(), "/output/Pulsatilla.longlat.rds"))` 
-c) **Plot sites on map from internet**: To get started, you may use this code (note the names of the variables with the spatial coordinates): 
-`myMap <- ggmap::qmplot(x=meanX, y=meanY,  data = as.data.frame(Pulsatilla.longlat), source = "stamen", maptype = "toner-lite")`
-Next, modify code from section 3.d to add labels for all sites and plot the map.
-d) **Combine data**: Use the function `dplyr::left_join` to add the variables from the dataset `H.pop` to the data frame in the `@data` slot of `Pulsatilla.longlat`. Notes: 
+a) **Load packages**: You may want to load the packages `dplyr` and `tmap`. Alternatively, you can use `::` to call functions from packages.
+b) **Import your datasets from Weeks 2 & 3 R Exercises**. Here's an example for your code, adapt it as needed to import the R objects "Pulsatilla.longlat.rds" (`sf` object, Week 2) and "H.pop.rds" (Week 3) that you saved previously:
+`Pulsatilla.longlat <- readRDS(here::here("output/Pulsatilla.longlat.rds"))` 
+c) **Plot sites on map from internet**: adapt the code from section 3.d to plot the sampling locations on a background map from the internet. Next, modify code from section 3.d to add labels for all sites.
+d) **Combine data**: Use the function `dplyr::left_join` to add the variables from the dataset `H.pop` to `Pulsatilla.longlat`. Notes: 
 
     - This is important, as the order of populations may not be the same in the two datasets. 
     - Remember to check the structure of the datasets (variable names and types) first so that you know which are the ID variables that you can use to match sites. 
     - If the two ID variables are not of the same type (e.g., one if a `factor`, the other is `character`), it is best to change the format of one (e.g., with `as.character`) before doing the left-join.
 
-e) **Scatterplot with regression line**: Create a scatterplot of Hexp (y axis) plotted against nIndiv (x axis). Add a regression line and, if possible, label points. You may modify code from section 3.b  using the `ggplot2` package, or use base R functions.  
+e) **Scatterplot with regression line**: Create a scatterplot of `Hexp` (y axis) plotted against `nIndiv` (x axis). Add a regression line and, if possible, label points. You may modify code from section 3.b or use base R functions.  
 f) **Regression analysis**: Adapt code from section 3.c to perform a regression of `Hexp` (response variable) on the predictor `nIndiv`. Create residual plots and inspect them. What is the main issue here? 
 
 **Questions:** There is one influential point in the regression analysis:
