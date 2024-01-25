@@ -1,0 +1,63 @@
+---
+title: "Test file"
+output: html_notebook
+---
+
+Some code from Week 7 Worked Example for profiling.
+
+```{r message=FALSE, warning=TRUE}
+library(LandGenCourse)
+library(nlme)
+library(dplyr)
+library(spatialreg)
+library(ggplot2)
+library(tmap)
+```
+
+### a) Import data
+
+```{r}
+data(Dianthus)
+```
+
+```{r fig.height=5, fig.width=7}
+Dianthus.df <- data.frame(A=Dianthus$A, IBD=Dianthus$Eu_pj, 
+                          IBR=Dianthus$Sheint_pj,
+                          PatchSize=log(Dianthus$Ha),
+                          System=Dianthus$System,
+                          Longitude=Dianthus$Longitude,
+                          Latitude=Dianthus$Latitude,
+                          st_coordinates(Dianthus))
+
+# Define 'System' for ungrazed patches
+Dianthus.df$System=as.character(Dianthus$System)
+Dianthus.df$System[is.na(Dianthus.df$System)] <- "Ungrazed"
+Dianthus.df$System <- factor(Dianthus.df$System, 
+                             levels=c("Ungrazed", "East", "South", "West"))
+
+# Remove patches with missing values for A
+Dianthus.df <- Dianthus.df[!is.na(Dianthus.df$A),]
+dim(Dianthus.df)
+
+```
+
+
+### b) Fit regression models
+
+Here we fit three multiple regression models to explain variation in allelic richness:
+
+- **mod.lm.IBD**: IBD model of connectivity 'Eu_pj'.
+- **mod.lm.IBR**: IBR model shepherding connectivity 'Sheint_pj'.
+- **mod.lm.PatchSize**: log patch size and IBR model.
+
+```{r}
+mod.lm.IBD <- lm(A ~ IBD, data = Dianthus.df)
+summary(mod.lm.IBD)
+```
+
+This model does not fit the data at all!
+
+```{r}
+mod.lm.IBR <- lm(A ~ IBR, data = Dianthus.df)
+summary(mod.lm.IBR)
+```
