@@ -161,13 +161,13 @@ profvis::profvis({
 
 
 ## ----notebook----------------------------------------------------------------------------------------
-file.copy(from=system.file("doc", "Week2_vignette.Rmd", package = "LandGenCourse"),
-                     to=file.path(here::here(), "downloads", "Week2_vignette.Rmd"))
+file.copy(from=system.file("doc", "Week5_vignette.Rmd", package = "LandGenCourse"),
+                     to=file.path(here::here(), "downloads", "Week5_vignette.Rmd"))
 
 
-## ----purl--------------------------------------------------------------------------------------------
-infile = here::here("downloads/Week2_vignette.Rmd")
-outfile = here::here("downloads/Week2_vignette.R")
+## ----purl, message=FALSE, include=FALSE--------------------------------------------------------------
+infile = here::here("downloads/Week5_vignette.Rmd")
+outfile = here::here("downloads/Week5_vignette.R")
 knitr::purl(infile, outfile)
 
 

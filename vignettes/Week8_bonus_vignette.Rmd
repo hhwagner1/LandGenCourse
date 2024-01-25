@@ -410,19 +410,19 @@ The results may depend on the speed of your computer. Check the sample interval 
 
 Unfortunately, we can't profile an entire R Notebook (as far as I know). However, we can extract the R code as a script file, then profile the script file. 
 
-Copy an R Notebook file (`Week2_vignette.Rmd`) to the downloads folder. This is just so that we have an example of an `.Rmd` file to extract the code from.
+Copy an R Notebook file (`Week5_vignette.Rmd`) to the downloads folder. This is just so that we have an example of an `.Rmd` file to extract the code from.
 
 
 ```{r notebook}
-file.copy(from=system.file("doc", "Week2_vignette.Rmd", package = "LandGenCourse"),
-                     to=file.path(here::here(), "downloads", "Week2_vignette.Rmd"))
+file.copy(from=system.file("doc", "Week5_vignette.Rmd", package = "LandGenCourse"),
+                     to=file.path(here::here(), "downloads", "Week5_vignette.Rmd"))
 ```
 
-Extract the R code from the R Notebook and save it in a script file `Week2_vignette.R` in the downloads folder. You may adapt the infile and outfile to extract the code from any R Notebook saved in your project. 
+Extract the R code from the R Notebook and save it in a script file `Week5_vignette.R` in the downloads folder. You may adapt the infile and outfile to extract the code from any R Notebook saved in your project. 
 
-```{r purl}
-infile = here::here("downloads/Week2_vignette.Rmd")
-outfile = here::here("downloads/Week2_vignette.R")
+```{r purl, message=FALSE, include=FALSE}
+infile = here::here("downloads/Week5_vignette.Rmd")
+outfile = here::here("downloads/Week5_vignette.R")
 knitr::purl(infile, outfile)
 ```
 
@@ -470,11 +470,8 @@ Note: The functions are listed by total time, in decreasing order. The two funct
 - **self.time**: total time spent executing the function itself (excluding functions called by it)
 - **self.pct**: percent time spent executing the function itself (excluding functions called by it)
 
-**Questions:** 
+**Question:** Which calculation of pairwise distances in the Week 5 Worked Example took the longest?
 
-- How much time did the call to `PopGenReport::null.all` use? 
-- How much of this time was used by the function itself, and how much by functions being called by it?
-- What might explain this?
 
 If you need to see a summary with more detail, `$by.self` lists each function used, even internal functions. 
 

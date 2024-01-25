@@ -4933,15 +4933,15 @@ example to compare how character data are being imported.</p>
 <span id="cb34-4"><a href="#cb34-4" tabindex="-1"></a>          rio<span class="sc">::</span><span class="fu">import</span>(x))</span></code></pre></div>
 <pre><code>## Unit: milliseconds
 ##                                        expr        min         lq       mean
-##                                 read.csv(x) 1999.91046 1999.91046 1999.91046
-##  readr::read_csv(x, show_col_types = FALSE) 2868.66043 2868.66043 2868.66043
-##                        data.table::fread(x)   96.44171   96.44171   96.44171
-##                              rio::import(x)  188.29223  188.29223  188.29223
+##                                 read.csv(x) 1912.03487 1912.03487 1912.03487
+##  readr::read_csv(x, show_col_types = FALSE) 2906.19652 2906.19652 2906.19652
+##                        data.table::fread(x)   99.86243   99.86243   99.86243
+##                              rio::import(x)  185.21396  185.21396  185.21396
 ##      median         uq        max neval
-##  1999.91046 1999.91046 1999.91046     1
-##  2868.66043 2868.66043 2868.66043     1
-##    96.44171   96.44171   96.44171     1
-##   188.29223  188.29223  188.29223     1</code></pre>
+##  1912.03487 1912.03487 1912.03487     1
+##  2906.19652 2906.19652 2906.19652     1
+##    99.86243   99.86243   99.86243     1
+##   185.21396  185.21396  185.21396     1</code></pre>
 <p>Would it be faster if we first loaded the packages so that we could
 call the functions directly?</p>
 <p>Note: you can list several independent commands on the same line by
@@ -4954,15 +4954,15 @@ separating the with a semi-colon ‘;’. Also, the chunk setting
 <span id="cb36-4"><a href="#cb36-4" tabindex="-1"></a>          <span class="fu">read.csv</span>(x), <span class="fu">read_csv</span>(x, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>), <span class="fu">fread</span>(x), <span class="fu">import</span>(x))</span></code></pre></div>
 <pre><code>## Unit: milliseconds
 ##                                 expr        min         lq       mean
-##                          read.csv(x) 1814.63491 1814.63491 1814.63491
-##  read_csv(x, show_col_types = FALSE) 2576.51036 2576.51036 2576.51036
-##                             fread(x)   84.73936   84.73936   84.73936
-##                            import(x)   86.43592   86.43592   86.43592
+##                          read.csv(x) 1949.33190 1949.33190 1949.33190
+##  read_csv(x, show_col_types = FALSE) 2622.90332 2622.90332 2622.90332
+##                             fread(x)   90.62617   90.62617   90.62617
+##                            import(x)   84.94677   84.94677   84.94677
 ##      median         uq        max neval
-##  1814.63491 1814.63491 1814.63491     1
-##  2576.51036 2576.51036 2576.51036     1
-##    84.73936   84.73936   84.73936     1
-##    86.43592   86.43592   86.43592     1</code></pre>
+##  1949.33190 1949.33190 1949.33190     1
+##  2622.90332 2622.90332 2622.90332     1
+##    90.62617   90.62617   90.62617     1
+##    84.94677   84.94677   84.94677     1</code></pre>
 <p>Yes, the import was faster when the packages were already loaded.</p>
 <p>Overall <code>fread</code> and <code>import</code> were in the order
 of 50 times faster than <code>read.csv</code> and <code>read_csv</code>!
@@ -5055,10 +5055,10 @@ actually do it 10 times.</p>
 <span id="cb49-5"><a href="#cb49-5" tabindex="-1"></a>          <span class="at">feather=</span><span class="fu">import</span>(<span class="fu">file.path</span>(here<span class="sc">::</span><span class="fu">here</span>(), <span class="st">&quot;output&quot;</span>, <span class="st">&quot;gen.feather&quot;</span>)))</span></code></pre></div>
 <pre><code>## Unit: milliseconds
 ##     expr        min         lq       mean     median         uq        max
-##      csv   73.60320   74.55167   75.42096   75.62353   76.18825   77.32810
-##    RData   21.13811   21.31715   21.82338   21.73982   22.13551   22.80136
-##      rds   20.73778   21.21980   21.98534   22.05765   23.00467   23.06730
-##  feather 5706.13521 5728.85313 5825.73190 5805.05853 5914.40915 5995.63970
+##      csv   73.66968   75.78056   79.60440   76.81534   77.63440  108.21713
+##    RData   21.43529   21.96776   24.52573   22.63712   23.10385   43.66674
+##      rds   21.60083   22.02871   24.49643   22.45210   23.00072   43.68733
+##  feather 5739.31864 5765.97197 5848.60118 5806.20598 5890.80894 6123.18639
 ##  neval cld
 ##     10  a 
 ##     10  a 
@@ -5182,9 +5182,9 @@ current version.</li>
 <span id="cb56-5"><a href="#cb56-5" tabindex="-1"></a></span>
 <span id="cb56-6"><a href="#cb56-6" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">myFunction</span>(), <span class="fu">myFunction.cmp</span>())</span></code></pre></div>
 <pre><code>## Unit: microseconds
-##              expr    min     lq     mean median      uq      max neval cld
-##      myFunction() 45.748 46.489 60.84364 46.779 47.0615 1430.575   100   a
-##  myFunction.cmp() 45.847 46.440 46.77651 46.708 47.0210   50.346   100   a</code></pre>
+##              expr    min      lq     mean  median      uq      max neval cld
+##      myFunction() 45.912 46.7010 61.38263 47.0005 47.3480 1452.196   100   a
+##  myFunction.cmp() 45.749 46.5575 47.02006 46.9795 47.3495   51.589   100   a</code></pre>
 <p><strong>Question</strong>: Which of the following times are most
 different between the uncompiled and the compiled versions of this
 simple function?</p>
@@ -5240,8 +5240,8 @@ Line(s)’.</li>
 <span id="cb58-6"><a href="#cb58-6" tabindex="-1"></a>  <span class="fu">with</span>(dat, <span class="fu">cor</span>(x, y))</span>
 <span id="cb58-7"><a href="#cb58-7" tabindex="-1"></a>  <span class="fu">lm</span>(y <span class="sc">~</span> x, <span class="at">data=</span>dat)</span>
 <span id="cb58-8"><a href="#cb58-8" tabindex="-1"></a>})</span></code></pre></div>
-<div class="profvis html-widget html-fill-item" id="htmlwidget-dfa3776a30e442d8b1ea" style="width:100%;height:600px;"></div>
-<script type="application/json" data-for="htmlwidget-dfa3776a30e442d8b1ea">{"x":{"message":{"prof":{"time":[1,2,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,6,6,6,7,7],"depth":[1,1,1,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,2,1,3,2,1,2,1],"label":["rnorm","rnorm","cor","[.data.frame","na.omit.data.frame","model.frame.default","eval","eval","eval_with_user_handlers","evaluate_call","evaluate::evaluate","evaluate","eng_r","block_exec","call_block","process_group.block","process_file","knitr::knit","lm.fit","lm","<GC>","lm.fit","lm","lm.fit","lm"],"filenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null,null,1,null,1],"linenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,7,null,null,7,null,7],"memalloc":[49.64781951904297,53.46490478515625,53.47187042236328,85.90055847167969,85.90055847167969,85.90055847167969,85.90055847167969,85.90055847167969,85.90055847167969,85.90055847167969,85.90055847167969,85.90055847167969,85.90055847167969,85.90055847167969,85.90055847167969,85.90055847167969,85.90055847167969,85.90055847167969,110.8846969604492,110.8846969604492,74.44620513916016,74.44620513916016,74.44620513916016,87.78388214111328,87.78388214111328],"meminc":[0,3.817085266113281,0.00696563720703125,32.42868804931641,0,0,0,0,0,0,0,0,0,0,0,0,0,0,24.98413848876953,0,-36.43849182128906,0,0,13.33767700195312,0],"filename":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"<expr>",null,null,"<expr>",null,"<expr>"]},"interval":10,"files":[{"filename":"<expr>","content":"profvis::profvis({\n  dat <- data.frame(\n       x = rnorm(5e5), \n       y = rnorm(5e5))   \n  mean(dat$x)\n  with(dat, cor(x, y))\n  lm(y ~ x, data=dat)\n})","normpath":"<expr>"}],"prof_output":"/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T//RtmpSzRUGD/file162f09a22294.prof","highlight":{"output":["^output\\$"],"gc":["^<GC>$"],"stacktrace":["^\\.\\.stacktraceo(n|ff)\\.\\.$"]},"split":"h"}},"evals":[],"jsHooks":[]}</script>
+<div class="profvis html-widget html-fill-item" id="htmlwidget-1a3271f2a53492571108" style="width:100%;height:600px;"></div>
+<script type="application/json" data-for="htmlwidget-1a3271f2a53492571108">{"x":{"message":{"prof":{"time":[1,2,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,6,6],"depth":[1,1,1,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,2,1,2,1],"label":["rnorm","rnorm","rnorm","anyDuplicated.default","[.data.frame","na.omit.data.frame","model.frame.default","eval","eval","eval_with_user_handlers","evaluate_call","evaluate::evaluate","evaluate","eng_r","block_exec","call_block","process_group.block","process_file","knitr::knit","lm.fit","lm","lm.fit","lm"],"filenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null,1],"linenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,7,null,7],"memalloc":[49.64772796630859,53.46481323242188,53.46481323242188,89.90048217773438,89.90048217773438,89.90048217773438,89.90048217773438,89.90048217773438,89.90048217773438,89.90048217773438,89.90048217773438,89.90048217773438,89.90048217773438,89.90048217773438,89.90048217773438,89.90048217773438,89.90048217773438,89.90048217773438,89.90048217773438,110.8846054077148,110.8846054077148,80.154296875,80.154296875],"meminc":[0,3.817085266113281,0,36.4356689453125,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,20.98412322998047,0,-30.73030853271484,0],"filename":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"<expr>",null,"<expr>"]},"interval":10,"files":[{"filename":"<expr>","content":"profvis::profvis({\n  dat <- data.frame(\n       x = rnorm(5e5), \n       y = rnorm(5e5))   \n  mean(dat$x)\n  with(dat, cor(x, y))\n  lm(y ~ x, data=dat)\n})","normpath":"<expr>"}],"prof_output":"/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T//Rtmp4nMlSH/file1707e7bf1cbc0.prof","highlight":{"output":["^output\\$"],"gc":["^<GC>$"],"stacktrace":["^\\.\\.stacktraceo(n|ff)\\.\\.$"]},"split":"h"}},"evals":[],"jsHooks":[]}</script>
 <p>The results will be opened in a ‘Profile’ tab. The upper part has two
 tabs (the lower part is less intuitive to interpret, we’ll ignore it
 here):</p>
@@ -5263,20 +5263,16 @@ lines lines must have been too fast to be recorded.</p>
 <p>Unfortunately, we can’t profile an entire R Notebook (as far as I
 know). However, we can extract the R code as a script file, then profile
 the script file.</p>
-<p>Copy an R Notebook file (<code>Week2_vignette.Rmd</code>) to the
+<p>Copy an R Notebook file (<code>Week5_vignette.Rmd</code>) to the
 downloads folder. This is just so that we have an example of an
 <code>.Rmd</code> file to extract the code from.</p>
-<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" tabindex="-1"></a><span class="fu">file.copy</span>(<span class="at">from=</span><span class="fu">system.file</span>(<span class="st">&quot;doc&quot;</span>, <span class="st">&quot;Week2_vignette.Rmd&quot;</span>, <span class="at">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>),</span>
-<span id="cb59-2"><a href="#cb59-2" tabindex="-1"></a>                     <span class="at">to=</span><span class="fu">file.path</span>(here<span class="sc">::</span><span class="fu">here</span>(), <span class="st">&quot;downloads&quot;</span>, <span class="st">&quot;Week2_vignette.Rmd&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" tabindex="-1"></a><span class="fu">file.copy</span>(<span class="at">from=</span><span class="fu">system.file</span>(<span class="st">&quot;doc&quot;</span>, <span class="st">&quot;Week5_vignette.Rmd&quot;</span>, <span class="at">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>),</span>
+<span id="cb59-2"><a href="#cb59-2" tabindex="-1"></a>                     <span class="at">to=</span><span class="fu">file.path</span>(here<span class="sc">::</span><span class="fu">here</span>(), <span class="st">&quot;downloads&quot;</span>, <span class="st">&quot;Week5_vignette.Rmd&quot;</span>))</span></code></pre></div>
 <pre><code>## [1] FALSE</code></pre>
 <p>Extract the R code from the R Notebook and save it in a script file
-<code>Week2_vignette.R</code> in the downloads folder. You may adapt the
+<code>Week5_vignette.R</code> in the downloads folder. You may adapt the
 infile and outfile to extract the code from any R Notebook saved in your
 project.</p>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" tabindex="-1"></a>infile <span class="ot">=</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;downloads/Week2_vignette.Rmd&quot;</span>)</span>
-<span id="cb61-2"><a href="#cb61-2" tabindex="-1"></a>outfile <span class="ot">=</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;downloads/Week2_vignette.R&quot;</span>)</span>
-<span id="cb61-3"><a href="#cb61-3" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">purl</span>(infile, outfile)</span></code></pre></div>
-<pre><code>## [1] &quot;/Users/helene/Desktop/R_Github_projects/LandGenCourse/downloads/Week2_vignette.R&quot;</code></pre>
 <p>Let’s open the two files and compare them. Note that
 <code>file.show</code> opens a simple text version, whereas
 <code>file.edit</code> shows the colored versions commonly displayed by
@@ -5302,526 +5298,659 @@ way: as the code is executed, R checks at regular time intervals which
 function is being executed at that very moment. The
 <code>summaryRprof</code> function then tabulates the number of
 intervals, and thus the time used, by function.</p>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" tabindex="-1"></a><span class="fu">summaryRprof</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;downloads/Rprof.out&quot;</span>))[<span class="fu">c</span>(<span class="st">&quot;sampling.time&quot;</span>, <span class="st">&quot;sample.interval&quot;</span>)]  </span></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" tabindex="-1"></a><span class="fu">summaryRprof</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;downloads/Rprof.out&quot;</span>))[<span class="fu">c</span>(<span class="st">&quot;sampling.time&quot;</span>, <span class="st">&quot;sample.interval&quot;</span>)]  </span></code></pre></div>
 <pre><code>## $sampling.time
-## [1] 14.16
+## [1] 40.52
 ## 
 ## $sample.interval
 ## [1] 0.02</code></pre>
 <p>The attribute <code>$by.total</code> only lists the top-level
 functions called (not any functions called internally by that top-level
 function).</p>
-<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" tabindex="-1"></a><span class="fu">summaryRprof</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;downloads/Rprof.out&quot;</span>))<span class="sc">$</span>by.total</span></code></pre></div>
-<pre><code>##                                      total.time total.pct self.time self.pct
-## &quot;eval&quot;                                    14.16    100.00      0.02     0.14
-## &quot;withCallingHandlers&quot;                     14.16    100.00      0.02     0.14
-## &quot;block_exec&quot;                              14.16    100.00      0.00     0.00
-## &quot;call_block&quot;                              14.16    100.00      0.00     0.00
-## &quot;eng_r&quot;                                   14.16    100.00      0.00     0.00
-## &quot;eval_with_user_handlers&quot;                 14.16    100.00      0.00     0.00
-## &quot;evaluate_call&quot;                           14.16    100.00      0.00     0.00
-## &quot;evaluate::evaluate&quot;                      14.16    100.00      0.00     0.00
-## &quot;evaluate&quot;                                14.16    100.00      0.00     0.00
-## &quot;handle_error&quot;                            14.16    100.00      0.00     0.00
-## &quot;handle&quot;                                  14.16    100.00      0.00     0.00
-## &quot;in_dir&quot;                                  14.16    100.00      0.00     0.00
-## &quot;in_input_dir&quot;                            14.16    100.00      0.00     0.00
-## &quot;knitr::knit&quot;                             14.16    100.00      0.00     0.00
-## &quot;process_file&quot;                            14.16    100.00      0.00     0.00
-## &quot;process_group.block&quot;                     14.16    100.00      0.00     0.00
-## &quot;process_group&quot;                           14.16    100.00      0.00     0.00
-## &quot;rmarkdown::render&quot;                       14.16    100.00      0.00     0.00
-## &quot;source&quot;                                  14.16    100.00      0.00     0.00
-## &quot;timing_fn&quot;                               14.16    100.00      0.00     0.00
-## &quot;withVisible&quot;                             14.16    100.00      0.00     0.00
-## &quot;&lt;Anonymous&gt;&quot;                              8.62     60.88      0.18     1.27
-## &quot;FUN&quot;                                      7.92     55.93      0.08     0.56
-## &quot;lapply&quot;                                   7.92     55.93      0.04     0.28
-## &quot;.local&quot;                                   6.48     45.76      0.02     0.14
-## &quot;doTryCatch&quot;                               5.16     36.44      0.04     0.28
-## &quot;tryCatch&quot;                                 5.16     36.44      0.02     0.14
-## &quot;tryCatchOne&quot;                              5.16     36.44      0.02     0.14
-## &quot;tryCatchList&quot;                             5.16     36.44      0.00     0.00
-## &quot;.External&quot;                                4.38     30.93      4.30    30.37
-## &quot;standardGeneric&quot;                          3.84     27.12      0.00     0.00
-## &quot;library&quot;                                  3.76     26.55      0.00     0.00
-## &quot;loadNamespace&quot;                            3.74     26.41      0.00     0.00
-## &quot;do.call&quot;                                  3.66     25.85      0.00     0.00
-## &quot;methods::cacheMetaData&quot;                   3.20     22.60      0.00     0.00
-## &quot;calculate_lsm_internal&quot;                   2.92     20.62      0.00     0.00
-## &quot;landscapemetrics::calculate_lsm&quot;          2.48     17.51      0.00     0.00
-## &quot;Module&quot;                                   1.98     13.98      0.38     2.68
-## &quot;.doLoadActions&quot;                           1.98     13.98      0.00     0.00
-## &quot;loadModule&quot;                               1.98     13.98      0.00     0.00
-## &quot;plot&quot;                                     1.70     12.01      0.00     0.00
-## &quot;.prep.plot.data&quot;                          1.50     10.59      0.00     0.00
-## &quot;prepare_extras&quot;                           1.48     10.45      0.00     0.00
-## &quot;landscapemetrics::sample_lsm&quot;             1.46     10.31      0.00     0.00
-## &quot;sample_lsm_int&quot;                           1.46     10.31      0.00     0.00
-## &quot;show_cores&quot;                               1.42     10.03      0.00     0.00
-## &quot;.Call&quot;                                    1.28      9.04      1.26     8.90
-## &quot;.as.raster.continuous&quot;                    1.28      9.04      0.60     4.24
-## &quot;asNamespace&quot;                              1.28      9.04      0.00     0.00
-## &quot;namespaceImportFrom&quot;                      1.28      9.04      0.00     0.00
-## &quot;spatOptions&quot;                              1.26      8.90      0.00     0.00
-## &quot;subset&quot;                                   1.18      8.33      0.00     0.00
-## &quot;get_patches_int&quot;                          1.14      8.05      0.40     2.82
-## &quot;[[&quot;                                       1.12      7.91      0.00     0.00
-## &quot;readValues&quot;                               1.04      7.34      0.00     0.00
-## &quot;terra::as.list&quot;                           1.00      7.06      0.00     0.00
-## &quot;is&quot;                                       0.94      6.64      0.36     2.54
-## &quot;.updateMethodsInTable&quot;                    0.94      6.64      0.00     0.00
-## &quot;get_enn_patch&quot;                            0.92      6.50      0.00     0.00
-## &quot;get_nearestneighbour_calc&quot;                0.90      6.36      0.02     0.14
-## &quot;unique&quot;                                   0.80      5.65      0.02     0.14
-## &quot;terra::values&quot;                            0.80      5.65      0.00     0.00
-## &quot;[&quot;                                        0.74      5.23      0.00     0.00
-## &quot;insertClassMethods&quot;                       0.74      5.23      0.00     0.00
-## &quot;layerCor&quot;                                 0.70      4.94      0.00     0.00
-## &quot;data.frame&quot;                               0.66      4.66      0.02     0.14
-## &quot;makeClassMethod&quot;                          0.66      4.66      0.00     0.00
-## &quot;lazyLoadDBfetch&quot;                          0.64      4.52      0.62     4.38
-## &quot;methods::setRefClass&quot;                     0.64      4.52      0.00     0.00
-## &quot;rcpp_get_nearest_neighbor&quot;                0.64      4.52      0.00     0.00
-## &quot;show_patches&quot;                             0.64      4.52      0.00     0.00
-## &quot;calculate_lsm&quot;                            0.62      4.38      0.00     0.00
-## &quot;values&quot;                                   0.62      4.38      0.00     0.00
-## &quot;cbind&quot;                                    0.60      4.24      0.04     0.28
-## &quot;matrix&quot;                                   0.58      4.10      0.08     0.56
-## &quot;matrix_to_raster&quot;                         0.58      4.10      0.00     0.00
-## &quot;[.data.frame&quot;                             0.56      3.95      0.02     0.14
-## &quot;show_lsm&quot;                                 0.56      3.95      0.00     0.00
-## &quot;factor&quot;                                   0.54      3.81      0.36     2.54
-## &quot;initialize&quot;                               0.54      3.81      0.02     0.14
-## &quot;new&quot;                                      0.52      3.67      0.00     0.00
-## &quot;$&quot;                                        0.50      3.53      0.06     0.42
-## &quot;merge.data.frame&quot;                         0.50      3.53      0.02     0.14
-## &quot;merge&quot;                                    0.50      3.53      0.00     0.00
-## &quot;terra::as.data.frame&quot;                     0.50      3.53      0.00     0.00
-## &quot;getGeneric&quot;                               0.48      3.39      0.02     0.14
-## &quot;extract_lsm&quot;                              0.44      3.11      0.00     0.00
-## &quot;terra::setValues&quot;                         0.44      3.11      0.00     0.00
-## &quot;.get_Module_Class&quot;                        0.42      2.97      0.38     2.68
-## &quot;extract_lsm_internal&quot;                     0.42      2.97      0.00     0.00
-## &quot;get_patches&quot;                              0.42      2.97      0.00     0.00
-## &quot;generator$methods&quot;                        0.40      2.82      0.00     0.00
-## &quot;[&lt;-&quot;                                      0.38      2.68      0.00     0.00
-## &quot;data_info&quot;                                0.38      2.68      0.00     0.00
-## &quot;get_class_patches&quot;                        0.38      2.68      0.00     0.00
-## &quot;try&quot;                                      0.38      2.68      0.00     0.00
-## &quot;refClassInformation&quot;                      0.36      2.54      0.00     0.00
-## &quot;.checkGroupSigLength&quot;                     0.34      2.40      0.00     0.00
-## &quot;rbind&quot;                                    0.32      2.26      0.10     0.71
-## &quot;structure&quot;                                0.32      2.26      0.02     0.14
-## &quot;aggregate.data.frame&quot;                     0.32      2.26      0.00     0.00
-## &quot;as.factor&quot;                                0.32      2.26      0.00     0.00
-## &quot;stats::aggregate&quot;                         0.32      2.26      0.00     0.00
-## &quot;terra::as.matrix&quot;                         0.32      2.26      0.00     0.00
-## &quot;h&quot;                                        0.30      2.12      0.02     0.14
-## &quot;.getGlobalFuns&quot;                           0.30      2.12      0.00     0.00
-## &quot;codetools::findGlobals&quot;                   0.30      2.12      0.00     0.00
-## &quot;anyDuplicated.default&quot;                    0.28      1.98      0.28     1.98
-## &quot;which&quot;                                    0.28      1.98      0.12     0.85
-## &quot;.getGeneric&quot;                              0.28      1.98      0.02     0.14
-## &quot;anyDuplicated&quot;                            0.28      1.98      0.00     0.00
-## &quot;collectUsage&quot;                             0.28      1.98      0.00     0.00
-## &quot;collectUsageFun&quot;                          0.28      1.98      0.00     0.00
-## &quot;cut.matrix&quot;                               0.28      1.98      0.00     0.00
-## &quot;cut&quot;                                      0.28      1.98      0.00     0.00
-## &quot;get_boundaries&quot;                           0.28      1.98      0.00     0.00
-## &quot;make.unique&quot;                              0.26      1.84      0.26     1.84
-## &quot;as.vector&quot;                                0.26      1.84      0.08     0.56
-## &quot;check_landscape&quot;                          0.26      1.84      0.00     0.00
-## &quot;cmpfun&quot;                                   0.26      1.84      0.00     0.00
-## &quot;compiler:::tryCmpfun&quot;                     0.26      1.84      0.00     0.00
-## &quot;cut.default&quot;                              0.26      1.84      0.00     0.00
-## &quot;getGroupMembers&quot;                          0.26      1.84      0.00     0.00
-## &quot;landscapemetrics::get_patches&quot;            0.26      1.84      0.00     0.00
-## &quot;xyFromCell&quot;                               0.26      1.84      0.00     0.00
-## &quot;-&quot;                                        0.24      1.69      0.24     1.69
-## &quot;stopifnot&quot;                                0.24      1.69      0.12     0.85
-## &quot;.as.raster.classes&quot;                       0.24      1.69      0.06     0.42
-## &quot;get_boundaries_calc&quot;                      0.24      1.69      0.02     0.14
-## &quot;.recMembers&quot;                              0.24      1.69      0.00     0.00
-## &quot;fun&quot;                                      0.24      1.69      0.00     0.00
-## &quot;setClass&quot;                                 0.24      1.69      0.00     0.00
-## &quot;sapply&quot;                                   0.22      1.55      0.04     0.28
-## &quot;landscape_as_list&quot;                        0.22      1.55      0.00     0.00
-## &quot;landscapemetrics::check_landscape&quot;        0.22      1.55      0.00     0.00
-## &quot;namespaceImport&quot;                          0.22      1.55      0.00     0.00
-## &quot;runHook&quot;                                  0.22      1.55      0.00     0.00
-## &quot;setValues&quot;                                0.22      1.55      0.00     0.00
-## &quot;terra::values&lt;-&quot;                          0.22      1.55      0.00     0.00
-## &quot;%in%&quot;                                     0.20      1.41      0.10     0.71
-## &quot;getClassDef&quot;                              0.20      1.41      0.06     0.42
-## &quot;as&lt;-&quot;                                     0.20      1.41      0.04     0.28
-## &quot;cmp&quot;                                      0.20      1.41      0.00     0.00
-## &quot;cmpCall&quot;                                  0.20      1.41      0.00     0.00
-## &quot;findLocalsList&quot;                           0.20      1.41      0.00     0.00
-## &quot;genCode&quot;                                  0.20      1.41      0.00     0.00
-## &quot;setIs&quot;                                    0.20      1.41      0.00     0.00
-## &quot;tryInline&quot;                                0.20      1.41      0.00     0.00
-## &quot;.plotit&quot;                                  0.18      1.27      0.00     0.00
-## &quot;.replace_cell&quot;                            0.18      1.27      0.00     0.00
-## &quot;==&quot;                                       0.18      1.27      0.00     0.00
-## &quot;aggregate.default&quot;                        0.18      1.27      0.00     0.00
-## &quot;as.matrix&quot;                                0.18      1.27      0.00     0.00
-## &quot;stats::setNames&quot;                          0.18      1.27      0.00     0.00
-## &quot;envRefInferField&quot;                         0.16      1.13      0.02     0.14
-## &quot;findFuncLocals&quot;                           0.16      1.13      0.00     0.00
-## &quot;landscape_as_list.SpatRaster&quot;             0.16      1.13      0.00     0.00
-## &quot;rast&quot;                                     0.16      1.13      0.00     0.00
-## &quot;terra::rast&quot;                              0.16      1.13      0.00     0.00
-## &quot;tibble::add_column&quot;                       0.16      1.13      0.00     0.00
-## &quot;.cacheGenericTable&quot;                       0.14      0.99      0.14     0.99
-## &quot;as.character&quot;                             0.14      0.99      0.14     0.99
-## &quot;file.exists&quot;                              0.14      0.99      0.14     0.99
-## &quot;is.na&quot;                                    0.14      0.99      0.08     0.56
-## &quot;validObject&quot;                              0.14      0.99      0.04     0.28
-## &quot;.cacheGeneric&quot;                            0.14      0.99      0.00     0.00
-## &quot;.resetInheritedMethods&quot;                   0.14      0.99      0.00     0.00
-## &quot;completeSubclasses&quot;                       0.14      0.99      0.00     0.00
-## &quot;construct_buffer&quot;                         0.14      0.99      0.00     0.00
-## &quot;get&quot;                                      0.14      0.99      0.00     0.00
-## &quot;installClassMethod&quot;                       0.14      0.99      0.00     0.00
-## &quot;load_units_xml&quot;                           0.14      0.99      0.00     0.00
-## &quot;terra::vect&quot;                              0.14      0.99      0.00     0.00
-## &quot;ud_init&quot;                                  0.14      0.99      0.00     0.00
-## &quot;w$call&quot;                                   0.14      0.99      0.00     0.00
-## &quot;walkCode&quot;                                 0.14      0.99      0.00     0.00
-## &quot;.identC&quot;                                  0.12      0.85      0.12     0.85
-## &quot;.External2&quot;                               0.12      0.85      0.06     0.42
-## &quot;assignClassDef&quot;                           0.12      0.85      0.00     0.00
-## &quot;rcpp_ccl&quot;                                 0.12      0.85      0.00     0.00
-## &quot;Recall&quot;                                   0.12      0.85      0.00     0.00
-## &quot;setDataPart&quot;                              0.12      0.85      0.00     0.00
-## &quot;terra::crop&quot;                              0.12      0.85      0.00     0.00
-## &quot;grep&quot;                                     0.10      0.71      0.08     0.56
-## &quot;$&lt;-&quot;                                      0.10      0.71      0.02     0.14
-## &quot;tibble_quos&quot;                              0.10      0.71      0.02     0.14
-## &quot;.cacheClass&quot;                              0.10      0.71      0.00     0.00
-## &quot;as.data.frame&quot;                            0.10      0.71      0.00     0.00
-## &quot;asMethod&quot;                                 0.10      0.71      0.00     0.00
-## &quot;cpp_refMethods&quot;                           0.10      0.71      0.00     0.00
-## &quot;get_perimeter_patch&quot;                      0.10      0.71      0.00     0.00
-## &quot;get_unique_values_int&quot;                    0.10      0.71      0.00     0.00
-## &quot;is.element&quot;                               0.10      0.71      0.00     0.00
-## &quot;library.dynam&quot;                            0.10      0.71      0.00     0.00
-## &quot;readStop&quot;                                 0.10      0.71      0.00     0.00
-## &quot;res&lt;-&quot;                                    0.10      0.71      0.00     0.00
-## &quot;terra::as.int&quot;                            0.10      0.71      0.00     0.00
-## &quot;tibble&quot;                                   0.10      0.71      0.00     0.00
-## &quot;.getClassesFromCache&quot;                     0.08      0.56      0.08     0.56
-## &quot;max&quot;                                      0.08      0.56      0.08     0.56
-## &quot;.assignedVars&quot;                            0.08      0.56      0.02     0.14
-## &quot;.getGenericFromCache&quot;                     0.08      0.56      0.02     0.14
-## &quot;.quickCoerceSelect&quot;                       0.08      0.56      0.02     0.14
-## &quot;cmpCallArgs&quot;                              0.08      0.56      0.02     0.14
-## &quot;names&lt;-&quot;                                  0.08      0.56      0.02     0.14
-## &quot;sort&quot;                                     0.08      0.56      0.02     0.14
-## &quot;w$leaf&quot;                                   0.08      0.56      0.02     0.14
-## &quot;.checkFieldsInMethod&quot;                     0.08      0.56      0.00     0.00
-## &quot;.mergeMethodsTable&quot;                       0.08      0.56      0.00     0.00
-## &quot;.recacheSubclasses&quot;                       0.08      0.56      0.00     0.00
-## &quot;as.data.frame.matrix&quot;                     0.08      0.56      0.00     0.00
-## &quot;constantFold&quot;                             0.08      0.56      0.00     0.00
-## &quot;constantFoldCall&quot;                         0.08      0.56      0.00     0.00
-## &quot;crs&lt;-&quot;                                    0.08      0.56      0.00     0.00
-## &quot;getFoldFun&quot;                               0.08      0.56      0.00     0.00
-## &quot;getInlineInfo&quot;                            0.08      0.56      0.00     0.00
-## &quot;lsm_c_pland_calc&quot;                         0.08      0.56      0.00     0.00
-## &quot;lsm_p_area_calc&quot;                          0.08      0.56      0.00     0.00
-## &quot;pad_raster_internal&quot;                      0.08      0.56      0.00     0.00
-## &quot;rcpp_get_boundaries&quot;                      0.08      0.56      0.00     0.00
-## &quot;as.list&quot;                                  0.06      0.42      0.06     0.42
-## &quot;dyn.load&quot;                                 0.06      0.42      0.06     0.42
-## &quot;t.default&quot;                                0.06      0.42      0.06     0.42
-## &quot;unique.default&quot;                           0.06      0.42      0.06     0.42
-## &quot;unpad_raster_internal&quot;                    0.06      0.42      0.06     0.42
-## &quot;...elt&quot;                                   0.06      0.42      0.04     0.28
-## &quot;.getGenericFromCacheTable&quot;                0.06      0.42      0.04     0.28
-## &quot;codetools::walkCode&quot;                      0.06      0.42      0.04     0.28
-## &quot;findCenvVar&quot;                              0.06      0.42      0.04     0.28
-## &quot;mapply&quot;                                   0.06      0.42      0.04     0.28
-## &quot;.findMethodInTable&quot;                       0.06      0.42      0.02     0.14
-## &quot;as&quot;                                       0.06      0.42      0.02     0.14
-## &quot;duplicated&quot;                               0.06      0.42      0.02     0.14
-## &quot;glue_data&quot;                                0.06      0.42      0.02     0.14
-## &quot;isClassDef&quot;                               0.06      0.42      0.02     0.14
-## &quot;messages&quot;                                 0.06      0.42      0.02     0.14
-## &quot;ncol&quot;                                     0.06      0.42      0.02     0.14
-## &quot;setdiff&quot;                                  0.06      0.42      0.02     0.14
-## &quot;!&quot;                                        0.06      0.42      0.00     0.00
-## &quot;.name_spec&quot;                               0.06      0.42      0.00     0.00
-## &quot;collectUsageArgs&quot;                         0.06      0.42      0.00     0.00
-## &quot;envRefSetField&quot;                           0.06      0.42      0.00     0.00
-## &quot;find.package&quot;                             0.06      0.42      0.00     0.00
-## &quot;getClass&quot;                                 0.06      0.42      0.00     0.00
-## &quot;glue::glue&quot;                               0.06      0.42      0.00     0.00
-## &quot;isBaseVar&quot;                                0.06      0.42      0.00     0.00
-## &quot;isDDSym&quot;                                  0.06      0.42      0.00     0.00
-## &quot;landscapemetrics::lsm_l_pr&quot;               0.06      0.42      0.00     0.00
-## &quot;landscapemetrics::lsm_l_shdi&quot;             0.06      0.42      0.00     0.00
-## &quot;lsm_c_pland&quot;                              0.06      0.42      0.00     0.00
-## &quot;lsm_p_core_calc&quot;                          0.06      0.42      0.00     0.00
-## &quot;rcpp_get_coocurrence_matrix_single&quot;       0.06      0.42      0.00     0.00
-## &quot;readStart&quot;                                0.06      0.42      0.00     0.00
-## &quot;splice_dfs&quot;                               0.06      0.42      0.00     0.00
-## &quot;t&quot;                                        0.06      0.42      0.00     0.00
-## &quot;vec_c&quot;                                    0.06      0.42      0.00     0.00
-## &quot;.bincode&quot;                                 0.04      0.28      0.04     0.28
-## &quot;all&quot;                                      0.04      0.28      0.04     0.28
-## &quot;dir.exists&quot;                               0.04      0.28      0.04     0.28
-## &quot;exists&quot;                                   0.04      0.28      0.04     0.28
-## &quot;graphics::rasterImage&quot;                    0.04      0.28      0.04     0.28
-## &quot;is.list&quot;                                  0.04      0.28      0.04     0.28
-## &quot;methodsPackageMetaName&quot;                   0.04      0.28      0.04     0.28
-## &quot;names&quot;                                    0.04      0.28      0.04     0.28
-## &quot;normalizePath&quot;                            0.04      0.28      0.04     0.28
-## &quot;nzchar&quot;                                   0.04      0.28      0.04     0.28
-## &quot;order&quot;                                    0.04      0.28      0.04     0.28
-## &quot;simplify2array&quot;                           0.04      0.28      0.04     0.28
-## &quot;.mergeAttrs&quot;                              0.04      0.28      0.02     0.14
-## &quot;extends&quot;                                  0.04      0.28      0.02     0.14
-## &quot;methods:::.setDummyField&quot;                 0.04      0.28      0.02     0.14
-## &quot;paste&quot;                                    0.04      0.28      0.02     0.14
-## &quot;tabulate&quot;                                 0.04      0.28      0.02     0.14
-## &quot;text.default&quot;                             0.04      0.28      0.02     0.14
-## &quot;vapply&quot;                                   0.04      0.28      0.02     0.14
-## &quot;.extendsForS3&quot;                            0.04      0.28      0.00     0.00
-## &quot;.simpleSignature&quot;                         0.04      0.28      0.00     0.00
-## &quot;.transformer&quot;                             0.04      0.28      0.00     0.00
-## &quot;%||%&quot;                                     0.04      0.28      0.00     0.00
-## &quot;+.gg&quot;                                     0.04      0.28      0.00     0.00
-## &quot;add_ggplot&quot;                               0.04      0.28      0.00     0.00
-## &quot;assign&quot;                                   0.04      0.28      0.00     0.00
-## &quot;cb$putconst&quot;                              0.04      0.28      0.00     0.00
-## &quot;cmpCallSymFun&quot;                            0.04      0.28      0.00     0.00
-## &quot;cmpComplexAssign&quot;                         0.04      0.28      0.00     0.00
-## &quot;cmpSetterCall&quot;                            0.04      0.28      0.00     0.00
-## &quot;data.row.names&quot;                           0.04      0.28      0.00     0.00
-## &quot;duplicated.data.frame&quot;                    0.04      0.28      0.00     0.00
-## &quot;ext&quot;                                      0.04      0.28      0.00     0.00
-## &quot;findLocalsList1&quot;                          0.04      0.28      0.00     0.00
-## &quot;funEnv&quot;                                   0.04      0.28      0.00     0.00
-## &quot;getSlots&quot;                                 0.04      0.28      0.00     0.00
-## &quot;landscapemetrics::lsm_c_pladj&quot;            0.04      0.28      0.00     0.00
-## &quot;lsm_fun&quot;                                  0.04      0.28      0.00     0.00
-## &quot;make.functionContext&quot;                     0.04      0.28      0.00     0.00
-## &quot;match&quot;                                    0.04      0.28      0.00     0.00
-## &quot;ncell&quot;                                    0.04      0.28      0.00     0.00
-## &quot;nlyr&quot;                                     0.04      0.28      0.00     0.00
-## &quot;nrow&quot;                                     0.04      0.28      0.00     0.00
-## &quot;plot.default&quot;                             0.04      0.28      0.00     0.00
-## &quot;plot.new&quot;                                 0.04      0.28      0.00     0.00
-## &quot;rcpp_get_coocurrence_matrix&quot;              0.04      0.28      0.00     0.00
-## &quot;readLines&quot;                                0.04      0.28      0.00     0.00
-## &quot;set_repaired_names&quot;                       0.04      0.28      0.00     0.00
-## &quot;sort.list&quot;                                0.04      0.28      0.00     0.00
-## &quot;st_transform.sf&quot;                          0.04      0.28      0.00     0.00
-## &quot;st_transform.sfc&quot;                         0.04      0.28      0.00     0.00
-## &quot;st_transform&quot;                             0.04      0.28      0.00     0.00
-## &quot;suppressWarnings&quot;                         0.04      0.28      0.00     0.00
-## &quot;svc&quot;                                      0.04      0.28      0.00     0.00
-## &quot;table&quot;                                    0.04      0.28      0.00     0.00
-## &quot;terra::ext&quot;                               0.04      0.28      0.00     0.00
-## &quot;text&quot;                                     0.04      0.28      0.00     0.00
-## &quot;trySetterInline&quot;                          0.04      0.28      0.00     0.00
-## &quot;unique.data.frame&quot;                        0.04      0.28      0.00     0.00
-## &quot;unlist&quot;                                   0.04      0.28      0.00     0.00
-## &quot;unpad_raster&quot;                             0.04      0.28      0.00     0.00
-## &quot;with_glue_error&quot;                          0.04      0.28      0.00     0.00
-## &quot;working_internet&quot;                         0.04      0.28      0.00     0.00
-## &quot;...length&quot;                                0.02      0.14      0.02     0.14
-## &quot;.dataSlot&quot;                                0.02      0.14      0.02     0.14
-## &quot;.makeMessage&quot;                             0.02      0.14      0.02     0.14
-## &quot;[.quosures&quot;                               0.02      0.14      0.02     0.14
-## &quot;addVar&quot;                                   0.02      0.14      0.02     0.14
-## &quot;any&quot;                                      0.02      0.14      0.02     0.14
-## &quot;as.integer&quot;                               0.02      0.14      0.02     0.14
-## &quot;as.logical&quot;                               0.02      0.14      0.02     0.14
-## &quot;asS4&quot;                                     0.02      0.14      0.02     0.14
-## &quot;c&quot;                                        0.02      0.14      0.02     0.14
-## &quot;character&quot;                                0.02      0.14      0.02     0.14
-## &quot;class&quot;                                    0.02      0.14      0.02     0.14
-## &quot;close.connection&quot;                         0.02      0.14      0.02     0.14
-## &quot;CPL_crs_from_input&quot;                       0.02      0.14      0.02     0.14
-## &quot;CPL_transform&quot;                            0.02      0.14      0.02     0.14
-## &quot;file&quot;                                     0.02      0.14      0.02     0.14
-## &quot;findOwnerEnv&quot;                             0.02      0.14      0.02     0.14
-## &quot;findVar&quot;                                  0.02      0.14      0.02     0.14
-## &quot;is.factor&quot;                                0.02      0.14      0.02     0.14
-## &quot;isNamespace&quot;                              0.02      0.14      0.02     0.14
-## &quot;list&quot;                                     0.02      0.14      0.02     0.14
-## &quot;list2env&quot;                                 0.02      0.14      0.02     0.14
-## &quot;make.promiseContext&quot;                      0.02      0.14      0.02     0.14
-## &quot;match.call&quot;                               0.02      0.14      0.02     0.14
-## &quot;mean.default&quot;                             0.02      0.14      0.02     0.14
-## &quot;methods::is&quot;                              0.02      0.14      0.02     0.14
-## &quot;new_CppObject_xp&quot;                         0.02      0.14      0.02     0.14
-## &quot;parent.frame&quot;                             0.02      0.14      0.02     0.14
-## &quot;plot_clone&quot;                               0.02      0.14      0.02     0.14
-## &quot;pos_from_before_after&quot;                    0.02      0.14      0.02     0.14
-## &quot;positive_indices&quot;                         0.02      0.14      0.02     0.14
-## &quot;readRDS&quot;                                  0.02      0.14      0.02     0.14
-## &quot;sum&quot;                                      0.02      0.14      0.02     0.14
-## &quot;tbl_subassign&quot;                            0.02      0.14      0.02     0.14
-## &quot;vec_set_attributes&quot;                       0.02      0.14      0.02     0.14
-## &quot;w$handler&quot;                                0.02      0.14      0.02     0.14
-## &quot;.asS4&quot;                                    0.02      0.14      0.00     0.00
-## &quot;.combineExtends&quot;                          0.02      0.14      0.00     0.00
-## &quot;.deparseOpts&quot;                             0.02      0.14      0.00     0.00
-## &quot;.findOrCopyClass&quot;                         0.02      0.14      0.00     0.00
-## &quot;.from_sf&quot;                                 0.02      0.14      0.00     0.00
-## &quot;.genericOrImplicit&quot;                       0.02      0.14      0.00     0.00
-## &quot;.getExt&quot;                                  0.02      0.14      0.00     0.00
-## &quot;.getGenerics&quot;                             0.02      0.14      0.00     0.00
-## &quot;.getSpatDF&quot;                               0.02      0.14      0.00     0.00
-## &quot;.isIndirectExtension&quot;                     0.02      0.14      0.00     0.00
-## &quot;.makeActiveBinding&quot;                       0.02      0.14      0.00     0.00
-## &quot;.makeDataFrame&quot;                           0.02      0.14      0.00     0.00
-## &quot;.mergeImportMethods&quot;                      0.02      0.14      0.00     0.00
-## &quot;.Object$initialize&quot;                       0.02      0.14      0.00     0.00
-## &quot;.plot.axes&quot;                               0.02      0.14      0.00     0.00
-## &quot;.removePreviousCoerce&quot;                    0.02      0.14      0.00     0.00
-## &quot;.rowNamesDF&lt;-&quot;                            0.02      0.14      0.00     0.00
-## &quot;.sigLabel&quot;                                0.02      0.14      0.00     0.00
-## &quot;.TableMetaName&quot;                           0.02      0.14      0.00     0.00
-## &quot;.transitiveExtends&quot;                       0.02      0.14      0.00     0.00
-## &quot;.walkClassGraph&quot;                          0.02      0.14      0.00     0.00
-## &quot;[[.tbl_df&quot;                                0.02      0.14      0.00     0.00
-## &quot;$&lt;-.tbl_df&quot;                               0.02      0.14      0.00     0.00
-## &quot;as.data.frame.numeric&quot;                    0.02      0.14      0.00     0.00
-## &quot;as.points&quot;                                0.02      0.14      0.00     0.00
-## &quot;as.raster&quot;                                0.02      0.14      0.00     0.00
-## &quot;attachNamespace&quot;                          0.02      0.14      0.00     0.00
-## &quot;cacheGenericsMetaData&quot;                    0.02      0.14      0.00     0.00
-## &quot;checkCall&quot;                                0.02      0.14      0.00     0.00
-## &quot;checkConflicts&quot;                           0.02      0.14      0.00     0.00
-## &quot;classMetaName&quot;                            0.02      0.14      0.00     0.00
-## &quot;close&quot;                                    0.02      0.14      0.00     0.00
-## &quot;cmpBuiltin&quot;                               0.02      0.14      0.00     0.00
-## &quot;cmpBuiltinArgs&quot;                           0.02      0.14      0.00     0.00
-## &quot;cmpDotInternalCall&quot;                       0.02      0.14      0.00     0.00
-## &quot;cmpPrim2&quot;                                 0.02      0.14      0.00     0.00
-## &quot;cmpSym&quot;                                   0.02      0.14      0.00     0.00
-## &quot;cmpSymbolAssign&quot;                          0.02      0.14      0.00     0.00
-## &quot;completeClassDefinition&quot;                  0.02      0.14      0.00     0.00
-## &quot;completeExtends&quot;                          0.02      0.14      0.00     0.00
-## &quot;compute_by&quot;                               0.02      0.14      0.00     0.00
-## &quot;crds&quot;                                     0.02      0.14      0.00     0.00
-## &quot;data&quot;                                     0.02      0.14      0.00     0.00
-## &quot;deepcopy&quot;                                 0.02      0.14      0.00     0.00
-## &quot;deparse&quot;                                  0.02      0.14      0.00     0.00
-## &quot;deparse1&quot;                                 0.02      0.14      0.00     0.00
-## &quot;detect_named&quot;                             0.02      0.14      0.00     0.00
-## &quot;detect_new&quot;                               0.02      0.14      0.00     0.00
-## &quot;dplyr::mutate&quot;                            0.02      0.14      0.00     0.00
-## &quot;dplyr::summarize&quot;                         0.02      0.14      0.00     0.00
-## &quot;dropMissings&quot;                             0.02      0.14      0.00     0.00
-## &quot;environment&quot;                              0.02      0.14      0.00     0.00
-## &quot;eval.parent&quot;                              0.02      0.14      0.00     0.00
-## &quot;exprs_auto_name&quot;                          0.02      0.14      0.00     0.00
-## &quot;find_super&quot;                               0.02      0.14      0.00     0.00
-## &quot;findClass&quot;                                0.02      0.14      0.00     0.00
-## &quot;findHomeNS&quot;                               0.02      0.14      0.00     0.00
-## &quot;findLocals1&quot;                              0.02      0.14      0.00     0.00
-## &quot;force&quot;                                    0.02      0.14      0.00     0.00
-## &quot;get_parentpid&quot;                            0.02      0.14      0.00     0.00
-## &quot;get_points&quot;                               0.02      0.14      0.00     0.00
-## &quot;get0&quot;                                     0.02      0.14      0.00     0.00
-## &quot;getDataPart&quot;                              0.02      0.14      0.00     0.00
-## &quot;getPackageName&quot;                           0.02      0.14      0.00     0.00
-## &quot;ggplot_add&quot;                               0.02      0.14      0.00     0.00
-## &quot;ggplot2::facet_wrap&quot;                      0.02      0.14      0.00     0.00
-## &quot;ggplot2::geom_raster&quot;                     0.02      0.14      0.00     0.00
-## &quot;ggproto&quot;                                  0.02      0.14      0.00     0.00
-## &quot;graphics::par&quot;                            0.02      0.14      0.00     0.00
-## &quot;group_data.data.frame&quot;                    0.02      0.14      0.00     0.00
-## &quot;group_data.tbl_df&quot;                        0.02      0.14      0.00     0.00
-## &quot;group_data&quot;                               0.02      0.14      0.00     0.00
-## &quot;has_length&quot;                               0.02      0.14      0.00     0.00
-## &quot;ifelse&quot;                                   0.02      0.14      0.00     0.00
-## &quot;inherits&quot;                                 0.02      0.14      0.00     0.00
-## &quot;inlineSimpleInternalCall&quot;                 0.02      0.14      0.00     0.00
-## &quot;is.data.frame&quot;                            0.02      0.14      0.00     0.00
-## &quot;is.int&quot;                                   0.02      0.14      0.00     0.00
-## &quot;is.na.data.frame&quot;                         0.02      0.14      0.00     0.00
-## &quot;is.simpleInternal&quot;                        0.02      0.14      0.00     0.00
-## &quot;isFALSE&quot;                                  0.02      0.14      0.00     0.00
-## &quot;isVirtualClass&quot;                           0.02      0.14      0.00     0.00
-## &quot;layer&quot;                                    0.02      0.14      0.00     0.00
-## &quot;lazyLoad&quot;                                 0.02      0.14      0.00     0.00
-## &quot;lazyLoadDBexec&quot;                           0.02      0.14      0.00     0.00
-## &quot;legend&quot;                                   0.02      0.14      0.00     0.00
-## &quot;local&quot;                                    0.02      0.14      0.00     0.00
-## &quot;ls&quot;                                       0.02      0.14      0.00     0.00
-## &quot;lsm_l_ta_calc&quot;                            0.02      0.14      0.00     0.00
-## &quot;make_crs&quot;                                 0.02      0.14      0.00     0.00
-## &quot;make_replace_index&quot;                       0.02      0.14      0.00     0.00
-## &quot;makeClassRepresentation&quot;                  0.02      0.14      0.00     0.00
-## &quot;makeExtends&quot;                              0.02      0.14      0.00     0.00
-## &quot;makeNamespace&quot;                            0.02      0.14      0.00     0.00
-## &quot;map&quot;                                      0.02      0.14      0.00     0.00
-## &quot;mask$eval_all_summarise&quot;                  0.02      0.14      0.00     0.00
-## &quot;match.arg&quot;                                0.02      0.14      0.00     0.00
-## &quot;mayCallBrowser&quot;                           0.02      0.14      0.00     0.00
-## &quot;mayCallBrowserList&quot;                       0.02      0.14      0.00     0.00
-## &quot;methods:::.mergeMethodsTable2&quot;            0.02      0.14      0.00     0.00
-## &quot;methods::as&quot;                              0.02      0.14      0.00     0.00
-## &quot;methods::new&quot;                             0.02      0.14      0.00     0.00
-## &quot;mode&quot;                                     0.02      0.14      0.00     0.00
-## &quot;mutate.data.frame&quot;                        0.02      0.14      0.00     0.00
-## &quot;namespaceImportMethods&quot;                   0.02      0.14      0.00     0.00
-## &quot;new_list_of&quot;                              0.02      0.14      0.00     0.00
-## &quot;new_list_of0&quot;                             0.02      0.14      0.00     0.00
-## &quot;new_vctr&quot;                                 0.02      0.14      0.00     0.00
-## &quot;newClassRepresentation&quot;                   0.02      0.14      0.00     0.00
-## &quot;NextMethod&quot;                               0.02      0.14      0.00     0.00
-## &quot;nsName&quot;                                   0.02      0.14      0.00     0.00
-## &quot;packageStartupMessage&quot;                    0.02      0.14      0.00     0.00
-## &quot;par&quot;                                      0.02      0.14      0.00     0.00
-## &quot;points&quot;                                   0.02      0.14      0.00     0.00
-## &quot;pos_from_before_after_names&quot;              0.02      0.14      0.00     0.00
-## &quot;possibleExtends&quot;                          0.02      0.14      0.00     0.00
-## &quot;quos_auto_name&quot;                           0.02      0.14      0.00     0.00
-## &quot;range&quot;                                    0.02      0.14      0.00     0.00
-## &quot;rcpp_get_circle&quot;                          0.02      0.14      0.00     0.00
-## &quot;rcpp_get_composition_vector&quot;              0.02      0.14      0.00     0.00
-## &quot;rcpp_get_coocurrence_matrix_diag&quot;         0.02      0.14      0.00     0.00
-## &quot;rcpp_get_unique_values&quot;                   0.02      0.14      0.00     0.00
-## &quot;Rcpp::cpp_object_initializer&quot;             0.02      0.14      0.00     0.00
-## &quot;refObjectClass&quot;                           0.02      0.14      0.00     0.00
-## &quot;register&quot;                                 0.02      0.14      0.00     0.00
-## &quot;registerS3method&quot;                         0.02      0.14      0.00     0.00
-## &quot;repaired_names&quot;                           0.02      0.14      0.00     0.00
-## &quot;row.names&lt;-.data.frame&quot;                   0.02      0.14      0.00     0.00
-## &quot;row.names&lt;-&quot;                              0.02      0.14      0.00     0.00
-## &quot;rowSums&quot;                                  0.02      0.14      0.00     0.00
-## &quot;rstudio$detect&quot;                           0.02      0.14      0.00     0.00
-## &quot;runUserHook&quot;                              0.02      0.14      0.00     0.00
-## &quot;set_names&quot;                                0.02      0.14      0.00     0.00
-## &quot;setNamespaceInfo&quot;                         0.02      0.14      0.00     0.00
-## &quot;sf::st_as_sf&quot;                             0.02      0.14      0.00     0.00
-## &quot;simpleFormals&quot;                            0.02      0.14      0.00     0.00
-## &quot;slot&quot;                                     0.02      0.14      0.00     0.00
-## &quot;sort.default&quot;                             0.02      0.14      0.00     0.00
-## &quot;sort.int&quot;                                 0.02      0.14      0.00     0.00
-## &quot;SpatRaster$new&quot;                           0.02      0.14      0.00     0.00
-## &quot;split.default&quot;                            0.02      0.14      0.00     0.00
-## &quot;split&quot;                                    0.02      0.14      0.00     0.00
-## &quot;st_as_sf.SpatVector&quot;                      0.02      0.14      0.00     0.00
-## &quot;st_sfc&quot;                                   0.02      0.14      0.00     0.00
-## &quot;subclass_name_repair_errors&quot;              0.02      0.14      0.00     0.00
-## &quot;summarise_cols&quot;                           0.02      0.14      0.00     0.00
-## &quot;summarise.grouped_df&quot;                     0.02      0.14      0.00     0.00
-## &quot;sys.source&quot;                               0.02      0.14      0.00     0.00
-## &quot;tbl_subset2&quot;                              0.02      0.14      0.00     0.00
-## &quot;unname&quot;                                   0.02      0.14      0.00     0.00
-## &quot;validate_unique&quot;                          0.02      0.14      0.00     0.00
-## &quot;vec_as_names&quot;                             0.02      0.14      0.00     0.00
-## &quot;vect&quot;                                     0.02      0.14      0.00     0.00
-## &quot;xy.coords&quot;                                0.02      0.14      0.00     0.00</code></pre>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" tabindex="-1"></a><span class="fu">summaryRprof</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;downloads/Rprof.out&quot;</span>))<span class="sc">$</span>by.total</span></code></pre></div>
+<pre><code>##                                        total.time total.pct self.time self.pct
+## &quot;eval&quot;                                      40.52    100.00      0.58     1.43
+## &quot;block_exec&quot;                                40.52    100.00      0.00     0.00
+## &quot;call_block&quot;                                40.52    100.00      0.00     0.00
+## &quot;eng_r&quot;                                     40.52    100.00      0.00     0.00
+## &quot;eval_with_user_handlers&quot;                   40.52    100.00      0.00     0.00
+## &quot;evaluate_call&quot;                             40.52    100.00      0.00     0.00
+## &quot;evaluate::evaluate&quot;                        40.52    100.00      0.00     0.00
+## &quot;evaluate&quot;                                  40.52    100.00      0.00     0.00
+## &quot;handle_error&quot;                              40.52    100.00      0.00     0.00
+## &quot;handle&quot;                                    40.52    100.00      0.00     0.00
+## &quot;in_dir&quot;                                    40.52    100.00      0.00     0.00
+## &quot;in_input_dir&quot;                              40.52    100.00      0.00     0.00
+## &quot;knitr::knit&quot;                               40.52    100.00      0.00     0.00
+## &quot;process_file&quot;                              40.52    100.00      0.00     0.00
+## &quot;process_group.block&quot;                       40.52    100.00      0.00     0.00
+## &quot;process_group&quot;                             40.52    100.00      0.00     0.00
+## &quot;rmarkdown::render&quot;                         40.52    100.00      0.00     0.00
+## &quot;source&quot;                                    40.52    100.00      0.00     0.00
+## &quot;timing_fn&quot;                                 40.52    100.00      0.00     0.00
+## &quot;withCallingHandlers&quot;                       40.52    100.00      0.00     0.00
+## &quot;withVisible&quot;                               40.52    100.00      0.00     0.00
+## &quot;FUN&quot;                                       28.50     70.34      0.90     2.22
+## &quot;lapply&quot;                                    28.28     69.79      0.60     1.48
+## &quot;sapply&quot;                                    21.64     53.41      0.02     0.05
+## &quot;t&quot;                                         21.52     53.11      0.00     0.00
+## &quot;FXN&quot;                                       21.40     52.81      0.06     0.15
+## &quot;pairwise_fxn&quot;                              21.40     52.81      0.00     0.00
+## &quot;utils::combn&quot;                              21.40     52.81      0.00     0.00
+## &quot;.local&quot;                                    17.80     43.93      0.82     2.02
+## &quot;HsHt&quot;                                      14.06     34.70      0.16     0.39
+## &quot;[&quot;                                         12.98     32.03      0.32     0.79
+## &quot;mmod::pairwise_Gst_Hedrick&quot;                 7.36     18.16      0.00     0.00
+## &quot;mmod::pairwise_D&quot;                           7.08     17.47      0.00     0.00
+## &quot;mmod::pairwise_Gst_Nei&quot;                     6.96     17.18      0.00     0.00
+## &quot;seploc&quot;                                     6.78     16.73      0.02     0.05
+## &quot;apply&quot;                                      6.68     16.49      1.04     2.57
+## &quot;&lt;Anonymous&gt;&quot;                                6.62     16.34      0.76     1.88
+## &quot;callNextMethod&quot;                             6.30     15.55      1.40     3.46
+## &quot;initialize&quot;                                 5.80     14.31      0.10     0.25
+## &quot;new&quot;                                        5.80     14.31      0.00     0.00
+## &quot;tryCatch&quot;                                   5.48     13.52      0.10     0.25
+## &quot;loadNamespace&quot;                              5.48     13.52      0.00     0.00
+## &quot;tryCatchList&quot;                               5.40     13.33      0.10     0.25
+## &quot;doTryCatch&quot;                                 5.32     13.13      0.16     0.39
+## &quot;tryCatchOne&quot;                                5.32     13.13      0.02     0.05
+## &quot;namespaceImportFrom&quot;                        4.86     11.99      0.02     0.05
+## &quot;asNamespace&quot;                                4.84     11.94      0.00     0.00
+## &quot;requireNamespace&quot;                           4.82     11.90      0.00     0.00
+## &quot;as.dist&quot;                                    4.78     11.80      0.00     0.00
+## &quot;hierfstat::pairwise.neifst&quot;                 4.78     11.80      0.00     0.00
+## &quot;basic.stats&quot;                                4.70     11.60      0.00     0.00
+## &quot;factor&quot;                                     4.46     11.01      0.98     2.42
+## &quot;is&quot;                                         4.36     10.76      1.62     4.00
+## &quot;other&quot;                                      4.34     10.71      0.24     0.59
+## &quot;methods::cacheMetaData&quot;                     4.24     10.46      0.02     0.05
+## &quot;PopGenReport::pairwise.propShared&quot;          4.18     10.32      0.00     0.00
+## &quot;.drop_alleles&quot;                              3.72      9.18      0.14     0.35
+## &quot;tapply&quot;                                     3.44      8.49      0.76     1.88
+## &quot;table&quot;                                      3.26      8.05      0.50     1.23
+## &quot;methods:::loadMethod&quot;                       3.22      7.95      0.18     0.44
+## &quot;repool&quot;                                     3.02      7.45      0.00     0.00
+## &quot;namespaceImport&quot;                            2.98      7.35      0.00     0.00
+## &quot;unique&quot;                                     2.88      7.11      0.74     1.83
+## &quot;Module&quot;                                     2.16      5.33      0.40     0.99
+## &quot;.doLoadActions&quot;                             2.16      5.33      0.00     0.00
+## &quot;loadModule&quot;                                 2.16      5.33      0.00     0.00
+## &quot;pop.freq&quot;                                   2.06      5.08      0.00     0.00
+## &quot;match.arg&quot;                                  1.98      4.89      0.84     2.07
+## &quot;vapply&quot;                                     1.96      4.84      0.40     0.99
+## &quot;allele.count&quot;                               1.86      4.59      0.00     0.00
+## &quot;unlist&quot;                                     1.82      4.49      0.40     0.99
+## &quot;lazyLoadDBfetch&quot;                            1.76      4.34      1.76     4.34
+## &quot;getClassDef&quot;                                1.66      4.10      0.82     2.02
+## &quot;stopifnot&quot;                                  1.58      3.90      1.24     3.06
+## &quot;data.frame&quot;                                 1.58      3.90      0.08     0.20
+## &quot;do.call&quot;                                    1.48      3.65      0.14     0.35
+## &quot;alleles&quot;                                    1.48      3.65      0.12     0.30
+## &quot;.updateMethodsInTable&quot;                      1.48      3.65      0.00     0.00
+## &quot;order&quot;                                      1.44      3.55      0.26     0.64
+## &quot;as.data.frame&quot;                              1.44      3.55      0.06     0.15
+## &quot;Ops.data.frame&quot;                             1.44      3.55      0.06     0.15
+## &quot;validObject&quot;                                1.36      3.36      0.18     0.44
+## &quot;[.table&quot;                                    1.36      3.36      0.12     0.30
+## &quot;is.genind&quot;                                  1.34      3.31      0.04     0.10
+## &quot;NextMethod&quot;                                 1.32      3.26      0.24     0.59
+## &quot;cor&quot;                                        1.24      3.06      0.22     0.54
+## &quot;EcoGenetics::eco.cormantel&quot;                 1.24      3.06      0.00     0.00
+## &quot;int.mantel&quot;                                 1.16      2.86      0.02     0.05
+## &quot;as.data.frame.list&quot;                         1.12      2.76      0.06     0.15
+## &quot;getal&quot;                                      1.12      2.76      0.02     0.05
+## &quot;gstudio::genetic_distance&quot;                  1.12      2.76      0.00     0.00
+## &quot;pspop&quot;                                      1.10      2.71      0.00     0.00
+## &quot;pop&quot;                                        1.06      2.62      0.30     0.74
+## &quot;.seppop_internal&quot;                           1.04      2.57      0.00     0.00
+## &quot;seppop&quot;                                     1.04      2.57      0.00     0.00
+## &quot;match&quot;                                      1.02      2.52      0.04     0.10
+## &quot;unique.default&quot;                             0.94      2.32      0.32     0.79
+## &quot;possibleExtends&quot;                            0.92      2.27      0.48     1.18
+## &quot;vegan::mantel&quot;                              0.86      2.12      0.00     0.00
+## &quot;locFac&quot;                                     0.84      2.07      0.06     0.15
+## &quot;try&quot;                                        0.84      2.07      0.00     0.00
+## &quot;getal.b&quot;                                    0.82      2.02      0.00     0.00
+## &quot;insertClassMethods&quot;                         0.82      2.02      0.00     0.00
+## &quot;.getClassesFromCache&quot;                       0.80      1.97      0.80     1.97
+## &quot;sys.function&quot;                               0.80      1.97      0.64     1.58
+## &quot;.rmspaces&quot;                                  0.80      1.97      0.04     0.10
+## &quot;getGeneric&quot;                                 0.80      1.97      0.00     0.00
+## &quot;gsub&quot;                                       0.78      1.92      0.76     1.88
+## &quot;paste&quot;                                      0.78      1.92      0.38     0.94
+## &quot;as.data.frame.numeric&quot;                      0.78      1.92      0.16     0.39
+## &quot;methods::setRefClass&quot;                       0.78      1.92      0.00     0.00
+## &quot;makeClassMethod&quot;                            0.76      1.88      0.02     0.05
+## &quot;%/%&quot;                                        0.76      1.88      0.00     0.00
+## &quot;locNames&quot;                                   0.72      1.78      0.08     0.20
+## &quot;%%&quot;                                         0.68      1.68      0.00     0.00
+## &quot;is.data.frame&quot;                              0.64      1.58      0.44     1.09
+## &quot;ptest&quot;                                      0.64      1.58      0.26     0.64
+## &quot;df2genind&quot;                                  0.64      1.58      0.04     0.10
+## &quot;ind.count&quot;                                  0.62      1.53      0.02     0.05
+## &quot;.identC&quot;                                    0.60      1.48      0.58     1.43
+## &quot;isTRUE&quot;                                     0.60      1.48      0.04     0.10
+## &quot;suppressMessages&quot;                           0.58      1.43      0.00     0.00
+## &quot;to_mv.locus&quot;                                0.56      1.38      0.08     0.20
+## &quot;force&quot;                                      0.56      1.38      0.04     0.10
+## &quot;.getGeneric&quot;                                0.56      1.38      0.02     0.05
+## &quot;cbind&quot;                                      0.56      1.38      0.00     0.00
+## &quot;to_mv.data.frame&quot;                           0.56      1.38      0.00     0.00
+## &quot;to_mv&quot;                                      0.56      1.38      0.00     0.00
+## &quot;array&quot;                                      0.52      1.28      0.32     0.79
+## &quot;%in%&quot;                                       0.52      1.28      0.30     0.74
+## &quot;.nextMethod&quot;                                0.52      1.28      0.12     0.30
+## &quot;deparse1&quot;                                   0.52      1.28      0.02     0.05
+## &quot;is.na&quot;                                      0.50      1.23      0.26     0.64
+## &quot;anyStrings&quot;                                 0.50      1.23      0.02     0.05
+## &quot;as.list&quot;                                    0.48      1.18      0.28     0.69
+## &quot;[.data.frame&quot;                               0.48      1.18      0.16     0.39
+## &quot;validityMethod&quot;                             0.48      1.18      0.08     0.20
+## &quot;getClass&quot;                                   0.46      1.14      0.20     0.49
+## &quot;.checkGroupSigLength&quot;                       0.46      1.14      0.00     0.00
+## &quot;.External.graphics&quot;                         0.44      1.09      0.44     1.09
+## &quot;as.matrix&quot;                                  0.44      1.09      0.02     0.05
+## &quot;dist_bray&quot;                                  0.44      1.09      0.02     0.05
+## &quot;generator$methods&quot;                          0.44      1.09      0.00     0.00
+## &quot;image.default&quot;                              0.44      1.09      0.00     0.00
+## &quot;image&quot;                                      0.44      1.09      0.00     0.00
+## &quot;.get_Module_Class&quot;                          0.42      1.04      0.42     1.04
+## &quot;length&quot;                                     0.42      1.04      0.42     1.04
+## &quot;sub&quot;                                        0.42      1.04      0.42     1.04
+## &quot;mean.default&quot;                               0.42      1.04      0.18     0.44
+## &quot;as.matrix.data.frame&quot;                       0.42      1.04      0.16     0.39
+## &quot;split&quot;                                      0.42      1.04      0.16     0.39
+## &quot;as.character&quot;                               0.40      0.99      0.36     0.89
+## &quot;deparse&quot;                                    0.40      0.99      0.16     0.39
+## &quot;list.names&quot;                                 0.40      0.99      0.10     0.25
+## &quot;alleles.locus&quot;                              0.40      0.99      0.02     0.05
+## &quot;EcoGenetics::eco.plotCorrelog&quot;              0.40      0.99      0.00     0.00
+## &quot;fun&quot;                                        0.40      0.99      0.00     0.00
+## &quot;refClassInformation&quot;                        0.40      0.99      0.00     0.00
+## &quot;runHook&quot;                                    0.40      0.99      0.00     0.00
+## &quot;harmonic_mean&quot;                              0.38      0.94      0.06     0.15
+## &quot;tab&quot;                                        0.38      0.94      0.02     0.05
+## &quot;frequencies.data.frame&quot;                     0.38      0.94      0.00     0.00
+## &quot;frequencies&quot;                                0.38      0.94      0.00     0.00
+## &quot;setClass&quot;                                   0.38      0.94      0.00     0.00
+## &quot;to_mv_freq&quot;                                 0.38      0.94      0.00     0.00
+## &quot;formals&quot;                                    0.36      0.89      0.04     0.10
+## &quot;@&lt;-&quot;                                        0.34      0.84      0.34     0.84
+## &quot;match.fun&quot;                                  0.34      0.84      0.30     0.74
+## &quot;levels&quot;                                     0.34      0.84      0.24     0.59
+## &quot;.getGlobalFuns&quot;                             0.34      0.84      0.00     0.00
+## &quot;.tabGetter&quot;                                 0.34      0.84      0.00     0.00
+## &quot;codetools::findGlobals&quot;                     0.34      0.84      0.00     0.00
+## &quot;genind&quot;                                     0.34      0.84      0.00     0.00
+## &quot;setIs&quot;                                      0.34      0.84      0.00     0.00
+## &quot;.Call&quot;                                      0.32      0.79      0.22     0.54
+## &quot;aperm&quot;                                      0.32      0.79      0.20     0.49
+## &quot;collectUsage&quot;                               0.32      0.79      0.00     0.00
+## &quot;sample.int&quot;                                 0.30      0.74      0.24     0.59
+## &quot;colSums&quot;                                    0.30      0.74      0.02     0.05
+## &quot;.rbind_strata&quot;                              0.30      0.74      0.00     0.00
+## &quot;collectUsageFun&quot;                            0.30      0.74      0.00     0.00
+## &quot;assign&quot;                                     0.28      0.69      0.28     0.69
+## &quot;c&quot;                                          0.28      0.69      0.28     0.69
+## &quot;sys.call&quot;                                   0.28      0.69      0.28     0.69
+## &quot;as.vector&quot;                                  0.28      0.69      0.10     0.25
+## &quot;.recMembers&quot;                                0.28      0.69      0.02     0.05
+## &quot;Summary.data.frame&quot;                         0.28      0.69      0.02     0.05
+## &quot;getGroupMembers&quot;                            0.28      0.69      0.00     0.00
+## &quot;library&quot;                                    0.28      0.69      0.00     0.00
+## &quot;file.exists&quot;                                0.26      0.64      0.26     0.64
+## &quot;split.default&quot;                              0.26      0.64      0.24     0.59
+## &quot;structure&quot;                                  0.26      0.64      0.20     0.49
+## &quot;mean&quot;                                       0.26      0.64      0.08     0.20
+## &quot;.combineExtends&quot;                            0.26      0.64      0.04     0.10
+## &quot;.transitiveExtends&quot;                         0.26      0.64      0.00     0.00
+## &quot;EcoGenetics::ecogen2genind&quot;                 0.26      0.64      0.00     0.00
+## &quot;strsplit&quot;                                   0.24      0.59      0.24     0.59
+## &quot;lengths&quot;                                    0.24      0.59      0.22     0.54
+## &quot;...elt&quot;                                     0.24      0.59      0.16     0.39
+## &quot;[&lt;-.data.frame&quot;                             0.24      0.59      0.04     0.10
+## &quot;get&quot;                                        0.24      0.59      0.04     0.10
+## &quot;max&quot;                                        0.24      0.59      0.02     0.05
+## &quot;.walkClassGraph&quot;                            0.24      0.59      0.00     0.00
+## &quot;[&lt;-&quot;                                        0.24      0.59      0.00     0.00
+## &quot;as&quot;                                         0.24      0.59      0.00     0.00
+## &quot;completeExtends&quot;                            0.24      0.59      0.00     0.00
+## &quot;dist_cgd&quot;                                   0.24      0.59      0.00     0.00
+## &quot;dist_nei&quot;                                   0.24      0.59      0.00     0.00
+## &quot;is.na.locus&quot;                                0.24      0.59      0.00     0.00
+## &quot;require&quot;                                    0.24      0.59      0.00     0.00
+## &quot;methods::validObject&quot;                       0.22      0.54      0.12     0.30
+## &quot;dist_jaccard&quot;                               0.22      0.54      0.00     0.00
+## &quot;frequencies.locus&quot;                          0.22      0.54      0.00     0.00
+## &quot;load_units_xml&quot;                             0.22      0.54      0.00     0.00
+## &quot;Recall&quot;                                     0.22      0.54      0.00     0.00
+## &quot;standardGeneric&quot;                            0.22      0.54      0.00     0.00
+## &quot;ud_init&quot;                                    0.22      0.54      0.00     0.00
+## &quot;sys.parent&quot;                                 0.20      0.49      0.20     0.49
+## &quot;[.factor&quot;                                   0.20      0.49      0.10     0.25
+## &quot;sample&quot;                                     0.20      0.49      0.04     0.10
+## &quot;.findMethodInTable&quot;                         0.20      0.49      0.02     0.05
+## &quot;[[&quot;                                         0.20      0.49      0.02     0.05
+## &quot;doShuffleSet&quot;                               0.20      0.49      0.02     0.05
+## &quot;findLocalsList&quot;                             0.20      0.49      0.02     0.05
+## &quot;.quickCoerceSelect&quot;                         0.20      0.49      0.00     0.00
+## &quot;find.package&quot;                               0.20      0.49      0.00     0.00
+## &quot;findFuncLocals&quot;                             0.20      0.49      0.00     0.00
+## &quot;frequencies.default&quot;                        0.20      0.49      0.00     0.00
+## &quot;getPermuteMatrix&quot;                           0.20      0.49      0.00     0.00
+## &quot;shuffleSet&quot;                                 0.20      0.49      0.00     0.00
+## &quot;names&quot;                                      0.18      0.44      0.18     0.44
+## &quot;grep&quot;                                       0.18      0.44      0.16     0.39
+## &quot;match.call&quot;                                 0.18      0.44      0.14     0.35
+## &quot;.External2&quot;                                 0.18      0.44      0.12     0.30
+## &quot;.deparseOpts&quot;                               0.18      0.44      0.10     0.25
+## &quot;walkCode&quot;                                   0.18      0.44      0.04     0.10
+## &quot;[[.data.frame&quot;                              0.18      0.44      0.02     0.05
+## &quot;mode&quot;                                       0.18      0.44      0.02     0.05
+## &quot;ncol&quot;                                       0.18      0.44      0.02     0.05
+## &quot;sort&quot;                                       0.18      0.44      0.02     0.05
+## &quot;dist_euclidean&quot;                             0.18      0.44      0.00     0.00
+## &quot;ggplotly.ggplot&quot;                            0.18      0.44      0.00     0.00
+## &quot;html_print&quot;                                 0.18      0.44      0.00     0.00
+## &quot;plotly::ggplotly&quot;                           0.18      0.44      0.00     0.00
+## &quot;print.htmlwidget&quot;                           0.18      0.44      0.00     0.00
+## &quot;print&quot;                                      0.18      0.44      0.00     0.00
+## &quot;all&quot;                                        0.16      0.39      0.16     0.39
+## &quot;is.factor&quot;                                  0.16      0.39      0.16     0.39
+## &quot;nlevels&quot;                                    0.16      0.39      0.08     0.20
+## &quot;w$call&quot;                                     0.16      0.39      0.04     0.10
+## &quot;readRDS&quot;                                    0.16      0.39      0.02     0.05
+## &quot;.setStrata&quot;                                 0.16      0.39      0.00     0.00
+## &quot;as&lt;-&quot;                                       0.16      0.39      0.00     0.00
+## &quot;gg2list&quot;                                    0.16      0.39      0.00     0.00
+## &quot;library.dynam&quot;                              0.16      0.39      0.00     0.00
+## &quot;save_html&quot;                                  0.16      0.39      0.00     0.00
+## &quot;strata&lt;-&quot;                                   0.16      0.39      0.00     0.00
+## &quot;sweep&quot;                                      0.16      0.39      0.00     0.00
+## &quot;tabulate&quot;                                   0.14      0.35      0.10     0.25
+## &quot;.rowNamesDF&lt;-&quot;                              0.14      0.35      0.06     0.15
+## &quot;rowSums&quot;                                    0.14      0.35      0.06     0.15
+## &quot;dplyr::bind_rows&quot;                           0.14      0.35      0.00     0.00
+## &quot;h&quot;                                          0.14      0.35      0.00     0.00
+## &quot;suppressWarnings&quot;                           0.14      0.35      0.00     0.00
+## &quot;as.integer&quot;                                 0.12      0.30      0.12     0.30
+## &quot;attr&quot;                                       0.12      0.30      0.12     0.30
+## &quot;is.numeric&quot;                                 0.12      0.30      0.12     0.30
+## &quot;pmatch&quot;                                     0.12      0.30      0.12     0.30
+## &quot;isFALSE&quot;                                    0.12      0.30      0.10     0.25
+## &quot;aperm.default&quot;                              0.12      0.30      0.06     0.15
+## &quot;levels.default&quot;                             0.12      0.30      0.04     0.10
+## &quot;.cacheGeneric&quot;                              0.12      0.30      0.02     0.05
+## &quot;as.data.frame.matrix&quot;                       0.12      0.30      0.02     0.05
+## &quot;.cacheGenericTable&quot;                         0.10      0.25      0.10     0.25
+## &quot;as.list.default&quot;                            0.10      0.25      0.10     0.25
+## &quot;dyn.load&quot;                                   0.10      0.25      0.10     0.25
+## &quot;sys.frame&quot;                                  0.10      0.25      0.10     0.25
+## &quot;anyDuplicated&quot;                              0.10      0.25      0.06     0.15
+## &quot;as.list.locus&quot;                              0.10      0.25      0.02     0.05
+## &quot;completeSubclasses&quot;                         0.10      0.25      0.02     0.05
+## &quot;locus&quot;                                      0.10      0.25      0.02     0.05
+## &quot;methods::is&quot;                                0.10      0.25      0.02     0.05
+## &quot;setNames&quot;                                   0.10      0.25      0.02     0.05
+## &quot;.read_columns&quot;                              0.10      0.25      0.00     0.00
+## &quot;adegenet::chooseCN&quot;                         0.10      0.25      0.00     0.00
+## &quot;gstudio::read_population&quot;                   0.10      0.25      0.00     0.00
+## &quot;mapply&quot;                                     0.10      0.25      0.00     0.00
+## &quot;plot&quot;                                       0.10      0.25      0.00     0.00
+## &quot;row.names&lt;-.data.frame&quot;                     0.10      0.25      0.00     0.00
+## &quot;row.names&lt;-&quot;                                0.10      0.25      0.00     0.00
+## &quot;vec_rbind&quot;                                  0.10      0.25      0.00     0.00
+## &quot;any&quot;                                        0.08      0.20      0.08     0.20
+## &quot;close.connection&quot;                           0.08      0.20      0.08     0.20
+## &quot;list&quot;                                       0.08      0.20      0.08     0.20
+## &quot;[.locus&quot;                                    0.08      0.20      0.04     0.10
+## &quot;dim&quot;                                        0.08      0.20      0.04     0.10
+## &quot;extends&quot;                                    0.08      0.20      0.04     0.10
+## &quot;paste0&quot;                                     0.08      0.20      0.04     0.10
+## &quot;rank&quot;                                       0.08      0.20      0.04     0.10
+## &quot;make.names&quot;                                 0.08      0.20      0.02     0.05
+## &quot;rapply&quot;                                     0.08      0.20      0.02     0.05
+## &quot;.resetInheritedMethods&quot;                     0.08      0.20      0.00     0.00
+## &quot;as.tags.htmlwidget&quot;                         0.08      0.20      0.00     0.00
+## &quot;asMethod&quot;                                   0.08      0.20      0.00     0.00
+## &quot;callback&quot;                                   0.08      0.20      0.00     0.00
+## &quot;close&quot;                                      0.08      0.20      0.00     0.00
+## &quot;dots_list&quot;                                  0.08      0.20      0.00     0.00
+## &quot;get_method&quot;                                 0.08      0.20      0.00     0.00
+## &quot;htmltools::as.tags&quot;                         0.08      0.20      0.00     0.00
+## &quot;is.na.data.frame&quot;                           0.08      0.20      0.00     0.00
+## &quot;Rank&quot;                                       0.08      0.20      0.00     0.00
+## &quot;run_on_load&quot;                                0.08      0.20      0.00     0.00
+## &quot;save_html.default&quot;                          0.08      0.20      0.00     0.00
+## &quot;tagList&quot;                                    0.08      0.20      0.00     0.00
+## &quot;toHTML&quot;                                     0.08      0.20      0.00     0.00
+## &quot;toJSON&quot;                                     0.08      0.20      0.00     0.00
+## &quot;URapply&quot;                                    0.08      0.20      0.00     0.00
+## &quot;widget_data&quot;                                0.08      0.20      0.00     0.00
+## &quot;&gt;&quot;                                          0.06      0.15      0.06     0.15
+## &quot;anyNA&quot;                                      0.06      0.15      0.06     0.15
+## &quot;complete.cases&quot;                             0.06      0.15      0.06     0.15
+## &quot;gzfile&quot;                                     0.06      0.15      0.06     0.15
+## &quot;is.list&quot;                                    0.06      0.15      0.06     0.15
+## &quot;isS4&quot;                                       0.06      0.15      0.06     0.15
+## &quot;ploidy&quot;                                     0.06      0.15      0.06     0.15
+## &quot;testmantelCpp&quot;                              0.06      0.15      0.06     0.15
+## &quot;.getGenericFromCache&quot;                       0.06      0.15      0.04     0.10
+## &quot;rbind&quot;                                      0.06      0.15      0.04     0.10
+## &quot;.classEnv&quot;                                  0.06      0.15      0.02     0.05
+## &quot;is.na&lt;-&quot;                                    0.06      0.15      0.02     0.05
+## &quot;slot&lt;-&quot;                                     0.06      0.15      0.02     0.05
+## &quot;tryInline&quot;                                  0.06      0.15      0.02     0.05
+## &quot;xtfrm&quot;                                      0.06      0.15      0.02     0.05
+## &quot;.checkFieldsInMethod&quot;                       0.06      0.15      0.00     0.00
+## &quot;.gen.valid&quot;                                 0.06      0.15      0.00     0.00
+## &quot;.getRequiredPackages2&quot;                      0.06      0.15      0.00     0.00
+## &quot;.mergeMethodsTable&quot;                         0.06      0.15      0.00     0.00
+## &quot;$&lt;-&quot;                                        0.06      0.15      0.00     0.00
+## &quot;ade4::mantel.randtest&quot;                      0.06      0.15      0.00     0.00
+## &quot;cmp&quot;                                        0.06      0.15      0.00     0.00
+## &quot;cmpCall&quot;                                    0.06      0.15      0.00     0.00
+## &quot;colMeans&quot;                                   0.06      0.15      0.00     0.00
+## &quot;copyDependencyToDir&quot;                        0.06      0.15      0.00     0.00
+## &quot;cpp_refMethods&quot;                             0.06      0.15      0.00     0.00
+## &quot;createPayload&quot;                              0.06      0.15      0.00     0.00
+## &quot;genCode&quot;                                    0.06      0.15      0.00     0.00
+## &quot;ggplotly_build&quot;                             0.06      0.15      0.00     0.00
+## &quot;instance$preRenderHook&quot;                     0.06      0.15      0.00     0.00
+## &quot;int.random.test&quot;                            0.06      0.15      0.00     0.00
+## &quot;methods:::.getGenerics&quot;                     0.06      0.15      0.00     0.00
+## &quot;min&quot;                                        0.06      0.15      0.00     0.00
+## &quot;plot.new&quot;                                   0.06      0.15      0.00     0.00
+## &quot;plotly_build.plotly&quot;                        0.06      0.15      0.00     0.00
+## &quot;pop&lt;-&quot;                                      0.06      0.15      0.00     0.00
+## &quot;registerS3methods&quot;                          0.06      0.15      0.00     0.00
+## &quot;tmpfun&quot;                                     0.06      0.15      0.00     0.00
+## &quot;unique.matrix&quot;                              0.06      0.15      0.00     0.00
+## &quot;...length&quot;                                  0.04      0.10      0.04     0.10
+## &quot;.row_names_info&quot;                            0.04      0.10      0.04     0.10
+## &quot;.subset2&quot;                                   0.04      0.10      0.04     0.10
+## &quot;anyDuplicated.default&quot;                      0.04      0.10      0.04     0.10
+## &quot;as.character.factor&quot;                        0.04      0.10      0.04     0.10
+## &quot;class&quot;                                      0.04      0.10      0.04     0.10
+## &quot;colnames&quot;                                   0.04      0.10      0.04     0.10
+## &quot;dimnames&quot;                                   0.04      0.10      0.04     0.10
+## &quot;dir.exists&quot;                                 0.04      0.10      0.04     0.10
+## &quot;environment&quot;                                0.04      0.10      0.04     0.10
+## &quot;findOwnerEnv&quot;                               0.04      0.10      0.04     0.10
+## &quot;is.ordered&quot;                                 0.04      0.10      0.04     0.10
+## &quot;options&quot;                                    0.04      0.10      0.04     0.10
+## &quot;parent.frame&quot;                               0.04      0.10      0.04     0.10
+## &quot;prod&quot;                                       0.04      0.10      0.04     0.10
+## &quot;seq.default&quot;                                0.04      0.10      0.04     0.10
+## &quot;tcrossprod&quot;                                 0.04      0.10      0.04     0.10
+## &quot;tempfile&quot;                                   0.04      0.10      0.04     0.10
+## &quot;envRefInferField&quot;                           0.04      0.10      0.02     0.05
+## &quot;file.copy&quot;                                  0.04      0.10      0.02     0.05
+## &quot;list_flatten&quot;                               0.04      0.10      0.02     0.05
+## &quot;nPop&quot;                                       0.04      0.10      0.02     0.05
+## &quot;nrow&quot;                                       0.04      0.10      0.02     0.05
+## &quot;pmax&quot;                                       0.04      0.10      0.02     0.05
+## &quot;rev&quot;                                        0.04      0.10      0.02     0.05
+## &quot;selectMethod&quot;                               0.04      0.10      0.02     0.05
+## &quot;slot&quot;                                       0.04      0.10      0.02     0.05
+## &quot;.get_pop_inds&quot;                              0.04      0.10      0.00     0.00
+## &quot;.make_numeric_version&quot;                      0.04      0.10      0.00     0.00
+## &quot;.mergeImportMethods&quot;                        0.04      0.10      0.00     0.00
+## &quot;$&quot;                                          0.04      0.10      0.00     0.00
+## &quot;addImports&quot;                                 0.04      0.10      0.00     0.00
+## &quot;as.data.frame.character&quot;                    0.04      0.10      0.00     0.00
+## &quot;as.data.frame.factor&quot;                       0.04      0.10      0.00     0.00
+## &quot;as.numeric_version&quot;                         0.04      0.10      0.00     0.00
+## &quot;asplit&quot;                                     0.04      0.10      0.00     0.00
+## &quot;assignNativeRoutines&quot;                       0.04      0.10      0.00     0.00
+## &quot;checkSlotAssignment&quot;                        0.04      0.10      0.00     0.00
+## &quot;cmpfun&quot;                                     0.04      0.10      0.00     0.00
+## &quot;collectUsageArgs&quot;                           0.04      0.10      0.00     0.00
+## &quot;compiler:::tryCmpfun&quot;                       0.04      0.10      0.00     0.00
+## &quot;dim.data.frame&quot;                             0.04      0.10      0.00     0.00
+## &quot;ecogen&quot;                                     0.04      0.10      0.00     0.00
+## &quot;eval.parent&quot;                                0.04      0.10      0.00     0.00
+## &quot;format_perc&quot;                                0.04      0.10      0.00     0.00
+## &quot;formatC&quot;                                    0.04      0.10      0.00     0.00
+## &quot;is.na&lt;-.default&quot;                            0.04      0.10      0.00     0.00
+## &quot;layers2traces&quot;                              0.04      0.10      0.00     0.00
+## &quot;lazyLoad&quot;                                   0.04      0.10      0.00     0.00
+## &quot;lazyLoadDBexec&quot;                             0.04      0.10      0.00     0.00
+## &quot;local&quot;                                      0.04      0.10      0.00     0.00
+## &quot;ls&quot;                                         0.04      0.10      0.00     0.00
+## &quot;makeClassRepresentation&quot;                    0.04      0.10      0.00     0.00
+## &quot;map&quot;                                        0.04      0.10      0.00     0.00
+## &quot;MASS::kde2d&quot;                                0.04      0.10      0.00     0.00
+## &quot;Math.data.frame&quot;                            0.04      0.10      0.00     0.00
+## &quot;methods:::.mergeMethodsTable2&quot;              0.04      0.10      0.00     0.00
+## &quot;modify_list&quot;                                0.04      0.10      0.00     0.00
+## &quot;modifyList&quot;                                 0.04      0.10      0.00     0.00
+## &quot;numeric_version&quot;                            0.04      0.10      0.00     0.00
+## &quot;plot.default&quot;                               0.04      0.10      0.00     0.00
+## &quot;popgraph::popgraph&quot;                         0.04      0.10      0.00     0.00
+## &quot;quantile.default&quot;                           0.04      0.10      0.00     0.00
+## &quot;quantile&quot;                                   0.04      0.10      0.00     0.00
+## &quot;register&quot;                                   0.04      0.10      0.00     0.00
+## &quot;rownames&lt;-&quot;                                 0.04      0.10      0.00     0.00
+## &quot;s3_register&quot;                                0.04      0.10      0.00     0.00
+## &quot;setDataPart&quot;                                0.04      0.10      0.00     0.00
+## &quot;simplify2array&quot;                             0.04      0.10      0.00     0.00
+## &quot;sort.default&quot;                               0.04      0.10      0.00     0.00
+## &quot;sort.int&quot;                                   0.04      0.10      0.00     0.00
+## &quot;supply_defaults&quot;                            0.04      0.10      0.00     0.00
+## &quot;sys.source&quot;                                 0.04      0.10      0.00     0.00
+## &quot;w$isLocal&quot;                                  0.04      0.10      0.00     0.00
+## &quot;.C&quot;                                         0.02      0.05      0.02     0.05
+## &quot;.cacheClass&quot;                                0.02      0.05      0.02     0.05
+## &quot;.class1&quot;                                    0.02      0.05      0.02     0.05
+## &quot;.getGenericFromCacheTable&quot;                  0.02      0.05      0.02     0.05
+## &quot;.mergeAttrs&quot;                                0.02      0.05      0.02     0.05
+## &quot;.requirePackage&quot;                            0.02      0.05      0.02     0.05
+## &quot;.set_row_names&quot;                             0.02      0.05      0.02     0.05
+## &quot;.subset&quot;                                    0.02      0.05      0.02     0.05
+## &quot;$&lt;-.data.frame&quot;                             0.02      0.05      0.02     0.05
+## &quot;anyDots&quot;                                    0.02      0.05      0.02     0.05
+## &quot;as.logical&quot;                                 0.02      0.05      0.02     0.05
+## &quot;as.name&quot;                                    0.02      0.05      0.02     0.05
+## &quot;attributes&quot;                                 0.02      0.05      0.02     0.05
+## &quot;base::colSums&quot;                              0.02      0.05      0.02     0.05
+## &quot;col&quot;                                        0.02      0.05      0.02     0.05
+## &quot;delayedAssign&quot;                              0.02      0.05      0.02     0.05
+## &quot;elNamed&quot;                                    0.02      0.05      0.02     0.05
+## &quot;file.append&quot;                                0.02      0.05      0.02     0.05
+## &quot;getDataPart&quot;                                0.02      0.05      0.02     0.05
+## &quot;getNamespaceName&quot;                           0.02      0.05      0.02     0.05
+## &quot;ggplot2::calc_element&quot;                      0.02      0.05      0.02     0.05
+## &quot;grepl&quot;                                      0.02      0.05      0.02     0.05
+## &quot;importIntoEnv&quot;                              0.02      0.05      0.02     0.05
+## &quot;is.atomic&quot;                                  0.02      0.05      0.02     0.05
+## &quot;is.function&quot;                                0.02      0.05      0.02     0.05
+## &quot;isatty&quot;                                     0.02      0.05      0.02     0.05
+## &quot;La.svd&quot;                                     0.02      0.05      0.02     0.05
+## &quot;logical&quot;                                    0.02      0.05      0.02     0.05
+## &quot;make.argContext&quot;                            0.02      0.05      0.02     0.05
+## &quot;make.unique&quot;                                0.02      0.05      0.02     0.05
+## &quot;makeUsageCollector&quot;                         0.02      0.05      0.02     0.05
+## &quot;methodsPackageMetaName&quot;                     0.02      0.05      0.02     0.05
+## &quot;nargs&quot;                                      0.02      0.05      0.02     0.05
+## &quot;packageSlot&quot;                                0.02      0.05      0.02     0.05
+## &quot;plot.xy&quot;                                    0.02      0.05      0.02     0.05
+## &quot;reconcilePropertiesAndPrototype&quot;            0.02      0.05      0.02     0.05
+## &quot;rev.default&quot;                                0.02      0.05      0.02     0.05
+## &quot;row.names&quot;                                  0.02      0.05      0.02     0.05
+## &quot;setdiff&quot;                                    0.02      0.05      0.02     0.05
+## &quot;sum&quot;                                        0.02      0.05      0.02     0.05
+## &quot;unclass&quot;                                    0.02      0.05      0.02     0.05
+## &quot;uniqlengths&quot;                                0.02      0.05      0.02     0.05
+## &quot;unit&quot;                                       0.02      0.05      0.02     0.05
+## &quot;w$leaf&quot;                                     0.02      0.05      0.02     0.05
+## &quot;.assignedVars&quot;                              0.02      0.05      0.00     0.00
+## &quot;.encode_numeric_version&quot;                    0.02      0.05      0.00     0.00
+## &quot;.fillSignatures&quot;                            0.02      0.05      0.00     0.00
+## &quot;.findInheritedMethods&quot;                      0.02      0.05      0.00     0.00
+## &quot;.genericOrImplicit&quot;                         0.02      0.05      0.00     0.00
+## &quot;.isIndirectExtension&quot;                       0.02      0.05      0.00     0.00
+## &quot;.makeActiveBinding&quot;                         0.02      0.05      0.00     0.00
+## &quot;.mlistAddToTable&quot;                           0.02      0.05      0.00     0.00
+## &quot;.recacheSubclasses&quot;                         0.02      0.05      0.00     0.00
+## &quot;.registerS3method&quot;                          0.02      0.05      0.00     0.00
+## &quot;.removePreviousCoerce&quot;                      0.02      0.05      0.00     0.00
+## &quot;.resetTable&quot;                                0.02      0.05      0.00     0.00
+## &quot;.rlang_cli_format&quot;                          0.02      0.05      0.00     0.00
+## &quot;.setupMethodsTables&quot;                        0.02      0.05      0.00     0.00
+## &quot;.simpleSignature&quot;                           0.02      0.05      0.00     0.00
+## &quot;.TableMetaName&quot;                             0.02      0.05      0.00     0.00
+## &quot;[.data.table&quot;                               0.02      0.05      0.00     0.00
+## &quot;%&gt;%&quot;                                        0.02      0.05      0.00     0.00
+## &quot;%||%&quot;                                       0.02      0.05      0.00     0.00
+## &quot;adegenet::genind2df&quot;                        0.02      0.05      0.00     0.00
+## &quot;all.equal.numeric&quot;                          0.02      0.05      0.00     0.00
+## &quot;all.equal&quot;                                  0.02      0.05      0.00     0.00
+## &quot;ansi_strwrap&quot;                               0.02      0.05      0.00     0.00
+## &quot;app$get_width&quot;                              0.02      0.05      0.00     0.00
+## &quot;app$text&quot;                                   0.02      0.05      0.00     0.00
+## &quot;app$xtext&quot;                                  0.02      0.05      0.00     0.00
+## &quot;as_widget&quot;                                  0.02      0.05      0.00     0.00
+## &quot;asJSON&quot;                                     0.02      0.05      0.00     0.00
+## &quot;assignWrapped&quot;                              0.02      0.05      0.00     0.00
+## &quot;attach&quot;                                     0.02      0.05      0.00     0.00
+## &quot;attachNamespace&quot;                            0.02      0.05      0.00     0.00
+## &quot;base::strwrap&quot;                              0.02      0.05      0.00     0.00
+## &quot;cacheGenericsMetaData&quot;                      0.02      0.05      0.00     0.00
+## &quot;cb$putconst&quot;                                0.02      0.05      0.00     0.00
+## &quot;check_scale_type&quot;                           0.02      0.05      0.00     0.00
+## &quot;checkCall&quot;                                  0.02      0.05      0.00     0.00
+## &quot;checkConflicts&quot;                             0.02      0.05      0.00     0.00
+## &quot;cli__fmt&quot;                                   0.02      0.05      0.00     0.00
+## &quot;cli_fmt&quot;                                    0.02      0.05      0.00     0.00
+## &quot;cli_format&quot;                                 0.02      0.05      0.00     0.00
+## &quot;clii__get_width&quot;                            0.02      0.05      0.00     0.00
+## &quot;clii__xtext&quot;                                0.02      0.05      0.00     0.00
+## &quot;clii_bullets&quot;                               0.02      0.05      0.00     0.00
+## &quot;clii_text&quot;                                  0.02      0.05      0.00     0.00
+## &quot;cmpBuiltinArgs&quot;                             0.02      0.05      0.00     0.00
+## &quot;cmpCallArgs&quot;                                0.02      0.05      0.00     0.00
+## &quot;cmpCallSymFun&quot;                              0.02      0.05      0.00     0.00
+## &quot;cmpComplexAssign&quot;                           0.02      0.05      0.00     0.00
+## &quot;cmpForBody&quot;                                 0.02      0.05      0.00     0.00
+## &quot;cmpSetterCall&quot;                              0.02      0.05      0.00     0.00
+## &quot;cmpSetterDispatch&quot;                          0.02      0.05      0.00     0.00
+## &quot;cmpSymbolAssign&quot;                            0.02      0.05      0.00     0.00
+## &quot;cnd_message_format&quot;                         0.02      0.05      0.00     0.00
+## &quot;cnd_message&quot;                                0.02      0.05      0.00     0.00
+## &quot;codetools::walkCode&quot;                        0.02      0.05      0.00     0.00
+## &quot;compile&quot;                                    0.02      0.05      0.00     0.00
+## &quot;compiler:::tryCompile&quot;                      0.02      0.05      0.00     0.00
+## &quot;conditionMessage.rlang_message&quot;             0.02      0.05      0.00     0.00
+## &quot;conditionMessage&quot;                           0.02      0.05      0.00     0.00
+## &quot;config&quot;                                     0.02      0.05      0.00     0.00
+## &quot;console_width&quot;                              0.02      0.05      0.00     0.00
+## &quot;convert&quot;                                    0.02      0.05      0.00     0.00
+## &quot;convertUnit&quot;                                0.02      0.05      0.00     0.00
+## &quot;detect_new&quot;                                 0.02      0.05      0.00     0.00
+## &quot;dev_fun&quot;                                    0.02      0.05      0.00     0.00
+## &quot;dir_exists&quot;                                 0.02      0.05      0.00     0.00
+## &quot;discrete_scale&quot;                             0.02      0.05      0.00     0.00
+## &quot;DiscreteRange$new&quot;                          0.02      0.05      0.00     0.00
+## &quot;doWithOneRestart&quot;                           0.02      0.05      0.00     0.00
+## &quot;droplevels&quot;                                 0.02      0.05      0.00     0.00
+## &quot;dynGet&quot;                                     0.02      0.05      0.00     0.00
+## &quot;eco.lagweight&quot;                              0.02      0.05      0.00     0.00
+## &quot;EcoGenetics::eco.fill_ecogen_with_df&quot;       0.02      0.05      0.00     0.00
+## &quot;ecoslot.C&lt;-&quot;                                0.02      0.05      0.00     0.00
+## &quot;element_text&quot;                               0.02      0.05      0.00     0.00
+## &quot;farver::encode_colour&quot;                      0.02      0.05      0.00     0.00
+## &quot;find_args&quot;                                  0.02      0.05      0.00     0.00
+## &quot;func&quot;                                       0.02      0.05      0.00     0.00
+## &quot;geom2trace.GeomPath&quot;                        0.02      0.05      0.00     0.00
+## &quot;get_data&quot;                                   0.02      0.05      0.00     0.00
+## &quot;get_inherit&quot;                                0.02      0.05      0.00     0.00
+## &quot;ggplot2::scale_colour_discrete&quot;             0.02      0.05      0.00     0.00
+## &quot;ggplot2::theme_grey&quot;                        0.02      0.05      0.00     0.00
+## &quot;ggproto&quot;                                    0.02      0.05      0.00     0.00
+## &quot;graph.adjacency&quot;                            0.02      0.05      0.00     0.00
+## &quot;group2NA&quot;                                   0.02      0.05      0.00     0.00
+## &quot;has_attr&quot;                                   0.02      0.05      0.00     0.00
+## &quot;hierfstat::genind2hierfstat&quot;                0.02      0.05      0.00     0.00
+## &quot;hist.default&quot;                               0.02      0.05      0.00     0.00
+## &quot;hist&quot;                                       0.02      0.05      0.00     0.00
+## &quot;htmlwidgets::createWidget&quot;                  0.02      0.05      0.00     0.00
+## &quot;ifelse&quot;                                     0.02      0.05      0.00     0.00
+## &quot;implicitGeneric&quot;                            0.02      0.05      0.00     0.00
+## &quot;inform&quot;                                     0.02      0.05      0.00     0.00
+## &quot;installClassMethod&quot;                         0.02      0.05      0.00     0.00
+## &quot;int.df2genind&quot;                              0.02      0.05      0.00     0.00
+## &quot;is_symmetric&quot;                               0.02      0.05      0.00     0.00
+## &quot;is.baseenv&quot;                                 0.02      0.05      0.00     0.00
+## &quot;is.ggproto&quot;                                 0.02      0.05      0.00     0.00
+## &quot;isBaseVar&quot;                                  0.02      0.05      0.00     0.00
+## &quot;isDDSym&quot;                                    0.02      0.05      0.00     0.00
+## &quot;isGroup&quot;                                    0.02      0.05      0.00     0.00
+## &quot;isSymmetric.matrix&quot;                         0.02      0.05      0.00     0.00
+## &quot;join_by_common&quot;                             0.02      0.05      0.00     0.00
+## &quot;join_mutate&quot;                                0.02      0.05      0.00     0.00
+## &quot;jsonlite::toJSON&quot;                           0.02      0.05      0.00     0.00
+## &quot;layout$map_position&quot;                        0.02      0.05      0.00     0.00
+## &quot;left_join.data.frame&quot;                       0.02      0.05      0.00     0.00
+## &quot;left_join&quot;                                  0.02      0.05      0.00     0.00
+## &quot;lines&quot;                                      0.02      0.05      0.00     0.00
+## &quot;list2&quot;                                      0.02      0.05      0.00     0.00
+## &quot;load_gdal&quot;                                  0.02      0.05      0.00     0.00
+## &quot;loess.smooth&quot;                               0.02      0.05      0.00     0.00
+## &quot;makeExtends&quot;                                0.02      0.05      0.00     0.00
+## &quot;makeGeneric&quot;                                0.02      0.05      0.00     0.00
+## &quot;map_df&quot;                                     0.02      0.05      0.00     0.00
+## &quot;map_position&quot;                               0.02      0.05      0.00     0.00
+## &quot;Map&quot;                                        0.02      0.05      0.00     0.00
+## &quot;median.default&quot;                             0.02      0.05      0.00     0.00
+## &quot;median&quot;                                     0.02      0.05      0.00     0.00
+## &quot;METHOD$info&quot;                                0.02      0.05      0.00     0.00
+## &quot;methods::getFunction&quot;                       0.02      0.05      0.00     0.00
+## &quot;mget&quot;                                       0.02      0.05      0.00     0.00
+## &quot;mostattributes&lt;-&quot;                           0.02      0.05      0.00     0.00
+## &quot;Ops.factor&quot;                                 0.02      0.05      0.00     0.00
+## &quot;Ops.numeric_version&quot;                        0.02      0.05      0.00     0.00
+## &quot;p.adjust&quot;                                   0.02      0.05      0.00     0.00
+## &quot;p0q&quot;                                        0.02      0.05      0.00     0.00
+## &quot;palette&quot;                                    0.02      0.05      0.00     0.00
+## &quot;partition&quot;                                  0.02      0.05      0.00     0.00
+## &quot;plot.histogram&quot;                             0.02      0.05      0.00     0.00
+## &quot;plot.nb&quot;                                    0.02      0.05      0.00     0.00
+## &quot;points.default&quot;                             0.02      0.05      0.00     0.00
+## &quot;points&quot;                                     0.02      0.05      0.00     0.00
+## &quot;register_all_s3_methods&quot;                    0.02      0.05      0.00     0.00
+## &quot;register_s3_method&quot;                         0.02      0.05      0.00     0.00
+## &quot;remove&quot;                                     0.02      0.05      0.00     0.00
+## &quot;renderTags&quot;                                 0.02      0.05      0.00     0.00
+## &quot;resolveDependencies&quot;                        0.02      0.05      0.00     0.00
+## &quot;retain&quot;                                     0.02      0.05      0.00     0.00
+## &quot;RLog$new&quot;                                   0.02      0.05      0.00     0.00
+## &quot;rownames&quot;                                   0.02      0.05      0.00     0.00
+## &quot;rstudio$detect&quot;                             0.02      0.05      0.00     0.00
+## &quot;runUserHook&quot;                                0.02      0.05      0.00     0.00
+## &quot;scale_apply&quot;                                0.02      0.05      0.00     0.00
+## &quot;scale$map_df&quot;                               0.02      0.05      0.00     0.00
+## &quot;self$map&quot;                                   0.02      0.05      0.00     0.00
+## &quot;self$palette&quot;                               0.02      0.05      0.00     0.00
+## &quot;self$reset&quot;                                 0.02      0.05      0.00     0.00
+## &quot;signalCondition&quot;                            0.02      0.05      0.00     0.00
+## &quot;simpleLoess&quot;                                0.02      0.05      0.00     0.00
+## &quot;split.data.frame&quot;                           0.02      0.05      0.00     0.00
+## &quot;svd&quot;                                        0.02      0.05      0.00     0.00
+## &quot;text2font&quot;                                  0.02      0.05      0.00     0.00
+## &quot;theme&quot;                                      0.02      0.05      0.00     0.00
+## &quot;trySetterInline&quot;                            0.02      0.05      0.00     0.00
+## &quot;type&quot;                                       0.02      0.05      0.00     0.00
+## &quot;unitConvert&quot;                                0.02      0.05      0.00     0.00
+## &quot;utils::file_test&quot;                           0.02      0.05      0.00     0.00
+## &quot;vctrs::s3_register&quot;                         0.02      0.05      0.00     0.00
+## &quot;verify_attr_spec&quot;                           0.02      0.05      0.00     0.00
+## &quot;verify_attr&quot;                                0.02      0.05      0.00     0.00
+## &quot;w$handler&quot;                                  0.02      0.05      0.00     0.00
+## &quot;withOneRestart&quot;                             0.02      0.05      0.00     0.00
+## &quot;withRestarts&quot;                               0.02      0.05      0.00     0.00
+## &quot;xtfrm.factor&quot;                               0.02      0.05      0.00     0.00
+## &quot;xtfrm.numeric_version&quot;                      0.02      0.05      0.00     0.00</code></pre>
 <p>Note: The functions are listed by total time, in decreasing order.
 The two functions <code>eval</code> and <code>source</code>, are related
 to evaluating (running) the code from the sourced R script file.</p>
@@ -5835,14 +5964,8 @@ itself (excluding functions called by it)</li>
 <li><strong>self.pct</strong>: percent time spent executing the function
 itself (excluding functions called by it)</li>
 </ul>
-<p><strong>Questions:</strong></p>
-<ul>
-<li>How much time did the call to <code>PopGenReport::null.all</code>
-use?</li>
-<li>How much of this time was used by the function itself, and how much
-by functions being called by it?</li>
-<li>What might explain this?</li>
-</ul>
+<p><strong>Question:</strong> Which calculation of pairwise distances in
+the Week 5 Worked Example took the longest?</p>
 <p>If you need to see a summary with more detail, <code>$by.self</code>
 lists each function used, even internal functions.</p>
 <p>If you want to profile memory use rather than processing time, see
@@ -5901,20 +6024,20 @@ should be plotted side-by-side. Then we create the plots.</li>
 they are nested within a set of double quotes. R pretty much considers
 single and double quotes as synonyms, which allows us to nest them
 either way: ‘““’ or”’’“.</p>
-<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a>myPath <span class="ot">&lt;-</span> <span class="fu">file.path</span>(here<span class="sc">::</span><span class="fu">here</span>(), <span class="st">&quot;output/myBashScript.sh&quot;</span>)</span>
-<span id="cb67-2"><a href="#cb67-2" tabindex="-1"></a>fileConn <span class="ot">&lt;-</span> <span class="fu">file</span>(myPath)</span>
-<span id="cb67-3"><a href="#cb67-3" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="fu">c</span>(<span class="st">&quot;#!/bin/bash&quot;</span>,</span>
-<span id="cb67-4"><a href="#cb67-4" tabindex="-1"></a>             <span class="st">&quot;R --slave &lt;&lt; EOF&quot;</span>,</span>
-<span id="cb67-5"><a href="#cb67-5" tabindex="-1"></a>             <span class="st">&quot;x &lt;- rnorm(100)&quot;</span>,</span>
-<span id="cb67-6"><a href="#cb67-6" tabindex="-1"></a>             <span class="st">&quot;mean(x)&quot;</span>,</span>
-<span id="cb67-7"><a href="#cb67-7" tabindex="-1"></a>             <span class="st">&quot;png(&#39;my_plot.png&#39;, height = 400, width = 800)&quot;</span>,</span>
-<span id="cb67-8"><a href="#cb67-8" tabindex="-1"></a>             <span class="st">&quot;par(mfrow=c(1,2))&quot;</span>, </span>
-<span id="cb67-9"><a href="#cb67-9" tabindex="-1"></a>             <span class="st">&quot;hist(x)&quot;</span>, </span>
-<span id="cb67-10"><a href="#cb67-10" tabindex="-1"></a>             <span class="st">&quot;qqnorm(x)&quot;</span>,</span>
-<span id="cb67-11"><a href="#cb67-11" tabindex="-1"></a>             <span class="st">&quot;dev.off()&quot;</span>,</span>
-<span id="cb67-12"><a href="#cb67-12" tabindex="-1"></a>             <span class="st">&quot;EOF&quot;</span>), fileConn)</span>
-<span id="cb67-13"><a href="#cb67-13" tabindex="-1"></a><span class="fu">close</span>(fileConn)</span>
-<span id="cb67-14"><a href="#cb67-14" tabindex="-1"></a><span class="fu">file.show</span>(myPath)</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" tabindex="-1"></a>myPath <span class="ot">&lt;-</span> <span class="fu">file.path</span>(here<span class="sc">::</span><span class="fu">here</span>(), <span class="st">&quot;output/myBashScript.sh&quot;</span>)</span>
+<span id="cb65-2"><a href="#cb65-2" tabindex="-1"></a>fileConn <span class="ot">&lt;-</span> <span class="fu">file</span>(myPath)</span>
+<span id="cb65-3"><a href="#cb65-3" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="fu">c</span>(<span class="st">&quot;#!/bin/bash&quot;</span>,</span>
+<span id="cb65-4"><a href="#cb65-4" tabindex="-1"></a>             <span class="st">&quot;R --slave &lt;&lt; EOF&quot;</span>,</span>
+<span id="cb65-5"><a href="#cb65-5" tabindex="-1"></a>             <span class="st">&quot;x &lt;- rnorm(100)&quot;</span>,</span>
+<span id="cb65-6"><a href="#cb65-6" tabindex="-1"></a>             <span class="st">&quot;mean(x)&quot;</span>,</span>
+<span id="cb65-7"><a href="#cb65-7" tabindex="-1"></a>             <span class="st">&quot;png(&#39;my_plot.png&#39;, height = 400, width = 800)&quot;</span>,</span>
+<span id="cb65-8"><a href="#cb65-8" tabindex="-1"></a>             <span class="st">&quot;par(mfrow=c(1,2))&quot;</span>, </span>
+<span id="cb65-9"><a href="#cb65-9" tabindex="-1"></a>             <span class="st">&quot;hist(x)&quot;</span>, </span>
+<span id="cb65-10"><a href="#cb65-10" tabindex="-1"></a>             <span class="st">&quot;qqnorm(x)&quot;</span>,</span>
+<span id="cb65-11"><a href="#cb65-11" tabindex="-1"></a>             <span class="st">&quot;dev.off()&quot;</span>,</span>
+<span id="cb65-12"><a href="#cb65-12" tabindex="-1"></a>             <span class="st">&quot;EOF&quot;</span>), fileConn)</span>
+<span id="cb65-13"><a href="#cb65-13" tabindex="-1"></a><span class="fu">close</span>(fileConn)</span>
+<span id="cb65-14"><a href="#cb65-14" tabindex="-1"></a><span class="fu">file.show</span>(myPath)</span></code></pre></div>
 </div>
 <div id="c.-executing-a-bash-r-script" class="section level4 unnumbered">
 <h4 class="unnumbered">c. Executing a Bash R script</h4>
@@ -5957,11 +6080,11 @@ graphics file ‘my_plot.png’ should now be listed.</li>
 </ol>
 <p>Use R again to open the graphics file (the code here first checks
 whether the file exists):</p>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" tabindex="-1"></a>myPNG <span class="ot">&lt;-</span> <span class="fu">file.path</span>(here<span class="sc">::</span><span class="fu">here</span>(), <span class="st">&quot;output/my_plot.png&quot;</span>)</span>
-<span id="cb68-2"><a href="#cb68-2" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">file.exists</span>(myPNG))</span>
-<span id="cb68-3"><a href="#cb68-3" tabindex="-1"></a>{</span>
-<span id="cb68-4"><a href="#cb68-4" tabindex="-1"></a>  <span class="fu">file.show</span>(myPNG)</span>
-<span id="cb68-5"><a href="#cb68-5" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" tabindex="-1"></a>myPNG <span class="ot">&lt;-</span> <span class="fu">file.path</span>(here<span class="sc">::</span><span class="fu">here</span>(), <span class="st">&quot;output/my_plot.png&quot;</span>)</span>
+<span id="cb66-2"><a href="#cb66-2" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">file.exists</span>(myPNG))</span>
+<span id="cb66-3"><a href="#cb66-3" tabindex="-1"></a>{</span>
+<span id="cb66-4"><a href="#cb66-4" tabindex="-1"></a>  <span class="fu">file.show</span>(myPNG)</span>
+<span id="cb66-5"><a href="#cb66-5" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 <div id="d.-moving-to-a-node-or-cluster" class="section level4 unnumbered">
 <h4 class="unnumbered">d. Moving to a node or cluster?</h4>
@@ -5972,7 +6095,7 @@ for submitting a job to a single node (a single machine with
 multiple/many cores).</p>
 <p>Note: A copy of the file ‘BashExample.sh’ should also have been
 copied into the downloads folder inside your project folder.</p>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="fu">readLines</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;BashExample.sh&quot;</span>, <span class="at">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="fu">readLines</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;BashExample.sh&quot;</span>, <span class="at">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>)))</span></code></pre></div>
 <pre><code>## #!/bin/bash 
 ## 
 ## #SBATCH --nodes=1                                 # Number of Nodes 
@@ -6031,8 +6154,8 @@ version, installation date and repository (CRAN, Github etc.). All
 packages that are currently loaded will be marked with an asterisk.</li>
 </ul>
 <p>Platform:</p>
-<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" tabindex="-1"></a>Session <span class="ot">&lt;-</span> devtools<span class="sc">::</span><span class="fu">session_info</span>()</span>
-<span id="cb71-2"><a href="#cb71-2" tabindex="-1"></a>Session<span class="sc">$</span>platform</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" tabindex="-1"></a>Session <span class="ot">&lt;-</span> devtools<span class="sc">::</span><span class="fu">session_info</span>()</span>
+<span id="cb69-2"><a href="#cb69-2" tabindex="-1"></a>Session<span class="sc">$</span>platform</span></code></pre></div>
 <pre><code>##  setting  value
 ##  version  R version 4.3.2 (2023-10-31)
 ##  os       macOS Sonoma 14.2.1
@@ -6046,14 +6169,14 @@ packages that are currently loaded will be marked with an asterisk.</li>
 ##  pandoc   3.1.1 @ /Applications/RStudio.app/Contents/Resources/app/quarto/bin/tools/ (via rmarkdown)</code></pre>
 <p>Packages: here we display only the first six lines, as the list may
 be long.</p>
-<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" tabindex="-1"></a><span class="fu">head</span>(Session<span class="sc">$</span>packages)</span></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" tabindex="-1"></a><span class="fu">head</span>(Session<span class="sc">$</span>packages)</span></code></pre></div>
 <pre><code>##  package    * version  date (UTC) lib source
-##  abind        1.4-5    2016-07-21 [1] CRAN (R 4.3.0)
+##  ade4         1.7-22   2023-02-06 [1] CRAN (R 4.3.0)
+##  adegenet     2.1.10   2023-01-26 [1] CRAN (R 4.3.0)
+##  ape          5.7-1    2023-03-13 [1] CRAN (R 4.3.0)
 ##  arrow        14.0.0.2 2023-12-02 [1] CRAN (R 4.3.0)
 ##  assertthat   0.2.1    2019-03-21 [1] CRAN (R 4.3.0)
-##  base64enc    0.1-3    2015-07-28 [1] CRAN (R 4.3.0)
 ##  bit          4.0.5    2022-11-15 [1] CRAN (R 4.3.0)
-##  bit64        4.0.5    2020-08-30 [1] CRAN (R 4.3.0)
 ## 
 ##  [1] /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/library</code></pre>
 <p>Exporting the session information is a bit tricky because ‘Session’
@@ -6123,17 +6246,17 @@ will only be faster on Mac / Unix.</p>
 <p>With the package ‘parallel’, it is really easy to use all cores of
 your local machine (as long as you are on a Mac / Unix / Linux system).
 Let’s check the number of cores available:</p>
-<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
-<span id="cb75-2"><a href="#cb75-2" tabindex="-1"></a><span class="fu">detectCores</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb73-2"><a href="#cb73-2" tabindex="-1"></a><span class="fu">detectCores</span>()</span></code></pre></div>
 <pre><code>## [1] 6</code></pre>
 <p><strong>Question</strong>: How many cores does your machine have?</p>
 <p>Note: Here we check whether the operating system is ‘Windows’, in
 which case we set <code>nCores = 1</code>. This means that we will use
 all cores on Mac or Linux, but only one core on Windows. This is to
 avoid problems on Windows machines.</p>
-<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" tabindex="-1"></a>nCores <span class="ot">&lt;-</span> <span class="fu">detectCores</span>()</span>
-<span id="cb77-2"><a href="#cb77-2" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">Sys.info</span>()[[<span class="st">&#39;sysname&#39;</span>]]<span class="sc">==</span><span class="st">&quot;Windows&quot;</span>) nCores <span class="ot">=</span> <span class="dv">1</span></span>
-<span id="cb77-3"><a href="#cb77-3" tabindex="-1"></a>nCores</span></code></pre></div>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" tabindex="-1"></a>nCores <span class="ot">&lt;-</span> <span class="fu">detectCores</span>()</span>
+<span id="cb75-2"><a href="#cb75-2" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">Sys.info</span>()[[<span class="st">&#39;sysname&#39;</span>]]<span class="sc">==</span><span class="st">&quot;Windows&quot;</span>) nCores <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb75-3"><a href="#cb75-3" tabindex="-1"></a>nCores</span></code></pre></div>
 <pre><code>## [1] 6</code></pre>
 <ul>
 <li>Code your analysis with <code>lapply</code> (and related
@@ -6144,10 +6267,10 @@ automatically detect the number of cores in your machine.</li>
 </ul>
 <p>NOTE: April 2021: package build does not work with multiple cores,
 changing nCores to 1.</p>
-<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> gen[,<span class="sc">-</span><span class="dv">1</span>]</span>
-<span id="cb79-2"><a href="#cb79-2" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lapply</span>(x, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
-<span id="cb79-3"><a href="#cb79-3" tabindex="-1"></a><span class="co">#m2 &lt;- mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)  # Use this line when running the code yourself</span></span>
-<span id="cb79-4"><a href="#cb79-4" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">mclapply</span>(x, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>, <span class="at">mc.cores=</span><span class="dv">1</span>)        <span class="co"># Replace this line with the previous line</span></span></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> gen[,<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb77-2"><a href="#cb77-2" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lapply</span>(x, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<span id="cb77-3"><a href="#cb77-3" tabindex="-1"></a><span class="co">#m2 &lt;- mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)  # Use this line when running the code yourself</span></span>
+<span id="cb77-4"><a href="#cb77-4" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">mclapply</span>(x, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>, <span class="at">mc.cores=</span><span class="dv">1</span>)        <span class="co"># Replace this line with the previous line</span></span></code></pre></div>
 <p>Let’s benchmark four ways of calculating the mean of each column in
 our example data set ‘gen’ with 94 rows and 10,000 columns (SNPs):</p>
 <ul>
@@ -6159,25 +6282,25 @@ our example data set ‘gen’ with 94 rows and 10,000 columns (SNPs):</p>
 <li><strong>Method 4</strong>: Multi-core with
 <code>mclapply</code>.</li>
 </ul>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" tabindex="-1"></a>method1 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="fu">colMeans</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)}</span>
-<span id="cb80-2"><a href="#cb80-2" tabindex="-1"></a>method2 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(x)) <span class="fu">mean</span>(x[,i], <span class="at">na.rm=</span><span class="cn">TRUE</span>)}</span>
-<span id="cb80-3"><a href="#cb80-3" tabindex="-1"></a>method3 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="fu">lapply</span>(x, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>)}</span>
-<span id="cb80-4"><a href="#cb80-4" tabindex="-1"></a><span class="co">#method4 &lt;- function(x) {mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)} # Use this line when running the code yourself</span></span>
-<span id="cb80-5"><a href="#cb80-5" tabindex="-1"></a>method4 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="fu">mclapply</span>(x, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>, <span class="at">mc.cores=</span><span class="dv">1</span>)}  <span class="co"># Replace this line with the previous line</span></span>
-<span id="cb80-6"><a href="#cb80-6" tabindex="-1"></a></span>
-<span id="cb80-7"><a href="#cb80-7" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="at">times =</span> <span class="dv">10</span>, <span class="at">unit =</span> <span class="st">&quot;ms&quot;</span>,</span>
-<span id="cb80-8"><a href="#cb80-8" tabindex="-1"></a>                               <span class="fu">method1</span>(x), <span class="fu">method2</span>(x), <span class="fu">method3</span>(x), <span class="fu">method4</span>(x))</span></code></pre></div>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" tabindex="-1"></a>method1 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="fu">colMeans</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)}</span>
+<span id="cb78-2"><a href="#cb78-2" tabindex="-1"></a>method2 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(x)) <span class="fu">mean</span>(x[,i], <span class="at">na.rm=</span><span class="cn">TRUE</span>)}</span>
+<span id="cb78-3"><a href="#cb78-3" tabindex="-1"></a>method3 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="fu">lapply</span>(x, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>)}</span>
+<span id="cb78-4"><a href="#cb78-4" tabindex="-1"></a><span class="co">#method4 &lt;- function(x) {mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)} # Use this line when running the code yourself</span></span>
+<span id="cb78-5"><a href="#cb78-5" tabindex="-1"></a>method4 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="fu">mclapply</span>(x, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>, <span class="at">mc.cores=</span><span class="dv">1</span>)}  <span class="co"># Replace this line with the previous line</span></span>
+<span id="cb78-6"><a href="#cb78-6" tabindex="-1"></a></span>
+<span id="cb78-7"><a href="#cb78-7" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="at">times =</span> <span class="dv">10</span>, <span class="at">unit =</span> <span class="st">&quot;ms&quot;</span>,</span>
+<span id="cb78-8"><a href="#cb78-8" tabindex="-1"></a>                               <span class="fu">method1</span>(x), <span class="fu">method2</span>(x), <span class="fu">method3</span>(x), <span class="fu">method4</span>(x))</span></code></pre></div>
 <pre><code>## Unit: milliseconds
 ##        expr       min        lq      mean    median        uq       max neval
-##  method1(x)  35.47205  35.88241  44.52610  36.50300  38.39096  78.12521    10
-##  method2(x) 196.47420 200.03749 208.46171 203.45759 205.20722 238.00597    10
-##  method3(x)  47.09651  49.51295  60.13482  52.69331  79.60607  84.22894    10
-##  method4(x)  50.49616  52.67188  60.23249  53.39766  54.41404  92.55668    10
+##  method1(x)  36.48191  36.74001  37.37629  36.94531  37.90994  38.91163    10
+##  method2(x) 200.24005 203.72397 223.75555 224.38497 243.54665 247.12231    10
+##  method3(x)  50.82236  53.62251  62.73641  54.59302  56.39132  99.17732    10
+##  method4(x)  46.49716  52.75840  57.88108  53.95401  54.90909 101.05743    10
 ##  cld
-##   a 
-##    b
-##   a 
-##   a</code></pre>
+##  a  
+##   b 
+##    c
+##    c</code></pre>
 <p><strong>Question</strong>: Compare the mean</p>
 <ul>
 <li>Which method was the fastest? Can you explain this?</li>
@@ -6202,12 +6325,12 @@ omit this step, the code will not use parallel computing.</li>
 </ul>
 <p>The following code is commented out to avoid problems when knitting
 the Notebook. You may uncomment and run it.</p>
-<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" tabindex="-1"></a><span class="fu">library</span>(doParallel)</span></code></pre></div>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" tabindex="-1"></a><span class="fu">library</span>(doParallel)</span></code></pre></div>
 <pre><code>## Loading required package: foreach</code></pre>
 <pre><code>## Loading required package: iterators</code></pre>
-<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" tabindex="-1"></a><span class="co">#cl &lt;- makeCluster(2)</span></span>
-<span id="cb85-2"><a href="#cb85-2" tabindex="-1"></a><span class="co">#cl</span></span>
-<span id="cb85-3"><a href="#cb85-3" tabindex="-1"></a><span class="co">#registerDoParallel(cl)</span></span></code></pre></div>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" tabindex="-1"></a><span class="co">#cl &lt;- makeCluster(2)</span></span>
+<span id="cb83-2"><a href="#cb83-2" tabindex="-1"></a><span class="co">#cl</span></span>
+<span id="cb83-3"><a href="#cb83-3" tabindex="-1"></a><span class="co">#registerDoParallel(cl)</span></span></code></pre></div>
 <p>Now we adapt the code in two steps:</p>
 <ul>
 <li>The code is a little different with <code>foreach</code> than with
@@ -6218,19 +6341,19 @@ in parallelisation yet.</li>
 <li>To make this parallel, replace <code>%do%</code> by
 <code>%dopar%</code>.</li>
 </ul>
-<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(x)) <span class="fu">mean</span>(x[,i], <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
-<span id="cb86-2"><a href="#cb86-2" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">foreach</span>(<span class="at">i =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(x)) <span class="sc">%do%</span> (<span class="fu">mean</span>(x[,i], <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
-<span id="cb86-3"><a href="#cb86-3" tabindex="-1"></a><span class="co">#m3 &lt;- foreach(i = 1:ncol(x)) %dopar% (mean(x[,i], na.rm=TRUE))</span></span></code></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(x)) <span class="fu">mean</span>(x[,i], <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<span id="cb84-2"><a href="#cb84-2" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">foreach</span>(<span class="at">i =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(x)) <span class="sc">%do%</span> (<span class="fu">mean</span>(x[,i], <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
+<span id="cb84-3"><a href="#cb84-3" tabindex="-1"></a><span class="co">#m3 &lt;- foreach(i = 1:ncol(x)) %dopar% (mean(x[,i], na.rm=TRUE))</span></span></code></pre></div>
 <p>Let’s benchmark this again. We’ll only do 3 replicates this time
 (uncomment before running this code).</p>
-<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" tabindex="-1"></a><span class="co">#method1 &lt;- function(x) {colMeans(x, na.rm=TRUE)}</span></span>
-<span id="cb87-2"><a href="#cb87-2" tabindex="-1"></a><span class="co">#method2 &lt;- function(x) {for(i in 1:ncol(x)) mean(x[,i], na.rm=TRUE)}</span></span>
-<span id="cb87-3"><a href="#cb87-3" tabindex="-1"></a><span class="co">#method3 &lt;- function(x) {lapply(x, mean, na.rm=TRUE)}</span></span>
-<span id="cb87-4"><a href="#cb87-4" tabindex="-1"></a><span class="co">#method4 &lt;- function(x) {mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)}</span></span>
-<span id="cb87-5"><a href="#cb87-5" tabindex="-1"></a><span class="co">#method5 &lt;- function(x) {foreach(i = 1:ncol(x)) %do% (mean(x[,i], na.rm=TRUE))}</span></span>
-<span id="cb87-6"><a href="#cb87-6" tabindex="-1"></a><span class="co">#method6 &lt;- function(x) {foreach(i = 1:ncol(x)) %dopar% (mean(x[,i], na.rm=TRUE))}</span></span>
-<span id="cb87-7"><a href="#cb87-7" tabindex="-1"></a></span>
-<span id="cb87-8"><a href="#cb87-8" tabindex="-1"></a><span class="co">#microbenchmark::microbenchmark(times = 3, unit = &quot;ms&quot;,method1(x), method2(x), method3(x), method4(x), method5(x), method6(x))</span></span></code></pre></div>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" tabindex="-1"></a><span class="co">#method1 &lt;- function(x) {colMeans(x, na.rm=TRUE)}</span></span>
+<span id="cb85-2"><a href="#cb85-2" tabindex="-1"></a><span class="co">#method2 &lt;- function(x) {for(i in 1:ncol(x)) mean(x[,i], na.rm=TRUE)}</span></span>
+<span id="cb85-3"><a href="#cb85-3" tabindex="-1"></a><span class="co">#method3 &lt;- function(x) {lapply(x, mean, na.rm=TRUE)}</span></span>
+<span id="cb85-4"><a href="#cb85-4" tabindex="-1"></a><span class="co">#method4 &lt;- function(x) {mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)}</span></span>
+<span id="cb85-5"><a href="#cb85-5" tabindex="-1"></a><span class="co">#method5 &lt;- function(x) {foreach(i = 1:ncol(x)) %do% (mean(x[,i], na.rm=TRUE))}</span></span>
+<span id="cb85-6"><a href="#cb85-6" tabindex="-1"></a><span class="co">#method6 &lt;- function(x) {foreach(i = 1:ncol(x)) %dopar% (mean(x[,i], na.rm=TRUE))}</span></span>
+<span id="cb85-7"><a href="#cb85-7" tabindex="-1"></a></span>
+<span id="cb85-8"><a href="#cb85-8" tabindex="-1"></a><span class="co">#microbenchmark::microbenchmark(times = 3, unit = &quot;ms&quot;,method1(x), method2(x), method3(x), method4(x), method5(x), method6(x))</span></span></code></pre></div>
 <p>Whether parallelisation is faster depends on the type of task and on
 your system. In this case, both versions that used parallelisation were
 actually slower than the sequential code (at least on my system).</p>
