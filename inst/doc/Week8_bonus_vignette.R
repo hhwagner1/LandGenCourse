@@ -167,10 +167,11 @@ file.copy(from=system.file("doc", "Week3_vignette.Rmd", package = "LandGenCourse
 
 ## ----purl--------------------------------------------------------------------------------------------
 infile = here::here("downloads/Week3_vignette.Rmd")
-
+tmpfile = here::here("downloads/tmp.Rmd")
 outfile = here::here("downloads/Week3_vignette.R")
 
-knitr::purl(infile, outfile)
+readr::write_lines(readr::read_lines(infile, n_max=252), tmpfile)
+knitr::purl(tmpfile, outfile)
 
 
 ## ----file.show---------------------------------------------------------------------------------------
@@ -182,24 +183,17 @@ file.show(outfile)
 
 
 ## ----Rprof, include=FALSE----------------------------------------------------------------------------
-Rprof()
-
-#source(outfile)
-
-file.lines <- scan(outfile, what=character(), skip=0, nlines=94, sep='\n')
-file.lines.collapsed <- paste(file.lines, collapse='\n')
-source(textConnection(file.lines.collapsed))
-
+Rprof(filename=here::here("downloads/Rprof.out"))
+source(outfile)
 Rprof(NULL)
 
 
-
 ## ----sampling.interval-------------------------------------------------------------------------------
-summaryRprof()[c("sampling.time", "sample.interval")]	
+summaryRprof(here::here("downloads/Rprof.out"))[c("sampling.time", "sample.interval")]	
 
 
 ## ----summaryRprof------------------------------------------------------------------------------------
-summaryRprof()$by.total
+summaryRprof(here::here("downloads/Rprof.out"))$by.total
 
 
 ## ----BashScript--------------------------------------------------------------------------------------

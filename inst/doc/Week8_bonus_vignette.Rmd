@@ -420,12 +420,15 @@ file.copy(from=system.file("doc", "Week3_vignette.Rmd", package = "LandGenCourse
 
 Extract the R code from the R Notebook and save it in a script file `Week3_vignette.R` in the downloads folder. You may adapt the infile and outfile to extract the code from any R Notebook saved in your project. 
 
+Here, we extract only the first 252 lines of the R Notebook. 
+
 ```{r purl}
 infile = here::here("downloads/Week3_vignette.Rmd")
-
+tmpfile = here::here("downloads/tmp.Rmd")
 outfile = here::here("downloads/Week3_vignette.R")
 
-knitr::purl(infile, outfile)
+readr::write_lines(readr::read_lines(infile, n_max=252), tmpfile)
+knitr::purl(tmpfile, outfile)
 ```
 
 Let's open the two files and compare them. Note that `file.show` opens a simple text version, whereas `file.edit` shows the colored versions commonly displayed by the RStudio editor.
@@ -448,30 +451,21 @@ file.show(outfile)
 
 We can now use the function `source` to read and execute the code in the R script. We use the function `Rprof` to start and stop the profiling.
 
-With `source(outfile)`, we can source and run the entire file. Here, we extract only the first 94 lines of the R script. 
-
 ```{r Rprof, include=FALSE}
-Rprof()
-
-#source(outfile)
-
-file.lines <- scan(outfile, what=character(), skip=0, nlines=94, sep='\n')
-file.lines.collapsed <- paste(file.lines, collapse='\n')
-source(textConnection(file.lines.collapsed))
-
+Rprof(filename=here::here("downloads/Rprof.out"))
+source(outfile)
 Rprof(NULL)
-
 ```
 
 With the function `summaryRprof`, we get a summary by function. First, let's check the total time spent executing the code, and the sample interval (in seconds). Note that profiling works in this way: as the code is executed, R checks at regular time intervals which function is being executed at that very moment. The `summaryRprof` function then tabulates the number of intervals, and thus the time used, by function. 
 
 ```{r sampling.interval}
-summaryRprof()[c("sampling.time", "sample.interval")]	
+summaryRprof(here::here("downloads/Rprof.out"))[c("sampling.time", "sample.interval")]	
 ```
 The attribute `$by.total` only lists the top-level functions called (not any functions called internally by that top-level function). 
 
 ```{r summaryRprof}
-summaryRprof()$by.total
+summaryRprof(here::here("downloads/Rprof.out"))$by.total
 ```
 
 Note: The functions are listed by total time, in decreasing order. The two functions `eval` and `source`, are related to evaluating (running) the code from the sourced R script file.
