@@ -28,7 +28,7 @@ This code checks of all required packages are installed, and if so, loads them. 
 The package then checks if your version of the `GeNetIt` package is up-to-date (at least 0.1-5), and if not, installs the latest version.
 
 ```{r setup}
-p <- c("raster", "rgdal", "igraph", "sp", "GeNetIt", "spatialEco", "leaflet",
+p <- c("raster", "igraph", "sp", "GeNetIt", "spatialEco", "leaflet",
        "sf", "terra", "sfnetworks", "spdep", "dplyr", "tmap", "devtools") 
   if(any(!unlist(lapply(p, requireNamespace, quietly=TRUE)))) { 
     m = which(!unlist(lapply(p, requireNamespace, quietly=TRUE)))
@@ -47,7 +47,7 @@ p <- c("raster", "rgdal", "igraph", "sp", "GeNetIt", "spatialEco", "leaflet",
 
 ```{r environment}
 # Get the path to your project folder
-Path <- here::here()
+Path <- here::here("downloads")
 
 # indicates UTM 11 NAD83 projection
 prj = 32611 
@@ -57,19 +57,6 @@ back.transform <- function(y) exp(y + 0.5 * stats::var(y))
 rmse = function(p, o){ sqrt(mean((p - o)^2)) }
 ```
 
-#### Download data {-}
-
-This may take a moment as the file is large (148.7 MB).
-
-```{r download}
-if(!file.exists(file.path(Path, "data", "Wetlands.csv")))
-{
-  d = "https://spatialr.s3.us-west-2.amazonaws.com/Gravity/data.zip"
-  download.file(d, destfile=file.path(Path, "data.zip"), mode="wb")
-  unzip(file.path(Path, "data.zip"))
-  file.remove(file.path(Path, "data.zip"))
-}
-```
 
 ## 3. Wetland complex data preparation {-}
 
@@ -77,10 +64,10 @@ In this sections, we will read in all wetland locations in the study area and ca
 
 ### a) Read in wetlands data {-} 
 
-Read file "Wetlands.csv".
+Import file "Wetlands.csv".
 
 ```{r import}
-wetlands <- read.csv(file.path(Path, "data", "Wetlands.csv"), 
+wetlands <- read.csv(system.file("extdata/Wetlands.csv", package="LandGenCourse"), 
                     header = TRUE)
 head(wetlands)
 ```
@@ -200,7 +187,7 @@ Using `RALU_Site.csv`, we read in the data, add the node data (betweenness and d
 Read in site data
 
 ```{r sites}
-sites <- read.csv(file.path(Path, "data", "RALU_Site.csv"), 
+sites <- read.csv(system.file("extdata/RALU_Site.csv", package="LandGenCourse"), 
                   header = TRUE)
 sites$SiteID <- as.character(sites$SiteID)
 ```
@@ -252,7 +239,7 @@ Note: Can create a distance-constrained graph with max.dist arg (not run)
 Read in the genetic distance data and make a matrix, gdist, then unfold data
 
 ```{r genetic}
-gdist <- read.csv(file.path(Path, "data", "RALU_Dps.csv"), header=TRUE) 
+gdist <- read.csv(system.file("extdata/RALU_Dps.csv", package="LandGenCourse"), header=TRUE) 
   rownames(gdist) <- t(names(gdist))
 gdist <- dmatrix.df(as.matrix(gdist)) 
 names(gdist) <- c("FROM", "TO", "GDIST") #unfold the file
@@ -284,9 +271,7 @@ dist.graph <- merge(dist.graph, gdist, by = "from.to")
 ### a)  Read raster data using 'terra' {-}
 
 ```{r files}
-list.files(file.path(Path,"data"), "tif$")
-xvars <- rast(list.files(file.path(Path, "data"), "tif$", 
-                        full.names = TRUE))
+xvars <- terra::rast(system.file("extdata/covariates.tif", package="GeNetIt"))
 ```
 
 ### b) Reclassify wetlands {-}
@@ -305,7 +290,7 @@ wetlnd <- classify(xvars[["nlcd"]], reclass)
 
 ### c)  Calculate the proportion of the landscape around sites {-}
 
-Assign proportion of landcover that is wetland to sites as pwetland.  You could create a binary raster for any cover type of interest and calculate this parameter.
+Assign proportion of landcover that is wetland to sites as `pwetland`.  You could create a binary raster for any cover type of interest and calculate this parameter.
 
 **Question**:
 
@@ -350,14 +335,13 @@ Alternatively, you can use the `landscapemetrics` package (see Week 2) to calcul
 Note: as per help file, the argument `y` of the function `sample_lsm` can accept an `sf` points object (e.g., `sites`). This returned an error though, hence we first convert `sites` to an `sp` object, using the function `as_Spatial`. 
 
 ```{r landscapemetrics, eval=FALSE}
-sites.sp <- as_Spatial(sites)
 nlcd_sampled <- landscapemetrics::sample_lsm(landscape = xvars[["wetlnd"]], 
                                              what = "lsm_c_pland",
                                              shape = "circle",
-                                             y = sites.sp, 
+                                             y = sf::st_coordinates(sites), 
                                              size = 300, 
                                              return_raster = FALSE,
-                                             plot_id=sites.sp@data$SiteID)
+                                             plot_id=sites$SiteID)
 pwetland <- dplyr::select(dplyr::filter(nlcd_sampled, class == 1, 
                                         metric == "pland"), plot_id, value)  
 names(pwetland) <- c("SiteID", "pwetland")
@@ -440,7 +424,8 @@ Create data frame with the node variables to be evaluated.
 node.var <- c("degree", "betweenness", "Elev", "Length", "Area", "Perim", 
               "Depth", "pH","Dforest","Drock", "Dshrub", "pwetland", "cti",
 			  "dd5", "ffp","gsp","pratio","hli","rough27","srr")
-s <- st_drop_geometry(sites)[,node.var]
+s <- st_drop_geometry(sites) %>% select("degree", "betweenness", "Elev", "Length", "Area", "Perim", 
+              "Depth", "pH","Dforest","Drock", "Dshrub", "pwetland", "cti", "ffp","gsp")
 ```
 
 Log-transform values, set log of negative values or zero (where log is not defined) to 0.00001.
@@ -491,12 +476,8 @@ node.cor
 Build and add node (at-site) level data to graph, then merge edge (distance graph) and edge (between-site) data.   
 
 ```{r node}
-node.var <- c("degree", "betweenness", "Elev", "Length", "Area", "Perim", 
-              "Depth", "pH","Dforest","Drock", "Dshrub", "pwetland", "cti",
-			  "dd5", "ffp","gsp","pratio","hli","rough27","srr")  
-
 node <- build.node.data(st_drop_geometry(sites), group.ids = "SiteID", 
-                        from.parms = node.var)
+                        from.parms = names(s))
 ```
 
 Merge node and edges for model data.frame
@@ -504,7 +485,7 @@ Merge node and edges for model data.frame
 ```{r gdata}
 gdata <- merge(st_drop_geometry(dist.graph)[c(1,2,5,11,14,7)], node, 
                by.x="SiteID", by.y="SiteID")
-gdata <- merge(gdata, st_drop_geometry(dist.graph)[c(11, 8:10, 15:55)], 
+gdata <- merge(gdata, st_drop_geometry(dist.graph)[c(11, 8:10, 15:40)], 
 	               by.x="SiteID", by.y="SiteID") 
 # log transform matrix
 for(i in 5:ncol(gdata)) 
@@ -561,14 +542,14 @@ NOTE: we are adding elevation here as a covariate. HOWEVER - elevation does not 
                    group = "from_ID", data = gdata, fit.method = "ML", ln = FALSE) )
 
 # Productivity hypothesis (under Maximum Likelihood) 
-( production <- gravity(y = "GDIST", x = c("length", "from.ffp", "from.hli"), 
-                     d = "length",  group = "from_ID", data = gdata, 
-					 fit.method = "ML", ln = FALSE) )
+#( production <- gravity(y = "GDIST", x = c("length", "from.ffp", "from.hli"), 
+#                    d = "length",  group = "from_ID", data = gdata, 
+#					 fit.method = "ML", ln = FALSE) )
 
 # Climate hypothesis (under Maximum Likelihood) 
-( climate <- gravity(y = "GDIST", x = c("length", "median.ffp", "median.pratio"), 
-                     d = "length", group = "from_ID", data = gdata, 
-					 fit.method = "ML",  ln = FALSE) )
+#( climate <- gravity(y = "GDIST", x = c("length", "median.ffp", "median.pratio"), 
+#                     d = "length", group = "from_ID", data = gdata, 
+#					 fit.method = "ML",  ln = FALSE) )
 
 # Wetlands hypothesis (under Maximum Likelihood) 
 ( wetlands <- gravity(y = "GDIST", x = c("length", "from.degree", "from.betweenness", "from.pwetland"), 
@@ -576,9 +557,9 @@ NOTE: we are adding elevation here as a covariate. HOWEVER - elevation does not 
 					  ln = FALSE) )
 
 # Topography hypothesis (under Maximum Likelihood) 
-( topo <- gravity(y = "GDIST", x = c("length", "median.srr", "median.rough27"), d = "length", 
-                  group = "from_ID", data = gdata, fit.method = "ML",
-				  ln = FALSE) )
+#( topo <- gravity(y = "GDIST", x = c("length", "median.srr", "median.rough27"), d = "length", 
+#                  group = "from_ID", data = gdata, fit.method = "ML",
+#				  ln = FALSE) )
 
 # Habitat hypothesis (under Maximum Likelihood) 
 ( habitat <- gravity(y = "GDIST", x = c("length", "wet.pct.nlcd", "median.gsp"), 
@@ -587,9 +568,14 @@ NOTE: we are adding elevation here as a covariate. HOWEVER - elevation does not 
 
 # Global model (under Maximum Likelihood) 
 
+#( global <- gravity(y = "GDIST", x = c("length", "wet.pct.nlcd", "median.gsp", 
+#                    "from.Depth", "from.ffp", "from.hli", "from.pratio", "from.degree", 
+#					"from.betweenness", "from.pwetland", "median.srr", "median.rough27"), 
+#					d = "length", group = "from_ID", data = gdata, fit.method = "ML",
+#					ln = FALSE) )
 ( global <- gravity(y = "GDIST", x = c("length", "wet.pct.nlcd", "median.gsp", 
-                    "from.Depth", "from.ffp", "from.hli", "from.pratio", "from.degree", 
-					"from.betweenness", "from.pwetland", "median.srr", "median.rough27"), 
+                    "from.Depth", "from.ffp",  
+					"from.betweenness", "from.pwetland"), 
 					d = "length", group = "from_ID", data = gdata, fit.method = "ML",
 					ln = FALSE) )
 
@@ -603,8 +589,10 @@ Should you use ML or REML? Create diagnostic plots.
 Can you directly compare ML and REML? Why not?
 
 ```{r compare}
-compare.models(null, depth, production, climate, wetlands, 
-               topo, habitat, global)
+#compare.models(null, depth, production, climate, wetlands, 
+#               topo, habitat, global)
+compare.models(null, depth, wetlands, 
+               habitat, global)
 ```
 
 ```{r null}
@@ -618,14 +606,16 @@ To calculate effect size, we refit the models with REML.
 
 ```{r REML}
 # productivity fit (under REML)
-h <- c("length", "from.ffp", "from.hli")
-production_fit <- gravity(y = "GDIST", x = h, d = "length", group = "from_ID",
-                      data = gdata, ln=FALSE)
+#h <- c("length", "from.ffp", "from.hli")
+#production_fit <- gravity(y = "GDIST", x = h, d = "length", group = "from_ID",
+#                      data = gdata, ln=FALSE)
 
 # global fit (under REML)
+#g <-  c("length", "wet.pct.nlcd", "median.gsp", "from.Depth", "from.ffp",
+#        "from.hli", "from.pratio",  "from.degree", "from.betweenness",  
+#        "from.pwetland", "median.srr",  "median.rough27")
 g <-  c("length", "wet.pct.nlcd", "median.gsp", "from.Depth", "from.ffp",
-        "from.hli", "from.pratio",  "from.degree", "from.betweenness",  
-        "from.pwetland", "median.srr",  "median.rough27")
+        "from.betweenness",  "from.pwetland")
 global_fit <- gravity(y = "GDIST", x = g, d = "length", 
                       group = "from_ID", data = gdata, ln=FALSE)
 ```
@@ -641,9 +631,9 @@ par(mfrow=c(2,3))
 Production model:
 
 ```{r production_fit}
-gravity.es(production_fit)
-par(mfrow=c(2,3))
-   for (i in 1:6) { plot(production_fit, type=i) } 
+#gravity.es(production_fit)
+#par(mfrow=c(2,3))
+#   for (i in 1:6) { plot(production_fit, type=i) } 
 ```
 
 
@@ -658,12 +648,12 @@ gd <- back.transform(gdata$GDIST)
 global.p <- predict(global_fit, y = "GDIST", x = g,  
                     newdata=gdata, groups = gdata$from_ID,
 				    back.transform = "simple")
-production.p <- predict(production_fit, y = "GDIST", x = h,  
-                     newdata=gdata, groups = gdata$from_ID,
-			         back.transform = "simple")
+#production.p <- predict(production_fit, y = "GDIST", x = h,  
+#                     newdata=gdata, groups = gdata$from_ID,
+#			         back.transform = "simple")
 
 cat("RMSE of global", rmse(global.p, gd), "\n")
-cat("RMSE of production", rmse(production.p, gd), "\n")
+#cat("RMSE of production", rmse(production.p, gd), "\n")
 ```
 
 ### e)  Aggregrate estimates and plot {-} 

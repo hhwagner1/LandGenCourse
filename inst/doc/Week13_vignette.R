@@ -1,5 +1,5 @@
 ## ----setup-------------------------------------------------------------------------------------------
-p <- c("raster", "rgdal", "igraph", "sp", "GeNetIt", "spatialEco", "leaflet",
+p <- c("raster", "igraph", "sp", "GeNetIt", "spatialEco", "leaflet",
        "sf", "terra", "sfnetworks", "spdep", "dplyr", "tmap", "devtools") 
   if(any(!unlist(lapply(p, requireNamespace, quietly=TRUE)))) { 
     m = which(!unlist(lapply(p, requireNamespace, quietly=TRUE)))
@@ -16,7 +16,7 @@ p <- c("raster", "rgdal", "igraph", "sp", "GeNetIt", "spatialEco", "leaflet",
 
 ## ----environment-------------------------------------------------------------------------------------
 # Get the path to your project folder
-Path <- here::here()
+Path <- here::here("downloads")
 
 # indicates UTM 11 NAD83 projection
 prj = 32611 
@@ -26,18 +26,8 @@ back.transform <- function(y) exp(y + 0.5 * stats::var(y))
 rmse = function(p, o){ sqrt(mean((p - o)^2)) }
 
 
-## ----download----------------------------------------------------------------------------------------
-if(!file.exists(file.path(Path, "data", "Wetlands.csv")))
-{
-  d = "https://spatialr.s3.us-west-2.amazonaws.com/Gravity/data.zip"
-  download.file(d, destfile=file.path(Path, "data.zip"), mode="wb")
-  unzip(file.path(Path, "data.zip"))
-  file.remove(file.path(Path, "data.zip"))
-}
-
-
 ## ----import------------------------------------------------------------------------------------------
-wetlands <- read.csv(file.path(Path, "data", "Wetlands.csv"), 
+wetlands <- read.csv(system.file("extdata/Wetlands.csv", package="LandGenCourse"), 
                     header = TRUE)
 head(wetlands)
 
@@ -103,7 +93,7 @@ title("Wetlands Gabriel graph degree")
 
 
 ## ----sites-------------------------------------------------------------------------------------------
-sites <- read.csv(file.path(Path, "data", "RALU_Site.csv"), 
+sites <- read.csv(system.file("extdata/RALU_Site.csv", package="LandGenCourse"), 
                   header = TRUE)
 sites$SiteID <- as.character(sites$SiteID)
 
@@ -132,7 +122,7 @@ dist.graph <- dist.graph[,-c(11:19)] # drop extra columns
 
 
 ## ----genetic-----------------------------------------------------------------------------------------
-gdist <- read.csv(file.path(Path, "data", "RALU_Dps.csv"), header=TRUE) 
+gdist <- read.csv(system.file("extdata/RALU_Dps.csv", package="LandGenCourse"), header=TRUE) 
   rownames(gdist) <- t(names(gdist))
 gdist <- dmatrix.df(as.matrix(gdist)) 
 names(gdist) <- c("FROM", "TO", "GDIST") #unfold the file
@@ -152,9 +142,7 @@ dist.graph <- merge(dist.graph, gdist, by = "from.to")
 
 
 ## ----files-------------------------------------------------------------------------------------------
-list.files(file.path(Path,"data"), "tif$")
-xvars <- rast(list.files(file.path(Path, "data"), "tif$", 
-                        full.names = TRUE))
+xvars <- terra::rast(system.file("extdata/covariates.tif", package="GeNetIt"))
 
 
 ## ----reclass-----------------------------------------------------------------------------------------
@@ -190,14 +178,13 @@ head(sites$pwetland)
 
 
 ## ----landscapemetrics, eval=FALSE--------------------------------------------------------------------
-## sites.sp <- as_Spatial(sites)
 ## nlcd_sampled <- landscapemetrics::sample_lsm(landscape = xvars[["wetlnd"]],
 ##                                              what = "lsm_c_pland",
 ##                                              shape = "circle",
-##                                              y = sites.sp,
+##                                              y = sf::st_coordinates(sites),
 ##                                              size = 300,
 ##                                              return_raster = FALSE,
-##                                              plot_id=sites.sp@data$SiteID)
+##                                              plot_id=sites$SiteID)
 ## pwetland <- dplyr::select(dplyr::filter(nlcd_sampled, class == 1,
 ##                                         metric == "pland"), plot_id, value)
 ## names(pwetland) <- c("SiteID", "pwetland")
@@ -243,7 +230,8 @@ dist.graph$wet.pct.nlcd <- as.numeric(wetstats[,1])
 node.var <- c("degree", "betweenness", "Elev", "Length", "Area", "Perim", 
               "Depth", "pH","Dforest","Drock", "Dshrub", "pwetland", "cti",
 			  "dd5", "ffp","gsp","pratio","hli","rough27","srr")
-s <- st_drop_geometry(sites)[,node.var]
+s <- st_drop_geometry(sites) %>% select("degree", "betweenness", "Elev", "Length", "Area", "Perim", 
+              "Depth", "pH","Dforest","Drock", "Dshrub", "pwetland", "cti", "ffp","gsp")
 
 
 ## ----transform---------------------------------------------------------------------------------------
@@ -282,18 +270,14 @@ node.cor
 
 
 ## ----node--------------------------------------------------------------------------------------------
-node.var <- c("degree", "betweenness", "Elev", "Length", "Area", "Perim", 
-              "Depth", "pH","Dforest","Drock", "Dshrub", "pwetland", "cti",
-			  "dd5", "ffp","gsp","pratio","hli","rough27","srr")  
-
 node <- build.node.data(st_drop_geometry(sites), group.ids = "SiteID", 
-                        from.parms = node.var)
+                        from.parms = names(s))
 
 
 ## ----gdata-------------------------------------------------------------------------------------------
 gdata <- merge(st_drop_geometry(dist.graph)[c(1,2,5,11,14,7)], node, 
                by.x="SiteID", by.y="SiteID")
-gdata <- merge(gdata, st_drop_geometry(dist.graph)[c(11, 8:10, 15:55)], 
+gdata <- merge(gdata, st_drop_geometry(dist.graph)[c(11, 8:10, 15:40)], 
 	               by.x="SiteID", by.y="SiteID") 
 # log transform matrix
 for(i in 5:ncol(gdata)) 
@@ -313,14 +297,14 @@ for(i in 5:ncol(gdata))
                    group = "from_ID", data = gdata, fit.method = "ML", ln = FALSE) )
 
 # Productivity hypothesis (under Maximum Likelihood) 
-( production <- gravity(y = "GDIST", x = c("length", "from.ffp", "from.hli"), 
-                     d = "length",  group = "from_ID", data = gdata, 
-					 fit.method = "ML", ln = FALSE) )
+#( production <- gravity(y = "GDIST", x = c("length", "from.ffp", "from.hli"), 
+#                    d = "length",  group = "from_ID", data = gdata, 
+#					 fit.method = "ML", ln = FALSE) )
 
 # Climate hypothesis (under Maximum Likelihood) 
-( climate <- gravity(y = "GDIST", x = c("length", "median.ffp", "median.pratio"), 
-                     d = "length", group = "from_ID", data = gdata, 
-					 fit.method = "ML",  ln = FALSE) )
+#( climate <- gravity(y = "GDIST", x = c("length", "median.ffp", "median.pratio"), 
+#                     d = "length", group = "from_ID", data = gdata, 
+#					 fit.method = "ML",  ln = FALSE) )
 
 # Wetlands hypothesis (under Maximum Likelihood) 
 ( wetlands <- gravity(y = "GDIST", x = c("length", "from.degree", "from.betweenness", "from.pwetland"), 
@@ -328,9 +312,9 @@ for(i in 5:ncol(gdata))
 					  ln = FALSE) )
 
 # Topography hypothesis (under Maximum Likelihood) 
-( topo <- gravity(y = "GDIST", x = c("length", "median.srr", "median.rough27"), d = "length", 
-                  group = "from_ID", data = gdata, fit.method = "ML",
-				  ln = FALSE) )
+#( topo <- gravity(y = "GDIST", x = c("length", "median.srr", "median.rough27"), d = "length", 
+#                  group = "from_ID", data = gdata, fit.method = "ML",
+#				  ln = FALSE) )
 
 # Habitat hypothesis (under Maximum Likelihood) 
 ( habitat <- gravity(y = "GDIST", x = c("length", "wet.pct.nlcd", "median.gsp"), 
@@ -339,9 +323,14 @@ for(i in 5:ncol(gdata))
 
 # Global model (under Maximum Likelihood) 
 
+#( global <- gravity(y = "GDIST", x = c("length", "wet.pct.nlcd", "median.gsp", 
+#                    "from.Depth", "from.ffp", "from.hli", "from.pratio", "from.degree", 
+#					"from.betweenness", "from.pwetland", "median.srr", "median.rough27"), 
+#					d = "length", group = "from_ID", data = gdata, fit.method = "ML",
+#					ln = FALSE) )
 ( global <- gravity(y = "GDIST", x = c("length", "wet.pct.nlcd", "median.gsp", 
-                    "from.Depth", "from.ffp", "from.hli", "from.pratio", "from.degree", 
-					"from.betweenness", "from.pwetland", "median.srr", "median.rough27"), 
+                    "from.Depth", "from.ffp",  
+					"from.betweenness", "from.pwetland"), 
 					d = "length", group = "from_ID", data = gdata, fit.method = "ML",
 					ln = FALSE) )
 
@@ -349,8 +338,10 @@ for(i in 5:ncol(gdata))
 
 
 ## ----compare-----------------------------------------------------------------------------------------
-compare.models(null, depth, production, climate, wetlands, 
-               topo, habitat, global)
+#compare.models(null, depth, production, climate, wetlands, 
+#               topo, habitat, global)
+compare.models(null, depth, wetlands, 
+               habitat, global)
 
 
 ## ----null--------------------------------------------------------------------------------------------
@@ -360,14 +351,16 @@ par(mfrow=c(2,3))
 
 ## ----REML--------------------------------------------------------------------------------------------
 # productivity fit (under REML)
-h <- c("length", "from.ffp", "from.hli")
-production_fit <- gravity(y = "GDIST", x = h, d = "length", group = "from_ID",
-                      data = gdata, ln=FALSE)
+#h <- c("length", "from.ffp", "from.hli")
+#production_fit <- gravity(y = "GDIST", x = h, d = "length", group = "from_ID",
+#                      data = gdata, ln=FALSE)
 
 # global fit (under REML)
+#g <-  c("length", "wet.pct.nlcd", "median.gsp", "from.Depth", "from.ffp",
+#        "from.hli", "from.pratio",  "from.degree", "from.betweenness",  
+#        "from.pwetland", "median.srr",  "median.rough27")
 g <-  c("length", "wet.pct.nlcd", "median.gsp", "from.Depth", "from.ffp",
-        "from.hli", "from.pratio",  "from.degree", "from.betweenness",  
-        "from.pwetland", "median.srr",  "median.rough27")
+        "from.betweenness",  "from.pwetland")
 global_fit <- gravity(y = "GDIST", x = g, d = "length", 
                       group = "from_ID", data = gdata, ln=FALSE)
 
@@ -379,9 +372,9 @@ par(mfrow=c(2,3))
 
 
 ## ----production_fit----------------------------------------------------------------------------------
-gravity.es(production_fit)
-par(mfrow=c(2,3))
-   for (i in 1:6) { plot(production_fit, type=i) } 
+#gravity.es(production_fit)
+#par(mfrow=c(2,3))
+#   for (i in 1:6) { plot(production_fit, type=i) } 
 
 
 ## ----predict-----------------------------------------------------------------------------------------
@@ -391,12 +384,12 @@ gd <- back.transform(gdata$GDIST)
 global.p <- predict(global_fit, y = "GDIST", x = g,  
                     newdata=gdata, groups = gdata$from_ID,
 				    back.transform = "simple")
-production.p <- predict(production_fit, y = "GDIST", x = h,  
-                     newdata=gdata, groups = gdata$from_ID,
-			         back.transform = "simple")
+#production.p <- predict(production_fit, y = "GDIST", x = h,  
+#                     newdata=gdata, groups = gdata$from_ID,
+#			         back.transform = "simple")
 
 cat("RMSE of global", rmse(global.p, gd), "\n")
-cat("RMSE of production", rmse(production.p, gd), "\n")
+#cat("RMSE of production", rmse(production.p, gd), "\n")
 
 
 ## ----aggregate---------------------------------------------------------------------------------------
