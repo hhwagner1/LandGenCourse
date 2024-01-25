@@ -161,20 +161,17 @@ profvis::profvis({
 
 
 ## ----notebook----------------------------------------------------------------------------------------
-file.copy(from=system.file("doc", "Week3_vignette.Rmd", package = "LandGenCourse"),
-                     to=file.path(here::here(), "downloads", "Week3_vignette.Rmd"))
+file.copy(from=system.file("doc", "Week2_vignette.Rmd", package = "LandGenCourse"),
+                     to=file.path(here::here(), "downloads", "Week2_vignette.Rmd"))
 
 
 ## ----purl--------------------------------------------------------------------------------------------
-infile = here::here("downloads/Week3_vignette.Rmd")
-tmpfile = here::here("downloads/tmp.Rmd")
-outfile = here::here("downloads/Week3_vignette.R")
-
-readr::write_lines(readr::read_lines(infile, n_max=252), tmpfile)
-knitr::purl(tmpfile, outfile)
+infile = here::here("downloads/Week2_vignette.Rmd")
+outfile = here::here("downloads/Week2_vignette.R")
+knitr::purl(infile, outfile)
 
 
-## ----file.show---------------------------------------------------------------------------------------
+## ----file.show, message=FALSE, include=FALSE---------------------------------------------------------
 file.show(infile)
 file.show(outfile)
 
