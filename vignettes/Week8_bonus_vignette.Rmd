@@ -447,20 +447,20 @@ file.show(outfile)
 We can now use the function `source` to read and execute the code in the R script. We use the function `Rprof` to start and stop the profiling.
 
 ```{r Rprof, include=FALSE}
-Rprof(filename=here::here("downloads/Rprof.out"))
-source(outfile)
-Rprof(NULL)
+#Rprof(filename=here::here("downloads/Rprof.out"))
+#source(outfile)
+#Rprof(NULL)
 ```
 
 With the function `summaryRprof`, we get a summary by function. First, let's check the total time spent executing the code, and the sample interval (in seconds). Note that profiling works in this way: as the code is executed, R checks at regular time intervals which function is being executed at that very moment. The `summaryRprof` function then tabulates the number of intervals, and thus the time used, by function. 
 
 ```{r sampling.interval}
-summaryRprof(here::here("downloads/Rprof.out"))[c("sampling.time", "sample.interval")]	
+#summaryRprof(here::here("downloads/Rprof.out"))[c("sampling.time", "sample.interval")]	
 ```
 The attribute `$by.total` only lists the top-level functions called (not any functions called internally by that top-level function). 
 
 ```{r summaryRprof}
-summaryRprof(here::here("downloads/Rprof.out"))$by.total
+#summaryRprof(here::here("downloads/Rprof.out"))$by.total
 ```
 
 Note: The functions are listed by total time, in decreasing order. The two functions `eval` and `source`, are related to evaluating (running) the code from the sourced R script file.
@@ -469,8 +469,6 @@ Note: The functions are listed by total time, in decreasing order. The two funct
 - **total.pct**: (ignore this) percent time spent executing the function (including functions called by it)
 - **self.time**: total time spent executing the function itself (excluding functions called by it)
 - **self.pct**: percent time spent executing the function itself (excluding functions called by it)
-
-**Question:** Which calculation of pairwise distances in the Week 5 Worked Example took the longest?
 
 
 If you need to see a summary with more detail, `$by.self` lists each function used, even internal functions. 

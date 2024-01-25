@@ -4933,16 +4933,16 @@ example to compare how character data are being imported.</p>
 <span id="cb34-3"><a href="#cb34-3" tabindex="-1"></a>          <span class="fu">read.csv</span>(x), readr<span class="sc">::</span><span class="fu">read_csv</span>(x, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>), data.table<span class="sc">::</span><span class="fu">fread</span>(x),</span>
 <span id="cb34-4"><a href="#cb34-4" tabindex="-1"></a>          rio<span class="sc">::</span><span class="fu">import</span>(x))</span></code></pre></div>
 <pre><code>## Unit: milliseconds
-##                                        expr       min        lq      mean
-##                                 read.csv(x) 2088.2918 2088.2918 2088.2918
-##  readr::read_csv(x, show_col_types = FALSE) 2943.9283 2943.9283 2943.9283
-##                        data.table::fread(x)  146.9090  146.9090  146.9090
-##                              rio::import(x)  139.0789  139.0789  139.0789
-##     median        uq       max neval
-##  2088.2918 2088.2918 2088.2918     1
-##  2943.9283 2943.9283 2943.9283     1
-##   146.9090  146.9090  146.9090     1
-##   139.0789  139.0789  139.0789     1</code></pre>
+##                                        expr        min         lq       mean
+##                                 read.csv(x) 1913.72258 1913.72258 1913.72258
+##  readr::read_csv(x, show_col_types = FALSE) 2949.23131 2949.23131 2949.23131
+##                        data.table::fread(x)   96.48291   96.48291   96.48291
+##                              rio::import(x)  202.98174  202.98174  202.98174
+##      median         uq        max neval
+##  1913.72258 1913.72258 1913.72258     1
+##  2949.23131 2949.23131 2949.23131     1
+##    96.48291   96.48291   96.48291     1
+##   202.98174  202.98174  202.98174     1</code></pre>
 <p>Would it be faster if we first loaded the packages so that we could
 call the functions directly?</p>
 <p>Note: you can list several independent commands on the same line by
@@ -4955,15 +4955,15 @@ separating the with a semi-colon ‘;’. Also, the chunk setting
 <span id="cb36-4"><a href="#cb36-4" tabindex="-1"></a>          <span class="fu">read.csv</span>(x), <span class="fu">read_csv</span>(x, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>), <span class="fu">fread</span>(x), <span class="fu">import</span>(x))</span></code></pre></div>
 <pre><code>## Unit: milliseconds
 ##                                 expr        min         lq       mean
-##                          read.csv(x) 2052.13718 2052.13718 2052.13718
-##  read_csv(x, show_col_types = FALSE) 2672.62998 2672.62998 2672.62998
-##                             fread(x)   87.41178   87.41178   87.41178
-##                            import(x)   87.93344   87.93344   87.93344
+##                          read.csv(x) 1930.81781 1930.81781 1930.81781
+##  read_csv(x, show_col_types = FALSE) 2569.86079 2569.86079 2569.86079
+##                             fread(x)   84.34068   84.34068   84.34068
+##                            import(x)   85.64288   85.64288   85.64288
 ##      median         uq        max neval
-##  2052.13718 2052.13718 2052.13718     1
-##  2672.62998 2672.62998 2672.62998     1
-##    87.41178   87.41178   87.41178     1
-##    87.93344   87.93344   87.93344     1</code></pre>
+##  1930.81781 1930.81781 1930.81781     1
+##  2569.86079 2569.86079 2569.86079     1
+##    84.34068   84.34068   84.34068     1
+##    85.64288   85.64288   85.64288     1</code></pre>
 <p>Yes, the import was faster when the packages were already loaded.</p>
 <p>Overall <code>fread</code> and <code>import</code> were in the order
 of 50 times faster than <code>read.csv</code> and <code>read_csv</code>!
@@ -5056,10 +5056,10 @@ actually do it 10 times.</p>
 <span id="cb49-5"><a href="#cb49-5" tabindex="-1"></a>          <span class="at">feather=</span><span class="fu">import</span>(<span class="fu">file.path</span>(here<span class="sc">::</span><span class="fu">here</span>(), <span class="st">&quot;output&quot;</span>, <span class="st">&quot;gen.feather&quot;</span>)))</span></code></pre></div>
 <pre><code>## Unit: milliseconds
 ##     expr        min         lq       mean     median         uq        max
-##      csv   73.29531   74.41269   74.92099   74.64956   75.94286   76.06111
-##    RData   21.42565   21.99832   22.48038   22.31774   23.34823   23.65114
-##      rds   20.85050   21.32150   22.26019   21.95257   22.73679   25.90784
-##  feather 5653.49113 5710.66094 5846.40921 5808.42800 6002.43192 6147.45324
+##      csv   74.07420   74.80369   75.10166   75.02101   75.51547   76.34210
+##    RData   21.38819   21.55495   22.08983   21.69593   22.91642   23.43942
+##      rds   21.03384   21.50594   21.77365   21.66828   22.09027   22.53584
+##  feather 5680.15042 5719.41954 5798.59286 5742.03531 5941.91433 5942.80840
 ##  neval cld
 ##     10  a 
 ##     10  a 
@@ -5183,9 +5183,9 @@ current version.</li>
 <span id="cb56-5"><a href="#cb56-5" tabindex="-1"></a></span>
 <span id="cb56-6"><a href="#cb56-6" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="fu">myFunction</span>(), <span class="fu">myFunction.cmp</span>())</span></code></pre></div>
 <pre><code>## Unit: microseconds
-##              expr    min      lq     mean  median      uq      max neval cld
-##      myFunction() 45.833 46.5690 61.90002 47.0570 47.4130 1521.608   100   a
-##  myFunction.cmp() 45.650 46.5605 47.23724 46.9855 47.4415   67.202   100   a</code></pre>
+##              expr    min      lq     mean median     uq      max neval cld
+##      myFunction() 46.168 46.7725 61.50219 47.060 47.397 1471.419   100   a
+##  myFunction.cmp() 46.193 46.7535 47.71438 47.038 47.432   82.242   100   a</code></pre>
 <p><strong>Question</strong>: Which of the following times are most
 different between the uncompiled and the compiled versions of this
 simple function?</p>
@@ -5241,8 +5241,8 @@ Line(s)’.</li>
 <span id="cb58-6"><a href="#cb58-6" tabindex="-1"></a>  <span class="fu">with</span>(dat, <span class="fu">cor</span>(x, y))</span>
 <span id="cb58-7"><a href="#cb58-7" tabindex="-1"></a>  <span class="fu">lm</span>(y <span class="sc">~</span> x, <span class="at">data=</span>dat)</span>
 <span id="cb58-8"><a href="#cb58-8" tabindex="-1"></a>})</span></code></pre></div>
-<div class="profvis html-widget html-fill-item" id="htmlwidget-dac9ad8b5d42d3c914bf" style="width:100%;height:600px;"></div>
-<script type="application/json" data-for="htmlwidget-dac9ad8b5d42d3c914bf">{"x":{"message":{"prof":{"time":[1,2,3,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,6,7,7,8],"depth":[1,1,1,1,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,1,2,1,1],"label":["rnorm","rnorm","rnorm","is.na","[.data.frame","na.omit.data.frame","model.frame.default","eval","eval","eval_with_user_handlers","evaluate_call","evaluate::evaluate","evaluate","eng_r","block_exec","call_block","process_group.block","process_file","knitr::knit",".External2","lm.fit","lm","c"],"filenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null],"linenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,7,null],"memalloc":[49.64787292480469,53.46495819091797,53.46495819091797,57.28966522216797,85.90061187744141,85.90061187744141,85.90061187744141,85.90061187744141,85.90061187744141,85.90061187744141,85.90061187744141,85.90061187744141,85.90061187744141,85.90061187744141,85.90061187744141,85.90061187744141,85.90061187744141,85.90061187744141,85.90061187744141,110.8846588134766,126.1438827514648,126.1438827514648,133.7733688354492],"meminc":[0,3.817085266113281,0,3.82470703125,28.61094665527344,0,0,0,0,0,0,0,0,0,0,0,0,0,0,24.98404693603516,15.25922393798828,0,7.629486083984375],"filename":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"<expr>",null]},"interval":10,"files":[{"filename":"<expr>","content":"profvis::profvis({\n  dat <- data.frame(\n       x = rnorm(5e5), \n       y = rnorm(5e5))   \n  mean(dat$x)\n  with(dat, cor(x, y))\n  lm(y ~ x, data=dat)\n})","normpath":"<expr>"}],"prof_output":"/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T//RtmpCoataJ/file180242de7bddd.prof","highlight":{"output":["^output\\$"],"gc":["^<GC>$"],"stacktrace":["^\\.\\.stacktraceo(n|ff)\\.\\.$"]},"split":"h"}},"evals":[],"jsHooks":[]}</script>
+<div class="profvis html-widget html-fill-item" id="htmlwidget-aa9c8f353aab4b0574c4" style="width:100%;height:600px;"></div>
+<script type="application/json" data-for="htmlwidget-aa9c8f353aab4b0574c4">{"x":{"message":{"prof":{"time":[1,2,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,6,6,6,7,7],"depth":[1,1,1,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,1,3,2,1,2,1],"label":["rnorm","rnorm","mean.default","[.data.frame","na.omit.data.frame","model.frame.default","eval","eval","eval_with_user_handlers","evaluate_call","evaluate::evaluate","evaluate","eng_r","block_exec","call_block","process_group.block","process_file","knitr::knit",".External2","<GC>","lm.fit","lm","lm.fit","lm"],"filenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1,null,1],"linenum":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,7,null,7],"memalloc":[49.64755249023438,53.46463775634766,53.47104644775391,76.36351013183594,76.36351013183594,76.36351013183594,76.36351013183594,76.36351013183594,76.36351013183594,76.36351013183594,76.36351013183594,76.36351013183594,76.36351013183594,76.36351013183594,76.36351013183594,76.36351013183594,76.36351013183594,76.36351013183594,99.43710327148438,101.3341445922852,101.3341445922852,101.3341445922852,87.78361511230469,87.78361511230469],"meminc":[0,3.817085266113281,0.00640869140625,22.89246368408203,0,0,0,0,0,0,0,0,0,0,0,0,0,0,23.07359313964844,1.897041320800781,0,0,-13.55052947998047,0],"filename":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"<expr>",null,"<expr>"]},"interval":10,"files":[{"filename":"<expr>","content":"profvis::profvis({\n  dat <- data.frame(\n       x = rnorm(5e5), \n       y = rnorm(5e5))   \n  mean(dat$x)\n  with(dat, cor(x, y))\n  lm(y ~ x, data=dat)\n})","normpath":"<expr>"}],"prof_output":"/var/folders/kz/fv8pzy0d3cl_mp3md294cvbh0000gn/T//RtmpoDlmR2/file7902069fb48.prof","highlight":{"output":["^output\\$"],"gc":["^<GC>$"],"stacktrace":["^\\.\\.stacktraceo(n|ff)\\.\\.$"]},"split":"h"}},"evals":[],"jsHooks":[]}</script>
 <p>The results will be opened in a ‘Profile’ tab. The upper part has two
 tabs (the lower part is less intuitive to interpret, we’ll ignore it
 here):</p>
@@ -5269,7 +5269,7 @@ folder. This is just so that we have an example of an <code>.Rmd</code>
 file to extract the code from.</p>
 <div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" tabindex="-1"></a><span class="fu">file.copy</span>(<span class="at">from=</span><span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;Testfile.Rmd&quot;</span>, <span class="at">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>),</span>
 <span id="cb59-2"><a href="#cb59-2" tabindex="-1"></a>                     <span class="at">to=</span><span class="fu">file.path</span>(here<span class="sc">::</span><span class="fu">here</span>(), <span class="st">&quot;downloads&quot;</span>, <span class="st">&quot;Testfile.Rmd&quot;</span>))</span></code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
+<pre><code>## [1] FALSE</code></pre>
 <p>Extract the R code from the R Notebook and save it in a script file
 <code>Testfile.R</code> in the downloads folder. You may adapt the
 infile and outfile to extract the code from any R Notebook saved in your
@@ -5299,207 +5299,11 @@ way: as the code is executed, R checks at regular time intervals which
 function is being executed at that very moment. The
 <code>summaryRprof</code> function then tabulates the number of
 intervals, and thus the time used, by function.</p>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" tabindex="-1"></a><span class="fu">summaryRprof</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;downloads/Rprof.out&quot;</span>))[<span class="fu">c</span>(<span class="st">&quot;sampling.time&quot;</span>, <span class="st">&quot;sample.interval&quot;</span>)]  </span></code></pre></div>
-<pre><code>## $sampling.time
-## [1] 4.1
-## 
-## $sample.interval
-## [1] 0.02</code></pre>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" tabindex="-1"></a><span class="co">#summaryRprof(here::here(&quot;downloads/Rprof.out&quot;))[c(&quot;sampling.time&quot;, &quot;sample.interval&quot;)] </span></span></code></pre></div>
 <p>The attribute <code>$by.total</code> only lists the top-level
 functions called (not any functions called internally by that top-level
 function).</p>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" tabindex="-1"></a><span class="fu">summaryRprof</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;downloads/Rprof.out&quot;</span>))<span class="sc">$</span>by.total</span></code></pre></div>
-<pre><code>##                            total.time total.pct self.time self.pct
-## &quot;eval&quot;                           4.10    100.00      0.02     0.49
-## &quot;block_exec&quot;                     4.10    100.00      0.00     0.00
-## &quot;call_block&quot;                     4.10    100.00      0.00     0.00
-## &quot;eng_r&quot;                          4.10    100.00      0.00     0.00
-## &quot;eval_with_user_handlers&quot;        4.10    100.00      0.00     0.00
-## &quot;evaluate_call&quot;                  4.10    100.00      0.00     0.00
-## &quot;evaluate::evaluate&quot;             4.10    100.00      0.00     0.00
-## &quot;evaluate&quot;                       4.10    100.00      0.00     0.00
-## &quot;handle_error&quot;                   4.10    100.00      0.00     0.00
-## &quot;handle&quot;                         4.10    100.00      0.00     0.00
-## &quot;in_dir&quot;                         4.10    100.00      0.00     0.00
-## &quot;in_input_dir&quot;                   4.10    100.00      0.00     0.00
-## &quot;knitr::knit&quot;                    4.10    100.00      0.00     0.00
-## &quot;process_file&quot;                   4.10    100.00      0.00     0.00
-## &quot;process_group.block&quot;            4.10    100.00      0.00     0.00
-## &quot;process_group&quot;                  4.10    100.00      0.00     0.00
-## &quot;rmarkdown::render&quot;              4.10    100.00      0.00     0.00
-## &quot;source&quot;                         4.10    100.00      0.00     0.00
-## &quot;timing_fn&quot;                      4.10    100.00      0.00     0.00
-## &quot;withCallingHandlers&quot;            4.10    100.00      0.00     0.00
-## &quot;withVisible&quot;                    4.10    100.00      0.00     0.00
-## &quot;library&quot;                        4.08     99.51      0.00     0.00
-## &quot;doTryCatch&quot;                     4.06     99.02      0.10     2.44
-## &quot;tryCatch&quot;                       4.06     99.02      0.00     0.00
-## &quot;tryCatchList&quot;                   4.06     99.02      0.00     0.00
-## &quot;tryCatchOne&quot;                    4.06     99.02      0.00     0.00
-## &quot;loadNamespace&quot;                  4.00     97.56      0.00     0.00
-## &quot;asNamespace&quot;                    3.76     91.71      0.00     0.00
-## &quot;namespaceImportFrom&quot;            3.76     91.71      0.00     0.00
-## &quot;methods::cacheMetaData&quot;         3.38     82.44      0.00     0.00
-## &quot;namespaceImport&quot;                2.82     68.78      0.00     0.00
-## &quot;&lt;Anonymous&gt;&quot;                    2.62     63.90      0.00     0.00
-## &quot;Module&quot;                         2.20     53.66      0.28     6.83
-## &quot;.doLoadActions&quot;                 2.20     53.66      0.00     0.00
-## &quot;loadModule&quot;                     2.20     53.66      0.00     0.00
-## &quot;is&quot;                             0.86     20.98      0.32     7.80
-## &quot;lazyLoadDBfetch&quot;                0.84     20.49      0.84    20.49
-## &quot;.updateMethodsInTable&quot;          0.80     19.51      0.00     0.00
-## &quot;insertClassMethods&quot;             0.72     17.56      0.02     0.49
-## &quot;methods::setRefClass&quot;           0.68     16.59      0.00     0.00
-## &quot;makeClassMethod&quot;                0.64     15.61      0.02     0.49
-## &quot;new&quot;                            0.64     15.61      0.02     0.49
-## &quot;initialize&quot;                     0.62     15.12      0.06     1.46
-## &quot;.get_Module_Class&quot;              0.40      9.76      0.34     8.29
-## &quot;getGeneric&quot;                     0.40      9.76      0.04     0.98
-## &quot;.getGlobalFuns&quot;                 0.40      9.76      0.00     0.00
-## &quot;.getRequiredPackages2&quot;          0.40      9.76      0.00     0.00
-## &quot;codetools::findGlobals&quot;         0.40      9.76      0.00     0.00
-## &quot;generator$methods&quot;              0.40      9.76      0.00     0.00
-## &quot;collectUsage&quot;                   0.38      9.27      0.00     0.00
-## &quot;collectUsageFun&quot;                0.38      9.27      0.00     0.00
-## &quot;refClassInformation&quot;            0.36      8.78      0.00     0.00
-## &quot;try&quot;                            0.30      7.32      0.00     0.00
-## &quot;w$call&quot;                         0.28      6.83      0.10     2.44
-## &quot;walkCode&quot;                       0.28      6.83      0.04     0.98
-## &quot;setClass&quot;                       0.28      6.83      0.00     0.00
-## &quot;stopifnot&quot;                      0.26      6.34      0.14     3.41
-## &quot;.checkGroupSigLength&quot;           0.24      5.85      0.00     0.00
-## &quot;findFuncLocals&quot;                 0.24      5.85      0.00     0.00
-## &quot;findLocalsList&quot;                 0.24      5.85      0.00     0.00
-## &quot;setIs&quot;                          0.24      5.85      0.00     0.00
-## &quot;FUN&quot;                            0.22      5.37      0.06     1.46
-## &quot;.getGeneric&quot;                    0.22      5.37      0.00     0.00
-## &quot;fun&quot;                            0.22      5.37      0.00     0.00
-## &quot;runHook&quot;                        0.22      5.37      0.00     0.00
-## &quot;completeSubclasses&quot;             0.20      4.88      0.00     0.00
-## &quot;lapply&quot;                         0.20      4.88      0.00     0.00
-## &quot;file.exists&quot;                    0.16      3.90      0.16     3.90
-## &quot;.recMembers&quot;                    0.16      3.90      0.00     0.00
-## &quot;getGroupMembers&quot;                0.16      3.90      0.00     0.00
-## &quot;getClassDef&quot;                    0.14      3.41      0.04     0.98
-## &quot;Recall&quot;                         0.14      3.41      0.00     0.00
-## &quot;.Call&quot;                          0.12      2.93      0.12     2.93
-## &quot;assign&quot;                         0.12      2.93      0.02     0.49
-## &quot;.cacheClass&quot;                    0.12      2.93      0.00     0.00
-## &quot;assignClassDef&quot;                 0.12      2.93      0.00     0.00
-## &quot;h&quot;                              0.12      2.93      0.00     0.00
-## &quot;load_units_xml&quot;                 0.12      2.93      0.00     0.00
-## &quot;ud_init&quot;                        0.12      2.93      0.00     0.00
-## &quot;.getClassesFromCache&quot;           0.10      2.44      0.10     2.44
-## &quot;isVirtualClass&quot;                 0.10      2.44      0.04     0.98
-## &quot;as&lt;-&quot;                           0.10      2.44      0.02     0.49
-## &quot;sapply&quot;                         0.10      2.44      0.02     0.49
-## &quot;unique&quot;                         0.10      2.44      0.02     0.49
-## &quot;w$isLocal&quot;                      0.10      2.44      0.02     0.49
-## &quot;.recacheSubclasses&quot;             0.10      2.44      0.00     0.00
-## &quot;get&quot;                            0.10      2.44      0.00     0.00
-## &quot;library.dynam&quot;                  0.10      2.44      0.00     0.00
-## &quot;dyn.load&quot;                       0.08      1.95      0.08     1.95
-## &quot;...elt&quot;                         0.08      1.95      0.06     1.46
-## &quot;.findMethodInTable&quot;             0.08      1.95      0.00     0.00
-## &quot;.quickCoerceSelect&quot;             0.08      1.95      0.00     0.00
-## &quot;find.package&quot;                   0.08      1.95      0.00     0.00
-## &quot;methods:::.getGenerics&quot;         0.08      1.95      0.00     0.00
-## &quot;unlist&quot;                         0.08      1.95      0.00     0.00
-## &quot;paste&quot;                          0.06      1.46      0.06     1.46
-## &quot;is.baseenv&quot;                     0.06      1.46      0.04     0.98
-## &quot;methods:::.setDummyField&quot;       0.06      1.46      0.02     0.49
-## &quot;validObject&quot;                    0.06      1.46      0.02     0.49
-## &quot;w$leaf&quot;                         0.06      1.46      0.02     0.49
-## &quot;.assignedVars&quot;                  0.06      1.46      0.00     0.00
-## &quot;.checkFieldsInMethod&quot;           0.06      1.46      0.00     0.00
-## &quot;$&lt;-&quot;                            0.06      1.46      0.00     0.00
-## &quot;attachNamespace&quot;                0.06      1.46      0.00     0.00
-## &quot;codetools::walkCode&quot;            0.06      1.46      0.00     0.00
-## &quot;cpp_refMethods&quot;                 0.06      1.46      0.00     0.00
-## &quot;envRefSetField&quot;                 0.06      1.46      0.00     0.00
-## &quot;extends&quot;                        0.06      1.46      0.00     0.00
-## &quot;namespaceImportClasses&quot;         0.06      1.46      0.00     0.00
-## &quot;.bindingMetaName&quot;               0.04      0.98      0.04     0.98
-## &quot;.cacheGenericTable&quot;             0.04      0.98      0.04     0.98
-## &quot;.identC&quot;                        0.04      0.98      0.04     0.98
-## &quot;@&lt;-&quot;                            0.04      0.98      0.04     0.98
-## &quot;%in%&quot;                           0.04      0.98      0.04     0.98
-## &quot;dir.exists&quot;                     0.04      0.98      0.04     0.98
-## &quot;findOwnerEnv&quot;                   0.04      0.98      0.04     0.98
-## &quot;grep&quot;                           0.04      0.98      0.04     0.98
-## &quot;is.na&quot;                          0.04      0.98      0.04     0.98
-## &quot;.mergeMethodsTable&quot;             0.04      0.98      0.02     0.49
-## &quot;as.list&quot;                        0.04      0.98      0.02     0.49
-## &quot;getClass&quot;                       0.04      0.98      0.02     0.49
-## &quot;isClassDef&quot;                     0.04      0.98      0.02     0.49
-## &quot;METHOD$info&quot;                    0.04      0.98      0.02     0.49
-## &quot;vapply&quot;                         0.04      0.98      0.02     0.49
-## &quot;.cacheGeneric&quot;                  0.04      0.98      0.00     0.00
-## &quot;.extendsForS3&quot;                  0.04      0.98      0.00     0.00
-## &quot;.isIndirectExtension&quot;           0.04      0.98      0.00     0.00
-## &quot;.resetInheritedMethods&quot;         0.04      0.98      0.00     0.00
-## &quot;.sigLabel&quot;                      0.04      0.98      0.00     0.00
-## &quot;as&quot;                             0.04      0.98      0.00     0.00
-## &quot;cacheGenericsMetaData&quot;          0.04      0.98      0.00     0.00
-## &quot;collectUsageArgs&quot;               0.04      0.98      0.00     0.00
-## &quot;registerS3methods&quot;              0.04      0.98      0.00     0.00
-## &quot;sort.list&quot;                      0.04      0.98      0.00     0.00
-## &quot;...length&quot;                      0.02      0.49      0.02     0.49
-## &quot;.classEnv&quot;                      0.02      0.49      0.02     0.49
-## &quot;.makeMessage&quot;                   0.02      0.49      0.02     0.49
-## &quot;all&quot;                            0.02      0.49      0.02     0.49
-## &quot;as.list.default&quot;                0.02      0.49      0.02     0.49
-## &quot;body&quot;                           0.02      0.49      0.02     0.49
-## &quot;c&quot;                              0.02      0.49      0.02     0.49
-## &quot;character&quot;                      0.02      0.49      0.02     0.49
-## &quot;CPL_geos_version&quot;               0.02      0.49      0.02     0.49
-## &quot;deparse&quot;                        0.02      0.49      0.02     0.49
-## &quot;duplicated&quot;                     0.02      0.49      0.02     0.49
-## &quot;genericForBasic&quot;                0.02      0.49      0.02     0.49
-## &quot;get0&quot;                           0.02      0.49      0.02     0.49
-## &quot;importIntoEnv&quot;                  0.02      0.49      0.02     0.49
-## &quot;isNamespace&quot;                    0.02      0.49      0.02     0.49
-## &quot;length&quot;                         0.02      0.49      0.02     0.49
-## &quot;makeLocalsCollector&quot;            0.02      0.49      0.02     0.49
-## &quot;unique.default&quot;                 0.02      0.49      0.02     0.49
-## &quot;.combineExtends&quot;                0.02      0.49      0.00     0.00
-## &quot;.completeClassSlots&quot;            0.02      0.49      0.00     0.00
-## &quot;.makeActiveBinding&quot;             0.02      0.49      0.00     0.00
-## &quot;.newDirectSuperclass&lt;-&quot;         0.02      0.49      0.00     0.00
-## &quot;.registerS3method&quot;              0.02      0.49      0.00     0.00
-## &quot;.transitiveExtends&quot;             0.02      0.49      0.00     0.00
-## &quot;.validExtends&quot;                  0.02      0.49      0.00     0.00
-## &quot;as.function&quot;                    0.02      0.49      0.00     0.00
-## &quot;asMethod&quot;                       0.02      0.49      0.00     0.00
-## &quot;body&lt;-&quot;                         0.02      0.49      0.00     0.00
-## &quot;callback&quot;                       0.02      0.49      0.00     0.00
-## &quot;completeClassDefinition&quot;        0.02      0.49      0.00     0.00
-## &quot;completeExtends&quot;                0.02      0.49      0.00     0.00
-## &quot;dispatchIsInternal&quot;             0.02      0.49      0.00     0.00
-## &quot;isBaseVar&quot;                      0.02      0.49      0.00     0.00
-## &quot;isDDSym&quot;                        0.02      0.49      0.00     0.00
-## &quot;isGroup&quot;                        0.02      0.49      0.00     0.00
-## &quot;isTRUE&quot;                         0.02      0.49      0.00     0.00
-## &quot;load_gdal&quot;                      0.02      0.49      0.00     0.00
-## &quot;ls&quot;                             0.02      0.49      0.00     0.00
-## &quot;match.arg&quot;                      0.02      0.49      0.00     0.00
-## &quot;methods::getFunction&quot;           0.02      0.49      0.00     0.00
-## &quot;mode&quot;                           0.02      0.49      0.00     0.00
-## &quot;namespaceImportMethods&quot;         0.02      0.49      0.00     0.00
-## &quot;order&quot;                          0.02      0.49      0.00     0.00
-## &quot;packageStartupMessage&quot;          0.02      0.49      0.00     0.00
-## &quot;paste0&quot;                         0.02      0.49      0.00     0.00
-## &quot;register_all_s3_methods&quot;        0.02      0.49      0.00     0.00
-## &quot;register_s3_method&quot;             0.02      0.49      0.00     0.00
-## &quot;register&quot;                       0.02      0.49      0.00     0.00
-## &quot;registerNames&quot;                  0.02      0.49      0.00     0.00
-## &quot;reset_theme_settings&quot;           0.02      0.49      0.00     0.00
-## &quot;run_on_load&quot;                    0.02      0.49      0.00     0.00
-## &quot;runUserHook&quot;                    0.02      0.49      0.00     0.00
-## &quot;simplify2array&quot;                 0.02      0.49      0.00     0.00
-## &quot;strsplit&quot;                       0.02      0.49      0.00     0.00
-## &quot;utils::globalVariables&quot;         0.02      0.49      0.00     0.00
-## &quot;w$handler&quot;                      0.02      0.49      0.00     0.00</code></pre>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a><span class="co">#summaryRprof(here::here(&quot;downloads/Rprof.out&quot;))$by.total</span></span></code></pre></div>
 <p>Note: The functions are listed by total time, in decreasing order.
 The two functions <code>eval</code> and <code>source</code>, are related
 to evaluating (running) the code from the sourced R script file.</p>
@@ -5513,8 +5317,6 @@ itself (excluding functions called by it)</li>
 <li><strong>self.pct</strong>: percent time spent executing the function
 itself (excluding functions called by it)</li>
 </ul>
-<p><strong>Question:</strong> Which calculation of pairwise distances in
-the Week 5 Worked Example took the longest?</p>
 <p>If you need to see a summary with more detail, <code>$by.self</code>
 lists each function used, even internal functions.</p>
 <p>If you want to profile memory use rather than processing time, see
@@ -5573,20 +5375,20 @@ should be plotted side-by-side. Then we create the plots.</li>
 they are nested within a set of double quotes. R pretty much considers
 single and double quotes as synonyms, which allows us to nest them
 either way: ‘““’ or”’’“.</p>
-<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" tabindex="-1"></a>myPath <span class="ot">&lt;-</span> <span class="fu">file.path</span>(here<span class="sc">::</span><span class="fu">here</span>(), <span class="st">&quot;output/myBashScript.sh&quot;</span>)</span>
-<span id="cb65-2"><a href="#cb65-2" tabindex="-1"></a>fileConn <span class="ot">&lt;-</span> <span class="fu">file</span>(myPath)</span>
-<span id="cb65-3"><a href="#cb65-3" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="fu">c</span>(<span class="st">&quot;#!/bin/bash&quot;</span>,</span>
-<span id="cb65-4"><a href="#cb65-4" tabindex="-1"></a>             <span class="st">&quot;R --slave &lt;&lt; EOF&quot;</span>,</span>
-<span id="cb65-5"><a href="#cb65-5" tabindex="-1"></a>             <span class="st">&quot;x &lt;- rnorm(100)&quot;</span>,</span>
-<span id="cb65-6"><a href="#cb65-6" tabindex="-1"></a>             <span class="st">&quot;mean(x)&quot;</span>,</span>
-<span id="cb65-7"><a href="#cb65-7" tabindex="-1"></a>             <span class="st">&quot;png(&#39;my_plot.png&#39;, height = 400, width = 800)&quot;</span>,</span>
-<span id="cb65-8"><a href="#cb65-8" tabindex="-1"></a>             <span class="st">&quot;par(mfrow=c(1,2))&quot;</span>, </span>
-<span id="cb65-9"><a href="#cb65-9" tabindex="-1"></a>             <span class="st">&quot;hist(x)&quot;</span>, </span>
-<span id="cb65-10"><a href="#cb65-10" tabindex="-1"></a>             <span class="st">&quot;qqnorm(x)&quot;</span>,</span>
-<span id="cb65-11"><a href="#cb65-11" tabindex="-1"></a>             <span class="st">&quot;dev.off()&quot;</span>,</span>
-<span id="cb65-12"><a href="#cb65-12" tabindex="-1"></a>             <span class="st">&quot;EOF&quot;</span>), fileConn)</span>
-<span id="cb65-13"><a href="#cb65-13" tabindex="-1"></a><span class="fu">close</span>(fileConn)</span>
-<span id="cb65-14"><a href="#cb65-14" tabindex="-1"></a><span class="fu">file.show</span>(myPath)</span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" tabindex="-1"></a>myPath <span class="ot">&lt;-</span> <span class="fu">file.path</span>(here<span class="sc">::</span><span class="fu">here</span>(), <span class="st">&quot;output/myBashScript.sh&quot;</span>)</span>
+<span id="cb63-2"><a href="#cb63-2" tabindex="-1"></a>fileConn <span class="ot">&lt;-</span> <span class="fu">file</span>(myPath)</span>
+<span id="cb63-3"><a href="#cb63-3" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="fu">c</span>(<span class="st">&quot;#!/bin/bash&quot;</span>,</span>
+<span id="cb63-4"><a href="#cb63-4" tabindex="-1"></a>             <span class="st">&quot;R --slave &lt;&lt; EOF&quot;</span>,</span>
+<span id="cb63-5"><a href="#cb63-5" tabindex="-1"></a>             <span class="st">&quot;x &lt;- rnorm(100)&quot;</span>,</span>
+<span id="cb63-6"><a href="#cb63-6" tabindex="-1"></a>             <span class="st">&quot;mean(x)&quot;</span>,</span>
+<span id="cb63-7"><a href="#cb63-7" tabindex="-1"></a>             <span class="st">&quot;png(&#39;my_plot.png&#39;, height = 400, width = 800)&quot;</span>,</span>
+<span id="cb63-8"><a href="#cb63-8" tabindex="-1"></a>             <span class="st">&quot;par(mfrow=c(1,2))&quot;</span>, </span>
+<span id="cb63-9"><a href="#cb63-9" tabindex="-1"></a>             <span class="st">&quot;hist(x)&quot;</span>, </span>
+<span id="cb63-10"><a href="#cb63-10" tabindex="-1"></a>             <span class="st">&quot;qqnorm(x)&quot;</span>,</span>
+<span id="cb63-11"><a href="#cb63-11" tabindex="-1"></a>             <span class="st">&quot;dev.off()&quot;</span>,</span>
+<span id="cb63-12"><a href="#cb63-12" tabindex="-1"></a>             <span class="st">&quot;EOF&quot;</span>), fileConn)</span>
+<span id="cb63-13"><a href="#cb63-13" tabindex="-1"></a><span class="fu">close</span>(fileConn)</span>
+<span id="cb63-14"><a href="#cb63-14" tabindex="-1"></a><span class="fu">file.show</span>(myPath)</span></code></pre></div>
 </div>
 <div id="c.-executing-a-bash-r-script" class="section level4 unnumbered">
 <h4 class="unnumbered">c. Executing a Bash R script</h4>
@@ -5629,11 +5431,11 @@ graphics file ‘my_plot.png’ should now be listed.</li>
 </ol>
 <p>Use R again to open the graphics file (the code here first checks
 whether the file exists):</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" tabindex="-1"></a>myPNG <span class="ot">&lt;-</span> <span class="fu">file.path</span>(here<span class="sc">::</span><span class="fu">here</span>(), <span class="st">&quot;output/my_plot.png&quot;</span>)</span>
-<span id="cb66-2"><a href="#cb66-2" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">file.exists</span>(myPNG))</span>
-<span id="cb66-3"><a href="#cb66-3" tabindex="-1"></a>{</span>
-<span id="cb66-4"><a href="#cb66-4" tabindex="-1"></a>  <span class="fu">file.show</span>(myPNG)</span>
-<span id="cb66-5"><a href="#cb66-5" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" tabindex="-1"></a>myPNG <span class="ot">&lt;-</span> <span class="fu">file.path</span>(here<span class="sc">::</span><span class="fu">here</span>(), <span class="st">&quot;output/my_plot.png&quot;</span>)</span>
+<span id="cb64-2"><a href="#cb64-2" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">file.exists</span>(myPNG))</span>
+<span id="cb64-3"><a href="#cb64-3" tabindex="-1"></a>{</span>
+<span id="cb64-4"><a href="#cb64-4" tabindex="-1"></a>  <span class="fu">file.show</span>(myPNG)</span>
+<span id="cb64-5"><a href="#cb64-5" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 <div id="d.-moving-to-a-node-or-cluster" class="section level4 unnumbered">
 <h4 class="unnumbered">d. Moving to a node or cluster?</h4>
@@ -5644,7 +5446,7 @@ for submitting a job to a single node (a single machine with
 multiple/many cores).</p>
 <p>Note: A copy of the file ‘BashExample.sh’ should also have been
 copied into the downloads folder inside your project folder.</p>
-<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="fu">readLines</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;BashExample.sh&quot;</span>, <span class="at">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="fu">readLines</span>(<span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;BashExample.sh&quot;</span>, <span class="at">package =</span> <span class="st">&quot;LandGenCourse&quot;</span>)))</span></code></pre></div>
 <pre><code>## #!/bin/bash 
 ## 
 ## #SBATCH --nodes=1                                 # Number of Nodes 
@@ -5703,8 +5505,8 @@ version, installation date and repository (CRAN, Github etc.). All
 packages that are currently loaded will be marked with an asterisk.</li>
 </ul>
 <p>Platform:</p>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" tabindex="-1"></a>Session <span class="ot">&lt;-</span> devtools<span class="sc">::</span><span class="fu">session_info</span>()</span>
-<span id="cb69-2"><a href="#cb69-2" tabindex="-1"></a>Session<span class="sc">$</span>platform</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a>Session <span class="ot">&lt;-</span> devtools<span class="sc">::</span><span class="fu">session_info</span>()</span>
+<span id="cb67-2"><a href="#cb67-2" tabindex="-1"></a>Session<span class="sc">$</span>platform</span></code></pre></div>
 <pre><code>##  setting  value
 ##  version  R version 4.3.2 (2023-10-31)
 ##  os       macOS Sonoma 14.2.1
@@ -5718,14 +5520,14 @@ packages that are currently loaded will be marked with an asterisk.</li>
 ##  pandoc   3.1.1 @ /Applications/RStudio.app/Contents/Resources/app/quarto/bin/tools/ (via rmarkdown)</code></pre>
 <p>Packages: here we display only the first six lines, as the list may
 be long.</p>
-<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" tabindex="-1"></a><span class="fu">head</span>(Session<span class="sc">$</span>packages)</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" tabindex="-1"></a><span class="fu">head</span>(Session<span class="sc">$</span>packages)</span></code></pre></div>
 <pre><code>##  package    * version  date (UTC) lib source
-##  abind        1.4-5    2016-07-21 [1] CRAN (R 4.3.0)
 ##  arrow        14.0.0.2 2023-12-02 [1] CRAN (R 4.3.0)
 ##  assertthat   0.2.1    2019-03-21 [1] CRAN (R 4.3.0)
-##  base64enc    0.1-3    2015-07-28 [1] CRAN (R 4.3.0)
 ##  bit          4.0.5    2022-11-15 [1] CRAN (R 4.3.0)
 ##  bit64        4.0.5    2020-08-30 [1] CRAN (R 4.3.0)
+##  bslib        0.6.1    2023-11-28 [1] CRAN (R 4.3.0)
+##  cachem       1.0.8    2023-05-01 [1] CRAN (R 4.3.0)
 ## 
 ##  [1] /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/library</code></pre>
 <p>Exporting the session information is a bit tricky because ‘Session’
@@ -5795,17 +5597,17 @@ will only be faster on Mac / Unix.</p>
 <p>With the package ‘parallel’, it is really easy to use all cores of
 your local machine (as long as you are on a Mac / Unix / Linux system).
 Let’s check the number of cores available:</p>
-<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
-<span id="cb73-2"><a href="#cb73-2" tabindex="-1"></a><span class="fu">detectCores</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" tabindex="-1"></a><span class="fu">library</span>(parallel)</span>
+<span id="cb71-2"><a href="#cb71-2" tabindex="-1"></a><span class="fu">detectCores</span>()</span></code></pre></div>
 <pre><code>## [1] 6</code></pre>
 <p><strong>Question</strong>: How many cores does your machine have?</p>
 <p>Note: Here we check whether the operating system is ‘Windows’, in
 which case we set <code>nCores = 1</code>. This means that we will use
 all cores on Mac or Linux, but only one core on Windows. This is to
 avoid problems on Windows machines.</p>
-<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" tabindex="-1"></a>nCores <span class="ot">&lt;-</span> <span class="fu">detectCores</span>()</span>
-<span id="cb75-2"><a href="#cb75-2" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">Sys.info</span>()[[<span class="st">&#39;sysname&#39;</span>]]<span class="sc">==</span><span class="st">&quot;Windows&quot;</span>) nCores <span class="ot">=</span> <span class="dv">1</span></span>
-<span id="cb75-3"><a href="#cb75-3" tabindex="-1"></a>nCores</span></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" tabindex="-1"></a>nCores <span class="ot">&lt;-</span> <span class="fu">detectCores</span>()</span>
+<span id="cb73-2"><a href="#cb73-2" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">Sys.info</span>()[[<span class="st">&#39;sysname&#39;</span>]]<span class="sc">==</span><span class="st">&quot;Windows&quot;</span>) nCores <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb73-3"><a href="#cb73-3" tabindex="-1"></a>nCores</span></code></pre></div>
 <pre><code>## [1] 6</code></pre>
 <ul>
 <li>Code your analysis with <code>lapply</code> (and related
@@ -5816,10 +5618,10 @@ automatically detect the number of cores in your machine.</li>
 </ul>
 <p>NOTE: April 2021: package build does not work with multiple cores,
 changing nCores to 1.</p>
-<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> gen[,<span class="sc">-</span><span class="dv">1</span>]</span>
-<span id="cb77-2"><a href="#cb77-2" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lapply</span>(x, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
-<span id="cb77-3"><a href="#cb77-3" tabindex="-1"></a><span class="co">#m2 &lt;- mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)  # Use this line when running the code yourself</span></span>
-<span id="cb77-4"><a href="#cb77-4" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">mclapply</span>(x, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>, <span class="at">mc.cores=</span><span class="dv">1</span>)        <span class="co"># Replace this line with the previous line</span></span></code></pre></div>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> gen[,<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb75-2"><a href="#cb75-2" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lapply</span>(x, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<span id="cb75-3"><a href="#cb75-3" tabindex="-1"></a><span class="co">#m2 &lt;- mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)  # Use this line when running the code yourself</span></span>
+<span id="cb75-4"><a href="#cb75-4" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">mclapply</span>(x, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>, <span class="at">mc.cores=</span><span class="dv">1</span>)        <span class="co"># Replace this line with the previous line</span></span></code></pre></div>
 <p>Let’s benchmark four ways of calculating the mean of each column in
 our example data set ‘gen’ with 94 rows and 10,000 columns (SNPs):</p>
 <ul>
@@ -5831,24 +5633,24 @@ our example data set ‘gen’ with 94 rows and 10,000 columns (SNPs):</p>
 <li><strong>Method 4</strong>: Multi-core with
 <code>mclapply</code>.</li>
 </ul>
-<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" tabindex="-1"></a>method1 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="fu">colMeans</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)}</span>
-<span id="cb78-2"><a href="#cb78-2" tabindex="-1"></a>method2 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(x)) <span class="fu">mean</span>(x[,i], <span class="at">na.rm=</span><span class="cn">TRUE</span>)}</span>
-<span id="cb78-3"><a href="#cb78-3" tabindex="-1"></a>method3 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="fu">lapply</span>(x, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>)}</span>
-<span id="cb78-4"><a href="#cb78-4" tabindex="-1"></a><span class="co">#method4 &lt;- function(x) {mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)} # Use this line when running the code yourself</span></span>
-<span id="cb78-5"><a href="#cb78-5" tabindex="-1"></a>method4 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="fu">mclapply</span>(x, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>, <span class="at">mc.cores=</span><span class="dv">1</span>)}  <span class="co"># Replace this line with the previous line</span></span>
-<span id="cb78-6"><a href="#cb78-6" tabindex="-1"></a></span>
-<span id="cb78-7"><a href="#cb78-7" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="at">times =</span> <span class="dv">10</span>, <span class="at">unit =</span> <span class="st">&quot;ms&quot;</span>,</span>
-<span id="cb78-8"><a href="#cb78-8" tabindex="-1"></a>                               <span class="fu">method1</span>(x), <span class="fu">method2</span>(x), <span class="fu">method3</span>(x), <span class="fu">method4</span>(x))</span></code></pre></div>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" tabindex="-1"></a>method1 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="fu">colMeans</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)}</span>
+<span id="cb76-2"><a href="#cb76-2" tabindex="-1"></a>method2 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(x)) <span class="fu">mean</span>(x[,i], <span class="at">na.rm=</span><span class="cn">TRUE</span>)}</span>
+<span id="cb76-3"><a href="#cb76-3" tabindex="-1"></a>method3 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="fu">lapply</span>(x, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>)}</span>
+<span id="cb76-4"><a href="#cb76-4" tabindex="-1"></a><span class="co">#method4 &lt;- function(x) {mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)} # Use this line when running the code yourself</span></span>
+<span id="cb76-5"><a href="#cb76-5" tabindex="-1"></a>method4 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {<span class="fu">mclapply</span>(x, mean, <span class="at">na.rm=</span><span class="cn">TRUE</span>, <span class="at">mc.cores=</span><span class="dv">1</span>)}  <span class="co"># Replace this line with the previous line</span></span>
+<span id="cb76-6"><a href="#cb76-6" tabindex="-1"></a></span>
+<span id="cb76-7"><a href="#cb76-7" tabindex="-1"></a>microbenchmark<span class="sc">::</span><span class="fu">microbenchmark</span>(<span class="at">times =</span> <span class="dv">10</span>, <span class="at">unit =</span> <span class="st">&quot;ms&quot;</span>,</span>
+<span id="cb76-8"><a href="#cb76-8" tabindex="-1"></a>                               <span class="fu">method1</span>(x), <span class="fu">method2</span>(x), <span class="fu">method3</span>(x), <span class="fu">method4</span>(x))</span></code></pre></div>
 <pre><code>## Unit: milliseconds
 ##        expr       min        lq      mean    median        uq       max neval
-##  method1(x)  35.55728  36.17181  43.97021  37.48126  38.78234  71.77938    10
-##  method2(x) 211.56063 220.58118 232.39146 224.85376 243.30868 278.66768    10
-##  method3(x)  65.83379  67.44380  78.37610  69.03316  94.94679 101.94137    10
-##  method4(x)  58.97749  62.31775  71.61725  65.82073  72.64366 102.83537    10
+##  method1(x)  35.54290  36.21465  40.80475  37.13537  38.33376  63.89501    10
+##  method2(x) 203.44687 204.32955 212.81833 208.52080 219.92182 227.83624    10
+##  method3(x)  42.83451  42.94436  48.92384  45.71676  51.75313  72.40171    10
+##  method4(x)  43.08811  43.20855  57.04657  51.55534  67.17110  84.13484    10
 ##  cld
 ##  a  
 ##   b 
-##    c
+##  a c
 ##    c</code></pre>
 <p><strong>Question</strong>: Compare the mean</p>
 <ul>
@@ -5874,12 +5676,12 @@ omit this step, the code will not use parallel computing.</li>
 </ul>
 <p>The following code is commented out to avoid problems when knitting
 the Notebook. You may uncomment and run it.</p>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" tabindex="-1"></a><span class="fu">library</span>(doParallel)</span></code></pre></div>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" tabindex="-1"></a><span class="fu">library</span>(doParallel)</span></code></pre></div>
 <pre><code>## Loading required package: foreach</code></pre>
 <pre><code>## Loading required package: iterators</code></pre>
-<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" tabindex="-1"></a><span class="co">#cl &lt;- makeCluster(2)</span></span>
-<span id="cb83-2"><a href="#cb83-2" tabindex="-1"></a><span class="co">#cl</span></span>
-<span id="cb83-3"><a href="#cb83-3" tabindex="-1"></a><span class="co">#registerDoParallel(cl)</span></span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" tabindex="-1"></a><span class="co">#cl &lt;- makeCluster(2)</span></span>
+<span id="cb81-2"><a href="#cb81-2" tabindex="-1"></a><span class="co">#cl</span></span>
+<span id="cb81-3"><a href="#cb81-3" tabindex="-1"></a><span class="co">#registerDoParallel(cl)</span></span></code></pre></div>
 <p>Now we adapt the code in two steps:</p>
 <ul>
 <li>The code is a little different with <code>foreach</code> than with
@@ -5890,19 +5692,19 @@ in parallelisation yet.</li>
 <li>To make this parallel, replace <code>%do%</code> by
 <code>%dopar%</code>.</li>
 </ul>
-<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(x)) <span class="fu">mean</span>(x[,i], <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
-<span id="cb84-2"><a href="#cb84-2" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">foreach</span>(<span class="at">i =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(x)) <span class="sc">%do%</span> (<span class="fu">mean</span>(x[,i], <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
-<span id="cb84-3"><a href="#cb84-3" tabindex="-1"></a><span class="co">#m3 &lt;- foreach(i = 1:ncol(x)) %dopar% (mean(x[,i], na.rm=TRUE))</span></span></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(x)) <span class="fu">mean</span>(x[,i], <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<span id="cb82-2"><a href="#cb82-2" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">foreach</span>(<span class="at">i =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(x)) <span class="sc">%do%</span> (<span class="fu">mean</span>(x[,i], <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
+<span id="cb82-3"><a href="#cb82-3" tabindex="-1"></a><span class="co">#m3 &lt;- foreach(i = 1:ncol(x)) %dopar% (mean(x[,i], na.rm=TRUE))</span></span></code></pre></div>
 <p>Let’s benchmark this again. We’ll only do 3 replicates this time
 (uncomment before running this code).</p>
-<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" tabindex="-1"></a><span class="co">#method1 &lt;- function(x) {colMeans(x, na.rm=TRUE)}</span></span>
-<span id="cb85-2"><a href="#cb85-2" tabindex="-1"></a><span class="co">#method2 &lt;- function(x) {for(i in 1:ncol(x)) mean(x[,i], na.rm=TRUE)}</span></span>
-<span id="cb85-3"><a href="#cb85-3" tabindex="-1"></a><span class="co">#method3 &lt;- function(x) {lapply(x, mean, na.rm=TRUE)}</span></span>
-<span id="cb85-4"><a href="#cb85-4" tabindex="-1"></a><span class="co">#method4 &lt;- function(x) {mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)}</span></span>
-<span id="cb85-5"><a href="#cb85-5" tabindex="-1"></a><span class="co">#method5 &lt;- function(x) {foreach(i = 1:ncol(x)) %do% (mean(x[,i], na.rm=TRUE))}</span></span>
-<span id="cb85-6"><a href="#cb85-6" tabindex="-1"></a><span class="co">#method6 &lt;- function(x) {foreach(i = 1:ncol(x)) %dopar% (mean(x[,i], na.rm=TRUE))}</span></span>
-<span id="cb85-7"><a href="#cb85-7" tabindex="-1"></a></span>
-<span id="cb85-8"><a href="#cb85-8" tabindex="-1"></a><span class="co">#microbenchmark::microbenchmark(times = 3, unit = &quot;ms&quot;,method1(x), method2(x), method3(x), method4(x), method5(x), method6(x))</span></span></code></pre></div>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" tabindex="-1"></a><span class="co">#method1 &lt;- function(x) {colMeans(x, na.rm=TRUE)}</span></span>
+<span id="cb83-2"><a href="#cb83-2" tabindex="-1"></a><span class="co">#method2 &lt;- function(x) {for(i in 1:ncol(x)) mean(x[,i], na.rm=TRUE)}</span></span>
+<span id="cb83-3"><a href="#cb83-3" tabindex="-1"></a><span class="co">#method3 &lt;- function(x) {lapply(x, mean, na.rm=TRUE)}</span></span>
+<span id="cb83-4"><a href="#cb83-4" tabindex="-1"></a><span class="co">#method4 &lt;- function(x) {mclapply(x, mean, na.rm=TRUE, mc.cores=nCores)}</span></span>
+<span id="cb83-5"><a href="#cb83-5" tabindex="-1"></a><span class="co">#method5 &lt;- function(x) {foreach(i = 1:ncol(x)) %do% (mean(x[,i], na.rm=TRUE))}</span></span>
+<span id="cb83-6"><a href="#cb83-6" tabindex="-1"></a><span class="co">#method6 &lt;- function(x) {foreach(i = 1:ncol(x)) %dopar% (mean(x[,i], na.rm=TRUE))}</span></span>
+<span id="cb83-7"><a href="#cb83-7" tabindex="-1"></a></span>
+<span id="cb83-8"><a href="#cb83-8" tabindex="-1"></a><span class="co">#microbenchmark::microbenchmark(times = 3, unit = &quot;ms&quot;,method1(x), method2(x), method3(x), method4(x), method5(x), method6(x))</span></span></code></pre></div>
 <p>Whether parallelisation is faster depends on the type of task and on
 your system. In this case, both versions that used parallelisation were
 actually slower than the sequential code (at least on my system).</p>

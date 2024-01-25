@@ -180,17 +180,17 @@ file.show(outfile)
 
 
 ## ----Rprof, include=FALSE----------------------------------------------------------------------------
-Rprof(filename=here::here("downloads/Rprof.out"))
-source(outfile)
-Rprof(NULL)
+#Rprof(filename=here::here("downloads/Rprof.out"))
+#source(outfile)
+#Rprof(NULL)
 
 
 ## ----sampling.interval-------------------------------------------------------------------------------
-summaryRprof(here::here("downloads/Rprof.out"))[c("sampling.time", "sample.interval")]	
+#summaryRprof(here::here("downloads/Rprof.out"))[c("sampling.time", "sample.interval")]	
 
 
 ## ----summaryRprof------------------------------------------------------------------------------------
-summaryRprof(here::here("downloads/Rprof.out"))$by.total
+#summaryRprof(here::here("downloads/Rprof.out"))$by.total
 
 
 ## ----BashScript--------------------------------------------------------------------------------------
