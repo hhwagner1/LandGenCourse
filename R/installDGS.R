@@ -84,7 +84,7 @@ cran.pkg <- c("ade4", "adegenet", "base64enc", "BiocManager", "car", "compiler",
               "pegas", "pinfsc50", "PopGenReport", "poppr", "predictmeans", "profvis", "proto", "purrr", "pwr",
               "RANN", "raster", "rasterVis", "readr", "RColorBrewer",
               "RgoogleMaps", "rio", "rlang", "rmarkdown", "sampling", "seqinr",
-              "sf", "spacetime", "sp", "spatialEco", "spatialreg", "spdep", "spmoran", "SoDA", "stringi", "Sunder",
+              "sf", "spacetime", "sp", "spatialEco", "spatialreg", "spdep", "spmoran", "stringi",
               "testthat", "terra", "tibble", "tmap", "usdm", "vegan", "vcfR", "vctrs")
 libs(cran.pkg)
 
