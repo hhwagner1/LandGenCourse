@@ -375,7 +375,7 @@ gen.vect <- as.vector(as.dist(gen.mat))
 Define the two vectors of population effects: 
 
 ```{r}
-Pop <- matrix(names(as.dist(eucl.mat)), nrow(eucl.mat), ncol(eucl.mat), byrow=F)
+Pop <- matrix(names(as.dist(eucl.mat))[[1]], nrow(eucl.mat), ncol(eucl.mat), byrow=F)
 pop1 <-Pop[lower.tri(Pop)]
 pop2 <-t(Pop)[lower.tri(Pop)]
 ```
@@ -415,7 +415,7 @@ Let's combine all of this into our own function to extract the vectors, define t
 ```{r}
 getMLPE <- function(gen=gen.mat, eucl=eucl.mat, cost=cost.mat)
 {
-  Pop <- matrix(names(as.dist(eucl)), nrow(eucl), ncol(eucl), byrow=F)
+  Pop <- matrix(names(as.dist(eucl))[[1]], nrow(eucl), ncol(eucl), byrow=F)
   Link.data <- data.frame(
     eucl.vect = as.vector(as.dist(eucl)),
     cost.vect = as.vector(as.dist(cost)),
