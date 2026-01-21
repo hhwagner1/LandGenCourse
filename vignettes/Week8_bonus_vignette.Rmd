@@ -247,10 +247,12 @@ Let's benchmark the import again. We can use the function `import` for all of th
 
 ```{r microbenchmark3}
 microbenchmark(times = 10, unit = "ms", 
-          csv= import(file.path(here::here(), "output", "gen.csv")),
-          RData=import(file.path(here::here(), "output", "gen.RData")),
-          rds=import(file.path(here::here(), "output", "gen.rds")),
-          feather=import(file.path(here::here(), "output", "gen.feather")))
+          csv= rio::import(file.path(here::here(), "output", "gen.csv")),
+          RData=rio::import(file.path(here::here(), "output", "gen.RData"),
+                            trust=TRUE),
+          rds=rio::import(file.path(here::here(), "output", "gen.rds"), 
+                          trust=TRUE),
+          feather=rio::import(file.path(here::here(), "output", "gen.feather")))
 ```
 
 Look at the column 'mean'. Importing any of the binary files was at least twice as fast as importing the 'csv' file with the underlying function `fread` (which was already 50 times faster than `read.csv`). 
