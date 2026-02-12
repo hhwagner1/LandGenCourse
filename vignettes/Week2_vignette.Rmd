@@ -687,7 +687,7 @@ c) **Summarize by site**: Use the function `group_by` from library `dplyr` to gr
 `summarize(nIndiv = n())`.   
 Write the result into a new object `Pulsatilla`.
 d) **Add mean coordinates**: You can nest multiple functions within `summarize` and separate them with a comma. E.g., to calculate both sample size and the mean of a variable `myVar`, you could write:  
-`summarize(nIndiv = n(), myMean = n(myVar))`  
+`summarize(nIndiv = n(), myMean = mean(myVar))`  
 Modify your code to calculate the number of genotyped individuals for each site and their mean X and Y coordinates. Your object 'Pulsatilla' should now have three columns, one with the number of individuals and two with the mean coordinates. Display the dataset with `as_tibble` to check.
 e) **Convert to sf object**: Modify code from section 2.a to convert your data frame `Pulsatilla` to an `sf` object. Make sure to adjust the variable names for the coordinates (i.e., use the variable names that you assigned in the previous step for the mean X and Y coordinates).
 f) **Specify known projection**: The correct EPSG number for this dataset is: 31468. You can specify the CRS with: 
