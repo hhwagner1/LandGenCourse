@@ -116,7 +116,8 @@ tmap_mode("view")
 MyMap <-
   tm_basemap(c("Esri.WorldTopoMap", "Esri.WorldStreetMap", "Esri.WorldShadedRelief")) +
   tm_shape(Coords.sf) + tm_sf(size = 1, col = "black")
-MyMap + tm_shape(Coords.sf) + tm_text(text = "Population", size = 1, col = "black",just="bottom")
+MyMap + tm_shape(Coords.sf) + tm_text(text = "Population", size = 1, 
+            col = "black", options =opt_tm_text(just="bottom"))
 ```
 
 
