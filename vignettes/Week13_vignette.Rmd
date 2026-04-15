@@ -424,7 +424,7 @@ Create data frame with the node variables to be evaluated.
 node.var <- c("degree", "betweenness", "Elev", "Length", "Area", "Perim", 
               "Depth", "pH","Dforest","Drock", "Dshrub", "pwetland", "cti",
 			  "dd5", "ffp","gsp","pratio","hli","rough27","srr")
-s <- st_drop_geometry(sites) %>% select("degree", "betweenness", "Elev", "Length", "Area", "Perim", 
+s <- st_drop_geometry(sites) %>% dplyr::select("degree", "betweenness", "Elev", "Length", "Area", "Perim", 
               "Depth", "pH","Dforest","Drock", "Dshrub", "pwetland", "cti", "ffp","gsp")
 ```
 
