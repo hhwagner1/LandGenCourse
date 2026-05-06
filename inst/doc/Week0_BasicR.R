@@ -436,7 +436,7 @@ intersect( mom.alleles, dad.alleles )
 ## ----------------------------------------------------------------------------------------------------
 potential_offspring <- function( parent, offspring ) {
   off <- alleles( offspring )
-  par <- alleles( loc2 )
+  par <- alleles( parent )
   shared <- intersect( off, par )
   return( length( shared ) > 0 )
 }

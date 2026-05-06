@@ -1,5 +1,5 @@
 ## Online Book URL:  
-< https://bookdown.org/hhwagner1/LandGenCourse_book/>
+< https://bookdown.org/hhwagner1/LandGenCourse_book/
 
 ## Description
 This package provides an interface for accessing materials for the course 'Landscape Genetic Data Analysis with R'. It installs all R packages needed for the course, and adds four RStudio Add-ins. The weekly labs are implemented as vignettes. Some weeks have additional worked examples as bonus materials.
